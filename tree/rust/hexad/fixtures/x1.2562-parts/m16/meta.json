@@ -1,0 +1,138 @@
+{
+ "source_layouts": "x1.2562.part16.K3.npz",
+ "layouts_sha256": "a37243f1ab9085c83da9b12d5e606d9e743f792e6d343da3228dada8ba8c89d3",
+ "part_sha256": "e6409f9f36dbb860306391b8439126e29f98890e910e2bf1c53771e141068182",
+ "mesh_sha256": "8a825312a713bbe959c33ed03c2b503e5ec626238de6b15a686cd0ad5b40c986",
+ "halo_rings": 3,
+ "n_partitions": 16,
+ "ranks": [
+  {
+   "owned_cells": 159,
+   "owned_edges": 474,
+   "owned_vertices": 319,
+   "cells": 318,
+   "edges": 1014,
+   "vertexs": 697
+  },
+  {
+   "owned_cells": 159,
+   "owned_edges": 479,
+   "owned_vertices": 320,
+   "cells": 321,
+   "edges": 1024,
+   "vertexs": 704
+  },
+  {
+   "owned_cells": 162,
+   "owned_edges": 474,
+   "owned_vertices": 313,
+   "cells": 318,
+   "edges": 1013,
+   "vertexs": 696
+  },
+  {
+   "owned_cells": 161,
+   "owned_edges": 494,
+   "owned_vertices": 333,
+   "cells": 320,
+   "edges": 1020,
+   "vertexs": 701
+  },
+  {
+   "owned_cells": 157,
+   "owned_edges": 466,
+   "owned_vertices": 307,
+   "cells": 316,
+   "edges": 1008,
+   "vertexs": 693
+  },
+  {
+   "owned_cells": 164,
+   "owned_edges": 492,
+   "owned_vertices": 330,
+   "cells": 326,
+   "edges": 1039,
+   "vertexs": 714
+  },
+  {
+   "owned_cells": 159,
+   "owned_edges": 475,
+   "owned_vertices": 310,
+   "cells": 324,
+   "edges": 1034,
+   "vertexs": 711
+  },
+  {
+   "owned_cells": 158,
+   "owned_edges": 488,
+   "owned_vertices": 328,
+   "cells": 329,
+   "edges": 1052,
+   "vertexs": 724
+  },
+  {
+   "owned_cells": 161,
+   "owned_edges": 480,
+   "owned_vertices": 310,
+   "cells": 329,
+   "edges": 1050,
+   "vertexs": 722
+  },
+  {
+   "owned_cells": 159,
+   "owned_edges": 484,
+   "owned_vertices": 329,
+   "cells": 333,
+   "edges": 1064,
+   "vertexs": 732
+  },
+  {
+   "owned_cells": 160,
+   "owned_edges": 476,
+   "owned_vertices": 317,
+   "cells": 322,
+   "edges": 1027,
+   "vertexs": 706
+  },
+  {
+   "owned_cells": 160,
+   "owned_edges": 479,
+   "owned_vertices": 321,
+   "cells": 336,
+   "edges": 1074,
+   "vertexs": 739
+  },
+  {
+   "owned_cells": 160,
+   "owned_edges": 482,
+   "owned_vertices": 322,
+   "cells": 327,
+   "edges": 1044,
+   "vertexs": 718
+  },
+  {
+   "owned_cells": 158,
+   "owned_edges": 463,
+   "owned_vertices": 304,
+   "cells": 317,
+   "edges": 1011,
+   "vertexs": 695
+  },
+  {
+   "owned_cells": 161,
+   "owned_edges": 469,
+   "owned_vertices": 312,
+   "cells": 308,
+   "edges": 980,
+   "vertexs": 673
+  },
+  {
+   "owned_cells": 164,
+   "owned_edges": 505,
+   "owned_vertices": 345,
+   "cells": 331,
+   "edges": 1054,
+   "vertexs": 724
+  }
+ ]
+}

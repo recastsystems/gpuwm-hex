@@ -99,9 +99,14 @@ class ResidentMynnEdmfSlot:
         self.metadata = metadata
         if not hasattr(provider, '_rrfs_mynnedmf_backend'):
             image = getattr(provider, '_rrfs_mynnedmf_image', None)
-            if image is None:
+            # Correct mode (fork_corrections): the module compiles its corrected source itself.
+            corrections = tuple(set(getattr(call, 'corrections', ()))
+                                & set(getattr(self.module, 'CORRECTIONS', ())))
+            if image is None and not corrections:
                 raise RuntimeError('MYNN native callback requires its strict precompiled CUDA resource')
-            provider._rrfs_mynnedmf_backend = self.module.MynnEdmfCuda(compiled_image=image)
+            # A version module (MYNN-EDMF v6.1.1) declares no CORRECTIONS: its own text carries MY1 and MY2.
+            provider._rrfs_mynnedmf_backend = self.module.MynnEdmfCuda(
+                compiled_image=image, **({'corrections': corrections} if corrections else {}))
             provider._rrfs_mynnedmf_common_kernels = driver.StrictPhysicsKernelCache()
         self.backend = provider._rrfs_mynnedmf_backend
         kernels = provider._rrfs_mynnedmf_common_kernels

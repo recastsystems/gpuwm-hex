@@ -276,7 +276,9 @@ def gather_owned_field(row, layout, partitions, buffers, *, maps=None):
         raise ValueError('one field buffer is required for each partition')
     if row['kind'] not in ('real', 'integer'):
         raise ValueError('owned field assembly requires a numeric Registry field')
-    if row['pool'] == 'mesh':
+    # Integer mesh words are local indices (cellsOnEdge, indexToCellID, ...) that need inverse remapping. Real mesh
+    # words (zgrid, areaCell) are owner words like any other field's; the JEDI background reads zgrid.
+    if row['pool'] == 'mesh' and row['kind'] == 'integer':
         raise ValueError('mesh fields require global connectivity reconstruction')
     axes = [(axis, entity) for axis, dim in enumerate(row['dimensions'])
             for entity in _ENTITIES if dim in (entity, entity + 'All', entity + 'Solve')]

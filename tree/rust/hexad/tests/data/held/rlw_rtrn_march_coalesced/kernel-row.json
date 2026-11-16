@@ -1,0 +1,384 @@
+{
+ "function": "rlw_rtrn_march_coalesced",
+ "class": "physics-radiation",
+ "gate_ready": false,
+ "derivative": {
+  "row": "ad/held-rlw_rtrn_march_coalesced",
+  "spec": {
+   "path": "<kernel set>"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/rlw_rtrn_march_coalesced/march-ad.cu",
+   "generated_by": "gen_march.py <pinned 683d7a07 .cu> march_ad.cuh march-ad.cu"
+  },
+  "nvcc": [
+   "-fatbin",
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-gencode",
+   "arch=compute_80,code=compute_80",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false",
+   "--prec-div=true",
+   "--prec-sqrt=true"
+  ]
+ },
+ "capture": {
+  "manifest": "<local path>",
+  "step": 6,
+  "launch_index": 0
+ },
+ "arguments": [
+  {
+   "name": "ncol",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "52070000"
+  },
+  {
+   "name": "nl",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "40000000"
+  },
+  {
+   "name": "cldfmc",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "odcld",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "efclfrac",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "icldlyr",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": [
+    1874,
+    64
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    256,
+    4
+   ]
+  },
+  {
+   "name": "secdiff",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    16
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    64,
+    4
+   ]
+  },
+  {
+   "name": "semiss",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    16
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    64,
+    4
+   ]
+  },
+  {
+   "name": "planklay",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    16
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    4096,
+    64,
+    4
+   ]
+  },
+  {
+   "name": "planklev",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    65,
+    16
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    4160,
+    64,
+    4
+   ]
+  },
+  {
+   "name": "plankbnd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    16
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    64,
+    4
+   ]
+  },
+  {
+   "name": "fracs",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "taut",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "tau_tbl",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    10001
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    4
+   ]
+  },
+  {
+   "name": "exp_tbl",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    10001
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    4
+   ]
+  },
+  {
+   "name": "tfn_tbl",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    10001
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    4
+   ]
+  },
+  {
+   "name": "bpade",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "41376640"
+  },
+  {
+   "name": "ngb",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": [
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    4
+   ]
+  },
+  {
+   "name": "radld_p",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "radclrd_p",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "radlu_p",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "radclru_p",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    35840,
+    560,
+    4
+   ]
+  },
+  {
+   "name": "iclddn_p",
+   "kind": "device",
+   "dtype": "|u1",
+   "shape": [
+    1874,
+    64,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    8960,
+    140,
+    1
+   ]
+  },
+  {
+   "name": "radlu_sfc",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    560,
+    4
+   ]
+  },
+  {
+   "name": "radclru_sfc",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    1874,
+    140
+   ],
+   "pointer_depth": 1,
+   "strides_bytes": [
+    560,
+    4
+   ]
+  }
+ ]
+}

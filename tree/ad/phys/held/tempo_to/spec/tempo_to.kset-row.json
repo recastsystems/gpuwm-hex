@@ -1,0 +1,190 @@
+{
+ "function": "tempo_to",
+ "class": "physics-glue",
+ "gate_ready": false,
+ "derivative": {
+  "row": "ad/held-tempo_to",
+  "spec": {
+   "path": "/work/ad/held/tempo_to/kset/specs/tempo_to.spec.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/tempo_to/cuda/tempo_to.ad.cu"
+  },
+  "nvcc": [
+   "-fatbin",
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false",
+   "--prec-div=true",
+   "--prec-sqrt=true"
+  ]
+ },
+ "capture": {
+  "plan": "pkg18 plan.json d06ab544, step_01 tempo_to launch (grid 81, block 32)"
+ },
+ "arguments": [
+  {
+   "name": "m",
+   "kind": "device",
+   "dtype": "<u8",
+   "shape": [
+    16
+   ],
+   "pointer_depth": 2
+  },
+  {
+   "name": "mesh",
+   "kind": "device",
+   "dtype": "<u8",
+   "shape": [
+    2
+   ],
+   "pointer_depth": 2
+  },
+  {
+   "name": "d",
+   "kind": "device",
+   "dtype": "<u8",
+   "shape": [
+    10
+   ],
+   "pointer_depth": 2
+  },
+  {
+   "name": "t",
+   "kind": "device",
+   "dtype": "<u8",
+   "shape": [
+    12
+   ],
+   "pointer_depth": 2
+  },
+  {
+   "name": "f",
+   "kind": "device",
+   "dtype": "<u8",
+   "shape": [
+    20
+   ],
+   "pointer_depth": 2
+  },
+  {
+   "name": "nz",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "3b000000"
+  },
+  {
+   "name": "nc",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "020a0000"
+  },
+  {
+   "name": "aero",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "01000000"
+  },
+  {
+   "name": "hail",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "01000000"
+  },
+  {
+   "name": "dt",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "00009644"
+  },
+  {
+   "name": "rv",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "cdcce643"
+  },
+  {
+   "name": "rd",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "00808f43"
+  },
+  {
+   "name": "rvord",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "d2decd3f"
+  },
+  {
+   "name": "p0",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "0050c347"
+  },
+  {
+   "name": "rcv",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "cdcccc3e"
+  },
+  {
+   "name": "grav",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "08e61c41"
+  },
+  {
+   "name": "mp_top_level",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "pointer_depth": 0,
+   "value_hex": "3b000000"
+  },
+  {
+   "name": "compmax",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    2562
+   ],
+   "pointer_depth": 1
+  },
+  {
+   "name": "comp",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    2562
+   ],
+   "pointer_depth": 1
+  }
+ ]
+}

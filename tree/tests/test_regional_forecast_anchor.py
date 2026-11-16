@@ -94,7 +94,7 @@ def test_the_named_forecast_pair_is_masked_digest_identical(receipts):
 SOURCE_DRIFT_SINCE_CAMPAIGN: dict[str, dict[str, str]] = {
     "src/hexcore/cuda_driver.py": {
         "recorded": "cb6477ef2fd02ad551e9b6c8af0724c94fc4d90bdc712fff1378d218662f5d04",
-        "current": "98b0f786620a5e81f7e625da4c2f3727823f0d416338c64f09b7d69f3ad70a29",
+        "current": "5cf4bd473b2435476f0a56db17a2d1b15fbbc2e366f190fde95e007cf1a672de",
         "why": (
             "convection ruling, 2026-08-26: _v841_physics_cadences reports "
             "convection: None when no cumulus scheme is selected instead of "
@@ -190,7 +190,7 @@ SOURCE_DRIFT_SINCE_CAMPAIGN: dict[str, dict[str, str]] = {
     },
     "src/hexcore/regional_v841.py": {
         "recorded": "e74d345e3a2e02fe6887840e7ad3a8166ea302082e6a505d138c5293fef69a43",
-        "current": "18047e222e842acd4f73951d0dff2d11d1b85ce4d220a8bf3cf7ebf101555d83",
+        "current": "84ba9ed3e49c4d8e8877b9a96fe6a8693d379b7851426f819ce0e4c40344ab6e",
         "why": (
             "provenance scrub, 2026-08-27: ONE line of the module "
             "docstring named the machine the native v8.4.1 sources were "
@@ -326,7 +326,7 @@ SOURCE_DRIFT_SINCE_CAMPAIGN: dict[str, dict[str, str]] = {
     },
     "src/hexcore/cuda_horizontal.py": {
         "recorded": "97faf0869a0a5ea9ebbc4c67b3c2d6c68cefdfa10dece73cd204d818962efde4",
-        "current": "d4e4face383eab6f19f21598613b7bd58e37eb75e067b7b9e817060a2ec015cd",
+        "current": "e0fc005bcd591f312e01f60a1ffddb206ec3f86161e3b62c873f228cd2d554fc",
         "why": (
             "0.2.0 package rename, 2026-08-28: the token mpas_port became "
             "hexcore. This file is byte-identical to the copy these receipts "

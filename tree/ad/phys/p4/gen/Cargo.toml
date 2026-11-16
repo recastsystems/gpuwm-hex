@@ -1,0 +1,17 @@
+[package]
+name = "p4-gen"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "ad/phys P4: generates the derivative CUDA modules from the pinned captured forward sources"
+
+[[bin]]
+name = "p4-gen"
+path = "src/main.rs"
+
+[dependencies]
+regex = "=1.11.1"
+sha2 = "=0.10.9"
+
+[profile.release]
+opt-level = 2

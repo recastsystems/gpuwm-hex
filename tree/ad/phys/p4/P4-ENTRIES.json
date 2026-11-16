@@ -1,0 +1,68 @@
+{
+  "schema": "ad.phys.p4.entries/v1",
+  "unit": "P4: MYNN surface layer + GSL orographic drag whole launches (hrrrv5, MPAS physics route)",
+  "engine": "hex", "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+  "route": "generated (type substitution of the captured forward source) + hand (driver conversions)",
+  "mode": "exact",
+  "build": {
+    "recipe": "tree/ad/phys/p4/build.sh <capture-root> <scratch> <libnvrtc.so.13> <arch>",
+    "compiler": "NVRTC 13.2 (the forward's compiler family), options = forward strict options + -arch + -DP4_MODE_TL|-DP4_MODE_REV",
+    "options": ["--std=c++17", "--fmad=false", "--ftz=false", "--prec-div=true", "--prec-sqrt=true"],
+    "sources": {
+      "mynnsfc": {"captured_source_sha256": "9c87dce88bee3f9595bf84410375caed4884c51b4767c4e8367d77cfdf8f7eb9", "forward_file": "tree/src/hexcore/mpasphys/rrfs/sf_mynnsfc_v600.py", "upstream": "RRFS MYNN-SFC @1d6e370e (NOAA GSL, US government code)"},
+      "ugwp": {"captured_source_sha256": "e1af1284c8b51bd0e871d00208f894ce0125a32a55999dbe43eda27316886730", "forward_file": "tree/src/hexcore/mpasphys/ugwp_oro_v842.py + rrfs/resident_gwdo_rrfs.py", "upstream": "MPAS physics_noaa/UGWP/bl_ugwp.F (NOAA GSL, US government code); libm words MIT (Arm optimized-routines, notice travels in the verbatim source)"}
+    },
+    "generator": "tree/ad/phys/p4/gen (Rust): verbatim forward source + p4_ad.cuh + physics part with float -> ADF, functions renamed adx_*; every textual pattern must match its expected count or generation stops"
+  },
+  "types": {
+    "TL": "ADF = {float v; double t}; v from the forward's own float operation on the forward's float operands (bitwise primal), t from double partials",
+    "REV": "ADF = {float v; int node}; per-thread Wengert tape of (parents, double partials) in a per-call workspace; the reverse sweep is the exact transpose of the TL partials",
+    "precision": "tangents and adjoints are double inside every entry; the plain entries read/write float32 buffers (one rounding), the *64 entries double buffers"
+  },
+  "branch_policy": [
+    {"what": "every float comparison, while-loop test, if", "policy": "executed-arm (taken on v exactly as the forward)"},
+    {"what": "fmaxf/fminf", "policy": "min-max: derivative of the returned operand; tie -> left operand; NaN -> the non-NaN operand (fmaxf semantics)"},
+    {"what": "fabsf", "policy": "executed-arm by sign bit"},
+    {"what": "(int) of a float (psi table cell nzol, GSL wind direction idir)", "policy": "lookup: index fixed, interpolation weights active, table entries constant"},
+    {"what": "iterations (zolri/zolri2 secant and fixed-point loops, n<20, tol 0.01)", "policy": "iteration: derivative through the executed iterations, count as recorded"},
+    {"what": "libm (mynn_glibc_logf/expf/powf, glibc_atanf, gfk_pow/gfk_exp, glibc_sinf, sqrt)", "policy": "value from the forward's own routine; partial of the true function at the float operand (double)"},
+    {"what": "sqrt or log at exactly 0, pow(0, y<1), pow(x<=0, active y)", "policy": "declared singular partial := 0, counted (singular_partials in the receipt)"}
+  ],
+  "tables": [{"name": "psim_stab, psim_unstab, psih_stab, psih_unstab (1001 each)", "index_fixed": true, "weights_active": true, "entries_trainable": false, "built_by": "mynnsfc_tables (verbatim float builder, run once per derivative module)"}],
+  "kernels": {
+    "mynnsfc_tables": {"route": "inactive", "reason": "builds constant psi tables; no derivative; the derivative modules run it once at load"},
+    "mynnsfc_from_mpas": {
+      "args": {"f": "inout [68,n]", "sea": "out [68,n] (copy of f when fraction=1)", "density": "const (mesh geometry)", "sst": "in", "ice": "in (branch only here)"},
+      "rules": "d f.dx = 0 (dx from meshDensity); d sea = d f; sea.qsfc/xland/mavail/znt constants -> 0; f.xland -> 0; sea.tsk = fmaxf(sst,271.4): executed arm, tie -> sst",
+      "entries": {"tl": "mynnsfc_from_mpas__tl(f, sea, density, sst, ice, len_disp, threshold, fraction, n, d_f, d_sea, d_sst)", "tl64": "same, double", "ad": "mynnsfc_from_mpas__ad(f, sea, density, sst, ice, len_disp, threshold, fraction, n, b_f, b_sea, b_sst)", "ad64": "same, double"}
+    },
+    "mynnsfc_columns": {
+      "args": {"f": "inout [68,n], all 68 rows active (xland, lakemask, dx are never perturbed by the proofs: categorical / geometry)", "options": "const int", "vegtype": "const int", "errors": "out int (no derivative)"},
+      "launches_per_step": 2, "note": "first on the packed (land/ice) array, second on the open-water sea array",
+      "entries": {
+        "tl": "mynnsfc_columns__tl(f, options, vegtype, xice_threshold, present, n, step_override, init_override, d_f, singular) grid (n+127)/128 x 128; d_f holds the pre tangent and receives the post tangent",
+        "tl64": "same, double d_f",
+        "aug": "mynnsfc_columns__aug(f, f_out, errors, options, vegtype, xice_threshold, present, n, step_override, init_override, br, br_words, br_count)",
+        "ad": "mynnsfc_columns__ad(f, options, vegtype, xice_threshold, present, n, step_override, init_override, b_f, ab, w, adj, cap, stride, col0, ncols, counts, overflow, singular); call once with ab = 0 (count pass, counts[c] = tape nodes), then per column chunk with workspace ab int2[cap*stride], w double2[cap*stride], adj double[cap*stride]; f must hold the PRE state; b_f holds the post cotangent and receives the pre cotangent",
+        "ad64": "same, double b_f"
+      }
+    },
+    "mynnsfc_to_mpas": {
+      "args": {"f": "inout [68,n] (BLEND rows blended where threshold <= ice < 1)", "sea": "in [68,n]", "ice": "in (active weight)"},
+      "entries": {"tl": "mynnsfc_to_mpas__tl(f, sea, ice, threshold, n, d_f, d_sea, d_ice)", "ad": "mynnsfc_to_mpas__ad(f, sea, ice, threshold, n, b_f, b_sea, b_ice); f = pre state", "tl64/ad64": "double"}
+    },
+    "ugwp_oro_dx": {"route": "inactive", "reason": "dx = len_disp / meshDensity^0.25 is geometry", "entries": {"tl": "ugwp_oro_dx__tl(density, dx, length, n, d_dx): d_dx = 0", "ad": "ugwp_oro_dx__ad(density, dx, length, n, b_dx): b_dx = 0"}},
+    "ugwp_oro_diff": {"entries": {"tl": "ugwp_oro_diff__tl(before, after, diff, n, d_before, d_after, d_diff)", "ad": "ugwp_oro_diff__ad(before, after, diff, n, b_before, b_after, b_diff): b_after += b_diff, b_before -= b_diff, b_diff = 0"}},
+    "ugwp_oro_run": {
+      "args": {"layers": "in [10,59,nc] uproj vproj t1 q1 prsl prslk zl dz rublten rvblten", "prsi0": "in [60,nc]", "surface": "in [26,nc] (rows 0,1,4,5 geometry/categorical; 6-16 terrain statistics, active)", "kpbl0": "const int", "out": "out [12,59,nc] fully overwritten", "sout": "out [10,nc]", "status": "out int (entries write a scratch status)"},
+      "entries": {
+        "tl": "ugwp_oro_run__tl(layers, prsi0, surface, kpbl0, out, sout, status, g, cp, rd, rv, fv, pi_c, dt, nz, nc, diags, d_layers, d_prsi0, d_surface, d_out, d_sout, scratch_status, singular, rbw) grid (nc+63)/64 x 64; writes d_out/d_sout of written slots only",
+        "aug": "ugwp_oro_run__aug(<forward args>, br, br_words, br_count, rbw)",
+        "ad": "ugwp_oro_run__ad(<forward args>, b_layers, b_prsi0, b_surface, b_out, b_sout, ab, w, adj, cap, stride, col0, ncols, counts, overflow, singular, scratch_status); count pass with ab = 0, then column chunks; b_layers/b_prsi0/b_surface accumulate; b_out/b_sout of written slots are consumed and zeroed",
+        "tl64/ad64": "double"
+      }
+    }
+  },
+  "saved": "none persistent: the adjoint recomputes the column from the pre state into its workspace (no aug tape between calls)",
+  "workspace": "32 bytes per tape node per column in a chunk; measured max nodes per column in the receipt"
+}

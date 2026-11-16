@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from fractions import Fraction
 import json
 import os
+import sys
 from pathlib import Path
 from typing import Any, Mapping
 import xml.etree.ElementTree as ET
@@ -323,6 +324,60 @@ def init_pin_refusal(init: Any, route_key: str, route: Mapping[str, Any], suite:
         f'{run_pin}, or run the forecast with the --physics-pin-set of the route that made the init')
 
 
+def init_soil_refusal(init: Any, config: Any, suite: str | None) -> None:
+    """Refuse an init whose soil column is not the one the selected land surface integrates.
+
+    THE BREAKAGE THIS PREVENTS (published hex 0.5.0 and the 0.6.0 candidate, 2026-11-11, x1.40962, 2023-03-31 12Z):
+    a plain ``gpuwm-hex forecast`` (the default suite convection_permitting, Noah, four soil layers) on an hrrrv5
+    start file (RUC, nine soil levels) passed card admission and the asset fetch, then stopped in
+    framework_init_v842.physics_registry_init, which writes Noah's four layer thicknesses into the init's
+    nine-level ``dzs``: "could not broadcast input array from shape (4,1) into shape (9,40962)", rc 2, with no
+    word about soil or the remedy.  The mirror case (a four-level init under RUC) meets the same write in
+    framework_init_rrfs.physics_registry_init (read in the code, not run).
+
+    The door does not map one column onto the other: RUC's nine are values at depths from 0 to 3 m, Noah's four
+    are layers 0.1, 0.3, 0.6 and 1.0 m thick, and no route here carries a conversion between the two land
+    models' soil states that has been judged.  So the run is refused by name before any card or asset is taken,
+    with the two ways on.  The level counts are the suites table's (``options.config_lsm_scheme``).  An init
+    that cannot be read, or carries no nSoilLevels, is not judged here.
+    """
+
+    if init is None or config is None:
+        return
+    scheme = str(getattr(config, 'selectors', {}).get('land_surface', '') or '').strip()
+    table = load_table()
+    rows = table.get('options', {}).get('config_lsm_scheme', {})
+
+    def levels(name):
+        row = rows.get(name) or {}
+        return row.get('n_soil_levels', (row.get('carried') or {}).get('n_soil_levels'))
+
+    wanted = levels(scheme)
+    if wanted is None:
+        return
+    path = Path(init)
+    try:
+        from ..lbc import _open_lbc
+        found = len(_open_lbc(path).dimensions['nSoilLevels'])
+    except Exception:
+        return
+    if found == int(wanted):
+        return
+    suites = table.get('mpas_suites', {}).get('suites', {})
+    fitting = sorted(name for name, row in suites.items() if levels(row.get('config_lsm_scheme')) == found)
+    made_for = sorted(name for name in rows if levels(name) == found)
+    land = scheme[3:] if scheme.startswith('sf_') else scheme
+    ways = ([f'run it with --physics-suite {" or ".join(fitting)} (land surface '
+             f'{" or ".join(made_for)}, {found} levels)'] if fitting else [])
+    ways.append(f'rebuild the init for this suite with gpuwm-hex init --land-surface {land} ({wanted} levels)')
+    raise ValueError(
+        f'{path} carries {found} soil levels'
+        + (f' (the soil column of {" or ".join(made_for)})' if made_for else '')
+        + f', but this forecast runs suite {suite!r}, whose land surface {scheme} integrates {wanted}. '
+        "The forecast door does not map one land model's soil column onto another's, so the run would stop "
+        'at physics start or read soil at the wrong depths. ' + ways[0][:1].upper() + ', or '.join(ways)[1:])
+
+
 def native_route(arguments: Any, *, default_mode: str = 'exact'):
     """Table-selected explicit suite (_native_route), plus --ocean-mode pwp in the OML slot."""
     config, text = _native_route(arguments, default_mode=default_mode)
@@ -487,7 +542,7 @@ def _native_route(arguments: Any, *, default_mode: str = 'exact'):
         config = route_namelist(text, **mode)
     if config is not None and matches and path is None:
         # Only a run that brings no namelist of its own: a native namelist keeps pristine Registry defaults.
-        config, text = _workflow_namelist(config, text, matches[0][1], route_namelist, mode)
+        config, text = _workflow_namelist(config, text, matches[0][1], route_namelist, mode, arguments)
     if profile:
         config = finish_profile(profile_name, profile, config, getattr(arguments, 'init', None))
     if config is not None and overrides and tc_surface:
@@ -496,11 +551,17 @@ def _native_route(arguments: Any, *, default_mode: str = 'exact'):
     if config is not None:
         config = _mmm.configure(config, mmm_explicit)
         config = _gwdo.configure(config, gwdo_explicit, text)
+        init_soil_refusal(getattr(arguments, 'init', None), config, selected or getattr(config, 'suite', None))
     return config, text
 
 
-def _workflow_namelist(config, text, row, route_namelist, mode):
+def _workflow_namelist(config, text, row, route_namelist, mode, arguments=None):
     """The operational workflow's namelist pairings a suite row declares (``workflow_namelist``).
+
+    hrrrv5 (MODEL-AUDIT D13): a rule writes NOAA's deck (rrfs-workflow parm/hrrrv5/namelist.atmosphere: the CAM
+    filter on 8 levels, Rayleigh u damping, w damping from 16 km, mynn_ess=0, mixnumcon=0, tempo_ml_for_bl_nc,
+    gvf_update off), and ``workflow_meshdep`` the deck's per-mesh step, acoustic sub-steps and radiation interval
+    (config.meshdep), so a plain ``--physics-suite hrrrv5`` run and every recorder run NOAA's configuration.
 
     A rule sets an option the run's own namelist leaves unset when the resolved selection matches, the way the
     operational workflow writes its namelist (RRFS: rrfs-workflow 08eee4ce parm/hrrrv5/namelist.atmosphere:58-59
@@ -510,10 +571,17 @@ def _workflow_namelist(config, text, row, route_namelist, mode):
     names (``--physics KEY=VALUE``) is never changed, and a run that brings its own namelist is not touched.
     """
     rules = row.get('workflow_namelist') or ()
-    if not rules:
+    meshdep = _workflow_meshdep(config, row, arguments)
+    if not rules and not meshdep:
         return config, text
     groups = {name: dict(values) for name, values in parse_fortran_namelist(text).items()}
     changed = False
+    for group, values in meshdep.items():
+        present = {k.casefold() for k in groups.get(group, {})}
+        for key, value in values.items():
+            if key.casefold() not in present:
+                groups.setdefault(group, {})[key] = value
+                changed = True
     for rule in rules:
         if not all(str(config.options.get(key, '')).strip() == str(value)
                    for key, value in rule['when'].items()):
@@ -529,6 +597,57 @@ def _workflow_namelist(config, text, row, route_namelist, mode):
     text = '\n'.join('&'+name+'\n'+'\n'.join(f'{k}={_literal(v)}' for k,v in values.items())+'\n/'
                      for name,values in groups.items())
     return route_namelist(text, **mode), text
+
+
+def _workflow_meshdep(config, row, arguments) -> dict[str, dict[str, Any]]:
+    """The deck's per-mesh options (``workflow_meshdep``) for the run's mesh: the row nearest its nominal spacing.
+
+    Each option is left out when the run decides it itself: ``--dt`` (any value but auto) keeps config_dt,
+    ``--acoustic-substeps`` keeps config_number_of_sub_steps.  The spacing is the registered --mesh row's, else the
+    one the --init / --grid / --static file records; a run with neither takes nothing here, and neither does a mesh
+    whose spacing is not within ``within_factor`` of a row's.
+    A row's ``physics`` options (NOAA's 12 km cumulus) go into &physics the same way.
+
+    THE BREAKAGE THIS PREVENTS (fwdmatch, 15 Nov 2026): a run with no --mesh took nothing even when its init file
+    names the mesh, so ``forecast --init <12 km cut init> --physics-suite hrrrv5`` ran the door's own 72 s step, not
+    NOAA's 60 s / 2 sub-steps, and differed from native 44c0849 on NOAA's deck in 37,592,358 words over the hour.
+    """
+    spec = row.get('workflow_meshdep') if isinstance(row, Mapping) else None
+    if not spec or arguments is None:
+        return {}
+    if not all(str(config.options.get(key, '')).strip() == str(value) for key, value in spec['when'].items()):
+        return {}
+    import math
+    from ..forecast_door import mesh_nominal_dx_m
+    dx = mesh_nominal_dx_m(arguments)
+    if dx is None or not dx > 0:
+        return {}
+    pick = min(spec['meshes'], key=lambda m: abs(math.log(float(dx) / float(m['nominal_dx_m']))))
+    within = float(spec.get('within_factor', 1.2))
+    if abs(math.log(float(dx) / float(pick['nominal_dx_m']))) > math.log(within):
+        # THE BREAKAGE THIS PREVENTS: NOAA's 1.25 km step (12 s) on an 800 m mesh is three times the door's stable step,
+        # and its 12 km step (60 s) on a 120 km globe ten times too many steps. Only NOAA's own meshes take the row.
+        print(f"gpuwm-hex: NOAA hrrrv5 deck: no config.meshdep row within a factor {within:g} of this mesh's "
+              f"{dx:g} m nominal spacing (nearest {pick['mesh']}); the door's own step, sub-steps and radiation "
+              "interval stay", file=sys.stderr, flush=True)
+        return {}
+    radt = f"00:{int(pick['radt_minutes']):02d}:00"
+    out: dict[str, dict[str, Any]] = {'physics': {'config_radtlw_interval': radt, 'config_radtsw_interval': radt}}
+    # NOAA's per-mesh namelist additions (exrrfs_fcst.sh:62-67: cu_ntiedtke and config_gfl_sub3d=1 on its 12 km meshes).
+    # An option the run names is kept: the caller only fills options its namelist leaves unset.
+    out['physics'].update(dict(pick.get('physics') or {}))
+    nhyd: dict[str, Any] = {}
+    requested = getattr(arguments, 'dt', None)
+    if requested is None or str(requested).strip().lower() in ('', 'auto'):
+        nhyd['config_dt'] = float(pick['dt'])
+    if getattr(arguments, 'acoustic_substeps', None) is None:
+        nhyd['config_number_of_sub_steps'] = int(pick['substeps'])
+    if nhyd:
+        out['nhyd_model'] = nhyd
+    print(f"gpuwm-hex: NOAA hrrrv5 deck for this mesh ({dx:g} m nominal): rrfs-workflow config.meshdep "
+          f"{pick['mesh']} row " + ", ".join(f"{k}={v}" for g in out.values() for k, v in g.items()),
+          file=sys.stderr, flush=True)
+    return out
 
 
 def _registry_option_kinds() -> dict[str, str]:

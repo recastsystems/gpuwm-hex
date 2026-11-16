@@ -49,7 +49,9 @@ case 9 read (``mpas_init_atm_cases.F:4995-5080`` at 1d6e370e):
 * the soil as HRRR has it: for a producer whose land surface is RUC
   (``--physics-suite hrrrv5`` and the other RRFS suites) the nine RUC nodes
   themselves (``SOILT000 .. SOILT300``), which the fork copies straight onto
-  its nine levels; otherwise the four Noah layers interpolated from them.
+  its nine levels; otherwise four Noah layers plus preserved native point
+  records. The RUC init door selects those preserved points automatically,
+  even when a legacy caller requests four first-guess soil levels.
 
 The MPAS-A init (``rw_mpas_init``) reads the 2 m humidity, and the
 hydrometeor and number records too under the init door's

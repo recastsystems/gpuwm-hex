@@ -80,9 +80,8 @@ use MPAS's dot-separated clock; colons are interpreted by MPI-IO as filesystem
 URI separators and caused an actual open failure in validation.
 
 Member files follow the stock MPAS-JEDI state contract (`hexcore.jedi_contract`).
-`jedi_open_checked` stays false in a run of this distribution: opening the states
-with MPAS-JEDI is part of the maintainers' data-assimilation tooling, which is not
-distributed.
+`jedi_open_checked` stays false in a run of this distribution, which does not open
+the states with MPAS-JEDI.
 
 `tools/ensemble_recover_export.py RUN` recovers export from completed forecasts
 after checking input hashes. It retains the prior error and reports forecast

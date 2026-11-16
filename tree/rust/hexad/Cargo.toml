@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: Apache-2.0
+# hexad: the differentiable-engine runner of gpuwm-hex. One crate, two products:
+#   ad-binder          the replay / tangent / adjoint window runner (CLI)
+#   libhexad_phys.so   the same runner behind a C ABI (v2), for a host program that owns its own state
+# The sources under src/, cuda/, fixtures/ and tests/data/ are a mechanical copy of the AD program's
+# tree (SYNC.json names the source commit and every file's sha256); build.rs is written for this crate.
+[package]
+name = "hexad-phys"
+version = "0.6.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+publish = false
+build = "build.rs"
+autobins = false
+autotests = false
+autobenches = false
+autoexamples = false
+
+[lib]
+name = "hexad_phys"
+path = "src/runner/main.rs"
+crate-type = ["cdylib", "rlib"]
+# The unit tests run once, through the executable target (the same file is the root of both targets).
+test = false
+doctest = false
+
+[[bin]]
+name = "ad-binder"
+path = "src/runner/main.rs"
+
+[dependencies]
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.149"
+sha2 = "=0.10.9"
+flate2 = { version = "=1.1.9", features = ["zlib-rs"] }  # zlib-rs inflate (held split blobs: 4.3-5.5 s per physics step on one core with miniz_oxide)
+
+[features]
+default = []
+# The CUB / Thrust host-library symbols the cdylib must export itself (src/runner/capi_exports.rs).
+# setup.py builds the library with this feature and the executable without it, as the AD program does.
+capi-exports = []
+
+[profile.release]
+# The AD program's release profile is cargo's default; stated here so a workspace default never changes it.
+opt-level = 3
+
+[build-dependencies]
+sha2 = "=0.10.9"

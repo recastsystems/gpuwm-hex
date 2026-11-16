@@ -73,7 +73,7 @@ python -m pytest tests/test_fullstep_lts_shadow.py tests/test_fullstep_lts_pilot
 HEX_LTS_GPU_TESTS=1 python -m pytest tests/test_fullstep_lts_cuda_monitor.py
 ```
 
-The GPU commands require the authorized GPU mutex launcher. The pilot carries
+The GPU commands need one CUDA card to themselves (name it with `CUDA_VISIBLE_DEVICES`). The pilot carries
 six native scalar slots with physics and explicit mixing off. It writes compact
 array hashes and receipts instead of raw histories. A successful pilot does not
 replace the six-hour reference-physics shadow, interface conservation/order

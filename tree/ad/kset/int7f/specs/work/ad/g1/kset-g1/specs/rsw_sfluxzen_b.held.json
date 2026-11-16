@@ -1,0 +1,461 @@
+{
+ "kernel": "rsw_sfluxzen_b",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 1910,
+ "route": "hand",
+ "mode": "frozen-coefficient-linearisation",
+ "owner_task": "ad/held-rsw_sfluxzen_b",
+ "replaces": "nothing: status was missing (no generated or taped derivative existed)",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "kernel_line_in_source": 2231,
+  "body_line_in_source": 2087,
+  "spec_line_in_source": 1580,
+  "launches_per_radiation_step": "1 with ample memory (1281 daylit columns), 7 under the 512 MiB capture lease (1281 + 5 x 256 + 1)"
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the daylit batch (or chunk), fixed by the wrapper."
+  },
+  {
+   "name": "nlayers",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count (60 on x1.2562 hrrrv5 SW)."
+  },
+  {
+   "role": "in",
+   "dtype": "i32",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer tropopause layer per column (setcoef output): selects whether bands 16, 17, 27, 28, 29 have a solar-source value; frozen from the trajectory.",
+   "name": "laytrop",
+   "shape": "[ncol]"
+  },
+  {
+   "name": "tab",
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    104303
+   ],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Packed constant RRTMG SW table (only the 14 sfluxref blocks are read here); never perturbed."
+  },
+  {
+   "role": "in",
+   "dtype": "i32",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Constant g-point -> band map.",
+   "name": "ngb",
+   "shape": [
+    112
+   ]
+  },
+  {
+   "role": "in",
+   "dtype": "i32",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer solar-source layer per (column, band), host-computed from jp: frozen from the trajectory.",
+   "name": "laysolfr",
+   "shape": "[ncol, 14]"
+  },
+  {
+   "role": "in",
+   "dtype": "i32",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index passed to rsw_spec; sfluxzen does not read it.",
+   "name": "jp",
+   "shape": "[ncol, nlayers]"
+  },
+  {
+   "role": "in",
+   "dtype": "i32",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index passed to rsw_spec; sfluxzen does not read it.",
+   "name": "jt",
+   "shape": "[ncol, nlayers]"
+  },
+  {
+   "role": "in",
+   "dtype": "i32",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index passed to rsw_spec; sfluxzen does not read it.",
+   "name": "jt1",
+   "shape": "[ncol, nlayers]"
+  },
+  {
+   "name": "colh2o",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "one word per column at the solar-source layer of each band that uses it (A of bands 17, 18, 19, 21, 22, 24)"
+  },
+  {
+   "name": "colco2",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "one word per column at the solar-source layer of each band that uses it (B of bands 17, 19, 21)"
+  },
+  {
+   "name": "colch4",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "one word per column at the solar-source layer of each band that uses it (B of band 18)"
+  },
+  {
+   "name": "colo2",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "reads": "one word per column at the solar-source layer of each band that uses it (B of bands 22, 24, 28)"
+  },
+  {
+   "name": "colo3",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "reads": "one word per column at the solar-source layer of each band that uses it (A of band 28)"
+  },
+  {
+   "name": "fac00",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Passed to rsw_spec, which forms the f000..f111 weights from it; sfluxzen uses only fs and js, so the output has no dependence on it (zero partial, exactly)."
+  },
+  {
+   "name": "fac01",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Passed to rsw_spec, which forms the f000..f111 weights from it; sfluxzen uses only fs and js, so the output has no dependence on it (zero partial, exactly)."
+  },
+  {
+   "name": "fac10",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Passed to rsw_spec, which forms the f000..f111 weights from it; sfluxzen uses only fs and js, so the output has no dependence on it (zero partial, exactly)."
+  },
+  {
+   "name": "fac11",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Passed to rsw_spec, which forms the f000..f111 weights from it; sfluxzen uses only fs and js, so the output has no dependence on it (zero partial, exactly)."
+  },
+  {
+   "name": "sfluxzen",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, 112]",
+   "stagger": "none",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6,
+   "note": "every thread stores its word on every path (constant bands included)"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:2248",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Launch index against ncol*112."
+  },
+  {
+   "file_line": "capture source 3c499c7b:2109,2114,2182,2186,2196",
+   "operation": "integer branch lsf <= laytrop (bands 16, 17, 27, 28, 29)",
+   "active": false,
+   "policy": "frozen-from-trajectory",
+   "inactive_reason": "Integer layer indices; on the taken branch the word is 0 or a table constant."
+  },
+  {
+   "file_line": "capture source 3c499c7b:1586",
+   "operation": "limiter specparm = min(A/(A+rB), oneminus)",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "inactive_reason": "When the trajectory is clamped the tangent of specparm is 0 (the clamp value is a constant); otherwise the exact partial. 0 clamped points on the captured launches."
+  },
+  {
+   "file_line": "capture source 3c499c7b:1588-1589",
+   "operation": "bin js = 1 + (int)(mult*specparm), fs = frac",
+   "active": true,
+   "policy": "frozen-from-trajectory",
+   "inactive_reason": "Piecewise-linear interpolation, continuous across bin edges; the frozen bin gives the one-sided slope, exact off the edge."
+  }
+ ],
+ "limiters": "specparm clamp at oneminus: frozen coefficient (tangent 0 when clamped); interpolation bin frozen from the trajectory",
+ "tables": [
+  {
+   "arg": "tab",
+   "words": "sfluxref blocks of bands 16-29 (offsets 4998 .. 87341)",
+   "active": false
+  }
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "column amounts finite; A + r*B != 0 (the forward divides 0/0 there); bin js in 1..mult (a negative amount puts it outside); every partial and written derivative word finite"
+ },
+ "precondition": "the five column-amount arrays and sfluxzen are distinct allocations. TL: one thread per (col, g-point) owns its word. AD: one thread per column (first ncol threads of the forward geometry) walks the 112 g-points in order and sums into at most 14 (gas, layer) slots in double, each written once: deterministic, no atomics.",
+ "precision": "the f32 primal words the derivative needs (specparm, clamp flag, js, the two table words) are formed as the forward forms them (__f*_rn, --fmad=false --ftz=false; the harness-only __check is bitwise to the forward image); partials in double; one rounding to f32 per written derivative word (the glue-row rule)",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "rsw_sfluxzen_b__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "primal",
+      "arg": "laytrop"
+     },
+     {
+      "bind": "primal",
+      "arg": "tab"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "laysolfr"
+     },
+     {
+      "bind": "primal",
+      "arg": "colh2o"
+     },
+     {
+      "bind": "primal",
+      "arg": "colco2"
+     },
+     {
+      "bind": "primal",
+      "arg": "colch4"
+     },
+     {
+      "bind": "primal",
+      "arg": "colo2"
+     },
+     {
+      "bind": "primal",
+      "arg": "colo3"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colh2o",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colco2",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colch4",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colo2",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colo3",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "sfluxzen",
+      "field_id": 6,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:1910:nonfinite-or-0/0"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rsw_sfluxzen_b__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "primal",
+      "arg": "laytrop"
+     },
+     {
+      "bind": "primal",
+      "arg": "tab"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "laysolfr"
+     },
+     {
+      "bind": "primal",
+      "arg": "colh2o"
+     },
+     {
+      "bind": "primal",
+      "arg": "colco2"
+     },
+     {
+      "bind": "primal",
+      "arg": "colch4"
+     },
+     {
+      "bind": "primal",
+      "arg": "colo2"
+     },
+     {
+      "bind": "primal",
+      "arg": "colo3"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colh2o",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colco2",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colch4",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colo2",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colo3",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "sfluxzen",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:1910:nonfinite-or-0/0"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

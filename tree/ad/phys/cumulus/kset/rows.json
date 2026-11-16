@@ -1,0 +1,7580 @@
+[
+ {
+  "function": "ntiedtke_prep",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_prep",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_prep.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "t3d",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qv3d",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qc3d",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qi3d",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "u3d",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "v3d",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pcps",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "dz8w",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rho3d",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "p8w",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "w",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qvften",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "thften",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "xland",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "hfx",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qfx",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "dx",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prsl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ghtl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "omg",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "tf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qvf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qcf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qif",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "uf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "vf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qvftenz",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "thftenz",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prsi",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ghti",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "slimsk",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "scale_fac",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "scale_fac2",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "delt_out",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "nz",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "dt",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "stepcu",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "itimestep",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_convert",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_convert",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_convert.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "tf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qvf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "uf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "vf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "omg",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ghtl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ghti",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prsl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qvftenz",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "thftenz",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztp1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zqp1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zqsat",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pum1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvm1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pverv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "nz",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cuinin",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cuinin",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cuinin.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "pten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqsen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "puen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pven",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pverv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqsenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "puu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pud",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "klab",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "klwmin",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "nz",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cutypen",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cutypen",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cutypen.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "pqen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqsen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pap",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "hfx",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qfx",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "cutu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "cuqu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "culu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "culab",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "scr",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "scr_i",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ldcum_o",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype_o",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "cubot_o",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "cutop_o",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kdpl_o",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "wbase_o",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "nz",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_midlevel",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_midlevel",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_midlevel.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "pten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqsen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pverv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "klab",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plrain",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfub",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfus",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfuq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmful",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "dmfen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "dmfde",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "nz",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_mfub",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_mfub",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_mfub.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ptte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "puen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pven",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zqenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "lndj",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zdhpbl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "upbl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfub",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "tiedtke_closure",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "nz",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ztmst",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_closure",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_closure",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_closure.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kdpl",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "loddraf",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "lndj",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "wup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfub",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zdhpbl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "scale_fac",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "scale_fac2",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pap",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfds",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfdp",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdde_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zheat",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zcape",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zcape1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zcape2",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztauc",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztaubl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztau_o",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "upbl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfub1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "tiedtke_closure",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "nz",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ztmst",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cuascn",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cuascn",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cuascn.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "pten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqsen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pap",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pverv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "lndj",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kdpl",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "wbase",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfus",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfuq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmful",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plude",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plglac",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfude_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "klab",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop0",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfub",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "wup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ztmst",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "mpas_llo3_start",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cudtdqn",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cudtdqn",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cudtdqn.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plglac",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plude",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfus",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfds",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfuq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmful",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfdp",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdpmel",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptent",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pcte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ktopm2",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cududvn",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cududvn",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cududvn.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "puen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pven",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "puu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pud",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfuu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfuv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfdu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfdv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ktopm2",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cudlfsn",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cudlfsn",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cudlfsn.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqsen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfub",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfds",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfdp",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prfl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kdtop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "lddraf",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cuddrafn",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cuddrafn",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cuddrafn.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "lddraf",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfds",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfdp",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdde_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prfl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cuflxn",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cuflxn",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cuflxn.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kdtop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "lndj",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqenh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pap",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeoh",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "lddraf",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfus",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfds",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfuq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmful",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plude",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plglac",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfdp",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdde_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqsen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdpmel",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmflxr",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmflxs",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prain",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ztmst",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_cloud_depth",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_cloud_depth",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_cloud_depth.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ictop0",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prfl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfds",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfdp",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdpmel",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_adjust",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_adjust",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_adjust.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "loddraf",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "idtop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfuq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmful",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfds",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plude",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfdp",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdde_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfude_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmflxr",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmflxs",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prsfc",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pssfc",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ztmst",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_momentum_rescale",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_momentum_rescale",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_momentum_rescale.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfuus",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfdus",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ztmst",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_updraft_scale",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_updraft_scale",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_updraft_scale.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "loddraf",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfub1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zmfub",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "idtop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfus",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfuq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmful",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfup",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "plude",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfude_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfds",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pdmfdp",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdde_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ztmst",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_momentum_profile",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_momentum_profile",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_momentum_profile.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kcbot",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kdpl",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "idtop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "puen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pven",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfude_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pmfdde_rate",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "puu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pud",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvd",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_ke_dissipation",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_ke_dissipation",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_ke_dissipation.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "kctop",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "paph",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "puen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pven",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztenu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztenv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvom",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvol",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zuv2",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_post_run",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_post_run",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_post_run.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "exner",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qc",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qi",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "t",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "u",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "v",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "tf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qvf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qcf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qif",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "uf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "vf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rn",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rthcuten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rqvcuten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rqccuten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rqicuten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rucuten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rvcuten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "raincv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pratec",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "stepcu",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "dt",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "ntiedtke_post_conversion",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-ntiedtke_post_conversion",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/ntiedtke_post_conversion.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "pcte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztp1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ptte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ztt",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqte",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zqq",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zqp1",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qcf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qif",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "uf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "vf",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvom",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pvol",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "prsfc",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pssfc",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqc",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqi",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pt",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pu",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pv",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "zprecc",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "delt",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "llo3_mask",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "expect_tpb",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "expect_nblocks",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "geom_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "order_report",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ticket",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "mpas_ntiedtke_forcing",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-mpas_ntiedtke_forcing",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/mpas_ntiedtke_forcing.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "rthdynten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rthblten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rthratenlw",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rthratensw",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "exner",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rqvdynten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rqvblten",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "thften",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qvften",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "size",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "mpas_ntiedtke_dx",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-mpas_ntiedtke_dx",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/mpas_ntiedtke_dx.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "meshDensity",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "len_disp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "dx",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "mpas_ntiedtke_init_state",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-mpas_ntiedtke_init_state",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/mpas_ntiedtke_init_state.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "cp",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rd",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "rv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlv",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xls",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "xlf",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "out",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "mpas_ntiedtke_ascent_start",
+  "class": "inactive-entry",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-mpas_ntiedtke_ascent_start",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/mpas_ntiedtke_ascent_start.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "ldcum",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ktype",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "klab",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pqsen",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pgeo",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "start",
+    "kind": "device",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "ncol",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "klev",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "grav",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "rrfs_convection_forcing",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "cumulus-rrfs_convection_forcing",
+   "group": "cumulus/linear",
+   "shared_image": "nt_ad.fatbin",
+   "spec": {
+    "path": "specs/rrfs_convection_forcing.json"
+   },
+   "cuda": {
+    "path": "tree/ad/phys/cumulus/cuda/nt_ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "n",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "qdy",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qbl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "tdy",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "tbl",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "lw",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "sw",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "pi",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "qout",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "tout",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ }
+]

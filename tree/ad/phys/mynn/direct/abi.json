@@ -1,0 +1,1896 @@
+{
+  "schema": "mynn.direct.abi/v1",
+  "reference": "20a441f67",
+  "float_arrays": [
+    "dx",
+    "xland",
+    "ps",
+    "ts",
+    "qsfc",
+    "ust",
+    "ch",
+    "hfx",
+    "qfx",
+    "wspd",
+    "znt",
+    "uoce",
+    "voce",
+    "dz",
+    "u",
+    "v",
+    "w",
+    "th",
+    "tt",
+    "p",
+    "exner",
+    "rho",
+    "qv",
+    "qc",
+    "qi",
+    "qs",
+    "nc",
+    "ni",
+    "nifa",
+    "nwfa",
+    "nbca",
+    "qoz",
+    "rthraten",
+    "pblh",
+    "cldfra_bl",
+    "qc_bl",
+    "qi_bl",
+    "maxwidth",
+    "maxmf",
+    "ztop_plume",
+    "excess_h",
+    "excess_q",
+    "maxwidth_dd",
+    "maxmf_dd",
+    "maxtkeprod",
+    "cldtop_cooling",
+    "ent_eff",
+    "qke",
+    "qke_adv",
+    "tsq",
+    "qsq",
+    "cov",
+    "el_pbl",
+    "rublten",
+    "rvblten",
+    "rthblten",
+    "rqvblten",
+    "rqcblten",
+    "rqiblten",
+    "rqsblten",
+    "rncblten",
+    "rniblten",
+    "rnifablten",
+    "rnwfablten",
+    "rnbcablten",
+    "rqozblten",
+    "edmf_a",
+    "edmf_w",
+    "edmf_qt",
+    "edmf_thl",
+    "edmf_ent",
+    "edmf_qc",
+    "sub_thl",
+    "sub_sqv",
+    "det_thl",
+    "det_sqv",
+    "exch_h",
+    "exch_m",
+    "dqke",
+    "qwt",
+    "qshear",
+    "qbuoy",
+    "qdiss",
+    "sh3d",
+    "sm3d",
+    "pattern_spp",
+    "chem3d",
+    "settle3d",
+    "vd3d",
+    "frp_mean",
+    "emis_ant_no"
+  ],
+  "scalars": [
+    "int batch_first",
+    "int batch_count",
+    "unsigned long long workspace_stride",
+    "int ids",
+    "int ide",
+    "int jds",
+    "int jde",
+    "int kds",
+    "int kde",
+    "int ims",
+    "int ime",
+    "int jms",
+    "int jme",
+    "int kms",
+    "int kme",
+    "int its",
+    "int ite",
+    "int jts",
+    "int jte",
+    "int kts",
+    "int kte",
+    "int f_qc",
+    "int f_qi",
+    "int f_qs",
+    "int f_qoz",
+    "int f_nc",
+    "int f_ni",
+    "int f_nifa",
+    "int f_nwfa",
+    "int f_nbca",
+    "int initflag",
+    "int do_restart",
+    "int do_dacycling",
+    "int icloud_bl",
+    "float delt",
+    "int spp_pbl",
+    "int bl_mynn_tkeadvect",
+    "int bl_mynn_tkebudget",
+    "int bl_mynn_cloudpdf",
+    "int bl_mynn_mixlength",
+    "float bl_mynn_closure",
+    "int bl_mynn_stfunc",
+    "int bl_mynn_topdown",
+    "int bl_mynn_scaleaware",
+    "int bl_mynn_dheat_opt",
+    "int bl_mynn_edmf",
+    "int bl_mynn_edmf_dd",
+    "int bl_mynn_edmf_mom",
+    "int bl_mynn_edmf_tke",
+    "int bl_mynn_output",
+    "int bl_mynn_mixscalars",
+    "int bl_mynn_mixaerosols",
+    "int bl_mynn_mixnumcon",
+    "int bl_mynn_cloudmix",
+    "int bl_mynn_mixqt",
+    "int bl_mynn_ess",
+    "int mix_chem",
+    "int nchem",
+    "int ndvel",
+    "int enh_mix",
+    "int present_enh_mix"
+  ],
+  "args": [
+    {
+      "name": "batch_first",
+      "pos": 0,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "batch_count",
+      "pos": 1,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "workspace",
+      "pos": 2,
+      "device": true,
+      "dtype": "|u1",
+      "extent": "workspace_stride*batch_count",
+      "capture_shape": [
+        188173776
+      ],
+      "role": "scratch",
+      "active": false
+    },
+    {
+      "name": "workspace_stride",
+      "pos": 3,
+      "device": false,
+      "dtype": "<u8",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "error_flags",
+      "pos": 4,
+      "device": true,
+      "dtype": "<i4",
+      "extent": "(ime-ims+1)",
+      "capture_shape": [
+        2562
+      ],
+      "role": "out",
+      "active": false
+    },
+    {
+      "name": "ids",
+      "pos": 5,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "ide",
+      "pos": 6,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "jds",
+      "pos": 7,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "jde",
+      "pos": 8,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "kds",
+      "pos": 9,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "kde",
+      "pos": 10,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "ims",
+      "pos": 11,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "ime",
+      "pos": 12,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "jms",
+      "pos": 13,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "jme",
+      "pos": 14,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "kms",
+      "pos": 15,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "kme",
+      "pos": 16,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "its",
+      "pos": 17,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "ite",
+      "pos": 18,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "jts",
+      "pos": 19,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "jte",
+      "pos": 20,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "kts",
+      "pos": 21,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "kte",
+      "pos": 22,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_qc",
+      "pos": 23,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_qi",
+      "pos": 24,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_qs",
+      "pos": 25,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_qoz",
+      "pos": 26,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_nc",
+      "pos": 27,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_ni",
+      "pos": 28,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_nifa",
+      "pos": 29,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_nwfa",
+      "pos": 30,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "f_nbca",
+      "pos": 31,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "initflag",
+      "pos": 32,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "do_restart",
+      "pos": 33,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "do_dacycling",
+      "pos": 34,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "icloud_bl",
+      "pos": 35,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "delt",
+      "pos": 36,
+      "device": false,
+      "dtype": "<f4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "dx",
+      "pos": 37,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "xland",
+      "pos": 38,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "ps",
+      "pos": 39,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "ts",
+      "pos": 40,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qsfc",
+      "pos": 41,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "ust",
+      "pos": 42,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "ch",
+      "pos": 43,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "hfx",
+      "pos": 44,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qfx",
+      "pos": 45,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "wspd",
+      "pos": 46,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "znt",
+      "pos": 47,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "uoce",
+      "pos": 48,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "voce",
+      "pos": 49,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "dz",
+      "pos": 50,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "u",
+      "pos": 51,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "v",
+      "pos": 52,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "w",
+      "pos": 53,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "th",
+      "pos": 54,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "tt",
+      "pos": 55,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "p",
+      "pos": 56,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "exner",
+      "pos": 57,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rho",
+      "pos": 58,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qv",
+      "pos": 59,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qc",
+      "pos": 60,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qi",
+      "pos": 61,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qs",
+      "pos": 62,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "nc",
+      "pos": 63,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "ni",
+      "pos": 64,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "nifa",
+      "pos": 65,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "nwfa",
+      "pos": 66,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "nbca",
+      "pos": 67,
+      "device": false,
+      "dtype": "<u8",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "qoz",
+      "pos": 68,
+      "device": false,
+      "dtype": "<u8",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "rthraten",
+      "pos": 69,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "pblh",
+      "pos": 70,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "kpbl",
+      "pos": 71,
+      "device": true,
+      "dtype": "<i4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": false
+    },
+    {
+      "name": "cldfra_bl",
+      "pos": 72,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qc_bl",
+      "pos": 73,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qi_bl",
+      "pos": 74,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "maxwidth",
+      "pos": 75,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "maxmf",
+      "pos": 76,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "ztop_plume",
+      "pos": 77,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "excess_h",
+      "pos": 78,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "excess_q",
+      "pos": 79,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "maxwidth_dd",
+      "pos": 80,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "maxmf_dd",
+      "pos": 81,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "maxtkeprod",
+      "pos": 82,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "cldtop_cooling",
+      "pos": 83,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "ent_eff",
+      "pos": 84,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qke",
+      "pos": 85,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qke_adv",
+      "pos": 86,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "tsq",
+      "pos": 87,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qsq",
+      "pos": 88,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "cov",
+      "pos": 89,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "el_pbl",
+      "pos": 90,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rublten",
+      "pos": 91,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rvblten",
+      "pos": 92,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rthblten",
+      "pos": 93,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rqvblten",
+      "pos": 94,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rqcblten",
+      "pos": 95,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rqiblten",
+      "pos": 96,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rqsblten",
+      "pos": 97,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rncblten",
+      "pos": 98,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rniblten",
+      "pos": 99,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rnifablten",
+      "pos": 100,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rnwfablten",
+      "pos": 101,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "rnbcablten",
+      "pos": 102,
+      "device": false,
+      "dtype": "<u8",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "rqozblten",
+      "pos": 103,
+      "device": false,
+      "dtype": "<u8",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "edmf_a",
+      "pos": 104,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "edmf_w",
+      "pos": 105,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "edmf_qt",
+      "pos": 106,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "edmf_thl",
+      "pos": 107,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "edmf_ent",
+      "pos": 108,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "edmf_qc",
+      "pos": 109,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "sub_thl",
+      "pos": 110,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "sub_sqv",
+      "pos": 111,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "det_thl",
+      "pos": 112,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "det_sqv",
+      "pos": 113,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "exch_h",
+      "pos": 114,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "exch_m",
+      "pos": 115,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "dqke",
+      "pos": 116,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qwt",
+      "pos": 117,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qshear",
+      "pos": 118,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qbuoy",
+      "pos": 119,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "qdiss",
+      "pos": 120,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "sh3d",
+      "pos": 121,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "sm3d",
+      "pos": 122,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "spp_pbl",
+      "pos": 123,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "pattern_spp",
+      "pos": 124,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(kme-kms+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        60,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "bl_mynn_tkeadvect",
+      "pos": 125,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_tkebudget",
+      "pos": 126,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_cloudpdf",
+      "pos": 127,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_mixlength",
+      "pos": 128,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_closure",
+      "pos": 129,
+      "device": false,
+      "dtype": "<f4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_stfunc",
+      "pos": 130,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_topdown",
+      "pos": 131,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_scaleaware",
+      "pos": 132,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_dheat_opt",
+      "pos": 133,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_edmf",
+      "pos": 134,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_edmf_dd",
+      "pos": 135,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_edmf_mom",
+      "pos": 136,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_edmf_tke",
+      "pos": 137,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_output",
+      "pos": 138,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_mixscalars",
+      "pos": 139,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_mixaerosols",
+      "pos": 140,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_mixnumcon",
+      "pos": 141,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_cloudmix",
+      "pos": 142,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_mixqt",
+      "pos": 143,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "bl_mynn_ess",
+      "pos": 144,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "mix_chem",
+      "pos": 145,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "nchem",
+      "pos": 146,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "ndvel",
+      "pos": 147,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "chem3d",
+      "pos": 148,
+      "device": true,
+      "dtype": "<f4",
+      "extent": null,
+      "role": "absent",
+      "active": false
+    },
+    {
+      "name": "settle3d",
+      "pos": 149,
+      "device": true,
+      "dtype": "<f4",
+      "extent": null,
+      "role": "absent",
+      "active": false
+    },
+    {
+      "name": "vd3d",
+      "pos": 150,
+      "device": true,
+      "dtype": "<f4",
+      "extent": null,
+      "role": "absent",
+      "active": false
+    },
+    {
+      "name": "enh_mix",
+      "pos": 151,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "present_enh_mix",
+      "pos": 152,
+      "device": false,
+      "dtype": "<i4",
+      "role": "scalar",
+      "active": false
+    },
+    {
+      "name": "frp_mean",
+      "pos": 153,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    },
+    {
+      "name": "emis_ant_no",
+      "pos": 154,
+      "device": true,
+      "dtype": "<f4",
+      "extent": "(ime-ims+1)*(jme-jms+1)",
+      "capture_shape": [
+        2562,
+        1
+      ],
+      "role": "inout",
+      "active": true
+    }
+  ]
+}

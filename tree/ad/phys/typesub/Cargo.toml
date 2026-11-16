@@ -1,0 +1,20 @@
+[package]
+name = "ad-typesub"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Type-substitution derivative generator and proofs for hex physics kernels (private autodiff program, P2)"
+
+[[bin]]
+name = "tsgen"
+path = "src/bin/tsgen.rs"
+
+[[bin]]
+name = "tswarm"
+path = "src/bin/tswarm.rs"
+
+[[bin]]
+name = "tsbuild"
+path = "src/bin/tsbuild.rs"
+
+[dependencies]

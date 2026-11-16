@@ -1,0 +1,740 @@
+{
+ "kernel": "rsw_setcoef_b",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 1219,
+ "route": "hand",
+ "mode": "frozen-index-local-linearisation",
+ "owner_task": "ad/held-rsw_setcoef_b",
+ "replaces": "nothing: status was missing (no P7 row for the SW gas-optics setup)",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "kernel_line_in_source": 1540,
+  "body_line_in_source": 1423
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the chunk, fixed by the wrapper (1281/256/1 under a capture lease, 2562 with ample memory)."
+  },
+  {
+   "name": "nlayers",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count (60 on x1.2562 hrrrv5 SW)."
+  },
+  {
+   "name": "tab",
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    104303
+   ],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Packed constant RRTMG SW table (only preflog and tref are read here); never perturbed."
+  },
+  {
+   "name": "pavel",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "pavel_tavel",
+   "weight": "none",
+   "field_id": 1,
+   "reads": "every word"
+  },
+  {
+   "name": "tavel",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "pavel_tavel",
+   "weight": "none",
+   "field_id": 2,
+   "reads": "every word",
+   "note": "pavel and tavel are two disjoint views of one allocation (tavel at offset ncol*nlayers*4); both read-only"
+  },
+  {
+   "name": "coldry",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "every word"
+  },
+  {
+   "name": "wkl",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 38]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "reads": "molecule rows 0,1,2,3,5,6 (h2o, co2, o3, n2o, ch4, o2); rows 4 and 7..37 not read (cotangent untouched)"
+  },
+  {
+   "name": "jp",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "overwrite": "full",
+   "inactive_reason": "Integer table index / branch flag: piecewise constant, frozen from the trajectory (no tangent)."
+  },
+  {
+   "name": "jt",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "overwrite": "full",
+   "inactive_reason": "Integer table index / branch flag: piecewise constant, frozen from the trajectory (no tangent)."
+  },
+  {
+   "name": "jt1",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "overwrite": "full",
+   "inactive_reason": "Integer table index / branch flag: piecewise constant, frozen from the trajectory (no tangent)."
+  },
+  {
+   "name": "indself",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "overwrite": "full",
+   "inactive_reason": "Integer table index / branch flag: piecewise constant, frozen from the trajectory (no tangent)."
+  },
+  {
+   "name": "indfor",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "overwrite": "full",
+   "inactive_reason": "Integer table index / branch flag: piecewise constant, frozen from the trajectory (no tangent)."
+  },
+  {
+   "name": "trop_flag",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "overwrite": "full",
+   "inactive_reason": "Integer table index / branch flag: piecewise constant, frozen from the trajectory (no tangent)."
+  },
+  {
+   "name": "low_flag",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "overwrite": "full",
+   "inactive_reason": "Integer table index / branch flag: piecewise constant, frozen from the trajectory (no tangent)."
+  },
+  {
+   "name": "colh2o",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5
+  },
+  {
+   "name": "colco2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6
+  },
+  {
+   "name": "colo3",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7
+  },
+  {
+   "name": "coln2o",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8
+  },
+  {
+   "name": "colch4",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9
+  },
+  {
+   "name": "colo2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10
+  },
+  {
+   "name": "colmol",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 11
+  },
+  {
+   "name": "co2mult",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 12
+  },
+  {
+   "name": "selffac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 13
+  },
+  {
+   "name": "selffrac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 14
+  },
+  {
+   "name": "forfac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 15
+  },
+  {
+   "name": "forfrac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 16
+  },
+  {
+   "name": "fac00",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 17
+  },
+  {
+   "name": "fac01",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 18
+  },
+  {
+   "name": "fac10",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 19
+  },
+  {
+   "name": "fac11",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 20
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:1554",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Launch index against ncol*nlayers."
+  },
+  {
+   "file_line": "capture source 3c499c7b:1445,1450,1455,1475,1481",
+   "operation": "integer index clamp",
+   "active": false,
+   "policy": "frozen-from-trajectory",
+   "inactive_reason": "jp, jt, jt1, indfor, indself: integer table indices; the fractions keep their bin's slope, so a clamp changes no partial."
+  },
+  {
+   "file_line": "capture source 3c499c7b:1462",
+   "operation": "state branch plog > 4.56 (troposphere)",
+   "active": false,
+   "policy": "frozen-from-trajectory",
+   "inactive_reason": "Selects the forfrac/selffac/selffrac formula; outputs jump at the switch by design."
+  },
+  {
+   "file_line": "capture source 3c499c7b:1496-1499",
+   "operation": "EQ0 zero-column fallback",
+   "active": false,
+   "policy": "frozen-from-trajectory",
+   "inactive_reason": "colX = 1e-32*coldry where 1e-20*wkl is +-0; the tangent follows the taken branch."
+  }
+ ],
+ "limiters": "integer index clamps and the troposphere / zero-column branches are frozen from the primal trajectory (documented in the CUDA header); no continuous clamp, min or max acts on a float word",
+ "tables": [
+  {
+   "arg": "tab",
+   "words": "preflog (94184..94242), tref (94243..94301)",
+   "active": false
+  }
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "pavel > 0, tavel != 0, coldry != 0, 1+water != 0; every input, partial and written derivative word finite"
+ },
+ "precondition": "pavel/tavel may share one allocation as disjoint read-only views; every output is its own allocation; one thread per (column, layer) owns its words, so the adjoint is deterministic with no atomics",
+ "precision": "the f32 primal words the derivative uses are formed as the forward forms them (add/sub/mul.rn.f32, __fdiv_rn with the forward NaN rule, glibc 2.39 logf/expf transcriptions; --fmad=false --ftz=false; the harness-only __check is bitwise to the forward image in all 23 outputs); local partials in double; one rounding to f32 per written derivative word (the glue-row rule)",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "rsw_setcoef_b__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "primal",
+      "arg": "tab"
+     },
+     {
+      "bind": "primal",
+      "arg": "pavel"
+     },
+     {
+      "bind": "primal",
+      "arg": "tavel"
+     },
+     {
+      "bind": "primal",
+      "arg": "coldry"
+     },
+     {
+      "bind": "primal",
+      "arg": "wkl"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pavel",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tavel",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coldry",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "wkl",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colh2o",
+      "field_id": 5,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colco2",
+      "field_id": 6,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colo3",
+      "field_id": 7,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coln2o",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colch4",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colo2",
+      "field_id": 10,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colmol",
+      "field_id": 11,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "co2mult",
+      "field_id": 12,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "selffac",
+      "field_id": 13,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "selffrac",
+      "field_id": 14,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "forfac",
+      "field_id": 15,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "forfrac",
+      "field_id": 16,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fac00",
+      "field_id": 17,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fac01",
+      "field_id": 18,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fac10",
+      "field_id": 19,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fac11",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:1219:nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rsw_setcoef_b__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "primal",
+      "arg": "tab"
+     },
+     {
+      "bind": "primal",
+      "arg": "pavel"
+     },
+     {
+      "bind": "primal",
+      "arg": "tavel"
+     },
+     {
+      "bind": "primal",
+      "arg": "coldry"
+     },
+     {
+      "bind": "primal",
+      "arg": "wkl"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pavel",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tavel",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coldry",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "wkl",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colh2o",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colco2",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colo3",
+      "field_id": 7,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coln2o",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colch4",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colo2",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colmol",
+      "field_id": 11,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "co2mult",
+      "field_id": 12,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "selffac",
+      "field_id": 13,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "selffrac",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "forfac",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "forfrac",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fac00",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fac01",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fac10",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fac11",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:1219:nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

@@ -55,3 +55,33 @@ def test_a_missing_module_that_is_not_the_engine_still_raises(monkeypatch):
     monkeypatch.setattr(cli, "_DOORS", ((("broken",), broken),) + cli._DOORS)
     with pytest.raises(ModuleNotFoundError):
         cli.build_parser()
+
+
+def test_version_prints_the_installed_version_and_exits_zero(no_engine, capsys, monkeypatch):
+    """``gpuwm-hex --version``: the distribution and the version its own metadata holds, exit 0.
+
+    THE BREAKAGE (the candidate's card job, 2026-11-14): the install check's ``gpuwm-hex --version`` printed
+    ``usage: gpuwm-hex [-h] [--backend {cuda,amd}]`` and exited 2; only the ``version`` door answered."""
+    import hexcore
+
+    def no_parser(command=None):
+        raise AssertionError("--version builds no door's parser")
+    built = cli.build_parser
+    monkeypatch.setattr(cli, "build_parser", no_parser)
+    assert cli.main(["--version"]) == 0
+    out = capsys.readouterr()
+    assert out.out == f"gpuwm-hex {hexcore.__version__}\n" and out.err == ""
+    try:
+        from importlib.metadata import version
+        assert hexcore.__version__ == version("gpuwm-hex")       # an installed tree: the metadata's own number
+    except ImportError:
+        pass
+    except Exception as missing:                                  # a source tree with no metadata says so
+        assert type(missing).__name__ == "PackageNotFoundError" and hexcore.__version__ == "0+unknown"
+    # After another top-level option the parser answers the same line, and --help lists the word.
+    monkeypatch.setattr(cli, "build_parser", built)
+    with pytest.raises(SystemExit) as stop:
+        cli.build_parser("version").parse_args(["--backend", "cuda", "--version"])
+    assert stop.value.code == 0
+    assert capsys.readouterr().out == f"gpuwm-hex {hexcore.__version__}\n"
+    assert "--version" in cli.build_parser("version").format_help()

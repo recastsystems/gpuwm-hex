@@ -1,0 +1,75 @@
+{
+ "function": "mpas_cmbgb",
+ "class": "glue",
+ "gate_ready": true,
+ "window_launches_pkg18": 0,
+ "window_note": "step-0 RRTMG LW table build (rrtmg_lw_v842.py:2413, once per module); pkg18 replays from step 1 and holds radiation, so no launch to bind; the row binds when a plan composes the step-0 setup",
+ "arguments": [
+  {
+   "name": "band",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "points",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "first",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "weighted",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "raw",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "rwgt",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "out",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  }
+ ],
+ "derivative": {
+  "row": "ad/held-mpas_cmbgb",
+  "root": "tree/ad/phys/held/mpas_cmbgb",
+  "spec": {
+   "path": "tree/ad/phys/held/mpas_cmbgb/mpas_cmbgb.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/mpas_cmbgb/cuda/mpas_cmbgb.ad.cu"
+  },
+  "nvcc": [
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-gencode",
+   "arch=compute_80,code=compute_80",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false"
+  ]
+ },
+ "capture": {
+  "path": "<local path>"
+ }
+}

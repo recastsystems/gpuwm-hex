@@ -1,0 +1,302 @@
+{
+ "kernel": "mpas_cmbgb",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 2413,
+ "route": "hand",
+ "mode": "exact",
+ "affine": false,
+ "affine_reason": "linear in raw for fixed rwgt; bilinear in (raw, rwgt) on weighted launches",
+ "owner_task": "ad/held-mpas_cmbgb",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "source_lines": "10564-10581",
+  "source_file": "hexcore/mpasphys/rrtmg_lw_v842.py RRTMG LW CUDA source (captured source 683d7a07)",
+  "steps": [
+   0
+  ],
+  "launches_per_step": "one per _REDUCTIONS row (table build at module setup; never in a forecast step)"
+ },
+ "launch": {
+  "grid": "forward ((points*ngc[band]+127)/128)",
+  "block": "forward (128)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "band",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Band index 0..15 of the reduction (fixed _REDUCTIONS table)."
+  },
+  {
+   "name": "points",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Table points per g-point of this coefficient array (fixed by the RRTMG data file layout)."
+  },
+  {
+   "name": "first",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Layout flag: 1 when the g-point index is the fastest axis."
+  },
+  {
+   "name": "weighted",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Reduction kind: 1 weighted sum (k-coefficients), 0 plain sum (Planck fractions)."
+  },
+  {
+   "name": "raw",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[points*16]",
+   "stagger": "none",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "units": "RRTMG LW 256-g-point table (rrlw_kgNN data file words, flattened Fortran order); not model state"
+  },
+  {
+   "name": "rwgt",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[256]",
+   "stagger": "none",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "units": "g-point combination weights from mpas_init_rwgt (static wt/ngm tables); not model state"
+  },
+  {
+   "name": "out",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[points*groups]",
+   "stagger": "none",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "note": "reduced 140-g-point table (kgNN ka, kb, selfref, forref, fracref ...), read by rlw_taumol as a constant"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "rrtmg_lw:10569",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Thread index against points*ngc[band]."
+  },
+  {
+   "file_line": "rrtmg_lw:10575-10576",
+   "operation": "select",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "first/weighted are launch configuration, not state."
+  },
+  {
+   "file_line": "rrtmg_lw:10574",
+   "operation": "loop",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Loop over the fixed ngn table."
+  }
+ ],
+ "limiters": "none: no clamp, min/max, state-dependent table index or branch, so no frozen-coefficient treatment is applied",
+ "tables": [
+  "mpas_static_ngc[16]",
+  "mpas_static_ngn[140] (copied into the entry as cmb_ngc/cmb_ngn, checked equal to the forward source)"
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "0 <= band <= 15"
+ },
+ "precondition": "raw, rwgt and out are distinct allocations or disjoint views (true in every capture: 3 allocations, offset 0). out is fully overwritten (points*ngc[band] words); in the AD thread g is the only writer of its raw, rwgt and out words.",
+ "precision": "aug: the forward word for word in f32 (__f*_rn), built --fmad=false --ftz=false, bitwise to the forward image. tl/ad: local partials and sums in double, one rounding to f32 per written word (the glue-row rule).",
+ "binder_roles": "deriv.rs roles(): raw/rwgt TL in, AD accumulate (spec role in, never snapshotted); out TL out, AD inout (seed read and consumed in place).",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "derived_scalars": {
+   "groups": "10*max(0, 1 - max(band - 0, 0 - band)) + 12*max(0, 1 - max(band - 1, 1 - band)) + 16*max(0, 1 - max(band - 2, 2 - band)) + 14*max(0, 1 - max(band - 3, 3 - band)) + 16*max(0, 1 - max(band - 4, 4 - band)) + 8*max(0, 1 - max(band - 5, 5 - band)) + 12*max(0, 1 - max(band - 6, 6 - band)) + 8*max(0, 1 - max(band - 7, 7 - band)) + 12*max(0, 1 - max(band - 8, 8 - band)) + 6*max(0, 1 - max(band - 9, 9 - band)) + 8*max(0, 1 - max(band - 10, 10 - band)) + 8*max(0, 1 - max(band - 11, 11 - band)) + 4*max(0, 1 - max(band - 12, 12 - band)) + 2*max(0, 1 - max(band - 13, 13 - band)) + 2*max(0, 1 - max(band - 14, 14 - band)) + 2*max(0, 1 - max(band - 15, 15 - band))"
+  },
+  "entries": {
+   "aug": {
+    "function": "mpas_cmbgb__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "band"
+     },
+     {
+      "bind": "scalar",
+      "arg": "points"
+     },
+     {
+      "bind": "scalar",
+      "arg": "first"
+     },
+     {
+      "bind": "scalar",
+      "arg": "weighted"
+     },
+     {
+      "bind": "primal",
+      "arg": "raw"
+     },
+     {
+      "bind": "primal",
+      "arg": "rwgt"
+     },
+     {
+      "bind": "primal",
+      "arg": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw:mpas_cmbgb:10577-10579:nonfinite",
+       "rrtmg_lw:mpas_cmbgb:band-out-of-range"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "mpas_cmbgb__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "band"
+     },
+     {
+      "bind": "scalar",
+      "arg": "points"
+     },
+     {
+      "bind": "scalar",
+      "arg": "first"
+     },
+     {
+      "bind": "scalar",
+      "arg": "weighted"
+     },
+     {
+      "bind": "primal",
+      "arg": "raw"
+     },
+     {
+      "bind": "primal",
+      "arg": "rwgt"
+     },
+     {
+      "bind": "tangent",
+      "arg": "raw",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rwgt",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "out",
+      "field_id": 3,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw:mpas_cmbgb:10577-10579:nonfinite",
+       "rrtmg_lw:mpas_cmbgb:band-out-of-range"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_cmbgb__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "band"
+     },
+     {
+      "bind": "scalar",
+      "arg": "points"
+     },
+     {
+      "bind": "scalar",
+      "arg": "first"
+     },
+     {
+      "bind": "scalar",
+      "arg": "weighted"
+     },
+     {
+      "bind": "primal",
+      "arg": "raw"
+     },
+     {
+      "bind": "primal",
+      "arg": "rwgt"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "raw",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rwgt",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "out",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw:mpas_cmbgb:10577-10579:nonfinite",
+       "rrtmg_lw:mpas_cmbgb:band-out-of-range"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

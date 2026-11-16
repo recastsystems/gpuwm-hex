@@ -579,7 +579,7 @@ class TestNativeResolutionAndNames:
 
     def test_a_render_with_no_basemap_geometry_is_refused_before_converting(
             self, monkeypatch, tmp_path):
-        """A relocated renderer drew 59 maps with no coastline, border or
+        """A relocated renderer rendered 59 maps with no coastline, border or
         state line and reported every one RENDERED (2026-10-11).  With no
         Natural Earth set anywhere on the ladder the door refuses by name,
         and it does so before the converter is launched."""

@@ -1,0 +1,215 @@
+{
+ "kernel": "cloud_condensate",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 4a88150e",
+ "file": "tree/src/hexcore/mpasphys/rrfs/radiation_rrfs.py",
+ "line": 76,
+ "module": "4a88150e8023e9c69a775db25f5bf5a336e554111e6d8d3442a8e4e27c6c3e27",
+ "image": "faa24dc1da8dcc965d545cbb124e00f7e5d9e86363e285003f3ad0918b640126",
+ "route": "hand",
+ "mode": "exact-branch",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "n",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "cf",
+   "field_id": 1,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": false,
+   "inactive_reason": "gate operand only (frozen branch)"
+  },
+  {
+   "name": "added_c",
+   "field_id": 2,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  },
+  {
+   "name": "added_i",
+   "field_id": 3,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  },
+  {
+   "name": "qc",
+   "field_id": 4,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  },
+  {
+   "name": "qi",
+   "field_id": 5,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": "radiation_rrfs.py:80-81 qc < 1e-6 && cf > .001 (qi < 1e-9)",
+   "kind": "gate",
+   "treatment": "frozen on the pre-launch words"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "cloud_condensate: an added array aliases qc or qi"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "cloud_condensate__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "primal",
+      "arg": "cf"
+     },
+     {
+      "bind": "primal",
+      "arg": "qc"
+     },
+     {
+      "bind": "primal",
+      "arg": "qi"
+     },
+     {
+      "bind": "tangent",
+      "arg": "added_c",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "added_i",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "qc",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "qi",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "cloud_condensate: an added array aliases qc or qi"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "cloud_condensate__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "primal",
+      "arg": "cf"
+     },
+     {
+      "bind": "primal",
+      "arg": "qc"
+     },
+     {
+      "bind": "primal",
+      "arg": "qi"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "added_c",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "added_i",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "qc",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "qi",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "cloud_condensate: an added array aliases qc or qi"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

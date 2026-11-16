@@ -1120,6 +1120,7 @@ def load_native_dynamics_inputs(arguments, layout, payload, *, keep_initialized_
     # MPAS bootstrapping appends ancestor file IDs with newlines. Input
     # lineage is independent of whether this dycore retains deformation.
     mesh_options={'native_parent_chain':True}
+    mesh_options['lineage_static']=getattr(arguments,'static',None)
     mesh_options['exclude_variables']=native_mesh_state_exclusions(layout)
     mesh=Mesh.from_netcdf(getattr(arguments,'grid',None) or overlay,overlay,**mesh_options)
     # Native MPAS (single precision) reads a double-precision coordinate into RKIND on input
@@ -1192,6 +1193,7 @@ def _regional_source_inputs(arguments, layout):
     init, overlay, invariant, cold_start = native_state_sources(arguments, layout)
     mesh = Mesh.from_netcdf(getattr(arguments, 'grid', None) or overlay, overlay,
                             native_parent_chain=True,
+                            lineage_static=getattr(arguments, 'static', None),
                             exclude_variables=native_mesh_state_exclusions(layout))
     for name, value in list(mesh.arrays.items()):
         if getattr(value, 'dtype', None) is not None and value.dtype == np.float64:
@@ -1319,6 +1321,7 @@ def load_native_regional_inputs(arguments, layout, payload, *, keep_initialized_
         hydration_future = side.submit(NativePoolHydration, None, layout, payload)
         mesh = Mesh.from_netcdf(getattr(arguments, 'grid', None) or overlay, overlay,
                                 native_parent_chain=True,
+                                lineage_static=getattr(arguments, 'static', None),
                                 exclude_variables=native_mesh_state_exclusions(layout))
         for name, value in list(mesh.arrays.items()):
             if getattr(value, 'dtype', None) is not None and value.dtype == np.float64:
@@ -1528,6 +1531,31 @@ def framework_only(config):
                 str(config.service_backends.get('surface_update', 'native-cpu')) == 'native-cpu')
 
 
+def native_lbc_scalar_order(layout, config, names):
+    """The boundary species that drive each scalar slot, in the order the native model applies them.
+
+    mpas_atm_boundaries.F mpas_atm_get_bdy_state_3d returns the whole lbc_scalars array and
+    mpas_atm_time_integration.F (atm_bdy_set_scalars, the relaxation zone's scalars_driving) copies it into
+    scalars BY POSITION, while each array numbers its own constituents in its own Registry declaration order.
+    The RRFS fork's Registry (1d6e370e and 44c0849) declares scalars ``... ni, nr ...`` but lbc_scalars
+    ``... lbc_nr, lbc_ni ...``, so native RRFS-MPAS drives cloud-ice number from the boundary's rain number and
+    rain number from its cloud-ice number in the specified and relaxation zones (MPAS-A v8.4.2 declares both in
+    one order and is unaffected).  Exact mode reproduces that order, so a limited-area exact run matches the
+    native reference word for word; correct mode (the default) drives each species from its own boundary field.
+    THE BREAKAGE THIS PREVENTS: the strict exact 3 km storm box (2024-05-21 15Z, RRFS 44c0849) differed from
+    native from the first step in every specified-zone nr and ni word (native ni == hex nr exactly), which
+    hid every other difference behind it (lane fwdmatch, 15 Nov).
+    """
+    by_name = tuple('lbc_' + name for name in names)
+    if getattr(config, 'mode', 'correct') != 'exact':
+        return by_name, None
+    lbc = next((row['components'] for row in layout.fields if row['name'] == 'lbc_scalars'), None)
+    if lbc is None or len(lbc) != len(by_name) or set(lbc) != set(by_name) or tuple(lbc) == by_name:
+        return by_name, None
+    swapped = {name[4:]: driver[4:] for name, driver in zip(by_name, lbc) if name != driver}
+    return tuple(lbc), swapped
+
+
 def open_limited_area_dycore(arguments, layout, mesh, grid, profiles, state, reference, saved, names, *,
                              dt, start, config, les, kernel_cache, dycore_config=None, driver_type=None,
                              iau_wrapped=False):
@@ -1555,7 +1583,9 @@ def open_limited_area_dycore(arguments, layout, mesh, grid, profiles, state, ref
     if not paths:
         raise ValueError(f'--lbc-dir {lbc_dir} holds no lbc.*.nc: the limited-area run has no boundary series')
     start_time = datetime.strptime(start, '%Y-%m-%d_%H:%M:%S')
-    scalar_names = tuple('lbc_' + name for name in names)
+    scalar_names, native_order = native_lbc_scalar_order(layout, config, names)
+    if native_order:
+        print(json.dumps({'exact_mode_native_lbc_order': native_order}), flush=True)
     from ..dycore_variants import dycore_regional_constructor
     from ..cuda_regional_forecast_v841 import open_regional_forecast_v841 as _shared_regional
     # A fork dycore with its own regional driver builds it here. A variant on the shared regional driver (the
@@ -2159,6 +2189,9 @@ def _run_native_dynamics(arguments, config, layout, payload, streams, library,
                 # the first physics call (hexcore.f000_first_call); exact mode is native's.
                 # Same-host ranks gather every rank's owned first-call words to rank 0's global
                 # frame (samehost_v842 GatheredPhysicsStreams._read_first_call).
+                # Set first: holding the frame starts the f000 reflectivity's compile, which takes the
+                # corrections the forecast applies (tempo_refl_v303 REFL_CORRECTIONS).
+                output.fork_corrections=tuple(sorted(getattr(config,'corrections',()) or ()))
                 output.first_frame_from_first_call=True
             receipt['missing_fields'] = output.missing
             if os.environ.get('GPUWM_HEX_UH_LAYERS','').strip().lower() in ('1','on','true','yes'):

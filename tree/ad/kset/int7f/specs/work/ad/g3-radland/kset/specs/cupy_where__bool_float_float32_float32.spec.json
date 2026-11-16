@@ -1,0 +1,174 @@
+{
+ "kernel": "cupy_where__bool_float_float32_float32",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source ",
+ "file": "tree/src/hexcore/mpasphys/cupy-generated",
+ "line": 0,
+ "module": "983697d1df74032dcce62c313f249d200f7a21fca6dba159cda4292939b326e2",
+ "image": "fd581c64023973204e285c54d356e0c136f81c9ee9e560a511a97d55aa27a3fb",
+ "route": "hand",
+ "mode": "exact-branch",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "_raw_in0",
+   "field_id": 0,
+   "role": "in",
+   "dtype": "bool",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": false,
+   "inactive_reason": "bool mask: gate operand only (executed arm)"
+  },
+  {
+   "name": "in1",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "host scalar (the selected constant)"
+  },
+  {
+   "name": "_raw_in2",
+   "field_id": 2,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_raw_out0",
+   "field_id": 3,
+   "role": "out",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_ind",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "bytes24",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "CuPy CIndexer"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": "CuPy where(mask, c, x)",
+   "kind": "select",
+   "treatment": "executed arm of the pre-launch mask: mask -> constant (0), else d_x"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "cupy_where__bool_float_float32_float32: a view that is not 1-D contiguous (size != shape[0] or byte stride != element size)"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "cupy_where__bool_float_float32_float32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_in0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_in2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out0"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_in0"
+     },
+     {
+      "bind": "tangent",
+      "arg": "_raw_in2",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "_raw_out0",
+      "field_id": 3,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "cupy_where__bool_float_float32_float32: a view that is not 1-D contiguous (size != shape[0] or byte stride != element size)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "cupy_where__bool_float_float32_float32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_in0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_in2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out0"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_in0"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "_raw_in2",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "_raw_out0",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "cupy_where__bool_float_float32_float32: a view that is not 1-D contiguous (size != shape[0] or byte stride != element size)"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

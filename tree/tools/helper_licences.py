@@ -67,7 +67,11 @@ PROGRAMS = (("S", "hex_obs_scorecard", "the observation scorer (rust/obs-scoreca
             # (rust/ugwp-oro), which links rayon and serde_json, and no program row listed it, so their texts did
             # not travel with the binary and the census refused it as an unrecognized ELF.
             ("U", "rw_hex_ugwp_oro", "the GSL orographic drag statistics builder (rust/ugwp-oro)"),
-            ("V", "rw_hex_wave_products and wave_audit", "the wave maps and audit (rust/wave-products)"))
+            ("V", "rw_hex_wave_products and wave_audit", "the wave maps and audit (rust/wave-products)"),
+            # THE BREAKAGE THIS PREVENTS (hex 0.5.0): the wheel ships ad-binder and libhexad_phys.so (rust/hexad),
+            # which link serde, serde_json, sha2 and flate2 (zlib-rs); without this row their texts would not travel
+            # with the binaries.
+            ("D", "ad-binder and libhexad_phys.so", "the differentiable-engine runner and its C ABI (rust/hexad)"))
 
 
 def cargo_tree(cwd: Path, *args: str, linked: bool, target: str = "all") -> list[tuple[str, str, str | None]]:
@@ -126,14 +130,16 @@ def closures(engines: dict[str, Path], work: Path) -> dict[str, dict[str, list]]
                               ("R", ("-p", "rw-s2s"), ("--locked",)),
                               ("H", ("--manifest-path", str(TREE / "rust/chem-sources/Cargo.toml")), ("--locked",)),
                               ("U", ("--manifest-path", str(TREE / "rust/ugwp-oro/Cargo.toml")), ("--locked",)),
+                              ("D", ("--manifest-path", str(TREE / "rust/hexad/Cargo.toml"), "--features",
+                                     "capi-exports"), ("--locked",)),
                               ("V", ("--manifest-path", str(TREE / "rust/wave-products/Cargo.toml")), ("--locked",)),
                               ("E", ("--manifest-path", str(energy / "Cargo.toml")), ("--locked",))):
         # E resolves from the engine workspace directory so its vendored sources apply, exactly as
         # tools/build_s2s_energy.sh builds it.
         root = {"F": sfc, "P": TREE / "rust/physics-pool", "R": TREE / "tools/rustwx",
-                "H": TREE / "rust/chem-sources", "U": TREE / "rust/ugwp-oro",
+                "H": TREE / "rust/chem-sources", "U": TREE / "rust/ugwp-oro", "D": TREE / "rust/hexad",
                 "V": TREE / "rust/wave-products"}.get(key, engines[key] / "tools/rustwx")
-        target = "x86_64-unknown-linux-gnu" if key in ("F", "P", "R", "H", "E", "U", "V") else "all"
+        target = "x86_64-unknown-linux-gnu" if key in ("F", "P", "R", "H", "E", "U", "V", "D") else "all"
         linked = cargo_tree(root, *locked, *args, linked=True, target=target)
         every = cargo_tree(root, *locked, *args, linked=False, target=target)
         out[key] = {"linked": linked,
@@ -516,7 +522,7 @@ def main(argv: list[str] | None = None) -> int:
                            "licence": (notice["inventory"][(n, v)][0] if (n, v) in notice["inventory"] else
                                        ("Apache-2.0" if n == "hex-obs-scorecard" else
                                         "Apache-2.0 AND BSD-3-Clause" if n == "rw-sfc-series" else
-                                        "Apache-2.0" if n in ("rw-s2s", "rw-s2s-energy", "hex-chem-sources", "hex-ugwp-oro", "hex-wave-products") else
+                                        "Apache-2.0" if n in ("rw-s2s", "rw-s2s-energy", "hex-chem-sources", "hex-ugwp-oro", "hex-wave-products", "hexad-phys") else
                                         crate_source(n, v, s, engines)[1].get("license", "UNKNOWN")))}
                           for n, v, s in closure["linked"]] for key, closure in sets.items()}
             args.closures_json.write_text(json.dumps({"engine": identity(engine), "programs": rows}, indent=2) + "\n")

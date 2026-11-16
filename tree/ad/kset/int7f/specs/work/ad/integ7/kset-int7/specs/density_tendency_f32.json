@@ -1,0 +1,715 @@
+{
+ "kernel": "density_tendency_f32",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_horizontal.py",
+ "line": 412,
+ "route": "hand",
+ "mode": "exact",
+ "launch": {
+  "grid": "capture forward grid, positive x; y=z=1",
+  "block": "capture forward block, 1..1024 threads; y=z=1",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "mass_divergence",
+   "role": "in",
+   "field_id": 1,
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": 1,
+   "weight": "none",
+   "pointer_depth": 1
+  },
+  {
+   "name": "rho_w",
+   "role": "in",
+   "field_id": 2,
+   "dtype": "f32",
+   "shape": "[nlev+1,ncells]",
+   "stagger": "cell-interface",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  },
+  {
+   "name": "rdzw",
+   "role": "in",
+   "field_id": 3,
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  },
+  {
+   "name": "physics_tendency",
+   "role": "in",
+   "field_id": 4,
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": 1,
+   "weight": "none",
+   "pointer_depth": 1,
+   "reference_scale": 1e-06,
+   "reference_scale_reason": "The captured dry physics tendency is identically zero; this positive physical-rate scale admits a nonzero Taylor direction without holding the field."
+  },
+  {
+   "name": "has_physics",
+   "role": "scalar",
+   "field_id": 5,
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "discrete launch extent or branch control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "nlev",
+   "role": "scalar",
+   "field_id": 6,
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "discrete launch extent or branch control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "ncells",
+   "role": "scalar",
+   "field_id": 7,
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "discrete launch extent or branch control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "tendency",
+   "role": "out",
+   "field_id": 8,
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  }
+ ],
+ "saved": [
+  {
+   "name": "mass_divergence",
+   "from": "forward",
+   "reason": "required primal or validity input during reverse replay"
+  },
+  {
+   "name": "rho_w",
+   "from": "forward",
+   "reason": "required primal or validity input during reverse replay"
+  },
+  {
+   "name": "rdzw",
+   "from": "forward",
+   "reason": "required primal or validity input during reverse replay"
+  },
+  {
+   "name": "physics_tendency",
+   "from": "forward",
+   "reason": "required primal or validity input during reverse replay"
+  }
+ ],
+ "branches": [
+  {
+   "file_line": "cuda_horizontal.py:430",
+   "predicate": "has_physics != 0",
+   "policy": "inactive-config",
+   "tie": "zero disables the arm",
+   "active_variables": "none in the predicate; the selected arm may read active fields",
+   "replay": "recompute from unchanged primal and fixed controls",
+   "slot": 0,
+   "active": false,
+   "inactive_reason": "The launch, integer extent, configuration, or mesh topology controlling this decision is fixed; differentiable field values remain active."
+  },
+  {
+   "file_line": "cuda_horizontal.py:423",
+   "predicate": "launch bounds and fixed topology loop counts",
+   "policy": "inactive-index",
+   "tie": "indices on upper bound are excluded",
+   "active_variables": "none (integer extents and topology fixed)",
+   "replay": "recompute from unchanged primal and fixed controls",
+   "slot": 1,
+   "active": false,
+   "inactive_reason": "The launch, integer extent, configuration, or mesh topology controlling this decision is fixed; differentiable field values remain active.",
+   "column": 14,
+   "operation": "predicate",
+   "ledger_expression": "if (cell >= ncells) return;"
+  },
+  {
+   "file_line": "cuda_horizontal.py:424",
+   "predicate": "loop over vertical levels",
+   "policy": "iteration",
+   "tie": "stop before the fixed integer upper bound",
+   "active_variables": "none (fixed extent or topology)",
+   "replay": "repeat the same fixed count",
+   "slot": 2,
+   "active": false,
+   "inactive_reason": "The launch, integer extent, configuration, or mesh topology controlling this decision is fixed; differentiable field values remain active."
+  },
+  {
+   "file_line": "cuda_fp32.py:42",
+   "predicate": "decode nonzero subnormal as f64",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 3,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "exact value of the float32 input as a double: ldexp(mantissa,-149) with sign for a subnormal, (double)value otherwise",
+   "source_citation": "cuda_fp32.py:36-49"
+  },
+  {
+   "file_line": "cuda_fp32.py:45",
+   "predicate": "sign of decoded subnormal",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 4,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "sign selection of the same decoded magnitude",
+   "source_citation": "cuda_fp32.py:43-46"
+  },
+  {
+   "file_line": "cuda_fp32.py:57",
+   "predicate": "pack finite nonzero subnormal result",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 5,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "round-to-nearest-even float32 of the double: packed subnormal mantissa rint(|v|*2^149), __double2float_rn otherwise",
+   "source_citation": "cuda_fp32.py:51-67"
+  },
+  {
+   "file_line": "cuda_fp32.py:62",
+   "predicate": "sign of packed subnormal",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 6,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "sign bit of the same packed result",
+   "source_citation": "cuda_fp32.py:60-64"
+  },
+  {
+   "file_line": "cuda_fp32.py:78",
+   "predicate": "add ordinary-result exponent exceeds 24",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 7,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "left+right rounded to float32 (ordinary sum, or the double sum rounded once)",
+   "source_citation": "cuda_fp32.py:69-100"
+  },
+  {
+   "file_line": "cuda_fp32.py:83",
+   "predicate": "add has a nonzero subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 8,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "left+right rounded to float32",
+   "source_citation": "cuda_fp32.py:69-100"
+  },
+  {
+   "file_line": "cuda_fp32.py:93",
+   "predicate": "normal add operands may cancel to a subnormal",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 9,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "left+right rounded to float32",
+   "source_citation": "cuda_fp32.py:69-100"
+  },
+  {
+   "file_line": "cuda_fp32.py:111",
+   "predicate": "subtract ordinary-result exponent exceeds 24",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 10,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "left-right rounded to float32",
+   "source_citation": "cuda_fp32.py:102-130"
+  },
+  {
+   "file_line": "cuda_fp32.py:116",
+   "predicate": "subtract has a nonzero subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 11,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "left-right rounded to float32",
+   "source_citation": "cuda_fp32.py:102-130"
+  },
+  {
+   "file_line": "cuda_fp32.py:123",
+   "predicate": "normal subtract operands may cancel to a subnormal",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 12,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "left-right rounded to float32",
+   "source_citation": "cuda_fp32.py:102-130"
+  },
+  {
+   "file_line": "cuda_fp32.py:142",
+   "predicate": "multiply ordinary result has exponent zero",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 13,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "left*right rounded to float32 (ordinary product, or the double product rounded once)",
+   "source_citation": "cuda_fp32.py:132-151"
+  },
+  {
+   "file_line": "cuda_fp32.py:145",
+   "predicate": "multiply operands are both nonzero",
+   "policy": "rounding-helper",
+   "tie": "follow the exact source comparison and bit pattern",
+   "active_variables": "floating operands where reached",
+   "replay": "recompute the executed helper operands and selected arm",
+   "slot": 14,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json (COMMON-AD 58.3)",
+   "same_rounded_operation": "left*right rounded to float32",
+   "source_citation": "cuda_fp32.py:132-151"
+  },
+  {
+   "file_line": "cuda_horizontal.py:423",
+   "column": 25,
+   "operation": "iteration",
+   "ledger_expression": "return",
+   "active": false,
+   "inactive_reason": "The predicate, loop count, return, or lookup index depends only on fixed launch dimensions, integer topology, configuration, or fixed mesh geometry; selected continuous state values remain active.",
+   "policy": "inactive-index",
+   "slot": 15
+  },
+  {
+   "file_line": "cuda_horizontal.py:426",
+   "column": 47,
+   "operation": "lookup",
+   "ledger_expression": "mass_divergence[tid]",
+   "active": false,
+   "inactive_reason": "The integer index and mesh topology select a fixed element; mass_divergence remains active and its selected value is differentiated.",
+   "policy": "inactive-index",
+   "slot": 16
+  },
+  {
+   "file_line": "cuda_horizontal.py:427",
+   "column": 22,
+   "operation": "lookup",
+   "ledger_expression": "rdzw[k]",
+   "active": false,
+   "inactive_reason": "The integer index and mesh topology select a fixed element; rdzw remains active and its selected value is differentiated.",
+   "policy": "inactive-index",
+   "slot": 17
+  },
+  {
+   "file_line": "cuda_horizontal.py:428",
+   "column": 17,
+   "operation": "lookup",
+   "ledger_expression": "rho_w[lidx(k + 1, cell, ncells)]",
+   "active": false,
+   "inactive_reason": "The integer index and mesh topology select a fixed element; rho_w remains active and its selected value is differentiated.",
+   "policy": "inactive-index",
+   "slot": 18
+  },
+  {
+   "file_line": "cuda_horizontal.py:429",
+   "column": 17,
+   "operation": "lookup",
+   "ledger_expression": "rho_w[lidx(k, cell, ncells)]",
+   "active": false,
+   "inactive_reason": "The integer index and mesh topology select a fixed element; rho_w remains active and its selected value is differentiated.",
+   "policy": "inactive-index",
+   "slot": 19
+  },
+  {
+   "file_line": "cuda_horizontal.py:430",
+   "column": 50,
+   "operation": "lookup",
+   "ledger_expression": "physics_tendency[tid]",
+   "active": false,
+   "inactive_reason": "The integer index and mesh topology select a fixed element; physics_tendency remains active and its selected value is differentiated.",
+   "policy": "inactive-index",
+   "slot": 20
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "zero_divisors": true,
+  "slots": {
+   "tl": 5,
+   "ad": 8
+  },
+  "initialization": "one int32 slot per source_id; zero before launch; any nonzero refuses and is expanded to a host failure record",
+  "source_ids": {
+   "tl": [
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:61:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:63:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:64:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:66:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:72:refusal"
+   ],
+   "ad": [
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:89:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:90:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:91:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:92:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:93:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:102:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:109:refusal",
+    "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:114:refusal"
+   ]
+  },
+  "device_slot_bytes": 4,
+  "host_record_bytes": 32
+ },
+ "cuda_entries": {
+  "tl": {
+   "arguments": [
+    "mass_divergence",
+    "rho_w",
+    "rdzw",
+    "physics_tendency",
+    "has_physics",
+    "nlev",
+    "ncells",
+    "tendency",
+    "d_mass_divergence",
+    "d_rho_w",
+    "d_rdzw",
+    "d_physics_tendency",
+    "d_tendency",
+    "failures",
+    "branch_record"
+   ],
+   "prototypes": [
+    "const float* mass_divergence",
+    "const float* rho_w",
+    "const float* rdzw",
+    "const float* physics_tendency",
+    "int has_physics",
+    "int nlev",
+    "int ncells",
+    "float* tendency",
+    "const float* d_mass_divergence",
+    "const float* d_rho_w",
+    "const float* d_rdzw",
+    "const float* d_physics_tendency",
+    "float* d_tendency",
+    "int* failures",
+    "unsigned int* branch_record"
+   ]
+  },
+  "ad": {
+   "arguments": [
+    "mass_divergence",
+    "rho_w",
+    "rdzw",
+    "physics_tendency",
+    "has_physics",
+    "nlev",
+    "ncells",
+    "tendency",
+    "b_mass_divergence",
+    "b_rho_w",
+    "b_rdzw",
+    "b_physics_tendency",
+    "b_tendency",
+    "failures"
+   ],
+   "prototypes": [
+    "const float* mass_divergence",
+    "const float* rho_w",
+    "const float* rdzw",
+    "const float* physics_tendency",
+    "int has_physics",
+    "int nlev",
+    "int ncells",
+    "float* tendency",
+    "float* b_mass_divergence",
+    "float* b_rho_w",
+    "float* b_rdzw",
+    "float* b_physics_tendency",
+    "float* b_tendency",
+    "int* failures"
+   ]
+  },
+  "aug": null
+ },
+ "reverse_incidence": "any extra CSR maps must be independently checked against the original immutable forward topology; include every repeated incidence and preserve ascending source slot order",
+ "cotangents": "Accumulate each input cotangent with deterministic gathers. A single thread block completes all gathers, synchronizes, then zeros exactly the fully overwritten output cotangent slots; no seed is read after clearing.",
+ "proof_status": "interim proofs passed on two steps; group reconcile owns proof of record",
+ "alias": "mass_divergence and physics_tendency may be the same primal allocation only when has_physics is zero; inactive physics tangent/cotangent is not read or written on that arm.",
+ "branch_record_status": "Instrumented original predicate recomputation; stable one-sided and labelled record-change cases are in out/evidence/branch-audit.json.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "density_tendency_f32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "mass_divergence"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho_w"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "physics_tendency"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has_physics"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "primal",
+      "arg": "tendency"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "in",
+      "arg": "mass_divergence"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 2,
+      "io": "in",
+      "arg": "rho_w"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "field_id": 3,
+        "io": "in",
+        "arg": "rdzw"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "tangent",
+      "field_id": 4,
+      "io": "in",
+      "arg": "physics_tendency"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 8,
+      "io": "out",
+      "arg": "tendency"
+     },
+     {
+      "bind": "failure",
+      "slots": 5,
+      "source_ids": [
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:61:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:63:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:64:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:66:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:72:refusal"
+      ]
+     },
+     {
+      "bind": "branch_record",
+      "slots": 15
+     }
+    ]
+   },
+   "ad": {
+    "function": "density_tendency_f32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "mass_divergence"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho_w"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "physics_tendency"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has_physics"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "primal",
+      "arg": "tendency"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "accumulate",
+      "arg": "mass_divergence"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 2,
+      "io": "accumulate",
+      "arg": "rho_w"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "field_id": 3,
+        "io": "accumulate",
+        "arg": "rdzw"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 4,
+      "io": "accumulate",
+      "arg": "physics_tendency"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 8,
+      "io": "inout",
+      "arg": "tendency"
+     },
+     {
+      "bind": "failure",
+      "slots": 8,
+      "source_ids": [
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:90:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:91:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:92:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:93:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:94:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:103:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:110:refusal",
+       "hex-ad/cuda/dycore/density_tendency_f32.ad.cu:115:refusal"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "polynomial_degree": 2,
+ "polynomial_reason": "rho_w difference multiplied by active rdzw, with active mass_divergence and physics_tendency added (cuda_horizontal.py:425-430).",
+ "cotangent_accumulation": "Fixed-order repeated contributions are accumulated in float64 and rounded once at the float32 destination; separate outputs use deterministic gathers.",
+ "seed_clearing": {
+  "overwritten_outputs": [
+   "tendency"
+  ],
+  "written_elements": "nlev*ncells",
+  "outside_unchanged": true,
+  "zero_work_writes_nothing": true,
+  "synchronization": "one participating block and __syncthreads; all other blocks return before touching the seeds"
+ },
+ "source_of_record": {
+  "kind": "captured horizontal module source",
+  "sha256": "25d720171edf628710cafc326531042621bcbfb20fcc8919f8052ac4ebd064e0",
+  "kernel_text_sha256": "173dc2d58d9def2855cb10bf335cbd888865f5394de418a7109f8dc26e415c51",
+  "comparison": "byte-identical to the complete pinned source composed with CUDA_FTZ_HELPERS",
+  "evidence": "out/evidence/captured-source-audit.json"
+ },
+ "ledger_owner_task": "ad1-122-density_tendency_f32",
+ "ledger_reconciliation": {
+  "ledger": "ad0-l00-ledger/out/patch/contracts/branches.csv",
+  "owned_judgements": 7,
+  "key": "file,line,column,operation",
+  "evidence": "inactive lookups hold only the index fixed, never the selected active value"
+ }
+}

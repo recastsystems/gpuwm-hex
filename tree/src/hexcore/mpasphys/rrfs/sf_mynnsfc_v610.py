@@ -131,8 +131,9 @@ def cuda_source(waves=False):
     return source
 
 
-def module(waves=False):
-    """Own image and key, the v6.0.0 NVRTC options; NCAR/MYNN-SFC v6.1.0 src/module_sf_mynnsfc_driver.F90:73-87,838-881."""
+def module(waves=False, corrections=()):
+    """Own image and key, the v6.0.0 NVRTC options (``corrections`` is the rebound v6.0.0 glue's keyword: v6.1.0
+    already carries SF1, upstream f0c1839, so no fork id changes this source); NCAR/MYNN-SFC v6.1.0 src/module_sf_mynnsfc_driver.F90:73-87,838-881."""
     import cupy as cp
     from cupy.cuda import compiler, function
     dev=cp.cuda.runtime.getDevice()
@@ -188,3 +189,8 @@ def launch_slot(call):
 def register_backend(registry):
     """RRFS MPAS-Model-rrfs/src/core_atmosphere/physics/mpas_atmphys_driver_sfclayer.F:1390-1463 @44c0849 host."""
     registry.register('surface_layer',SCHEME,BACKEND,launch_slot)
+
+
+# GPUWM_HEX_AD_PARAMS: the MYNN-SFC constants are carried for v6.0.0 only; this version refuses them (unset: nothing happens).
+from .. import ad_params_override as _ad_params_override
+_ad_params_override.refuse_family("mynnsfc", "MYNN-SFC v6.1.0")

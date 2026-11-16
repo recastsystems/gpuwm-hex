@@ -26,6 +26,7 @@ from contextlib import nullcontext
 from dataclasses import asdict
 import json
 import os
+from hexcore import card_queue
 from pathlib import Path
 import socket
 import sys
@@ -1043,11 +1044,11 @@ def worker(job, rank, spec_text):
 
 def _child_context(rank, spec, request):
     """This rank process's context: the forecast's modules rebuilt, its card, stream, physics scope and halo end."""
-    grant = os.environ.get("GPU_MUTEX_CARDS", "").replace(",", " ").split()
+    grant = card_queue.granted()
     card = int(request["card"])
     if grant and 0 <= card < len(grant):
         # This process sees one card; the queue's grant list is narrowed to it (rank_event reads it).
-        os.environ["GPU_MUTEX_CARDS"] = grant[card]
+        card_queue.put(os.environ, card_queue.CARDS, grant[card])
     driver, replay = bootstrap(request["replay"])
     import cupy as cp
     from hexcore.drivers.samehost_forecast_v841 import _StepLoopGarbage

@@ -1,0 +1,178 @@
+{
+ "kernel": "cupy_multiply__float32_float32_float32",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source ",
+ "file": "tree/src/hexcore/mpasphys/cupy-generated",
+ "line": 0,
+ "module": "52c93e355e8912097c71ead00569a69ce57654c3af64837513efd1bbecf1d845",
+ "image": "48bda6527daa9c8454086a5d4ebe389fbde9ad33562b8a17381ba22297649b68",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "_raw_in0",
+   "field_id": 0,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_raw_in1",
+   "field_id": 1,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_raw_out0",
+   "field_id": 2,
+   "role": "out",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_ind",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "bytes24",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "CuPy CIndexer"
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "cupy_multiply__float32_float32_float32: a view that is not 1-D contiguous float32 (size != shape[0] or byte stride != 4)"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "cupy_multiply__float32_float32_float32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_in0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_in1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out0"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_in0"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_in1"
+     },
+     {
+      "bind": "tangent",
+      "arg": "_raw_in0",
+      "field_id": 0,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "_raw_in1",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "_raw_out0",
+      "field_id": 2,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "cupy_multiply__float32_float32_float32: a view that is not 1-D contiguous float32 (size != shape[0] or byte stride != 4)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "cupy_multiply__float32_float32_float32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_in0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_in1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out0"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_in0"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_in1"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "_raw_in0",
+      "field_id": 0,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "_raw_in1",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "_raw_out0",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "cupy_multiply__float32_float32_float32: a view that is not 1-D contiguous float32 (size != shape[0] or byte stride != 4)"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

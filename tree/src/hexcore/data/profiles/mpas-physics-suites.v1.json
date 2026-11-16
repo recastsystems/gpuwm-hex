@@ -1353,7 +1353,8 @@
             "call": "run_slot",
             "corrections": [
               "RP1",
-              "RP7"
+              "RP7",
+              "RP8"
             ],
             "bind": "bind_native_pools",
             "resources": {
@@ -2053,6 +2054,7 @@
             "module": "rrfs.tempo_v303",
             "call": "run_slot",
             "bind": "bind_native_pools",
+            "corrections": ["TP1", "TP2", "TP3", "TP4", "TP5"],
             "resources": {
               "module": "rrfs.tempo_v303",
               "call": "load_resources",
@@ -2156,6 +2158,7 @@
             "module": "rrfs.bl_mynnedmf_c942418",
             "call": "run_slot",
             "bind": "bind_native_pools",
+            "corrections": ["MY1", "MY2", "MY3", "MY4", "MY5"],
             "resources": {
               "module": "rrfs.bl_mynnedmf_c942418",
               "call": "load_cuda_packet",
@@ -2205,6 +2208,7 @@
           "sf_mynnsfclay": {
             "module": "rrfs.sf_mynnsfc_v600",
             "call": "launch_slot",
+            "corrections": ["SF1"],
             "profiles": {
               "u3d": "u_p",
               "v3d": "v_p",
@@ -5383,8 +5387,63 @@
           }
         },
         "source": "rrfs-workflow 08eee4ce parm/hrrrv5/namelist.atmosphere:58-59, parm/convection_permitting/namelist.atmosphere:60-61, scripts/exrrfs_fcst.sh:52-53"
+      },
+      {
+        "when": {
+          "config_physics_suite": "hrrrv5"
+        },
+        "set": {
+          "nhyd_model": {
+            "config_split_dynamics_transport": true,
+            "config_dynamics_split_steps": 3,
+            "config_horiz_mixing": "2d_smagorinsky",
+            "config_visc4_2dsmag": 0.05,
+            "config_scalar_advection": true,
+            "config_coef_3rd_order": 0.25,
+            "config_smdiv": 0.1
+          },
+          "damping": {
+            "config_mpas_cam_coef": 2.0,
+            "config_rayleigh_damp_u": true,
+            "config_zd": 16000.0,
+            "config_xnutr": 0.2,
+            "config_number_cam_damping_levels": 8
+          },
+          "physics": {
+            "config_sst_update": false,
+            "config_gvf_update": false,
+            "config_sstdiurn_update": false,
+            "config_frac_seaice": true,
+            "config_deepsoiltemp_update": false,
+            "config_bucket_update": "none",
+            "config_mynn_mixscalars": 0,
+            "config_mynn_mixaerosols": 1,
+            "config_mynn_mixnumcon": 0,
+            "config_mynn_ess": 0
+          },
+          "physics_mp_tempo": {
+            "config_tempo_aerosolaware": true,
+            "config_tempo_hailaware": true,
+            "config_tempo_ml_for_bl_nc": true
+          }
+        },
+        "source": "NOAA's deck: rrfs-workflow 570c81fe parm/hrrrv5/namelist.atmosphere lines 1-16 (&nhyd_model), 17-23 (&damping), 47-66 (&physics), 67-71 (&physics_mp_tempo). THE BREAKAGE THIS ENDS (MODEL-AUDIT D13, 2026-11-15): --physics-suite hrrrv5 with no namelist ran the fork Registry's defaults (no CAM filter, no Rayleigh u damping, w damping from 22 km, mynn_ess=1, mixnumcon=1, tempo_ml_for_bl_nc false, gvf_update true), so every adjoint recording linearised a configuration NOAA does not run; native 44c0849 on the 12 km cut differs in 1,917,431 of 4,135,591 history words at 15 minutes between the two. config_time_integration_order and config_monotonic equal the Registry and are left to their door flags; config_epssm (0.1 in the deck) is not written: v8.4.1 and 44c0849 ignore it (hexcore LegacyEpssmIgnored), so it would only print a warning on every run; config_dt, config_number_of_sub_steps and the radiation interval are per mesh (workflow_meshdep)"
       }
     ],
+    "workflow_meshdep": {
+      "when": {
+        "config_physics_suite": "hrrrv5"
+      },
+      "meshes": [
+        {"mesh": "conus12km", "nominal_dx_m": 12000.0, "dt": 60.0, "substeps": 2, "radt_minutes": 30, "physics": {"config_convection_scheme": "cu_ntiedtke", "config_gfl_sub3d": 1}},
+        {"mesh": "conus3km", "nominal_dx_m": 3000.0, "dt": 20.0, "substeps": 4, "radt_minutes": 15},
+        {"mesh": "fwx1p25km", "nominal_dx_m": 1250.0, "dt": 12.0, "substeps": 4, "radt_minutes": 10}
+      ],
+      "within_factor": 1.2,
+      "within_factor_source": "A row applies only to a mesh whose nominal spacing is within this factor of the row's (NOAA's three CONUS meshes and cuts of them). THE BREAKAGE THIS PREVENTS (audit-fix check, 15 Nov 2026): the nearest row went to every mesh, so a plain hrrrv5 run took 12 s on 800 m and 937.5 m meshes (the door's own steps 4 and 5 s), 60 s on 6 km (36 s), and 60 s on 25-120 km globes (150-600 s). Any other mesh keeps the door's own step, sub-steps and radiation interval",
+      "physics_source": "A row's physics options are NOAA's per-mesh namelist additions: rrfs-workflow 570c81fe scripts/exrrfs_fcst.sh:62-67 adds config_convection_scheme = cu_ntiedtke and config_gfl_sub3d = 1 when FCST_CONVECTION_SCHEME is true, which workflow/config_resources/config.meshdep:12,35 sets for na12km and conus12km (not conus3km or fwx1p25km). THE BREAKAGE THIS ENDS (job cumulus, 15 Nov 2026): a plain hrrrv5 run on a 12 km mesh ran no cumulus, a named departure from NOAA's deck, so every 12 km recording linearised a model without the scheme NOAA runs there. Exact mode with it equals native 44c0849 word for word (cumulus.md 21:25Z: 0 differing words in 27 files over the hour). An option the run names (--physics config_convection_scheme=...) or a --physics-namelist decides instead",
+      "source": "rrfs-workflow 570c81fe workflow/config_resources/config.meshdep (FCST_DT, FCST_SUBSTEPS, FCST_RADT for the CONUS line) through scripts/exrrfs_fcst.sh:9-11 and namelist.atmosphere's ${dt}, ${substeps}, ${radt}. The run's mesh takes the row nearest its nominal spacing (log distance). An explicit --dt or --acoustic-substeps, a --physics KEY=VALUE, or a --physics-namelist decides instead"
+    },
     "default_streams_omit": {
       "output": {
         "fields": ["ertel_pv", "u_pv", "v_pv", "theta_pv", "vort_pv", "iLev_DT"],
@@ -5593,6 +5652,7 @@
             "module": "rrfs.tempo_v303",
             "call": "run_slot",
             "bind": "bind_native_pools",
+            "corrections": ["TP1", "TP2", "TP3", "TP4", "TP5"],
             "resources": {
               "module": "rrfs.tempo_v303",
               "call": "load_resources",
@@ -5647,6 +5707,11 @@
                 ]
               }
             ]
+          },
+          "cu_ntiedtke": {
+            "module": "ntiedtke_v842",
+            "call": "run_slot",
+            "bind": "bind_native_pools"
           }
         }
       },
@@ -5671,6 +5736,7 @@
             "module": "rrfs.bl_mynnedmf_c6d08709",
             "call": "run_slot",
             "bind": "bind_native_pools",
+            "corrections": ["MY1", "MY2", "MY3", "MY4", "MY5"],
             "resources": {
               "module": "rrfs.bl_mynnedmf_c6d08709",
               "call": "load_cuda_packet",
@@ -5707,6 +5773,7 @@
           "sf_mynnsfclay": {
             "module": "rrfs.sf_mynnsfc_v600",
             "call": "launch_slot",
+            "corrections": ["SF1"],
             "profiles": {
               "u3d": "u_p",
               "v3d": "v_p",
@@ -10222,8 +10289,63 @@
           }
         },
         "source": "rrfs-workflow 08eee4ce parm/hrrrv5/namelist.atmosphere:58-59, parm/convection_permitting/namelist.atmosphere:60-61, scripts/exrrfs_fcst.sh:52-53"
+      },
+      {
+        "when": {
+          "config_physics_suite": "hrrrv5"
+        },
+        "set": {
+          "nhyd_model": {
+            "config_split_dynamics_transport": true,
+            "config_dynamics_split_steps": 3,
+            "config_horiz_mixing": "2d_smagorinsky",
+            "config_visc4_2dsmag": 0.05,
+            "config_scalar_advection": true,
+            "config_coef_3rd_order": 0.25,
+            "config_smdiv": 0.1
+          },
+          "damping": {
+            "config_mpas_cam_coef": 2.0,
+            "config_rayleigh_damp_u": true,
+            "config_zd": 16000.0,
+            "config_xnutr": 0.2,
+            "config_number_cam_damping_levels": 8
+          },
+          "physics": {
+            "config_sst_update": false,
+            "config_gvf_update": false,
+            "config_sstdiurn_update": false,
+            "config_frac_seaice": true,
+            "config_deepsoiltemp_update": false,
+            "config_bucket_update": "none",
+            "config_mynn_mixscalars": 0,
+            "config_mynn_mixaerosols": 1,
+            "config_mynn_mixnumcon": 0,
+            "config_mynn_ess": 0
+          },
+          "physics_mp_tempo": {
+            "config_tempo_aerosolaware": true,
+            "config_tempo_hailaware": true,
+            "config_tempo_ml_for_bl_nc": true
+          }
+        },
+        "source": "NOAA's deck: rrfs-workflow 570c81fe parm/hrrrv5/namelist.atmosphere lines 1-16 (&nhyd_model), 17-23 (&damping), 47-66 (&physics), 67-71 (&physics_mp_tempo). THE BREAKAGE THIS ENDS (MODEL-AUDIT D13, 2026-11-15): --physics-suite hrrrv5 with no namelist ran the fork Registry's defaults (no CAM filter, no Rayleigh u damping, w damping from 22 km, mynn_ess=1, mixnumcon=1, tempo_ml_for_bl_nc false, gvf_update true), so every adjoint recording linearised a configuration NOAA does not run; native 44c0849 on the 12 km cut differs in 1,917,431 of 4,135,591 history words at 15 minutes between the two. config_time_integration_order and config_monotonic equal the Registry and are left to their door flags; config_epssm (0.1 in the deck) is not written: v8.4.1 and 44c0849 ignore it (hexcore LegacyEpssmIgnored), so it would only print a warning on every run; config_dt, config_number_of_sub_steps and the radiation interval are per mesh (workflow_meshdep)"
       }
     ],
+    "workflow_meshdep": {
+      "when": {
+        "config_physics_suite": "hrrrv5"
+      },
+      "meshes": [
+        {"mesh": "conus12km", "nominal_dx_m": 12000.0, "dt": 60.0, "substeps": 2, "radt_minutes": 30, "physics": {"config_convection_scheme": "cu_ntiedtke", "config_gfl_sub3d": 1}},
+        {"mesh": "conus3km", "nominal_dx_m": 3000.0, "dt": 20.0, "substeps": 4, "radt_minutes": 15},
+        {"mesh": "fwx1p25km", "nominal_dx_m": 1250.0, "dt": 12.0, "substeps": 4, "radt_minutes": 10}
+      ],
+      "within_factor": 1.2,
+      "within_factor_source": "A row applies only to a mesh whose nominal spacing is within this factor of the row's (NOAA's three CONUS meshes and cuts of them). THE BREAKAGE THIS PREVENTS (audit-fix check, 15 Nov 2026): the nearest row went to every mesh, so a plain hrrrv5 run took 12 s on 800 m and 937.5 m meshes (the door's own steps 4 and 5 s), 60 s on 6 km (36 s), and 60 s on 25-120 km globes (150-600 s). Any other mesh keeps the door's own step, sub-steps and radiation interval",
+      "physics_source": "A row's physics options are NOAA's per-mesh namelist additions: rrfs-workflow 570c81fe scripts/exrrfs_fcst.sh:62-67 adds config_convection_scheme = cu_ntiedtke and config_gfl_sub3d = 1 when FCST_CONVECTION_SCHEME is true, which workflow/config_resources/config.meshdep:12,35 sets for na12km and conus12km (not conus3km or fwx1p25km). THE BREAKAGE THIS ENDS (job cumulus, 15 Nov 2026): a plain hrrrv5 run on a 12 km mesh ran no cumulus, a named departure from NOAA's deck, so every 12 km recording linearised a model without the scheme NOAA runs there. Exact mode with it equals native 44c0849 word for word (cumulus.md 21:25Z: 0 differing words in 27 files over the hour). An option the run names (--physics config_convection_scheme=...) or a --physics-namelist decides instead",
+      "source": "rrfs-workflow 570c81fe workflow/config_resources/config.meshdep (FCST_DT, FCST_SUBSTEPS, FCST_RADT for the CONUS line) through scripts/exrrfs_fcst.sh:9-11 and namelist.atmosphere's ${dt}, ${substeps}, ${radt}. The run's mesh takes the row nearest its nominal spacing (log distance). An explicit --dt or --acoustic-substeps, a --physics KEY=VALUE, or a --physics-namelist decides instead"
+    },
     "default_streams_omit": {
       "output": {
         "fields": ["ertel_pv", "u_pv", "v_pv", "theta_pv", "vort_pv", "iLev_DT"],
@@ -10264,6 +10386,16 @@
         {
           "microphysics": "mp_tempo",
           "convection": "cu_grell_freitas_li",
+          "pbl": "bl_mynnedmf",
+          "surface_layer": "sf_mynnsfclay",
+          "land_surface": "sf_ruc",
+          "gwdo": "bl_ugwp_gwdo",
+          "radiation_lw": "rrtmg_lw",
+          "radiation_sw": "rrtmg_sw"
+        },
+        {
+          "microphysics": "mp_tempo",
+          "convection": "cu_ntiedtke",
           "pbl": "bl_mynnedmf",
           "surface_layer": "sf_mynnsfclay",
           "land_surface": "sf_ruc",

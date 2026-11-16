@@ -1,0 +1,26 @@
+{
+ "source_layouts": "x1.2562.part2.K3.npz",
+ "layouts_sha256": "b6b9c43681188d5b77048246097a965e74c34853976fdea1f152681bd79e4b0d",
+ "part_sha256": "e813564121e246a4ae4f8e7beda4201081516450e00908f2ca349c56b8ffa730",
+ "mesh_sha256": "8a825312a713bbe959c33ed03c2b503e5ec626238de6b15a686cd0ad5b40c986",
+ "halo_rings": 3,
+ "n_partitions": 2,
+ "ranks": [
+  {
+   "owned_cells": 1279,
+   "owned_edges": 3859,
+   "owned_vertices": 2584,
+   "cells": 1537,
+   "edges": 4694,
+   "vertexs": 3158
+  },
+  {
+   "owned_cells": 1283,
+   "owned_edges": 3821,
+   "owned_vertices": 2536,
+   "cells": 1541,
+   "edges": 4706,
+   "vertexs": 3166
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+# S09: byte-exact inputs. Spec, source and kernel-set files are hashed by the recipe and the binder; git must not
+# normalise their line endings (three specs are CRLF as the box wrote them).
+specs/** -text
+src/** -text
+derived/** -text
+derived.pv/** -text
+kernels.json -text
+recipe.json -text

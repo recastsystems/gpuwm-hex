@@ -1,0 +1,3518 @@
+{
+ "schema": "ad.kset-rebuild/v1",
+ "kset": "kset-int7f",
+ "kernels_json_sha256": "9f51b2e626c7651f708fd6d3c2a61024a424f0af2edb53572870e932340992c2",
+ "rows": [
+  {
+   "function": "acoustic_coefficients_v841",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile",
+   "src": "hex-ad/cuda/acoustic/acoustic_coefficients_v841.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/acoustic",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "c3d89a6967c1fb8c35752003412e92ebdb8603ef6a2cbd60efd16afd5f91d8b6",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_coefficients_v841.ad.cu": "ddf0440c36488eca2b4a9c43ae3969162a97eb7deb43babae6985f90e0c92c5d",
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_coefficients_tape.cuh": "2a31f8afb59874a48eb5137eccf1fe7cabf0baa1f9ebad4938958ad1dff6ab80",
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_branch_record.cuh": "19ee02a267dc94c900c817487f48402424ea92b9bf7bcce5b9d891bea6ef5532",
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_mpas_fp32.cuh": "9b759e1f854fe05132370da92fb53ba4e6e0de5c0e467419b6add66ad0b982e7"
+   }
+  },
+  {
+   "function": "acoustic_cofrz_v841",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile",
+   "src": "hex-ad/cuda/acoustic/acoustic_cofrz_v841.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/acoustic",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "0a916ba046c5e95995faad76f93bfd112de34960b582eee6bd324054b696c24d",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_cofrz_v841.ad.cu": "99d9f6a075a62af89f9738c2ec6195c5d0fe147db65a9844c046ac874b312cf6"
+   }
+  },
+  {
+   "function": "acoustic_column_solve_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/phys/l4speed",
+   "src": "cuda/acoustic_column_solve_v841.l4.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iref/acoustic",
+    "-Icuda",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "7f9943b16b6cb16eb2ea624eb8e0ccf9fb1df61b561d02682675ef93856c3e6a",
+   "source_sha256": {
+    "tree/ad/phys/l4speed/cuda/acoustic_column_solve_v841.l4.cu": "0694978b7846c34a78b5bf330be22bcf63e962ca2cb1daf4ac833ce92d9d1a91",
+    "tree/ad/phys/l4speed/ref/acoustic/acoustic_column_solve_v841.ad.cu": "1094ed3a136d73e2508bad2bf119ab2ede451ad6d65cc0be90d76d046a8524b1",
+    "tree/ad/phys/l4speed/ref/acoustic/acoustic_coefficients_tape.cuh": "2a31f8afb59874a48eb5137eccf1fe7cabf0baa1f9ebad4938958ad1dff6ab80",
+    "tree/ad/phys/l4speed/ref/acoustic/acoustic_branch_record.cuh": "19ee02a267dc94c900c817487f48402424ea92b9bf7bcce5b9d891bea6ef5532",
+    "tree/ad/phys/l4speed/ref/acoustic/acoustic_mpas_fp32.cuh": "9b759e1f854fe05132370da92fb53ba4e6e0de5c0e467419b6add66ad0b982e7"
+   }
+  },
+  {
+   "function": "acoustic_prepare_v841",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile",
+   "src": "hex-ad/cuda/acoustic/acoustic_prepare_v841.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/acoustic",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "909d953c37c3e71c618d0ae5d634525c7615f9356c4417f0493f886bed25891c",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_prepare_v841.ad.cu": "a60af56937ba2bf6257387bfb91addf97ac55647de491dcb2d46bcd0664a7d46",
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_mpas_fp32.cuh": "9b759e1f854fe05132370da92fb53ba4e6e0de5c0e467419b6add66ad0b982e7"
+   }
+  },
+  {
+   "function": "acoustic_rs_ts_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/phys/l4speed",
+   "src": "cuda/acoustic_rs_ts_v841.l4.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iref/acoustic",
+    "-Icuda",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "e2bb8af0968b4eb871159c4ba186c2e8d78578443fe929f189ba8ba0389a18f1",
+   "source_sha256": {
+    "tree/ad/phys/l4speed/cuda/acoustic_rs_ts_v841.l4.cu": "360ffbe69e213e430523991912f78138024242d1a3ae5aefe3b4c325617bf718",
+    "tree/ad/phys/l4speed/ref/acoustic/acoustic_rs_ts_v841.ad.cu": "84673ad2359b926b2863279520675bf37c9905cd55e5ccf12a3db93a5467c95c",
+    "tree/ad/phys/l4speed/ref/acoustic/acoustic_ad_tape.cuh": "7ff5cba47c29de1d7d333fb31190d019198b5cfaf7b12f8eb5bfa25ea384ac0e",
+    "tree/ad/phys/l4speed/ref/acoustic/acoustic_branch_record.cuh": "19ee02a267dc94c900c817487f48402424ea92b9bf7bcce5b9d891bea6ef5532",
+    "tree/ad/phys/l4speed/ref/acoustic/acoustic_mpas_fp32.cuh": "9b759e1f854fe05132370da92fb53ba4e6e0de5c0e467419b6add66ad0b982e7"
+   }
+  },
+  {
+   "function": "acoustic_ru_v841",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile",
+   "src": "hex-ad/cuda/acoustic/acoustic_ru_v841.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/acoustic",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "d181ab68eb895cc77edce314a02f037b675bed2db31b820adbeba44beb3264d4",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_ru_v841.ad.cu": "425072daf7432a2919ce48ea58f0b9961f196caccb2ebc94eee92eb9576f4968",
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_branch_record.cuh": "19ee02a267dc94c900c817487f48402424ea92b9bf7bcce5b9d891bea6ef5532",
+    "tree/ad/kset/int7f/src/ad1-g05-acoustic-acoustic-v841-a-reconcile/hex-ad/cuda/acoustic/acoustic_mpas_fp32.cuh": "9b759e1f854fe05132370da92fb53ba4e6e0de5c0e467419b6add66ad0b982e7"
+   }
+  },
+  {
+   "function": "add_inplace_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile",
+   "src": "hex-ad/cuda/dycore/add_inplace_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "c757cdd15f122edfe13d8b28185e4185be88185e96d86c15b731829347ccd0b5",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile/hex-ad/cuda/dycore/add_inplace_f32.ad.cu": "943960a76aa62ee1acac2f2b064914dea55eac5023929b93b2b46f15fdcaec1b",
+    "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile/hex-ad/cuda/dycore/dycore_math.cuh": "8d48638f413abe6a5a5ff77e30205f1d98711837cada1c00ce2d3c67d31e3769"
+   }
+  },
+  {
+   "function": "add_lagged_diabatic_theta_v842_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g10-dycore-driver-d-reconcile",
+   "src": "hex-ad/cuda/dycore/add_lagged_diabatic_theta_v842_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "f082f424be3f924ead0801616aa0a4571482fa1db8b328461cdfa89ce98f3989",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g10-dycore-driver-d-reconcile/hex-ad/cuda/dycore/add_lagged_diabatic_theta_v842_f32.ad.cu": "0d0a24dd21c7ee38ef16e8877c38c73bcccb9c0deb2c23d8253be8b8e9d81485",
+    "tree/ad/kset/int7f/src/ad1-g10-dycore-driver-d-reconcile/hex-ad/cuda/dycore/derivative_support.cuh": "d9b55ec7c0d992e4d91f16730d820ec7e77a52a44b219ab2f2ab1d6da4cdd30f"
+   }
+  },
+  {
+   "function": "cell_diagnostics_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g20-dycore-horizontal-rrfs-a-reconcile",
+   "src": "hex-ad/cuda/dycore/cell_diagnostics_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--std=c++17",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "7a47389b0864980017926c86c6c689f5874a38f0635a1035ca4d183c64c3d6c1",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g20-dycore-horizontal-rrfs-a-reconcile/hex-ad/cuda/dycore/cell_diagnostics_v841_f32.ad.cu": "39d1c50519ded40bc298df210628dde917ffb7e9fd919d0c1c0c5a906665b40d",
+    "tree/ad/kset/int7f/src/ad1-g20-dycore-horizontal-rrfs-a-reconcile/hex-ad/cuda/dycore/rrfs_mpas_f32.cuh": "b72efadc5bb0a2894b0417b34cfbcfa5b4557f1cda302269ec0919264b04c477",
+    "tree/ad/kset/int7f/src/ad1-g20-dycore-horizontal-rrfs-a-reconcile/hex-ad/cuda/dycore/rrfs_ad_support.cuh": "03f121feee7d545f23cadec4ee3a83a509c07adddfea2b9dfa7e4b04784271c2"
+   }
+  },
+  {
+   "function": "cloud_condensate",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/cloud_condensate.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "6a752d08df3dcda568414d7a41479269f63fd8d361c369a9c0b227d6821a223b",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/cloud_condensate.ad.cu": "0d1714d745159d9b1cf1093df9d9fae9d067f6ba0dd64bcc47a7af1bfd55a12f",
+    "tree/ad/kset/int7f/src/g3-capture/cloud.cu": "0921732bfad0475e7909a13681ece6178a3bad83d0b9de1c99f1493967c4da3c",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "cloud_from",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/cloud_from.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "725c6118014500c2c719649207d4bf0c6bf0506bcd3814d5897beaf38de7b6b8",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/cloud_from.ad.cu": "2ff75fc077cc5203839ec33811e4dbfc2a75c768199fa7c85d61d9ae872c1700",
+    "tree/ad/kset/int7f/src/g3-capture/cloud.cu": "0921732bfad0475e7909a13681ece6178a3bad83d0b9de1c99f1493967c4da3c",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "cupy_copy__float_float32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_cupy.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=13",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "ed0aca552aa39b329f6d787e60c50932487b67880a80a34df64a06f31c2da03d",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_cupy.ad.cu": "12d375c8647631acc4ef77c0f1ea32e74140f3e52d4a481caeae03c5b4367b05",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "cupy_copy__int_float32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_cupy.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=14",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "2e459ae21ac8cf8b7c0911bad5604aceec0f15341357c023979f8672dcbadf23",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_cupy.ad.cu": "12d375c8647631acc4ef77c0f1ea32e74140f3e52d4a481caeae03c5b4367b05",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "cupy_multiply__float32_float32_float32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_cupy.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=11",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "987e5350b4b6a06290cc61b11c8dc7663d0f560d6effe47ad05d2d10953322bd",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_cupy.ad.cu": "12d375c8647631acc4ef77c0f1ea32e74140f3e52d4a481caeae03c5b4367b05",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "cupy_scatter_update",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_gather.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=22",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "cac1d7abfff2f20fb824cb726131e2fa14705587939dcee27c907a582c648063",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_gather.ad.cu": "a9a209aaa4661f37d8d5f2b51586a6eecd3d0b377a8a95fa1ac61ab6e38a869b",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "cupy_take",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_gather.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=21",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "bcdefa93f56b1eaa55b5af3546519486772627cda6ac5844d57213faad508c76",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_gather.ad.cu": "a9a209aaa4661f37d8d5f2b51586a6eecd3d0b377a8a95fa1ac61ab6e38a869b",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "cupy_where__bool_float_float32_float32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_cupy.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=12",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "e1c7fa171f82c0c64e02c65835eb070bb7e0d9314e24bf388958fc343050f18d",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_cupy.ad.cu": "12d375c8647631acc4ef77c0f1ea32e74140f3e52d4a481caeae03c5b4367b05",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "degrees",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/degrees.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "24fe5292809871c0c8dc605f00c6b87e19b2ab716b8c2654a9b7939ce7c3b2d1",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/degrees.ad.cu": "705eff7f2a9ac548a73b808e046b67260c2fa509030102bb59e07054293d5446",
+    "tree/ad/kset/int7f/src/g3-capture/cloud.cu": "0921732bfad0475e7909a13681ece6178a3bad83d0b9de1c99f1493967c4da3c",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "density_tendency_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile",
+   "src": "hex-ad/cuda/dycore/density_tendency_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "e599209d349a1032b2f5c017d5cd37c0d790f1aa6394d1932b8fe1a1a2fa1339",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile/hex-ad/cuda/dycore/density_tendency_f32.ad.cu": "27dcdfd11a88a27212f50adee0ae6176fabb2006ba2ea78e02f0eb839a3791d6",
+    "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile/hex-ad/cuda/dycore/common.cuh": "78aa9d7dec964e35e2961569ee56dbbbbe864cabaed3d58b58639079dc0e6c87",
+    "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile/hex-ad/cuda/dycore/mpas_fp32.cuh": "7bf80ac1814d83dd45c67960144c67c9dcea906f5f6e0a3c77aab870d12db9f5",
+    "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile/hex-ad/cuda/dycore/branch_record.cuh": "537a7976e04f93ae0058e267b069c7f0402df50c388dc73624fe905d796139a6"
+   }
+  },
+  {
+   "function": "divergence_damping_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g19-dycore-horizontal-c-reconcile",
+   "src": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "1cace109348cbd5fa3c7173e6b1da7682d5a5f34125891734a11c58f12b7c369",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g19-dycore-horizontal-c-reconcile/hex-ad/cuda/dycore/divergence_damping_f32.ad.cu": "4e9afecb7460ae3e9894daf29b2deb6621f3402ca6a4e422fe9bbd13247331df",
+    "tree/ad/kset/int7f/src/ad1-g19-dycore-horizontal-c-reconcile/hex-ad/cuda/dycore/mpas_fp32_ad.cuh": "5cbc143588c0f91073e12b2d484b3737ef289663b5809d076f718d0745b11ee6",
+    "tree/ad/kset/int7f/src/ad1-g19-dycore-horizontal-c-reconcile/hex-ad/cuda/dycore/ad_failure_slots.cuh": "62c94b80284e247df30b20572e28303ce5c9443d4bba0fd11609c3d2e5b8e26c"
+   }
+  },
+  {
+   "function": "edge_fields_from_saved_u_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile",
+   "src": "hex-ad/cuda/dycore/edge_fields_from_saved_u_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "184d0154eb938f4d7d32b2df3234844fd6c626f138ed60f92c421ff65fc45fa0",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/edge_fields_from_saved_u_f32.ad.cu": "3aa1cc2c8a2a8dfc3de5fbd437676167adf037ac0c6f3fb0246ad1d41ccd3d34",
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/edge_fields_from_saved_u_f32.branch.cuh": "6fa67f84e55e527e0ff88b8e8c18993b71196770e1ad0e87e672cdbc7e7a442b",
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/ad_branch_ops.cuh": "8f455a0ab344d8809d331f642156240708416e714835f0e9ba0c751387524db2"
+   }
+  },
+  {
+   "function": "enforce_rw_endpoints_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/enforce_rw_endpoints_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "d8b9663818ab0a1cbb3162052b2559f8f698794b07638c980c44646c4dff203c",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/enforce_rw_endpoints_v841_f32.ad.cu": "77595e6563fd821ca7733fdb52d35afce0582edd058550815f2ff219320bdaf6"
+   }
+  },
+  {
+   "function": "euler_w_moist_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c",
+   "src": "hex-ad/cuda/dycore/euler_w_moist_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "03c7cccd73315f161a44b1b7e015960bb030f95430c149791ec3a5a4d4b09d6c",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/euler_w_moist_v841_f32.ad.cu": "2d0f9be24bf5e66a1de6f4d5a4690b9ea6e86fb4fb442058f22855e3cead2719",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/common.cuh": "57aa20b53748eab40a1ba1bf5f2b2eb5435bf666138ddb71ae61035b95cc03df",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/branch_trace.cuh": "c9b915339573df68d5796a279fa0d2c30e3b36a9f535e042f2b4b629d431c210"
+   }
+  },
+  {
+   "function": "fct_edge_residual_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/phys/l4speed",
+   "src": "cuda/fct_edge_residual_v841.l4.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iref/transport",
+    "-Icuda",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "19f980a5b66e34b9991f77e4bbcc462933ec61bd0f43583d60d74760e7dfb9ec",
+   "source_sha256": {
+    "tree/ad/phys/l4speed/cuda/fct_edge_residual_v841.l4.cu": "cc04a3f16ff2bac07553e1bc355699307ec6938b1cc06484483e81a2f6ef3df4",
+    "tree/ad/phys/l4speed/ref/transport/fct_edge_residual_v841.ad.cu": "f1ecf7cb423a5a0bd25e0e08e7f3e9f94361e9c56e0dc97a4bbc0ad41893ced0",
+    "tree/ad/phys/l4speed/ref/transport/helpers.cuh": "6d0c5ecdcec03a887240e5e56faeb5ac92b82736265dfab2434b108550a6227c",
+    "tree/ad/phys/l4speed/ref/transport/trace_helpers.cuh": "a227c7c1a5975c46632f80494496d02c34a519c274c391c49366e7c523965b10",
+    "tree/ad/phys/l4speed/cuda/l4_common.cuh": "f81b6642850c211c162936fab92ffdb846f7c53f4349efba28bb4f68a1560710"
+   }
+  },
+  {
+   "function": "fct_finish_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/kset/g8",
+   "src": "hex-ad/cuda/transport/fct_finish_v841.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/transport",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "6115837c63b3e7ee1ea96c690238d2d49126977216db83d4328af5e023a3d1c6",
+   "source_sha256": {
+    "tree/ad/kset/g8/hex-ad/cuda/transport/fct_finish_v841.ad.cu": "318dc385266fcc1958ded4f322751d9b90b9f849b47ca01c48d57983dca88c9c",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/helpers.cuh": "6d0c5ecdcec03a887240e5e56faeb5ac92b82736265dfab2434b108550a6227c",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/trace_helpers.cuh": "a227c7c1a5975c46632f80494496d02c34a519c274c391c49366e7c523965b10",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/g8_reduce.cuh": "9992f9a69716c2b55b842d7a8889903674d96791b6bb94653adc98dffeba6aaa"
+   }
+  },
+  {
+   "function": "fct_horizontal_low_order_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/kset/g8",
+   "src": "hex-ad/cuda/transport/fct_horizontal_low_order_v841.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/transport",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "b1e9e4d20f8382a3e81123baff8fb162348153172748607a300d2aa3717c8891",
+   "source_sha256": {
+    "tree/ad/kset/g8/hex-ad/cuda/transport/fct_horizontal_low_order_v841.ad.cu": "fa7dfde74e6cde5e4fe4ad05008922a3b9e296a3541893cce648a2bff9da449a",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/helpers.cuh": "6d0c5ecdcec03a887240e5e56faeb5ac92b82736265dfab2434b108550a6227c",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/trace_helpers.cuh": "a227c7c1a5975c46632f80494496d02c34a519c274c391c49366e7c523965b10"
+   }
+  },
+  {
+   "function": "fct_limit_horizontal",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport",
+   "src": "cuda/u2_transport_ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "--ftz=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "837c2b2466ae952599ecc8bb5ec89f469b470aa886dbf669d9b586868c4c3856",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_transport_ad.cu": "599399a76b4e44a7e5f28113911901f7291c9dede8d1694a7d009eae11614c03",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_fp32_helpers.cuh": "3781e8a393189e6dcbc78c6e9c5f8104d0bed5e018d161a759db89f807da7ef6"
+   }
+  },
+  {
+   "function": "fct_limit_vertical",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport",
+   "src": "cuda/u2_transport_ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "--ftz=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "837c2b2466ae952599ecc8bb5ec89f469b470aa886dbf669d9b586868c4c3856",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_transport_ad.cu": "599399a76b4e44a7e5f28113911901f7291c9dede8d1694a7d009eae11614c03",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_fp32_helpers.cuh": "3781e8a393189e6dcbc78c6e9c5f8104d0bed5e018d161a759db89f807da7ef6"
+   }
+  },
+  {
+   "function": "fct_minmax_source",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport",
+   "src": "cuda/u2_transport_ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "--ftz=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "837c2b2466ae952599ecc8bb5ec89f469b470aa886dbf669d9b586868c4c3856",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_transport_ad.cu": "599399a76b4e44a7e5f28113911901f7291c9dede8d1694a7d009eae11614c03",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_fp32_helpers.cuh": "3781e8a393189e6dcbc78c6e9c5f8104d0bed5e018d161a759db89f807da7ef6"
+   }
+  },
+  {
+   "function": "fct_scale",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport",
+   "src": "cuda/u2_transport_ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "--ftz=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "837c2b2466ae952599ecc8bb5ec89f469b470aa886dbf669d9b586868c4c3856",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_transport_ad.cu": "599399a76b4e44a7e5f28113911901f7291c9dede8d1694a7d009eae11614c03",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_fp32_helpers.cuh": "3781e8a393189e6dcbc78c6e9c5f8104d0bed5e018d161a759db89f807da7ef6"
+   }
+  },
+  {
+   "function": "fct_vertical_low_order_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/phys/l4speed",
+   "src": "cuda/fct_vertical_low_order_v841.l4.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iref/vlo",
+    "-Icuda",
+    "-fatbin",
+    "-DAD_BUILD_TL",
+    "-DAD_BUILD_AD"
+   ],
+   "fatbin_sha256": "043d68245228e77483dfe47cffc3a7bd6f182e759a5baa0bf4d2e6f04bd78f1e",
+   "source_sha256": {
+    "tree/ad/phys/l4speed/cuda/fct_vertical_low_order_v841.l4.cu": "c6d79d958101425dd80871bb57f0d17f203b88b553a4ebdd8817ff558a054cc3",
+    "tree/ad/phys/l4speed/ref/vlo/fct_vertical_low_order_v841.ad.cu": "e8a470c6b2643b7f22feb5d0edc9def80d706739a953ae562b65bc4130a45338",
+    "tree/ad/phys/l4speed/ref/vlo/ad_transport_common.cuh": "aea07d29474d32c70edc1717d36716093af8b714c87700e1ac8920d8400aba1a",
+    "tree/ad/phys/l4speed/ref/vlo/ad_mpas_f32.cuh": "8193e92595cec58f3006f54de26785f9b86c5a5368ccc9d53277acff4e2850b2",
+    "tree/ad/phys/l4speed/ref/vlo/ad_vertical_branches.cuh": "f18bf8c9165cadb8818637f308659e0e54cba75c642477ff3ad522af8910532f",
+    "tree/ad/phys/l4speed/ref/vlo/ad_interpolate_branches.cuh": "36d6f4ceacbce5ced14a03014e6e98cb4d73c1b94f90f0f0529a8e85db3c076d",
+    "tree/ad/phys/l4speed/cuda/l4_common.cuh": "f81b6642850c211c162936fab92ffdb846f7c53f4349efba28bb4f68a1560710"
+   }
+  },
+  {
+   "function": "fork_albedo",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.fork_albedo.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "519ce1e124a6a223107437b55e070072217989e2903146df185cd1976d1c6a20",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.fork_albedo.ad.cu": "9f87ec4640f3879da7c8b093b1d513caac5a1a7f13c7ecb80465e0c44446f515"
+   }
+  },
+  {
+   "function": "fork_interp",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.fork_interp.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "42b9877b1cdd1186393a721c2cf30e477b91faf8eae1723e99049ce33f7e1af9",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.fork_interp.ad.cu": "d3b2af4fd33bf04b110ab08a4ba53d834c3e733903298f823a05fcfa914f5f7c"
+   }
+  },
+  {
+   "function": "fork_minmax",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.fork_minmax.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "da5abaeab349778dc2ef5fd070ecf100d50162992e91b6be1c7f3be6731417b6",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.fork_minmax.ad.cu": "bec2e2f8c88d8a496c9bbe8ba26210cfda54a67bec7d0148b5198cfca0d73cce"
+   }
+  },
+  {
+   "function": "laplacian_divergence_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/laplacian_divergence_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "058a0128bd913562fb07064e49a1de1241fa09b1a92ba7e4eeea859ec1b3dfa5",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/laplacian_divergence_v841_f32.ad.cu": "7f113287d9278d7b0aaba1c1b76cb1ac4e9dcdf2533bb3cd87fbc1435575acc6",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_ad.cuh": "f02588cd86e417706a03fcc16b16ec445bc4294c56a3c4efb709d6bc28ab5484",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_branches.cuh": "68b5ebfbfd946868065fd48376a011761f6c427d1232f7704fe4426342d9bbf9"
+   }
+  },
+  {
+   "function": "laplacian_vorticity_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/laplacian_vorticity_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "d3df09b46033bfcb2aa8299237364efeeb3a852fe05b9c5ebbe7daa1eb04ad73",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/laplacian_vorticity_v841_f32.ad.cu": "cd0843e8e91fb3cc42378a1a70b8e7002f30d65264c8c42d543d267c03339f5d",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_ad.cuh": "f02588cd86e417706a03fcc16b16ec445bc4294c56a3c4efb709d6bc28ab5484",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_branches.cuh": "68b5ebfbfd946868065fd48376a011761f6c427d1232f7704fe4426342d9bbf9"
+   }
+  },
+  {
+   "function": "mass_flux_divergence_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g22-dycore-horizontal-rrfs-c-reconcile",
+   "src": "hex-ad/cuda/dycore/mass_flux_divergence_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "0d161b8634dc0f75b9c5d729a88d0f1e5777c6ebdd6144c917104a7040a5782f",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g22-dycore-horizontal-rrfs-c-reconcile/hex-ad/cuda/dycore/mass_flux_divergence_v841_f32.ad.cu": "3807679b5c582fc3fdb11beac89259aa4cd07d5846ff5a40c4d2cb96c763a37a",
+    "tree/ad/kset/int7f/src/ad1-g22-dycore-horizontal-rrfs-c-reconcile/hex-ad/cuda/dycore/mass_flux_common.cuh": "5859feed8411bd59812e70387373c042e64e210f49ffdebad78da741baa6490f",
+    "tree/ad/kset/int7f/src/ad1-g22-dycore-horizontal-rrfs-c-reconcile/hex-ad/cuda/dycore/horizontal_rrfs_common.cuh": "fa64d7d01e51ea8ca97b4266aaab438ba3068f58521227ce342489d7e84b5688"
+   }
+  },
+  {
+   "function": "mixing_scaling_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile",
+   "src": "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "617ee41003309d30cf78af7d315ffd22e8a5d07f0a4fba4d00cb08f8e9c8a6e6",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile/hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu": "98d0132e9845c1fc17f1a167f29a81ee86ebddbca09888b57f8be60cbcda9895",
+    "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile/hex-ad/cuda/dycore/common.cuh": "78aa9d7dec964e35e2961569ee56dbbbbe864cabaed3d58b58639079dc0e6c87",
+    "tree/ad/kset/int7f/src/ad1-g18-dycore-horizontal-b-reconcile/hex-ad/cuda/dycore/mpas_fp32.cuh": "7bf80ac1814d83dd45c67960144c67c9dcea906f5f6e0a3c77aab870d12db9f5"
+   }
+  },
+  {
+   "function": "modified_theta_dynamics_rate_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g10-dycore-driver-d-reconcile",
+   "src": "hex-ad/cuda/dycore/modified_theta_dynamics_rate_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "e0d790bcfadac15b1f835605cd5209585211eece78aa42f8ee56aee60a5bd602",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g10-dycore-driver-d-reconcile/hex-ad/cuda/dycore/modified_theta_dynamics_rate_v841_f32.ad.cu": "7f45e6f537922dca74ea97cf9afa9149342d2af6b2c29c9ebdaf79a63605b2e2",
+    "tree/ad/kset/int7f/src/ad1-g10-dycore-driver-d-reconcile/hex-ad/cuda/dycore/derivative_support.cuh": "d9b55ec7c0d992e4d91f16730d820ec7e77a52a44b219ab2f2ab1d6da4cdd30f"
+   }
+  },
+  {
+   "function": "moist_cell_coefficients_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-a/tree/ad/kernels/ad1-g09-dycore-driver-c",
+   "src": "hex-ad/cuda/dycore/moist_cell_coefficients_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "5b1d8060f712b376a41c08c4924044ebd405680e6d6a29d0172a2366dd33b606",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/kernels/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/moist_cell_coefficients_v841_f32.ad.cu": "1a22c26ddf4ed9cf1789db9d5e489534222dcfa6071daddd320f4b831a87380b",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/kernels/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/common.cuh": "57aa20b53748eab40a1ba1bf5f2b2eb5435bf666138ddb71ae61035b95cc03df",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/kernels/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/branch_trace.cuh": "c9b915339573df68d5796a279fa0d2c30e3b36a9f535e042f2b4b629d431c210"
+   }
+  },
+  {
+   "function": "moist_dpdz_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c",
+   "src": "hex-ad/cuda/dycore/moist_dpdz_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "f190ae6e41673b8300e75d2153be9d42c5e0c76e29488b7bf2ca0aa9ba8328d9",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/moist_dpdz_v841_f32.ad.cu": "8656de0b07c16e47f5e143677a971b56c8e6c06077f15fe40b89649353f8cbcc",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/common.cuh": "57aa20b53748eab40a1ba1bf5f2b2eb5435bf666138ddb71ae61035b95cc03df",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/branch_trace.cuh": "c9b915339573df68d5796a279fa0d2c30e3b36a9f535e042f2b4b629d431c210"
+   }
+  },
+  {
+   "function": "moist_edge_coefficients_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c",
+   "src": "hex-ad/cuda/dycore/moist_edge_coefficients_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "f8f78c3e5025f7dad1bcfc363d8ca40a6d7161f6e22a44aff8c03227c2c381df",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/moist_edge_coefficients_v841_f32.ad.cu": "d290ebdbf97e53addb69e16bebad36866e59b266db5dc88dc0fbdd922f4ce7f0",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/common.cuh": "57aa20b53748eab40a1ba1bf5f2b2eb5435bf666138ddb71ae61035b95cc03df",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/branch_trace.cuh": "c9b915339573df68d5796a279fa0d2c30e3b36a9f535e042f2b4b629d431c210"
+   }
+  },
+  {
+   "function": "momentum_filter_lap4_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile",
+   "src": "hex-ad/cuda/dycore/momentum_filter_lap4_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "138611f856584d8c8406c4accc16da00dc7fc22a947d57ea5a7d144d6dfde182",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile/hex-ad/cuda/dycore/momentum_filter_lap4_v841_f32.ad.cu": "fbc66a0337f9ab6c3adbc42481cc35145607de1a1edab5cc2f7ae9927be06726",
+    "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile/hex-ad/cuda/dycore/mpas_f32.cuh": "84038165b686f9c58fe704c8c227b546dbe7157473d4be729966336f65506b3e"
+   }
+  },
+  {
+   "function": "momentum_filter_seed_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile",
+   "src": "hex-ad/cuda/dycore/momentum_filter_seed_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "5434e5fedeeb88d3b3f32bb99e019964f69e3a938151fab08bc8941f7093ef47",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile/hex-ad/cuda/dycore/momentum_filter_seed_v841_f32.ad.cu": "68eb2408fafcc9a41eb131db9607cce51dd128116c7407698efb749a15a59192",
+    "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile/hex-ad/cuda/dycore/mpas_f32.cuh": "84038165b686f9c58fe704c8c227b546dbe7157473d4be729966336f65506b3e"
+   }
+  },
+  {
+   "function": "mpas_cmbgb",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_cmbgb/cuda/mpas_cmbgb.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "743c0685db485501f80d9399bfcb4bdd5d6d7a60a2eb5002c7dbaddd13af3e0a",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_cmbgb/cuda/mpas_cmbgb.ad.cu": "cbd92e7693d7a7d2d8d341ea2aa20b7a994b46183b6b55c73fca146837bb4e18"
+   }
+  },
+  {
+   "function": "mpas_init_rwgt",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_init_rwgt/cuda/mpas_init_rwgt.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true"
+   ],
+   "fatbin_sha256": "a6a56acf27f14af23cff7111ae0a01b2e2ee12e21be843a98c7a7afe112f838b",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_init_rwgt/cuda/mpas_init_rwgt.ad.cu": "a9070d71b0591d1bab317b362e2734a3fb95a8d7fb08de1fe04ebd65d6bb4fd5"
+   }
+  },
+  {
+   "function": "mpas_layer_counts",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_layer_counts/cuda/mpas_layer_counts.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "4636f54b5b88951a140a47136c2a1e4a86c8c734ad8d73b3e5d4f3f556fc9a92",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_layer_counts/cuda/mpas_layer_counts.ad.cu": "e9132d5f88c9dbdf64b626a81353e27b1c3d94a2c4406507cf05748c5178bdd6"
+   }
+  },
+  {
+   "function": "mpas_layer_histogram",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_layer_histogram/cuda/mpas_layer_histogram.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false"
+   ],
+   "fatbin_sha256": "8c60459a83b8aab26f1cbfd95c4d0e9b5d02ec41319917b03f95360d3ceefaee",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_layer_histogram/cuda/mpas_layer_histogram.ad.cu": "212877660fa8477942eb32119df71404276787309c215576d985fc7455740a91"
+   }
+  },
+  {
+   "function": "mpas_lw_mcica_gpoint",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_lw_mcica_gpoint/cuda/mpas_lw_mcica_gpoint.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "80c8e264b11ecf68f2564afbbcd8c72962821d229ecf7faa8440ee8b056a1857",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_lw_mcica_gpoint/cuda/mpas_lw_mcica_gpoint.ad.cu": "16f3608cd5c0009fca609638f8fffad8638b7c1404342758b71717b32d073a26"
+   }
+  },
+  {
+   "function": "mpas_lw_mcica_seeds",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_lw_mcica_seeds/cuda/mpas_lw_mcica_seeds.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "b0bb707845dcd12685c97566304c19e12e95407c98f62b79bc96e48a1e532432",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_lw_mcica_seeds/cuda/mpas_lw_mcica_seeds.ad.cu": "da2071dc4577debb9401a515c9ff705e2c12954736054221d08bf71edf02a5cf"
+   }
+  },
+  {
+   "function": "mpas_lw_outputs",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_lw_outputs/cuda/mpas_lw_outputs.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "8c4a5acd96f9369262d23d345170f8b55dace0cc3bc846bd780493a2bc2eb6f1",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_lw_outputs/cuda/mpas_lw_outputs.ad.cu": "996a2fe6a7bcd621a3c5fe75b18f42624d6518d71946eb754e29e01432741f2a"
+   }
+  },
+  {
+   "function": "mpas_lw_prepare",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_lw_prepare/mpas_lw_prepare.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "1cbe110f94d7de2a3831793eb52ceedceabbdcebfe6488a2af08f8e37a58a827",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_lw_prepare/mpas_lw_prepare.ad.cu": "d76eb3533055ea0465e120b56f27ecbf5002332621eebbcce3e338f9b15c2115"
+   }
+  },
+  {
+   "function": "mpas_pressure_mb",
+   "toolchain": "13.4.92",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_pressure_mb/cuda/mpas_pressure_mb.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true"
+   ],
+   "fatbin_sha256": "eebf50822c51e8a693f3b67b1fc2283a28bbccc328c5e4d2165d84a0f65108d0",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_pressure_mb/cuda/mpas_pressure_mb.ad.cu": "302bf06071ad269d33a550708ef8002e0e8dca5f1adb31aaa2451d534fde957e"
+   }
+  },
+  {
+   "function": "mpas_rk_cells_v842_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.mpas_rk_cells_v842_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Iphysics-ad/cuda/hrrrv5",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "d46006b87dea9bf10974910225a79c4b615af21913d9d0ddb019257df1f1adb7",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.mpas_rk_cells_v842_f32.ad.cu": "67516151d2feccded151e8c93a62f8227d97beabcb6ed0898f14dc3c5dd09d2e",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_g28.cuh": "c99ce4849bc85a7dbad08f55609dd8929080b9dd60e22420a146d4f9742ef607",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_magnitude.cuh": "c735af38567ab48149ddfca775a73f1c8a3491f5b36d75fb35540922b4ea57f4",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_scalar_sum.cuh": "f4f6a7843bae2a7174b3a292abdf2057a395903111453f70dc2a919d0affcbb9"
+   }
+  },
+  {
+   "function": "mpas_rk_edges_v842_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.mpas_rk_edges_v842_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Iphysics-ad/cuda/hrrrv5",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "6cb577919def3faa016d94137ae5acb895f47b39a08154552541f395e312fe37",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.mpas_rk_edges_v842_f32.ad.cu": "972bfe4663317eb7c7964974bf01e1bccde75606a66ebc77bcaf11eff0ad144d",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_g28.cuh": "c99ce4849bc85a7dbad08f55609dd8929080b9dd60e22420a146d4f9742ef607",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_magnitude.cuh": "c735af38567ab48149ddfca775a73f1c8a3491f5b36d75fb35540922b4ea57f4"
+   }
+  },
+  {
+   "function": "mpas_sw_aerosol_columns",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_sw_aerosol_columns/cuda/mpas_sw_aerosol_columns.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "f559d90b82f67c5b73d51f1cc931be0ace57cd8c36eea8685a9ed3872d859be4",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_sw_aerosol_columns/cuda/mpas_sw_aerosol_columns.ad.cu": "5da2cedb0560afd5e04b00a7bbb408ff5ee20e8e2460f787342eb55f389f2098",
+    "tree/ad/phys/held/mpas_sw_aerosol_columns/cuda/mpas_sw_aerosol_columns.prelude.cuh": "642a7bb7773074185257d0afc0ec974444791a574b7af887aed893ac407e48c7"
+   }
+  },
+  {
+   "function": "mpas_sw_aerosol_finish",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_sw_aerosol_finish/cuda/mpas_sw_aerosol_finish.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "b0a4df5911fd775601f31e4553b52bceeeb70eeb09f649beaee9f6257cbcfa3c",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_sw_aerosol_finish/cuda/mpas_sw_aerosol_finish.ad.cu": "3829e840ed058042160e81355d50421ceb3c48f4b678deadcc998ceefdd51ab2"
+   }
+  },
+  {
+   "function": "mpas_sw_aerosol_levels",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_sw_aerosol_levels/cuda/mpas_sw_aerosol_levels.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "94ca2ecc3d981931694f88027bc15fcc14c98491181e24db4a4f6529311bd7ba",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_sw_aerosol_levels/cuda/mpas_sw_aerosol_levels.ad.cu": "4dcf36999f006d671d4190c63b4cf5773be078802a1b78e42a7c88e03c804c00"
+   }
+  },
+  {
+   "function": "mpas_sw_diffuse",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/mpas_sw_diffuse.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "ca6638b71623776b488c226727e975d6183956d657b509ca38595906a100093b",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/mpas_sw_diffuse.ad.cu": "b3a1cba1ead58e7b76d02fcbdde14d4fdcf69240f74e688c58129cd9438dc32b",
+    "tree/ad/kset/int7f/src/g3-capture/sw.cu": "c4924070c809401c354e672f0b5a5822a7641ad8f6940b4a6ca5089a4161b5dc",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "mpas_sw_driver_times",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_sw_driver_times/cuda/mpas_sw_driver_times.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "e15f12ed417c819b9689c865fb44532582cb089fc1305366f1497b3755b8c95b",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_sw_driver_times/cuda/mpas_sw_driver_times.ad.cu": "af1112361a9717d4665854199ae090e2755908402774860d12599cdc38eec01e"
+   }
+  },
+  {
+   "function": "mpas_sw_exp_table",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_setup.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=1",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "e2d723edc69f938b26283fe9445976c4e20be8b27e5317ec3274b651dcef6b12",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_setup.ad.cu": "12e94fbda2fa4f1d405deb842dac9379611c547b4da2e735d6ab69e8d9b5daff",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "mpas_sw_gt_aod",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_sw_gt_aod/cuda/mpas_sw_gt_aod.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "37e7df45f09164f36aadf75e852aea3d92437dfc91bc010b457476db4f68d06d",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_sw_gt_aod/cuda/mpas_sw_gt_aod.ad.cu": "4280b056b0adad499e0a83da044c41d8797ab03ea070b8cb970e0ae6b5ce9b38"
+   }
+  },
+  {
+   "function": "mpas_sw_mcica_gpoint",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_sw_mcica_gpoint/cuda/mpas_sw_mcica_gpoint.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "3ce1e49086f416798552260fef4826473490a892b51224991990915778ce19b6",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_sw_mcica_gpoint/cuda/mpas_sw_mcica_gpoint.ad.cu": "faf944d4c12572f0a10ed96aa89318b0992f3993158564b0f3a57d937caa0aec"
+   }
+  },
+  {
+   "function": "mpas_sw_mcica_seeds",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_sw_mcica_seeds/cuda/mpas_sw_mcica_seeds.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "d78e7719064625ec228a8b258f29369709908b08e43244943b9d9114d0d060a0",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_sw_mcica_seeds/cuda/mpas_sw_mcica_seeds.ad.cu": "772e1e60b4a2c6af81b4cc45d4940388de240b4326febaf83a5732d23a8a85ba"
+   }
+  },
+  {
+   "function": "mpas_sw_outputs",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/mpas_sw_outputs.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "2c98375ac04b1bcc28eca619dff39144ea18c2f722b15f72710a6656347983f0",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/mpas_sw_outputs.ad.cu": "19b414826b8a23d703e6efa3835df69f65762dd98d3f938b13f3568c10ec070c",
+    "tree/ad/kset/int7f/src/g3-capture/sw.cu": "c4924070c809401c354e672f0b5a5822a7641ad8f6940b4a6ca5089a4161b5dc",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "mpas_sw_prep",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/mpas_sw_prep.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "af482ba2f3e800ef8fa87cd8f34eefe1acfe9a39b4f7042dc321913b2ae3f77f",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/mpas_sw_prep.ad.cu": "962a725c4f274dbe51be1721a1dc676b5ab46a0659089cf33e30c812b2d402e2",
+    "tree/ad/kset/int7f/src/g3-capture/sw.cu": "c4924070c809401c354e672f0b5a5822a7641ad8f6940b4a6ca5089a4161b5dc",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "mpas_sw_radconst",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_sw_radconst/cuda/mpas_sw_radconst.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "2ba4115e844099b6aebd0b2387141a5fa161f5aae105ca749be9b61c477235fc",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_sw_radconst/cuda/mpas_sw_radconst.ad.cu": "24a995c4e500ced37c14ca00c4eda8ef0f58d23cb9ea20e0803bc011e6b60f70"
+   }
+  },
+  {
+   "function": "mpas_sw_reduce_coefficients",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_setup.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=4",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "8e85212e6ab9d86b349b26b25d8073a9f9442d50b750c6d1da0c1b9407db81b1",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_setup.ad.cu": "12e94fbda2fa4f1d405deb842dac9379611c547b4da2e735d6ab69e8d9b5daff",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "mpas_sw_static_tables",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_setup.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=2",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "d33f24e2a4cbe02ffad25016e73087b576913eddbf08f93b329f47ef824a2ca6",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_setup.ad.cu": "12e94fbda2fa4f1d405deb842dac9379611c547b4da2e735d6ab69e8d9b5daff",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "mpas_sw_weights",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_setup.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=3",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "a43ab539fa0ec538770224da612614fce79c90aafc5c7dc8fbd910271bc809d3",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_setup.ad.cu": "12e94fbda2fa4f1d405deb842dac9379611c547b4da2e735d6ab69e8d9b5daff",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "mpas_transport_handoff_v842_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.mpas_transport_handoff_v842_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Iphysics-ad/cuda/hrrrv5",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "ee53501f284e066d71a344754ab33b335479892769bcf2678610b1767d3e5668",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.mpas_transport_handoff_v842_f32.ad.cu": "5c56936070c083c7cc008f0ecb537f4b26c9c2a3ab95f0ee3710aef864c8decf",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_g28.cuh": "c99ce4849bc85a7dbad08f55609dd8929080b9dd60e22420a146d4f9742ef607",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_magnitude.cuh": "c735af38567ab48149ddfca775a73f1c8a3491f5b36d75fb35540922b4ea57f4",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_scalar_sum.cuh": "f4f6a7843bae2a7174b3a292abdf2057a395903111453f70dc2a919d0affcbb9"
+   }
+  },
+  {
+   "function": "mpas_transport_source_baseline_v842_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.mpas_transport_source_baseline_v842_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Iphysics-ad/cuda/hrrrv5",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "80dd5d4fb58d3bc59a0563ee3a62d5e8d37d9c4c8cbd7535328986238851240f",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.mpas_transport_source_baseline_v842_f32.ad.cu": "d157d743fa14b5023b1427517e68a4f657872084feb343e12ffe7e9829c4fc1a",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_g28.cuh": "c99ce4849bc85a7dbad08f55609dd8929080b9dd60e22420a146d4f9742ef607",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_magnitude.cuh": "c735af38567ab48149ddfca775a73f1c8a3491f5b36d75fb35540922b4ea57f4",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_scalar_sum.cuh": "f4f6a7843bae2a7174b3a292abdf2057a395903111453f70dc2a919d0affcbb9"
+   }
+  },
+  {
+   "function": "mpas_vinterp_level_chain",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/mpas_vinterp_level_chain/cuda/mpas_vinterp_level_chain.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "d7d226efadfd59ec951fc5c5d37e23a57f292ea1089692a3f4ff0ff8ec6f2a11",
+   "source_sha256": {
+    "tree/ad/phys/held/mpas_vinterp_level_chain/cuda/mpas_vinterp_level_chain.ad.cu": "0d9279138098f6245350198f3483d2dd6285e0b73f08c46c03ddb3aedb750b65"
+   }
+  },
+  {
+   "function": "oracle_diags_sfcdiags_ruclsm",
+   "toolchain": "13.0.88",
+   "cwd": "tree/ad/phys/held/oracle_diags_sfcdiags_ruclsm",
+   "src": "oracle_diags_sfcdiags_ruclsm.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-I/work/ad/held/oracle_diags_sfcdiags_ruclsm/src"
+   ],
+   "fatbin_sha256": "4fd38b10b68e3e81c651415ffc6d8ff1649321a83dfa6d428b31e64d635dddfd",
+   "source_sha256": {
+    "tree/ad/phys/held/oracle_diags_sfcdiags_ruclsm/oracle_diags_sfcdiags_ruclsm.ad.cu": "2a85883099fb5221e79d488466ee3efa05b55e54f1869f1d5a35657c45ff86cc",
+    "tree/ad/phys/held/oracle_diags_sfcdiags_ruclsm/ruc_shared_math.cuh": "48d8d099604fcf6f8d9daf5815d65953926c3335ed2eb3f7cf2d1258aad39d8e"
+   },
+   "host": "ubuntu-24.04",
+   "host_why": "CUDA 13.0 crt/math_functions.h does not parse against glibc >= 2.41 (rsqrtf, C23); the original was built on a glibc 2.39 box",
+   "mount_as": "/work/ad/held/oracle_diags_sfcdiags_ruclsm/src",
+   "mount_why": "the file-scope osd::SLOT/IS3D tables get an _INTERNAL_<hash> name that hashes the compiled file's absolute path; the original was built at this path (build/SHA256SUMS)"
+  },
+  {
+   "function": "oracle_drivers_correct_tsk_over_seaice",
+   "toolchain": "13.0.88",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/oracle_drivers_correct_tsk_over_seaice/oracle_drivers_correct_tsk_over_seaice.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false"
+   ],
+   "fatbin_sha256": "4eacd12dbf10b5f8c1b6fb456080aac5bab7b1caae978ffa76ef2dfb5e78025d",
+   "source_sha256": {
+    "tree/ad/phys/held/oracle_drivers_correct_tsk_over_seaice/oracle_drivers_correct_tsk_over_seaice.ad.cu": "7025d160014bb33a598c66a2b158dd307aedf79353bf4fa7654b828863405e9b"
+   },
+   "host": "ubuntu-24.04",
+   "host_why": "CUDA 13.0 crt/math_functions.h does not parse against glibc >= 2.41 (rsqrtf, C23); the original was built on a glibc 2.39 box"
+  },
+  {
+   "function": "oracle_drivers_driver_forcing",
+   "toolchain": "13.0.88",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/oracle_drivers_driver_forcing/oracle_drivers_driver_forcing.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false"
+   ],
+   "fatbin_sha256": "ee3e75230f7a0ab2da9c437397b7d04a6385a0c66c8da27638c6e6a7a44f6fdd",
+   "source_sha256": {
+    "tree/ad/phys/held/oracle_drivers_driver_forcing/oracle_drivers_driver_forcing.ad.cu": "afdc945dadbc99bdc90513c5ba8197d6e1212909114f09f64fb644c644632b8f"
+   },
+   "host": "ubuntu-24.04",
+   "host_why": "CUDA 13.0 crt/math_functions.h does not parse against glibc >= 2.41 (rsqrtf, C23); the original was built on a glibc 2.39 box"
+  },
+  {
+   "function": "oracle_drivers_seaice_finish",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/oracle_drivers_seaice_finish/cuda/seaice_finish.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "52e1a6365d38351744976bdd1846ce2b65d326f23c8700237d0158a0d76f1199",
+   "source_sha256": {
+    "tree/ad/phys/held/oracle_drivers_seaice_finish/cuda/seaice_finish.ad.cu": "c34564890a3b04b4cce87f8939492f7f87611e109a719ababb5f77dc29d1a686",
+    "tree/ad/phys/p6/cuda/seaice.ad.cu": "c8d107f75107296da27973cc8f37260c23e93adb9ce3eee680b328aab621f62c"
+   }
+  },
+  {
+   "function": "oracle_drivers_seaice_prepare",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/oracle_drivers_seaice_prepare/oracle_drivers_seaice_prepare.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false"
+   ],
+   "fatbin_sha256": "1fa93b0f599c3060e87b86505b5397aae0fa939b8af8f41f02d497d8940bf272",
+   "source_sha256": {
+    "tree/ad/phys/held/oracle_drivers_seaice_prepare/oracle_drivers_seaice_prepare.ad.cu": "22956729815cf17f829a35f7b761c0370eab45f9ca86ce74f35f5439ad3dd627"
+   }
+  },
+  {
+   "function": "ozone_latitude",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/g3_setup.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-DG3_KERNEL=5",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "9ab12e7c05214aa7bb90e816dbdb5a5a01faef85bc10e548d29f2432a427b507",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/g3_setup.ad.cu": "12e94fbda2fa4f1d405deb842dac9379611c547b4da2e735d6ab69e8d9b5daff",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "ozone_time",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/ozone_time.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "2e4c3721f42617c1d1012824adc841c2b971bae63c85b06a149b6335034e2db4",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/ozone_time.ad.cu": "ca555d7bcc0bc04043ae0bf0ccdbbc2592fc6f4c407c7fa4e9857fe5b950f508",
+    "tree/ad/kset/int7f/src/g3-capture/radshared.cu": "93cdbe79164fb82e3388fe5feeb387230c74bce4f3695bb5bac7bd7144ca528c",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "prep_interfaces_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.prep_interfaces_weights_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iphysics-ad/cuda/hrrrv5",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "9b547bb5df44ebe60e75ec8f6d5d1ec84a72114d43af28508bad2468e8c0ba77",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.prep_interfaces_weights_v841_f32.ad.cu": "779c074d205fa213a4fbef16509af1784ef908b2148e5eeed3fb516226988792",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.prep_interfaces_shared.cuh": "6002c45a185c7f90a4bf286d8ac978728bda03daecf38d715817559489c7d854",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_g26.cuh": "8d29e1ee74fe9a6ab728225d68ab8f9ad9d3946efa975a2132d233fac4f59d59",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_magnitude.cuh": "c735af38567ab48149ddfca775a73f1c8a3491f5b36d75fb35540922b4ea57f4",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.gfk_log_pinned.cuh": "173615b3d41509afe698eb858c064111b1ac1979cbe03103813dba9f7823464c"
+   }
+  },
+  {
+   "function": "prep_mass_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.prep_mass_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iphysics-ad/cuda/hrrrv5",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "7c25faf61fc6d93455dc1f94f10c0c60fa37e248718e486e7f213b64f5a81241",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.prep_mass_v841_f32.ad.cu": "f10afa30691c1a5e1505ba664a62f42b670f04e7c6e1b15a8830ff4198d97f73",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_g26.cuh": "8d29e1ee74fe9a6ab728225d68ab8f9ad9d3946efa975a2132d233fac4f59d59",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_magnitude.cuh": "c735af38567ab48149ddfca775a73f1c8a3491f5b36d75fb35540922b4ea57f4"
+   }
+  },
+  {
+   "function": "pressure_gradient_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g22-dycore-horizontal-rrfs-c-reconcile",
+   "src": "hex-ad/cuda/dycore/pressure_gradient_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "537437a1fd8226f9e01b5ee8a222a6c4ea223c8cae8e348aee53268fd5098746",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g22-dycore-horizontal-rrfs-c-reconcile/hex-ad/cuda/dycore/pressure_gradient_v841_f32.ad.cu": "f7dc5b4c22024657666ccbd2261f7f5e1528367b68277d17acc77c54a7d83982",
+    "tree/ad/kset/int7f/src/ad1-g22-dycore-horizontal-rrfs-c-reconcile/hex-ad/cuda/dycore/horizontal_rrfs_common.cuh": "fa64d7d01e51ea8ca97b4266aaab438ba3068f58521227ce342489d7e84b5688"
+   }
+  },
+  {
+   "function": "profile_from_mpas",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/profile_from_mpas.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "5bff8903f58920242baf3766eb0f01a66f6c22121661ad874f9ab6b40db0e0f8",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/profile_from_mpas.ad.cu": "b8573050c6f35e75cce537aa0d382f53852de4bbff3716b7ae30ebc8c1f48bc7",
+    "tree/ad/kset/int7f/src/g3-capture/radshared.cu": "93cdbe79164fb82e3388fe5feeb387230c74bce4f3695bb5bac7bd7144ca528c",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "profile_to_mpas",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/profile_to_mpas.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "ce57bd4fca690ec9d7a6a7d956af511de8c42f803ad490fcf3389b7ca510b51e",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/profile_to_mpas.ad.cu": "3af471676efb844367e4d76f9246ea5ec0665ef75d6635922f3a10f236da071f",
+    "tree/ad/kset/int7f/src/g3-capture/radshared.cu": "93cdbe79164fb82e3388fe5feeb387230c74bce4f3695bb5bac7bd7144ca528c",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "project_edges_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.project_edges.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-std=c++17",
+    "--fmad=false",
+    "--ftz=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "806465979099700ad81da8a7ae6c88a1ab8f3c3d551acb04998f8d0a8a97d611",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.project_edges.ad.cu": "b09a2dc49b129374a305a9a4bb33fdcbdc4a54c9d6c916bd33993de72fa385a4",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_g27.cuh": "5e83844cac406fc57623ade4a3ed0f112cce7418987b36dc88942a504ae9c064",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.member_magnitude.cuh": "c735af38567ab48149ddfca775a73f1c8a3491f5b36d75fb35540922b4ea57f4"
+   }
+  },
+  {
+   "function": "pv_apvm_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-a/tree/ad/kernels/ad1-g25-dycore-horizontal-v841-c",
+   "src": "hex-ad/cuda/dycore/pv_apvm_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "--ftz=true",
+    "--std=c++14",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "9e83c762ff0983f83a4f31736080ff9cfdff0c2874fa05c65e1a50e6ca07a8c0",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/kernels/ad1-g25-dycore-horizontal-v841-c/hex-ad/cuda/dycore/pv_apvm_v841_f32.ad.cu": "2f8ac1847085376875915069ff725407bbddacd884b5f6adcadc942e0e4d6c99",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/kernels/ad1-g25-dycore-horizontal-v841-c/hex-ad/cuda/dycore/horizontal_v841_ad_common.cuh": "29d9c4b79ec273a425b6776645cd32ae824f2195a098f994568263b9aeba8011",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/kernels/ad1-g25-dycore-horizontal-v841-c/hex-ad/cuda/dycore/horizontal_v841_branch.cuh": "80be4e3c5e77897cec68e53a5e92c32a03292aa4b589f5bab3e0bd659763cade"
+   }
+  },
+  {
+   "function": "pv_cell_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g21-dycore-horizontal-rrfs-b-reconcile",
+   "src": "hex-ad/cuda/dycore/pv_cell_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=true",
+    "--ftz=true",
+    "-DMPAS_FTZ_FALLBACK_ENABLED=0",
+    "-DHEX_NUMERICS_FAST=1",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "f6122e23592c8d90cbe1775b16957ef1d908e1785b394d63c3dc5126219d8b10",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g21-dycore-horizontal-rrfs-b-reconcile/hex-ad/cuda/dycore/pv_cell_v841_f32.ad.cu": "ce9d3a31326b8fe75de4995679d73fc8e4f811c35456c8ab354dacf9da513246",
+    "tree/ad/kset/int7f/src/ad1-g21-dycore-horizontal-rrfs-b-reconcile/hex-ad/cuda/dycore/hex_mpas_fp32_ad.cuh": "cb81cd9f7a3ef5a0af48ca4f6cbba825be20658ad8952bafd0bb389ce7470924",
+    "tree/ad/kset/int7f/src/ad1-g21-dycore-horizontal-rrfs-b-reconcile/hex-ad/cuda/dycore/hex_rrfs_branch_ad.cuh": "eee4858af40d95a5ac77c0493d49428b2140a8245da5ad8de1fb7b87373e26db",
+    "tree/ad/kset/int7f/src/ad1-g21-dycore-horizontal-rrfs-b-reconcile/hex-ad/cuda/dycore/hex_mpas_branch_ad.cuh": "6372ae362afe924798207aef96a48bd594d55b5c2fb0d91194f6b22b1d46bb62"
+   }
+  },
+  {
+   "function": "pv_edge_base_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile",
+   "src": "hex-ad/cuda/dycore/pv_edge_base_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "85cd716413522dda8465061eb33746b312c358d002e0983b4608aa9b0dcf6352",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/pv_edge_base_f32.ad.cu": "2fb1ccddd93b5063e582d68376ee6e38d451f13575a5f98917dbb7c7a8c4fd14",
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/pv_edge_base_f32.branch.cuh": "aae28daa8488ae1fb8309f0f6bafed31722ccfd57540a6bb7dd49666500c9888",
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/ad_branch_ops.cuh": "8f455a0ab344d8809d331f642156240708416e714835f0e9ba0c751387524db2"
+   }
+  },
+  {
+   "function": "reconstruct_winds_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g26-dycore-physics-prep-v841",
+   "src": "hex-ad/cuda/dycore/reconstruct_winds_v841_f32.ad.cu",
+   "flags": [
+    "-gencode=arch=compute_89,code=sm_89",
+    "-gencode=arch=compute_120,code=sm_120",
+    "-gencode=arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "73e464276412b04a84565e64bcc4c5fde249c48f262bddcadf00cf8d6ceb714c",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g26-dycore-physics-prep-v841/hex-ad/cuda/dycore/reconstruct_winds_v841_f32.ad.cu": "5216b0d81174472e66b81014390ef79a8df237de284bf1dbb9bc9aa23c0e0b0f",
+    "tree/ad/kset/int7f/src/ad1-g26-dycore-physics-prep-v841/hex-ad/cuda/dycore/prep_branch_record.cuh": "4e395d07abfbbadf657ae8efa11559791c4bdaf22bc5e3090678eb531a4f581b"
+   }
+  },
+  {
+   "function": "recover_cells_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c",
+   "src": "hex-ad/cuda/dycore/recover_cells_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "9cde4d6d59aa045509d25bc01665e8a7ade5df7ab9c719e38c4008e107b82097",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/recover_cells_f32.ad.cu": "d49c11e1ca9e2a12f492b5db3c987c216e3062249997bc7067350c43237d6adb",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/common.cuh": "57aa20b53748eab40a1ba1bf5f2b2eb5435bf666138ddb71ae61035b95cc03df",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/branch_trace.cuh": "c9b915339573df68d5796a279fa0d2c30e3b36a9f535e042f2b4b629d431c210"
+   }
+  },
+  {
+   "function": "recover_edge_velocity_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g30-dycore-recovery-reconcile",
+   "src": "hex-ad/cuda/dycore/recover_edge_velocity.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "--fmad=false",
+    "--ftz=true",
+    "-O3",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "f07b2c5dcdcb0392bd05d38f390828796904615f247e34a0e86538a6b3f8b60f",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g30-dycore-recovery-reconcile/hex-ad/cuda/dycore/recover_edge_velocity.ad.cu": "cd9f3d2f52574b1f1e077ebc08a79163b46819e584df31c6fe9e9ffd7e2e8587",
+    "tree/ad/kset/int7f/src/ad1-g30-dycore-recovery-reconcile/hex-ad/cuda/dycore/recovery_math.cuh": "c48cdafb70d6c04282bcab21ede2cbfa039de2aed50b830eaa35dd9bd57e6566",
+    "tree/ad/kset/int7f/src/ad1-g30-dycore-recovery-reconcile/hex-ad/cuda/dycore/recovery_branch_record.cuh": "eb3fe1739796109f99349c914cc8404db31e93b1b95914820d41ad1bd134c70b"
+   }
+  },
+  {
+   "function": "recover_edges_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c",
+   "src": "hex-ad/cuda/dycore/recover_edges_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "992a8c0fae4eb07f09f0be16843549a6fe4a1304c82448adf88d083b69e6deac",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/recover_edges_f32.ad.cu": "e7e0f7e55989e7b604ca22ea55f087f9931d268c05c2a0720f6b6c968d8c9d62",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/common.cuh": "57aa20b53748eab40a1ba1bf5f2b2eb5435bf666138ddb71ae61035b95cc03df",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/branch_trace.cuh": "c9b915339573df68d5796a279fa0d2c30e3b36a9f535e042f2b4b629d431c210"
+   }
+  },
+  {
+   "function": "recover_interfaces_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c",
+   "src": "hex-ad/cuda/dycore/recover_interfaces_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "63ba0bc16e39293d7ee68fcf2efbafdc026874f4d9c6c7900743b14d2a4985fe",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/recover_interfaces_f32.ad.cu": "146faf28f66b41004fba67c5ab29d1a039ca07b382cbf831b6409ac79b72b7e0",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/common.cuh": "57aa20b53748eab40a1ba1bf5f2b2eb5435bf666138ddb71ae61035b95cc03df",
+    "tree/ad/kset/int7f/src/ad1-g09-dycore-driver-c/hex-ad/cuda/dycore/branch_trace.cuh": "c9b915339573df68d5796a279fa0d2c30e3b36a9f535e042f2b4b629d431c210"
+   }
+  },
+  {
+   "function": "recover_terrain_w_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g30-dycore-recovery-reconcile",
+   "src": "hex-ad/cuda/dycore/recover_terrain_w.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "--fmad=false",
+    "--ftz=true",
+    "-O3",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "354a8a64ca9173b44ebbb3f160fda564b964cca66a39634416a5be96ab4edba3",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g30-dycore-recovery-reconcile/hex-ad/cuda/dycore/recover_terrain_w.ad.cu": "e60fac3af312f4813df93f5f481d267903286a5c9e2962a19fdc150a20e6cd9e",
+    "tree/ad/kset/int7f/src/ad1-g30-dycore-recovery-reconcile/hex-ad/cuda/dycore/recovery_math.cuh": "c48cdafb70d6c04282bcab21ede2cbfa039de2aed50b830eaa35dd9bd57e6566",
+    "tree/ad/kset/int7f/src/ad1-g30-dycore-recovery-reconcile/hex-ad/cuda/dycore/recovery_branch_record.cuh": "eb3fe1739796109f99349c914cc8404db31e93b1b95914820d41ad1bd134c70b"
+   }
+  },
+  {
+   "function": "reference_wind_edge_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/reference_wind_edge_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "54922d9b5e29fd63e6d7bedfc5841def1791896e498a2ffa4ae37c98867b8b22",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/reference_wind_edge_v841_f32.ad.cu": "ac1d7595b1bb4859e90ce1e78a578bba44a28bf476002aaf1199b19840f4470a",
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/dynamics_v841_ad.cuh": "15330aff3b2a0412641e8fe3460b9c2e46b948ec93a9b318701e9b4e3a36704c"
+   }
+  },
+  {
+   "function": "rlw_cldprmc_coalesced",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_cldprmc_coalesced/rlw_cldprmc_coalesced.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true"
+   ],
+   "fatbin_sha256": "3d1a5c44a9e81a36e5beaf640804864f338a7d2f0f5b4c28f72b88d5692c7b04",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_cldprmc_coalesced/rlw_cldprmc_coalesced.ad.cu": "38932bfb536648a7e373868f06e805d88fb61bb9a83702ce0bd06230776271b3"
+   }
+  },
+  {
+   "function": "rlw_inatm",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_inatm/cuda/rlw_inatm.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "cdefa72c297c08030c7107546a42e77a633275447c057a3f95ea5631c36e996e",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_inatm/cuda/rlw_inatm.ad.cu": "f04711a39e6e2ef7521f3007c3c49bb241866858de5ed8cb125564cb2090872c"
+   }
+  },
+  {
+   "function": "rlw_rtrn_accum_rows",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_rtrn_accum_rows/cuda/rlw_rtrn_accum_rows.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "d7d1c5c81ac16862c0c5350d7f95812c2dbb4ec5fc7aef2b73eb01ccd4000012",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_rtrn_accum_rows/cuda/rlw_rtrn_accum_rows.ad.cu": "a6350b49e173784e5e6e6dffb1d025993da1fd7e5924a697c518f231a118f891"
+   }
+  },
+  {
+   "function": "rlw_rtrn_final",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_rtrn_final/cuda/rlw_rtrn_final.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "1bba9905a53d1cef82896376bf4a4e4274d701a7bc253fd263bed47d22130149",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_rtrn_final/cuda/rlw_rtrn_final.ad.cu": "1381dbe41fce21f922f536917972227cd937a164917ce9acff4fd72547cd4281"
+   }
+  },
+  {
+   "function": "rlw_rtrn_march_coalesced",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_rtrn_march_coalesced/march-ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "c5760da3e50dffa88d3d6efbb51ccfb0d85a5765382de3ad4af01d42d6039774",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_rtrn_march_coalesced/march-ad.cu": "8e82fccf0c5fc340b61a3ecf9c4c8e00faf1c74de6c18ce767e168a756a1efe1"
+   },
+   "byte_reproducible": false,
+   "why": "nvcc 13.5.37 cicc output for this kernel varies run to run (address-space layout dependent: 4 of 4 builds differ, 3 of 3 equal under setarch -R); c5760da3 was one draw. Identity is shown by the per-launch replay, not by bytes"
+  },
+  {
+   "function": "rlw_rtrn_prol_gpoints",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_rtrn_prol_gpoints/cuda/rlw_rtrn_prol_gpoints.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "b59ba7102f34dddb20df398cafa6b9b41111d5ecaa7f1ee594e708dbef86b262",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_rtrn_prol_gpoints/cuda/rlw_rtrn_prol_gpoints.ad.cu": "1875045f0c3029f7c0455a0d52cd0a19e1ddf762bf502f3f531d360b06ca0a4e"
+   }
+  },
+  {
+   "function": "rlw_rtrn_secdiff",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_rtrn_secdiff/cuda/rlw_rtrn_secdiff.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "3894d87fe9d8e4df92176236f3e858b715550b641da844da6332bbb74d04fca7",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_rtrn_secdiff/cuda/rlw_rtrn_secdiff.ad.cu": "62f1461ec35fe4206c0bc80f922eb14cf95c25f1efa9cce05d790881e644d620"
+   }
+  },
+  {
+   "function": "rlw_setcoef",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_setcoef/cuda/rlw_setcoef.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "2326613d9b05ef7c74d4f7f8a29e6051367c081035fc7c765ea43b7c81191fe1",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_setcoef/cuda/rlw_setcoef.ad.cu": "46cb97c4fa848d49f63e279b7e65fd124d1012daa918848a24669225ccb04269"
+   }
+  },
+  {
+   "function": "rlw_taut",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rlw_taut/cuda/rlw_taut.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true"
+   ],
+   "fatbin_sha256": "959eca8233257f9a01e0eb6f75d323936eaa0e1b2861b40f2dbb5641a342c801",
+   "source_sha256": {
+    "tree/ad/phys/held/rlw_taut/cuda/rlw_taut.ad.cu": "261c653f5649e547e3effc40e304d141479d846965e67320d58bf4edf4e6be87"
+   }
+  },
+  {
+   "function": "rrfs_glue_copy_plan",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.rrfs_copy_plan.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iphysics-ad/cuda/hrrrv5",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "ab8e9cc6748a938cf5cecf9bd1b0fdfec7ad655db3e78cb46710f751c2981ece",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.rrfs_copy_plan.ad.cu": "8ac98d8525e62443a3c420b57235e2561fb293298a50cae8fe3d0b7a055d8d0f",
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.copy_reduce.cuh": "16ce0a11067a75eb7fb34742e1bea7bd919546bede0c44b5f78d1e9782279472"
+   }
+  },
+  {
+   "function": "rrfs_pbl_radiation_sum",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad2-hrrrv5-glue",
+   "src": "physics-ad/cuda/hrrrv5/glue.pbl_radiation_sum.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "3b4b90be9a722dbab72a2e3d1c3bd7bf136b2689379a57d9e7a0404ed5726962",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad2-hrrrv5-glue/physics-ad/cuda/hrrrv5/glue.pbl_radiation_sum.ad.cu": "86d1e51cf54238746a967617137b4aaf6c904fce07708d19f19bb647baf078a5"
+   }
+  },
+  {
+   "function": "rrfs_post_transport_copy",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/phys/l4speed",
+   "src": "cuda/rrfs_post_transport_copy.l4.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iref/glue",
+    "-Icuda",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "45e93dc6da792f2250c49f3bad71ab2bc8a43b1dfbcbfeeb5b269a5ed45d0134",
+   "source_sha256": {
+    "tree/ad/phys/l4speed/cuda/rrfs_post_transport_copy.l4.cu": "6aee9a86452681f0b87a413a7a73d95b416794ca267d56ba6e52b978a0cd55df",
+    "tree/ad/phys/l4speed/ref/glue/glue.copy_reduce.cuh": "16ce0a11067a75eb7fb34742e1bea7bd919546bede0c44b5f78d1e9782279472"
+   }
+  },
+  {
+   "function": "rrfs_radiation_unpack",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/rrfs_radiation_unpack.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "4f200bcd17cbd9802c547692ce52374e84d2f7df8bf2a054f3629c85f94acd6a",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/rrfs_radiation_unpack.ad.cu": "5020839637d43c07d533c27457bd2085973b9e6a602cde9f88a8132f4f80afaa",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "rrfs_surface_spacing",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/kset/g8",
+   "src": "physics-ad/cuda/hrrrv5/glue.surface_spacing.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "69214a5777607b01de3e3df5f1010cea84c6dd068995357e5717f0c575854ebf",
+   "source_sha256": {
+    "tree/ad/kset/g8/physics-ad/cuda/hrrrv5/glue.surface_spacing.ad.cu": "55be4ce389bf19e0e210587fae56ecb27e4e2cdbfa3dfdc7de20d3b64dfac9fb",
+    "tree/ad/kset/g8/physics-ad/cuda/hrrrv5/g8_reduce.cuh": "9992f9a69716c2b55b842d7a8889903674d96791b6bb94653adc98dffeba6aaa"
+   }
+  },
+  {
+   "function": "rsw_cldprmc_b",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rsw_cldprmc_b/rsw_cldprmc_b.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true"
+   ],
+   "fatbin_sha256": "310aa70e4a45f5864ddb97d59461f8b3f74697815288f13209fd11468574a657",
+   "source_sha256": {
+    "tree/ad/phys/held/rsw_cldprmc_b/rsw_cldprmc_b.ad.cu": "19aa8ae34eb34bd6df32b70c804a0adb640a081ef11c0a15ff68955e968fec8c"
+   }
+  },
+  {
+   "function": "rsw_inatm_layers_b",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rsw_inatm_layers_b/cuda/rsw_inatm_layers_b.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "62c2ef46c1c1e6c2d368f61ffc9ddcd2e35d977db9d4710fc64e0147de5e4cb8",
+   "source_sha256": {
+    "tree/ad/phys/held/rsw_inatm_layers_b/cuda/rsw_inatm_layers_b.ad.cu": "22d8fc6602a15b7f820773455a3707d7a340a0d6be251ace371ba3fc590ea0c6"
+   }
+  },
+  {
+   "function": "rsw_laysolfr_b",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rsw_laysolfr_b/cuda/rsw_laysolfr_b.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "483f74d8fafcfcad71241bf7d51fc9ad262b5102a9e512be253718a5853b6443",
+   "source_sha256": {
+    "tree/ad/phys/held/rsw_laysolfr_b/cuda/rsw_laysolfr_b.ad.cu": "62f1724020bc9498fe8ab8be4a2ad99b295faafc50ec67b556d2f99e49ba8646"
+   }
+  },
+  {
+   "function": "rsw_post_b",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/rsw_post_b.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "f5facafd431382748363c479fbc53f666e29801c8779bb7e47f0201dfd5ca5c5",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/rsw_post_b.ad.cu": "6167ea8bfb0f9630c65969d8236e4ff6f4764073a4bd22bc9888a45e9c6bf0af",
+    "tree/ad/kset/int7f/src/g3-capture/sw.cu": "c4924070c809401c354e672f0b5a5822a7641ad8f6940b4a6ca5089a4161b5dc",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "rsw_setcoef_b",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rsw_setcoef_b/cuda/rsw_setcoef_b.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "0bd4fe62fc8824b9f62703381351c8645e8b1ea798acdadfc877b2e06f4f63fd",
+   "source_sha256": {
+    "tree/ad/phys/held/rsw_setcoef_b/cuda/rsw_setcoef_b.ad.cu": "56f17b6b6491e3ca11e3786e91612b93f5cbc63b2800e1fcfc196740e512ee06"
+   }
+  },
+  {
+   "function": "rsw_sfluxzen_b",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rsw_sfluxzen_b/cuda/rsw_sfluxzen_b.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "a5b027ae088052b094721a55da1b43b8f1eb068284d9cbc0e5ff1f45cd6f48c6",
+   "source_sha256": {
+    "tree/ad/phys/held/rsw_sfluxzen_b/cuda/rsw_sfluxzen_b.ad.cu": "511468cd4311f23c642a2f0ffa0f8069d00d912ac41967e0145a7edd5b5e0dfc"
+   }
+  },
+  {
+   "function": "rsw_spc_accum_b",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rsw_spc_accum_b/cuda/rsw_spc_accum_b.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "dfc33875b7636b0bfb1eab64d083f7cdb605fe0f7cf488fa3b741869f385b664",
+   "source_sha256": {
+    "tree/ad/phys/held/rsw_spc_accum_b/cuda/rsw_spc_accum_b.ad.cu": "f27e29788db73950f9a7770380dc5bcffdff0ae7daef2eeb1f39caceaabb97ca"
+   }
+  },
+  {
+   "function": "rsw_spcvmc_gpt_b",
+   "toolchain": "13.2.86",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/rsw_spcvmc_gpt_b/cuda/rsw_spcvmc_gpt_b.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin",
+    "-Xptxas",
+    "-v"
+   ],
+   "fatbin_sha256": "45daa1b1cd640aaea3ea45bfece36b95a729ffabf2044ea6ae925969cacee702",
+   "source_sha256": {
+    "tree/ad/phys/held/rsw_spcvmc_gpt_b/cuda/rsw_spcvmc_gpt_b.ad.cu": "d482567bc73bf298646b7ee0a406daab86c54a9e246a446183383d8e00568bb1"
+   }
+  },
+  {
+   "function": "smagorinsky_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile",
+   "src": "hex-ad/cuda/dycore/smagorinsky_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "48ba6102a64f297007c42f03a0c2e5e2cfc501600b8b968b15c43c14b1863c82",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile/hex-ad/cuda/dycore/smagorinsky_v841_f32.ad.cu": "9bda2be87913da97ee27102f566fedd88a85c08fc79816f6586a9c24bd5c8c65",
+    "tree/ad/kset/int7f/src/ad1-g24-dycore-horizontal-v841-b-reconcile/hex-ad/cuda/dycore/mpas_f32.cuh": "84038165b686f9c58fe704c8c227b546dbe7157473d4be729966336f65506b3e"
+   }
+  },
+  {
+   "function": "solar",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/phys/g3",
+   "src": "cuda/solar.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "-I../../kset/int7f/src/g3-capture",
+    "-Icuda"
+   ],
+   "fatbin_sha256": "0bada47ae777c469fb836a037fbe4904d3e88c59fbf890c401c149b17a71bdb5",
+   "source_sha256": {
+    "tree/ad/phys/g3/cuda/solar.ad.cu": "da2c54fce0f273d2e7fbcf7031f9f7b2dc012dc9096d4b11361a3420416e84fa",
+    "tree/ad/kset/int7f/src/g3-capture/solar.cu": "4131e0625d8f343de89e6be265550297d42acd4d65c0a1c3920cca4f3cebc7e1",
+    "tree/ad/phys/g3/cuda/g3_common.cuh": "f61da187d1315dd338017e31a9b3599af22b95def073ef3c7bcd2ae62dfa6f06"
+   }
+  },
+  {
+   "function": "split_flux_add_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g12-dycore-dynamics-v841-b-reconcile",
+   "src": "hex-ad/cuda/dycore/split_flux_add_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--ftz=false",
+    "--fmad=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "03d5412245ac2ce3d037174425ca5cb75f3761676c9dac4224b4524e9fdffca5",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g12-dycore-dynamics-v841-b-reconcile/hex-ad/cuda/dycore/split_flux_add_v841_f32.ad.cu": "df241ff2bc5389ef8e8853f127ec583a776e1fa67b47d6fca3ea17ae1facd911"
+   }
+  },
+  {
+   "function": "split_flux_finish_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g12-dycore-dynamics-v841-b-reconcile",
+   "src": "hex-ad/cuda/dycore/split_flux_finish_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--ftz=false",
+    "--fmad=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "07048afac61371282b8a9826d967f9eb71c06df11e2c4217e3d77b7f3aea1b9c",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g12-dycore-dynamics-v841-b-reconcile/hex-ad/cuda/dycore/split_flux_finish_v841_f32.ad.cu": "843173655d05f54cf8c939fdc2f16b7604f77e0fb611a498b516dd41a3addfb1"
+   }
+  },
+  {
+   "function": "split_flux_first_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g12-dycore-dynamics-v841-b-reconcile",
+   "src": "hex-ad/cuda/dycore/split_flux_first_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--ftz=false",
+    "--fmad=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "e1cbed33aeb04649383778c8ddeb80a75a6d420cb97daf86ddc7fd13ddad8056",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g12-dycore-dynamics-v841-b-reconcile/hex-ad/cuda/dycore/split_flux_first_v841_f32.ad.cu": "8aad1bebdc61dca0614b78818e5045a18566ca042a50d80188a85f17f0c38ea9"
+   }
+  },
+  {
+   "function": "tangential_velocity_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile",
+   "src": "hex-ad/cuda/dycore/tangential_velocity_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "b5ccadf28cb0c3c434029d86b88d37fd30b8577fc914e5160c13f2fc5fa07101",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/tangential_velocity_f32.ad.cu": "f6edd62f19abafffe19176abac9cf3be7e5961b4c2c5448b73e5c1d582d7c2df",
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/tangential_velocity_f32.branch.cuh": "1f1785eaa369ca2ea1fa4e2bce49c1a12ea6c68c7e41a329d07d1d047b7ce2d5",
+    "tree/ad/kset/int7f/src/ad1-g17-dycore-horizontal-a-reconcile/hex-ad/cuda/dycore/ad_branch_ops.cuh": "8f455a0ab344d8809d331f642156240708416e714835f0e9ba0c751387524db2"
+   }
+  },
+  {
+   "function": "tempo_emissions",
+   "toolchain": "13.4.92",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/tempo_emissions/tempo_emissions.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "--fmad=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "490e3f3724593eb0fb5b9aac75499e03891091c8515a7466bbb7c06c088b83c3",
+   "source_sha256": {
+    "tree/ad/phys/held/tempo_emissions/tempo_emissions.ad.cu": "f58e412b714f1c279fa130df47ffbb9314150b7b8a395fd20fbe003a19bb86a7"
+   }
+  },
+  {
+   "function": "tempo_order_hist",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/tempo_order_hist/tempo_order_hist.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "ef64cb4813841426cefc83b30798165077d5d264dc0fa4a4c1e6e4929c532996",
+   "source_sha256": {
+    "tree/ad/phys/held/tempo_order_hist/tempo_order_hist.ad.cu": "49be765b8800d615f38ca7442de2df62b080206b2740c40d19e92ba4cdb347ee"
+   }
+  },
+  {
+   "function": "tempo_order_scatter",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/tempo_order_scatter/tempo_order_scatter.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "d692ef5f29194a3ad34bd86865fc964b130acd340318fba4d60739c384a7dcce",
+   "source_sha256": {
+    "tree/ad/phys/held/tempo_order_scatter/tempo_order_scatter.ad.cu": "817daa575db48536172607908eaf598c5ef3a744e18705cd561a347f12a3cff7"
+   }
+  },
+  {
+   "function": "tempo_to",
+   "toolchain": "13.5.37",
+   "cwd": ".",
+   "src": "tree/ad/phys/held/tempo_to/cuda/tempo_to.ad.cu",
+   "flags": [
+    "-fatbin",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "--prec-div=true",
+    "--prec-sqrt=true"
+   ],
+   "fatbin_sha256": "22e58fb8fb362bba5b6133b8da57205d17a623d85bd8829d3562a53d4a8743d0",
+   "source_sha256": {
+    "tree/ad/phys/held/tempo_to/cuda/tempo_to.ad.cu": "7b189f8502edca3c981098c74abdcf9d024557daf5910548a51016c24a6696bc"
+   }
+  },
+  {
+   "function": "tendency_w_to_omega",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g01-acoustic-acoustic-reconcile",
+   "src": "hex-ad/cuda/acoustic/tendency_w_to_omega.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "f7b676c3fd560b0386916b2fe7061735503cfc66bb1b986484a48cbe494f0069",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g01-acoustic-acoustic-reconcile/hex-ad/cuda/acoustic/tendency_w_to_omega.ad.cu": "8b1c5b310ca182cfbfba75ad28e7d02d6545d63c049ae94390f0aecb7ae5151d"
+   }
+  },
+  {
+   "function": "theta_edge_flux_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g07-dycore-driver-a-reconcile",
+   "src": "hex-ad/cuda/dycore/theta_edge_flux_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "e7c40b7d8e331ec4c574d8726f85426144bce7ff6a7fec48f980818d6645f6e7",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g07-dycore-driver-a-reconcile/hex-ad/cuda/dycore/theta_edge_flux_f32.ad.cu": "a1942056090448e14d25c0813808b2d8b7d2e22449b0b1ff7a5db7138bdb26dd"
+   }
+  },
+  {
+   "function": "theta_filter_lap2_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/theta_filter_lap2_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "5efdabee8eeb8e5ce5e0f464218f77ea4110efd43762c23bc00a1442547e9693",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/theta_filter_lap2_v841_f32.ad.cu": "cb09d1377d71e9943d9ec8208a14f4539ec8b15605fa3e879b78a1ce085a7c94",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_ad.cuh": "f02588cd86e417706a03fcc16b16ec445bc4294c56a3c4efb709d6bc28ab5484",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_branches.cuh": "68b5ebfbfd946868065fd48376a011761f6c427d1232f7704fe4426342d9bbf9"
+   }
+  },
+  {
+   "function": "theta_filter_lap4_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/theta_filter_lap4_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "9c11c3e590ec11a9a2c86a543450f369ef1910e14d6bad161ac137757a498df7",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/theta_filter_lap4_v841_f32.ad.cu": "07ec86de09e1cfbacb359b498af3c635e2f912d7207a6310b56519dda93b09c3",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_ad.cuh": "f02588cd86e417706a03fcc16b16ec445bc4294c56a3c4efb709d6bc28ab5484",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_branches.cuh": "68b5ebfbfd946868065fd48376a011761f6c427d1232f7704fe4426342d9bbf9"
+   }
+  },
+  {
+   "function": "theta_finish_corrected_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/theta_finish_corrected_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "a19b431a89f59fe17f37df8fc56ce9927bf229c15dc19d4d95084ccae4c8f6ed",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/theta_finish_corrected_v841_f32.ad.cu": "6cd3d96c3baaccdbd603340f6e54b6faae9d7ff7b39fd9611883ecc6ec01e86f",
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/dynamics_v841_ad.cuh": "15330aff3b2a0412641e8fe3460b9c2e46b948ec93a9b318701e9b4e3a36704c"
+   }
+  },
+  {
+   "function": "theta_finish_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/theta_finish_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "00ed83e1b431148ec638ccb486dcfd630b2e4d36db883cb7960e08eae0a5df8c",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/theta_finish_v841_f32.ad.cu": "de31841a2b7014ffc75333043093a2112a976878d6ff825e4e30c902343228bd",
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/dynamics_v841_ad.cuh": "15330aff3b2a0412641e8fe3460b9c2e46b948ec93a9b318701e9b4e3a36704c"
+   }
+  },
+  {
+   "function": "theta_vertical_flux_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g07-dycore-driver-a-reconcile",
+   "src": "hex-ad/cuda/dycore/theta_vertical_flux_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "816f33bcf508c292da1fa61b7b6960433b00c91cbb3f7046076303a350f594bb",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g07-dycore-driver-a-reconcile/hex-ad/cuda/dycore/theta_vertical_flux_f32.ad.cu": "8682002a4ce7741a3f59b2d6f6fa1d7e303847a33cc077f8a63f72210f1df993"
+   }
+  },
+  {
+   "function": "transport_edge_values",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport",
+   "src": "cuda/u2_transport_ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "--ftz=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "837c2b2466ae952599ecc8bb5ec89f469b470aa886dbf669d9b586868c4c3856",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_transport_ad.cu": "599399a76b4e44a7e5f28113911901f7291c9dede8d1694a7d009eae11614c03",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_fp32_helpers.cuh": "3781e8a393189e6dcbc78c6e9c5f8104d0bed5e018d161a759db89f807da7ef6"
+   }
+  },
+  {
+   "function": "transport_edge_values_mono_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/phys/l4speed",
+   "src": "cuda/transport_edge_values_mono_v841.l4.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iref/transport",
+    "-Icuda",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "1b95edc1c598cf8a7600e7b4af9471f59df3932e8ca8993a7b56ad4c95d602a3",
+   "source_sha256": {
+    "tree/ad/phys/l4speed/cuda/transport_edge_values_mono_v841.l4.cu": "17f28bf320643a337f5e24b5654f6786a2db4f5e3d39183b70ab22610c588c25",
+    "tree/ad/phys/l4speed/ref/transport/transport_edge_values_mono_v841.ad.cu": "862fd339dd6ba6eed0c1b7b898e64a9eb6c442abe94c64428e37114de48e9e28",
+    "tree/ad/phys/l4speed/ref/transport/helpers.cuh": "6d0c5ecdcec03a887240e5e56faeb5ac92b82736265dfab2434b108550a6227c",
+    "tree/ad/phys/l4speed/ref/transport/trace_helpers.cuh": "a227c7c1a5975c46632f80494496d02c34a519c274c391c49366e7c523965b10",
+    "tree/ad/phys/l4speed/cuda/l4_common.cuh": "f81b6642850c211c162936fab92ffdb846f7c53f4349efba28bb4f68a1560710"
+   }
+  },
+  {
+   "function": "transport_interpolate_target_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/kset/g8",
+   "src": "hex-ad/cuda/transport/transport_interpolate_target_v841.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/transport",
+    "-DAD_BUILD_TL",
+    "-DAD_BUILD_AD",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "4708c3c799b255f896492b2b30f6d792f5c71dac0f1a7c456f985f46fc2021f0",
+   "source_sha256": {
+    "tree/ad/kset/g8/hex-ad/cuda/transport/transport_interpolate_target_v841.ad.cu": "23ca7200c9b8ef8f038c3c18a5fc5164a227a086a6e4c592f26418123559b2b7",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/ad_transport_common.cuh": "aea07d29474d32c70edc1717d36716093af8b714c87700e1ac8920d8400aba1a",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/ad_interpolate_branches.cuh": "36d6f4ceacbce5ced14a03014e6e98cb4d73c1b94f90f0f0529a8e85db3c076d",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/ad_mpas_f32.cuh": "8193e92595cec58f3006f54de26785f9b86c5a5368ccc9d53277acff4e2850b2",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/g8_reduce.cuh": "9992f9a69716c2b55b842d7a8889903674d96791b6bb94653adc98dffeba6aaa"
+   }
+  },
+  {
+   "function": "transport_standard_finish_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/phys/l4speed",
+   "src": "cuda/transport_standard_finish_v841.l4.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Iref/transport",
+    "-Icuda",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "bb0179621410f2bcb1c4acecb83f0d8a260aa69036f23572189eb86b7d1680e8",
+   "source_sha256": {
+    "tree/ad/phys/l4speed/cuda/transport_standard_finish_v841.l4.cu": "dd9ecce332cba17f6bd3fd3c3258fccefe2e05f2ce911acbf1db707ea2510cfa",
+    "tree/ad/phys/l4speed/ref/transport/transport_standard_finish_v841.ad.cu": "faab14fd6c64de96714b20b3347ab6d4418fa8aacfebfe3fbc7b9488f9e3fac8",
+    "tree/ad/phys/l4speed/ref/transport/helpers.cuh": "6d0c5ecdcec03a887240e5e56faeb5ac92b82736265dfab2434b108550a6227c",
+    "tree/ad/phys/l4speed/ref/transport/trace_helpers.cuh": "a227c7c1a5975c46632f80494496d02c34a519c274c391c49366e7c523965b10",
+    "tree/ad/phys/l4speed/cuda/l4_common.cuh": "f81b6642850c211c162936fab92ffdb846f7c53f4349efba28bb4f68a1560710"
+   }
+  },
+  {
+   "function": "transport_target_density_v841",
+   "toolchain": "13.2.86",
+   "cwd": "tree/ad/kset/g8",
+   "src": "hex-ad/cuda/transport/transport_target_density_v841.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-Ihex-ad/cuda/transport",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "4554fecb65e08d5c605a447a36cde769d868013d6ee77d45c14b06164c8ae219",
+   "source_sha256": {
+    "tree/ad/kset/g8/hex-ad/cuda/transport/transport_target_density_v841.ad.cu": "3be2c409a9334e93db3b3eb259ebe6395218aeb6b0e943078fbac0a240ada11d",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/helpers.cuh": "6d0c5ecdcec03a887240e5e56faeb5ac92b82736265dfab2434b108550a6227c",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/trace_helpers.cuh": "a227c7c1a5975c46632f80494496d02c34a519c274c391c49366e7c523965b10",
+    "tree/ad/kset/g8/hex-ad/cuda/transport/g8_reduce.cuh": "9992f9a69716c2b55b842d7a8889903674d96791b6bb94653adc98dffeba6aaa"
+   }
+  },
+  {
+   "function": "transport_vertical_flux",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport",
+   "src": "cuda/u2_transport_ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--prec-div=true",
+    "--prec-sqrt=true",
+    "--ftz=true",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "837c2b2466ae952599ecc8bb5ec89f469b470aa886dbf669d9b586868c4c3856",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_transport_ad.cu": "599399a76b4e44a7e5f28113911901f7291c9dede8d1694a7d009eae11614c03",
+    "tree/ad/kset/int7f/src/overlay-a/tree/ad/u2_transport/cuda/u2_fp32_helpers.cuh": "3781e8a393189e6dcbc78c6e9c5f8104d0bed5e018d161a759db89f807da7ef6"
+   }
+  },
+  {
+   "function": "vector_momentum_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/vector_momentum_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "80cf0855d42d77b5ba3eb8467533f4b69923619b8776967c526fbc1bf4067977",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/vector_momentum_v841_f32.ad.cu": "e9ed588eba2d37a775099ca2ba7ce69adf221bcf2e218be92542145bff6b37b4",
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/dynamics_v841_ad.cuh": "15330aff3b2a0412641e8fe3460b9c2e46b948ec93a9b318701e9b4e3a36704c"
+   }
+  },
+  {
+   "function": "vertex_diagnostics_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/vertex_diagnostics_v841_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "56df4efd5f687d59e0b44418cd790627518a48e855ebf5f1a3d70db35a95abba",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/vertex_diagnostics_v841_f32.ad.cu": "47dc75fccf6119849de2ffd976e7ef03017b19e7dbbdbaf51bfed49d42395d4a",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_ad.cuh": "f02588cd86e417706a03fcc16b16ec445bc4294c56a3c4efb709d6bc28ab5484",
+    "tree/ad/kset/int7f/src/ad1-g23-dycore-horizontal-v841-a-reconcile/hex-ad/cuda/dycore/horizontal_v841_branches.cuh": "68b5ebfbfd946868065fd48376a011761f6c427d1232f7704fe4426342d9bbf9"
+   }
+  },
+  {
+   "function": "vertical_u_finish_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g07-dycore-driver-a-reconcile",
+   "src": "hex-ad/cuda/dycore/vertical_u_finish_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "2b7b95cde52d81a2e13d2c2c5394c2d3c048642b87455f5322fadbc46acd4de4",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g07-dycore-driver-a-reconcile/hex-ad/cuda/dycore/vertical_u_finish_f32.ad.cu": "13a6af31651dde1d11bbd16f1c2aefd9add73d723ebbf6832d80c2051ffb89e0"
+   }
+  },
+  {
+   "function": "vertical_u_flux_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g07-dycore-driver-a-reconcile",
+   "src": "hex-ad/cuda/dycore/vertical_u_flux_f32.ad.cu",
+   "flags": [
+    "-gencode",
+    "arch=compute_89,code=sm_89",
+    "-gencode",
+    "arch=compute_120,code=sm_120",
+    "-gencode",
+    "arch=compute_80,code=compute_80",
+    "-O3",
+    "--fmad=false",
+    "--ftz=false",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "d171bfed243f30dfcfa3099c9f9a6d2c5810f73ccd4b840b74894c04ab7c11e7",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g07-dycore-driver-a-reconcile/hex-ad/cuda/dycore/vertical_u_flux_f32.ad.cu": "3bb850642231738ef52ab0ee1432347bb1651513bada6e9a6991edb3b572dbff"
+   }
+  },
+  {
+   "function": "w_edge_flux_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile",
+   "src": "hex-ad/cuda/dycore/w_edge_flux_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "--std=c++17",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "b8ab7f40af15b4bf338ff506152fad3986fb038a29a0417f4318f820ea894493",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile/hex-ad/cuda/dycore/w_edge_flux_f32.ad.cu": "13cfa7dadad35a6bdebbca897c040de6e59517ad4c735494d28f7d505139b760",
+    "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile/hex-ad/cuda/dycore/w_edge_common.cuh": "06b1e7b58fb7c22e656fd6d8433ba6967a5b4420319b02e87df64487de432bdc",
+    "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile/hex-ad/cuda/dycore/dycore_math.cuh": "8d48638f413abe6a5a5ff77e30205f1d98711837cada1c00ce2d3c67d31e3769"
+   }
+  },
+  {
+   "function": "w_filter_lap2_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-b/tree/ad/kernels/ad1-g24-dycore-horizontal-v841-b",
+   "src": "hex-ad/cuda/dycore/w_filter_lap2_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "e773b5421a170ae4549aaab55c061b3328a8fcdd6fd3700fa4bed22e9d231a99",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-b/tree/ad/kernels/ad1-g24-dycore-horizontal-v841-b/hex-ad/cuda/dycore/w_filter_lap2_v841_f32.ad.cu": "ae56900c8799bd852ddc9fb25186e966996307f8bc748c72d6944e1bac6db9df",
+    "tree/ad/kset/int7f/src/overlay-b/tree/ad/kernels/ad1-g24-dycore-horizontal-v841-b/hex-ad/cuda/dycore/mpas_f32.cuh": "84038165b686f9c58fe704c8c227b546dbe7157473d4be729966336f65506b3e"
+   }
+  },
+  {
+   "function": "w_filter_lap4_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/overlay-b/tree/ad/kernels/ad1-g24-dycore-horizontal-v841-b",
+   "src": "hex-ad/cuda/dycore/w_filter_lap4_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "a681b682b5e3727f17b31832398f1687e26d3e9bbdceeb4a0140dd2c28759b83",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/overlay-b/tree/ad/kernels/ad1-g24-dycore-horizontal-v841-b/hex-ad/cuda/dycore/w_filter_lap4_v841_f32.ad.cu": "2045d32a6e372da444c200ec74374d58992d991427a711fc198fa256abb2bbeb",
+    "tree/ad/kset/int7f/src/overlay-b/tree/ad/kernels/ad1-g24-dycore-horizontal-v841-b/hex-ad/cuda/dycore/mpas_f32.cuh": "84038165b686f9c58fe704c8c227b546dbe7157473d4be729966336f65506b3e"
+   }
+  },
+  {
+   "function": "w_finish_v841_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile",
+   "src": "hex-ad/cuda/dycore/w_finish_v841_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "-O3",
+    "--fmad=false",
+    "--ftz=true",
+    "-Ihex-ad/cuda/dycore",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "db812ce60ba70d6ab9e6e441a17680d9b28c330d28ec1d0a3d8019a20fe25619",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/w_finish_v841_f32.ad.cu": "87624a468ebb53673c6e6007a70d85be9a663b4fe09c63b3cde3626ab5df3fcd",
+    "tree/ad/kset/int7f/src/ad1-g11-dycore-dynamics-v841-a-reconcile/hex-ad/cuda/dycore/dynamics_v841_ad.cuh": "15330aff3b2a0412641e8fe3460b9c2e46b948ec93a9b318701e9b4e3a36704c"
+   }
+  },
+  {
+   "function": "w_vertical_flux_f32",
+   "toolchain": "13.5.37",
+   "cwd": "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile",
+   "src": "hex-ad/cuda/dycore/w_vertical_flux_f32.ad.cu",
+   "flags": [
+    "-arch=sm_120",
+    "--fmad=false",
+    "--std=c++17",
+    "-fatbin"
+   ],
+   "fatbin_sha256": "45f5c3c33fe489f6c07de07be4f5a73b77ea36aec0123508a251bb6a0b8a2d94",
+   "source_sha256": {
+    "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile/hex-ad/cuda/dycore/w_vertical_flux_f32.ad.cu": "bfaade6f31e0d747c90de7de0b0e060a5e02048e431363cfea0a1a4ad95ea8c5",
+    "tree/ad/kset/int7f/src/ad1-g08-dycore-driver-b-reconcile/hex-ad/cuda/dycore/dycore_math.cuh": "8d48638f413abe6a5a5ff77e30205f1d98711837cada1c00ce2d3c67d31e3769"
+   }
+  }
+ ]
+}

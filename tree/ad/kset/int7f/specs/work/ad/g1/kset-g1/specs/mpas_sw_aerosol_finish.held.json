@@ -1,0 +1,526 @@
+{
+ "kernel": "mpas_sw_aerosol_finish",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 3584,
+ "launch_site": "rrtmg_sw_v842.py:447-449 (MPASShortwave._aerosol_passes)",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/held-mpas_sw_aerosol_finish",
+ "affine": true,
+ "affine_reason": "linear in exponent, slope, ssa and asy; the ssaval/asyval arms are constants; every branch is a launch-scalar select",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "source_lines": "3903-3915",
+  "steps": [
+   1,
+   6,
+   12
+  ],
+  "launches_per_radiation_step": "1 (one SW aerosol call)"
+ },
+ "launch": {
+  "grid": "forward ((nc+63)/64)",
+  "block": "forward (64)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Column count of the SW aerosol call (all cells, 2562 on x1.2562)."
+  },
+  {
+   "name": "nz",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "MPAS layer count (59 on x1.2562 hrrrv5), fixed by the mesh."
+  },
+  {
+   "name": "nl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Aerosol output level count (nz+1 = 60), fixed by the call."
+  },
+  {
+   "name": "has3d",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "1 when the 3-D AOD (Thompson aerosol aod5503d) is supplied; a configuration switch."
+  },
+  {
+   "name": "angopt",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist Angstrom-exponent option (3 on hrrrv5)."
+  },
+  {
+   "name": "ssaopt",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist single-scattering-albedo option (3 on hrrrv5)."
+  },
+  {
+   "name": "asyopt",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist asymmetry option (3 on hrrrv5)."
+  },
+  {
+   "name": "ssaval",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist constant SSA (used only by ssaopt 1; its derivative is 0)."
+  },
+  {
+   "name": "asyval",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist constant asymmetry (used only by asyopt 1; its derivative is 0)."
+  },
+  {
+   "name": "diagnostic_mask",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Bits 1/2/4: angexp2d/aerssa2d/aerasy2d supplied by the caller (0 on hrrrv5: none supplied)."
+  },
+  {
+   "name": "exponent",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "read only when angopt == 1 (ang2 = exponent)"
+  },
+  {
+   "name": "slope",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz] when (mask&1) && angopt == 3, else [1]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "read only when (mask&1) && angopt == 3: every k when has3d, k = 0 otherwise; the size-1 placeholder is never read"
+  },
+  {
+   "name": "ang2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "conditional",
+   "condition": "angopt == 1 || (diagnostic_mask % 2 == 1 && angopt == 3)",
+   "then": {
+    "overwrite": "full"
+   },
+   "else": {
+    "overwrite": "none"
+   },
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "note": "angexp2d: exponent (angopt 1), -sum_k slope (has3d) or -slope[0] (2-D) when mask&1 and angopt 3; else untouched"
+  },
+  {
+   "name": "ssa2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "conditional",
+   "condition": "ssaopt == 1 || ((diagnostic_mask // 2) % 2 == 1 && ssaopt == 3)",
+   "then": {
+    "overwrite": "full"
+   },
+   "else": {
+    "overwrite": "none"
+   },
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6,
+   "note": "aerssa2d: ssaval (ssaopt 1) or the band 7..10 level-0 mean of ssa (mask&2, ssaopt 3); else untouched"
+  },
+  {
+   "name": "asy2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "conditional",
+   "condition": "asyopt == 1 || ((diagnostic_mask // 4) % 2 == 1 && asyopt == 3)",
+   "then": {
+    "overwrite": "full"
+   },
+   "else": {
+    "overwrite": "none"
+   },
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "note": "aerasy2d: asyval (asyopt 1) or the band 7..10 level-0 mean of asy (mask&4, asyopt 3); else untouched"
+  },
+  {
+   "name": "ssa",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, 14, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "bands 7..10 at level 0, only when (mask&2) && ssaopt == 3"
+  },
+  {
+   "name": "asy",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, 14, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "reads": "bands 7..10 at level 0, only when (mask&4) && asyopt == 3"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:3906",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Thread index against the fixed column count."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3908-3909",
+   "operation": "select",
+   "active": false,
+   "policy": "inactive-scalar",
+   "inactive_reason": "diagnostic_mask, angopt and has3d are launch scalars: the arm is the same for every column and every perturbation."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3910-3914",
+   "operation": "select",
+   "active": false,
+   "policy": "inactive-scalar",
+   "inactive_reason": "angopt/ssaopt/asyopt and diagnostic_mask select the written outputs per launch (the spec's conditional overwrite)."
+  }
+ ],
+ "limiters": "none: no clamp, min/max or state-dependent branch",
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "every written derivative word finite"
+ },
+ "precondition": "the 7 array arguments are distinct allocations (true in every capture: the wrapper allocates exponent and slope fresh per call; ang2/ssa2/asy2 are the caller's column arrays); each column owns exponent[c], slope[c][*], ssa/asy[c][7..10][0] and the three column outputs",
+ "precision": "aug: the forward word for word in f32 (__f*_rn), built --fmad=false --ftz=false, bitwise to the forward image. tl/ad: sums in double, the exact 1/4, one rounding to f32 per written word (the glue-row rule).",
+ "binder_roles": "deriv.rs roles(): exponent, slope, ssa, asy TL in, AD accumulate (never snapshotted); ang2, ssa2, asy2 TL out, AD inout (seed read and consumed in place when the forward writes the output; untouched, i.e. identity, when it does not). On hrrrv5 (has3d 1, options 3, mask 0) every entry is a no-op: the launch is the identity on the state.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "mpas_sw_aerosol_finish__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "diagnostic_mask"
+     },
+     {
+      "bind": "primal",
+      "arg": "exponent"
+     },
+     {
+      "bind": "primal",
+      "arg": "slope"
+     },
+     {
+      "bind": "primal",
+      "arg": "ang2"
+     },
+     {
+      "bind": "primal",
+      "arg": "ssa2"
+     },
+     {
+      "bind": "primal",
+      "arg": "asy2"
+     },
+     {
+      "bind": "primal",
+      "arg": "ssa"
+     },
+     {
+      "bind": "primal",
+      "arg": "asy"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3584:mpas_sw_aerosol_finish:nonfinite-derivative"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "mpas_sw_aerosol_finish__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "diagnostic_mask"
+     },
+     {
+      "bind": "tangent",
+      "arg": "exponent",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "slope",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ssa",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "asy",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ang2",
+      "field_id": 5,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ssa2",
+      "field_id": 6,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "asy2",
+      "field_id": 7,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3584:mpas_sw_aerosol_finish:nonfinite-derivative"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_sw_aerosol_finish__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "diagnostic_mask"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "exponent",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "slope",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ssa",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "asy",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ang2",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ssa2",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "asy2",
+      "field_id": 7,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3584:mpas_sw_aerosol_finish:nonfinite-derivative"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

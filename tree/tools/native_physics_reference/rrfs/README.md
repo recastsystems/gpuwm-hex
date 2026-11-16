@@ -491,7 +491,7 @@ catalogue, original strict initializer, stage bodies and static dependencies:
 
 ```bash
 python tools/native_physics_reference/rrfs/verify_case_companions.py \
-  $MPAS_LANES/ref/rrfs/cases/pristine-global-both-date-ruc9-companions-index-v1/PUBLICATION.json \
+  $HEX_REFERENCE_ROOT/ref/rrfs/cases/pristine-global-both-date-ruc9-companions-index-v1/PUBLICATION.json \
   --expected-sha256 08b7b84db2db3749083b62b2648ff577e810f26210204f03a7c9987de221eb25 \
   --out "$TMPDIR/ruc9-companion-verification.json"
 ```
@@ -768,7 +768,7 @@ the 2026-10-28 restart-word `tsnav` exclusion is retired: no word is excluded.
 
 Build it with the recipe here, never by hand:
 
-    RRFS_44C0849_REFEREE=patched MPAS_LANES=... RRFS_FORK_CPU_OPT=...       bash tools/rrfs_44c0849_reference/rebuild.sh REF NEW_WORK atmosphere        # and init_atmosphere
+    RRFS_44C0849_REFEREE=patched HEX_REFERENCE_ROOT=... RRFS_FORK_CPU_OPT=...       bash tools/rrfs_44c0849_reference/rebuild.sh REF NEW_WORK atmosphere        # and init_atmosphere
 
 `prepare.py` applies the four lines (refusing if any location moved), writes them to `source-correction.diff` and
 labels `SOURCE-PINS.json` (`referee: patched`, `pristine: false`, `source_correction`, `patches`). The default

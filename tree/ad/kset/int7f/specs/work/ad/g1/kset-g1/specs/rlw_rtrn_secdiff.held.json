@@ -1,0 +1,42 @@
+{"kernel": "rlw_rtrn_secdiff", "engine": "hex", "pin": "0f364252573fd9d51d630608e2216ec81c1e62f3",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py", "line": 818, "route": "hand", "mode": "exact-local-linearisation",
+ "owner_task": "ad/held-rlw_rtrn_secdiff",
+ "supersedes_for_binding": "P7 generated launch (tree/ad/phys/p7/specs/rlw_rtrn_secdiff.json, p7-launch harness only, not an ad.entry/v1 row)",
+ "forward_capture": {"source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+                     "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+                     "source_lines": "1862-1884", "config": "hrrrv5_x1.2562", "steps": [1, 3], "launches_per_step": 13},
+ "launch": {"grid": "capture", "block": "capture", "shared_bytes": 0},
+ "args": [
+  {"name": "ncol", "role": "scalar", "dtype": "i32", "shape": [], "stagger": "none", "active": false, "inactive_reason": "Integer column count of the launch chunk."},
+  {"name": "pwvcm_v", "role": "in", "dtype": "f32", "shape": "[ncol]", "stagger": "column", "active": true, "overwrite": "none", "alias_group": null, "weight": "none", "field_id": 1, "reads": "word col"},
+  {"name": "a0", "role": "in", "dtype": "f32", "shape": "[16]", "stagger": "band", "active": false, "inactive_reason": "RRTMG LW diffusivity band constant (rrtmg_lw_v842.py K table), uploaded once, written by no launch."},
+  {"name": "a1", "role": "in", "dtype": "f32", "shape": "[16]", "stagger": "band", "active": false, "inactive_reason": "As a0."},
+  {"name": "a2", "role": "in", "dtype": "f32", "shape": "[16]", "stagger": "band", "active": false, "inactive_reason": "As a0."},
+  {"name": "secdiff", "role": "out", "dtype": "f32", "shape": "[ncol, 16]", "stagger": "column-band", "active": true, "overwrite": "full", "alias_group": null, "weight": "none", "field_id": 2, "note": "bands 1, 4, 10-16 are the constant 1.66: tangent 0; every word's adjoint seed is consumed"}],
+ "saved": [],
+ "branches": [
+  {"file_line": "capture 683d7a07:1869", "operation": "predicate", "active": false, "policy": "inactive-index", "inactive_reason": "Launch index against ncol."},
+  {"file_line": "capture 683d7a07:1873", "operation": "predicate", "active": false, "policy": "inactive-index", "inactive_reason": "Band index selects the constant bands 1, 4, 10-16."},
+  {"file_line": "capture 683d7a07:1879", "operation": "clamp", "active": true, "policy": "frozen-coefficient", "rule": "C1: tangent passes iff raw <= 1.80f (output word equals raw word, ties included); clamped word 1.80 has zero tangent"},
+  {"file_line": "capture 683d7a07:1880", "operation": "clamp", "active": true, "policy": "frozen-coefficient", "rule": "C2: tangent passes iff raw >= 1.50f; clamped word 1.50 has zero tangent; NaN raw passes neither and raises failure"}],
+ "tables": [{"name": "a0,a1,a2", "role": "inactive band constants"}],
+ "refusal": {"nonfinite": true, "domain": "pwvcm finite; raw secdiff and exp word finite; written tangent and adjoint words finite"},
+ "precondition": "pwvcm_v, a0/a1/a2 and secdiff do not alias; one thread per column touches only its own pwvcm word and its own 16 secdiff words.",
+ "precision": "aug: the forward word for word in f32 (__f*_rn and the forward's glibc 2.39 expf transcription), built --fmad=false --ftz=false, bitwise to the forward image. tl/ad: local partials in double from the f32 primal words (a1*a2*e), one rounding to f32 per written word; the adjoint sums the bands of a column in fixed order in double.",
+ "launch_abi": {"schema": "ad.entry/v1", "entries": {
+  "aug": {"function": "rlw_rtrn_secdiff__aug", "geometry": "forward", "args": [
+     {"bind": "scalar", "arg": "ncol"}, {"bind": "primal", "arg": "pwvcm_v"}, {"bind": "primal", "arg": "a0"},
+     {"bind": "primal", "arg": "a1"}, {"bind": "primal", "arg": "a2"}, {"bind": "primal", "arg": "secdiff"},
+     {"bind": "failure", "slots": 1, "source_ids": ["rrtmg_lw_v842.py:818:rlw_rtrn_secdiff:nonfinite"]}]},
+  "tl": {"function": "rlw_rtrn_secdiff__tl", "geometry": "forward", "args": [
+     {"bind": "scalar", "arg": "ncol"}, {"bind": "primal", "arg": "pwvcm_v"}, {"bind": "primal", "arg": "a0"},
+     {"bind": "primal", "arg": "a1"}, {"bind": "primal", "arg": "a2"},
+     {"bind": "tangent", "arg": "pwvcm_v", "field_id": 1, "io": "in"},
+     {"bind": "tangent", "arg": "secdiff", "field_id": 2, "io": "out"},
+     {"bind": "failure", "slots": 1, "source_ids": ["rrtmg_lw_v842.py:818:rlw_rtrn_secdiff:nonfinite"]}]},
+  "ad": {"function": "rlw_rtrn_secdiff__ad", "geometry": "forward", "args": [
+     {"bind": "scalar", "arg": "ncol"}, {"bind": "primal", "arg": "pwvcm_v"}, {"bind": "primal", "arg": "a0"},
+     {"bind": "primal", "arg": "a1"}, {"bind": "primal", "arg": "a2"},
+     {"bind": "adjoint", "arg": "pwvcm_v", "field_id": 1, "io": "accumulate"},
+     {"bind": "adjoint", "arg": "secdiff", "field_id": 2, "io": "inout"},
+     {"bind": "failure", "slots": 1, "source_ids": ["rrtmg_lw_v842.py:818:rlw_rtrn_secdiff:nonfinite"]}]}}}}

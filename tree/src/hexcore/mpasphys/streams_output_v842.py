@@ -152,6 +152,9 @@ class PhysicsStreams(NativePoolStreams):
         # exact mode writes native's.
         # The held f000 frame's reflectivity, formed from its start state beside step 1 (tempo_refl_v303), and
         # the side thread that compiles its module from the moment the frame will be held.
+        # The run's applied fork corrections (runtime_v842 sets them before it holds the frame): the f000
+        # reflectivity is formed with the snow moments the forecast hours use (tempo_refl_v303 REFL_CORRECTIONS).
+        self.fork_corrections = ()
         self._f000_reflectivity = None
         self._f000_warm = None
         self.first_frame_from_first_call = False
@@ -526,7 +529,8 @@ class PhysicsStreams(NativePoolStreams):
                 from .rrfs.tempo_refl_v303 import warm_start_reflectivity
                 import cupy as cp
                 self._f000_warm = warm_start_reflectivity(
-                    self.layout.configs, int(self.layout.dimensions['nVertLevels']), device=cp.cuda.Device().id)
+                    self.layout.configs, int(self.layout.dimensions['nVertLevels']), device=cp.cuda.Device().id,
+                    corrections=getattr(self, 'fork_corrections', ()))
                 if self._f000_warm is None:
                     # WSM6's start-radar unit (wsm6_refl_start_v842) is its own compile: here, not at the f000 write.
                     from .wsm6_refl_start_v842 import warm_start_reflectivity as warm_wsm6
@@ -555,7 +559,8 @@ class PhysicsStreams(NativePoolStreams):
             # TEMPO (the RRFS suites), else Thompson (convection_permitting, hrrr-like-aerosol), else WSM6
             # (mesoscale_reference): the same breakage on the MPAS-A suites' routes, whose start frame showed
             # "No values to plot" over the first guess's own rain (hex-meshes-sources review, 2026-10-29).
-            pending = start_frame_reflectivity(self.layout.configs, snapshot, device=device)
+            pending = start_frame_reflectivity(self.layout.configs, snapshot, device=device,
+                                               corrections=getattr(self, 'fork_corrections', ()))
             if pending is None:
                 pending = thompson_start(self.layout.configs, snapshot, device=device)
             if pending is None and str(self.layout.configs.get('config_microp_scheme', '')).strip() == 'mp_wsm6':

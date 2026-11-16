@@ -1,0 +1,106 @@
+{
+ "function": "mpas_sw_mcica_gpoint",
+ "class": "rowed",
+ "gate_ready": true,
+ "window_launches_pkg18": 0,
+ "window_note": "pkg18 holds radiation as held uploads, so no launch binds until a radiation-live seal",
+ "arguments": [
+  {
+   "name": "nc",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nl",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "icld",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "draws",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "cf",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "iw",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "lw",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "sw",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "seeds",
+   "kind": "device",
+   "dtype": "<u4",
+   "shape": []
+  },
+  {
+   "name": "weights",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "xorshift",
+   "kind": "device",
+   "dtype": "<u4",
+   "shape": []
+  },
+  {
+   "name": "out",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  }
+ ],
+ "derivative": {
+  "row": "ad/held-mpas_sw_mcica_gpoint",
+  "root": "tree/ad/phys/held/mpas_sw_mcica_gpoint",
+  "spec": {
+   "path": "tree/ad/phys/held/mpas_sw_mcica_gpoint/mpas_sw_mcica_gpoint.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/mpas_sw_mcica_gpoint/cuda/mpas_sw_mcica_gpoint.ad.cu"
+  },
+  "fatbin_sha256": "3ce1e49086f416798552260fef4826473490a892b51224991990915778ce19b6",
+  "nvcc": [
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-gencode",
+   "arch=compute_80,code=compute_80",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false"
+  ]
+ },
+ "capture": {
+  "path": "<origin>/ad/_captures/hex/hrrrv5_x1.2562/mpas_sw_mcica_gpoint/1/launch-000000/manifest.json"
+ }
+}

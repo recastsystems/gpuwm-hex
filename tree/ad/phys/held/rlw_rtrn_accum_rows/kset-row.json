@@ -1,0 +1,36 @@
+{
+ "function": "rlw_rtrn_accum_rows",
+ "class": "radiation",
+ "gate_ready": true,
+ "window_launches_pkg18": 0,
+ "arguments": [
+  {"name": "ncol", "kind": "scalar", "dtype": "<i4", "shape": []},
+  {"name": "nl", "kind": "scalar", "dtype": "<i4", "shape": []},
+  {"name": "radld_p", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "radclrd_p", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "radlu_p", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "radclru_p", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "iclddn_p", "kind": "device", "dtype": "|u1", "shape": []},
+  {"name": "radlu_sfc", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "radclru_sfc", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "ngs", "kind": "device", "dtype": "<i4", "shape": []},
+  {"name": "delwave", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "wtdiff", "kind": "scalar", "dtype": "<f4", "shape": []},
+  {"name": "totuflux", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "totdflux", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "totuclfl", "kind": "device", "dtype": "<f4", "shape": []},
+  {"name": "totdclfl", "kind": "device", "dtype": "<f4", "shape": []}
+ ],
+ "derivative": {
+  "row": "ad/held-rlw_rtrn_accum_rows",
+  "root": "tree/ad/phys/held/rlw_rtrn_accum_rows",
+  "spec": {"path": "tree/ad/phys/held/rlw_rtrn_accum_rows/rlw_rtrn_accum_rows.json"},
+  "cuda": {"path": "tree/ad/phys/held/rlw_rtrn_accum_rows/cuda/rlw_rtrn_accum_rows.ad.cu"},
+  "nvcc": ["-gencode", "arch=compute_120,code=sm_120", "-gencode", "arch=compute_89,code=sm_89",
+           "-gencode", "arch=compute_80,code=compute_80", "-O3", "--fmad=false", "--ftz=false"]
+ },
+ "capture": {
+  "path": "<origin>/ad/_captures/hex/hrrrv5_x1.2562/rlw_rtrn_accum_rows/1/launch-000000/manifest.json",
+  "also": "steps 1 and 3, launches 0-12 each"
+ }
+}

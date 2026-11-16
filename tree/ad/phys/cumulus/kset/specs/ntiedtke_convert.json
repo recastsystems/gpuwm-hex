@@ -1,0 +1,1164 @@
+{
+ "kernel": "ntiedtke_convert",
+ "engine": "hex",
+ "file": "tree/src/hexcore/mpasphys/ntiedtke_v842.py (cuda_source)",
+ "route": "generated: the forward NVRTC text re-typed over AF (tangent) / AR (taped reverse) by tree/ad/phys/cumulus/gen/gen_nt.py",
+ "mode": "exact executed-branch linearisation along the recorded path",
+ "forward_source_sha256": "59e5f609404256490fb031444181b213f1c72d943c143e83a982507cd6f35088",
+ "why": "NOAA 12 km hrrrv5 runs cu_ntiedtke every step; no kernel set had a row for its launches, so the window refused any 12 km recording with it",
+ "branch_rule": "every comparison, mpas_nt_int truncation (INTEGER zcbase), fmaxf/fminf arm (first operand on a tie), fabs sign, level index, cloud type (ktype), ldcum, loddraf, klab and the slab latch (mpas_llo3_start) are taken on the pre-launch primal words as the forward takes them; only the executed arm is differentiated",
+ "precision": "partials in double from the f32 primal words; tangents and adjoints accumulate in double, rounded once per written word (+0: no -0.0 words)",
+ "primal": "trajectory = the pre-launch state; the entries never write a primal word (column arrays are shadowed in the workspace)",
+ "tape": {
+  "entries_per_column_measured_max": 1398,
+  "capacity": 6193,
+  "entry_bytes": 32
+ },
+ "args": [
+  {
+   "name": "tf",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 1,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "qvf",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 2,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "uf",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 3,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "vf",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 4,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "omg",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 5,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "ghtl",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 6,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "ghti",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 7,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "prsl",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 8,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "qvftenz",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 9,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "thftenz",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 10,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none"
+  },
+  {
+   "name": "ztp1",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 11,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "zqp1",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 12,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "zqsat",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 13,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "pgeo",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 14,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "pgeoh",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 15,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "pum1",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 16,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "pvm1",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 17,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "pverv",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 18,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "ptte",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 19,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "pqte",
+   "dtype": "f32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 20,
+   "shape": "[(nz+1),ncol]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial"
+  },
+  {
+   "name": "ncol",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "nz",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "cp",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "rd",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "rv",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "xlv",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "xls",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "xlf",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "grav",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "llo3_mask",
+   "dtype": "i32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "in",
+   "field_id": 0,
+   "shape": "[1]",
+   "active": false,
+   "overwrite": "none",
+   "inactive_reason": "launch-wide integer word (slab latch / report mask): frozen at the recorded value"
+  },
+  {
+   "name": "expect_tpb",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "expect_nblocks",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "launch scalar (extent, constant or time step)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "geom_report",
+   "dtype": "i32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 0,
+   "shape": "[64]",
+   "active": false,
+   "overwrite": "none",
+   "inactive_reason": "launch report words (geometry, order ticket, ascent start): the entries write a workspace copy, never these"
+  },
+  {
+   "name": "order_report",
+   "dtype": "i32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 0,
+   "shape": "[64]",
+   "active": false,
+   "overwrite": "none",
+   "inactive_reason": "launch report words (geometry, order ticket, ascent start): the entries write a workspace copy, never these"
+  },
+  {
+   "name": "ticket",
+   "dtype": "i32",
+   "pointer_depth": 1,
+   "weight": "none",
+   "alias_group": null,
+   "role": "inout",
+   "field_id": 0,
+   "shape": "[1]",
+   "active": false,
+   "overwrite": "none",
+   "inactive_reason": "launch report words (geometry, order ticket, ascent start): the entries write a workspace copy, never these"
+  }
+ ],
+ "branches": [],
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "ntiedtke_convert__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "tf"
+     },
+     {
+      "bind": "primal",
+      "arg": "qvf"
+     },
+     {
+      "bind": "primal",
+      "arg": "uf"
+     },
+     {
+      "bind": "primal",
+      "arg": "vf"
+     },
+     {
+      "bind": "primal",
+      "arg": "omg"
+     },
+     {
+      "bind": "primal",
+      "arg": "ghtl"
+     },
+     {
+      "bind": "primal",
+      "arg": "ghti"
+     },
+     {
+      "bind": "primal",
+      "arg": "prsl"
+     },
+     {
+      "bind": "primal",
+      "arg": "qvftenz"
+     },
+     {
+      "bind": "primal",
+      "arg": "thftenz"
+     },
+     {
+      "bind": "primal",
+      "arg": "ztp1"
+     },
+     {
+      "bind": "primal",
+      "arg": "zqp1"
+     },
+     {
+      "bind": "primal",
+      "arg": "zqsat"
+     },
+     {
+      "bind": "primal",
+      "arg": "pgeo"
+     },
+     {
+      "bind": "primal",
+      "arg": "pgeoh"
+     },
+     {
+      "bind": "primal",
+      "arg": "pum1"
+     },
+     {
+      "bind": "primal",
+      "arg": "pvm1"
+     },
+     {
+      "bind": "primal",
+      "arg": "pverv"
+     },
+     {
+      "bind": "primal",
+      "arg": "ptte"
+     },
+     {
+      "bind": "primal",
+      "arg": "pqte"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cp"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rd"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rv"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xlv"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xls"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xlf"
+     },
+     {
+      "bind": "scalar",
+      "arg": "grav"
+     },
+     {
+      "bind": "primal",
+      "arg": "llo3_mask"
+     },
+     {
+      "bind": "scalar",
+      "arg": "expect_tpb"
+     },
+     {
+      "bind": "scalar",
+      "arg": "expect_nblocks"
+     },
+     {
+      "bind": "primal",
+      "arg": "geom_report"
+     },
+     {
+      "bind": "primal",
+      "arg": "order_report"
+     },
+     {
+      "bind": "primal",
+      "arg": "ticket"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "in",
+      "arg": "tf"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 2,
+      "io": "in",
+      "arg": "qvf"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 3,
+      "io": "in",
+      "arg": "uf"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 4,
+      "io": "in",
+      "arg": "vf"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 5,
+      "io": "in",
+      "arg": "omg"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 6,
+      "io": "in",
+      "arg": "ghtl"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 7,
+      "io": "in",
+      "arg": "ghti"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 8,
+      "io": "in",
+      "arg": "prsl"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 9,
+      "io": "in",
+      "arg": "qvftenz"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 10,
+      "io": "in",
+      "arg": "thftenz"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 11,
+      "io": "in",
+      "arg": "ztp1"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 12,
+      "io": "in",
+      "arg": "zqp1"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 13,
+      "io": "in",
+      "arg": "zqsat"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 14,
+      "io": "in",
+      "arg": "pgeo"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 15,
+      "io": "in",
+      "arg": "pgeoh"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 16,
+      "io": "in",
+      "arg": "pum1"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 17,
+      "io": "in",
+      "arg": "pvm1"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 18,
+      "io": "in",
+      "arg": "pverv"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 19,
+      "io": "in",
+      "arg": "ptte"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 20,
+      "io": "in",
+      "arg": "pqte"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 11,
+      "io": "out",
+      "arg": "ztp1"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 12,
+      "io": "out",
+      "arg": "zqp1"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 13,
+      "io": "out",
+      "arg": "zqsat"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 14,
+      "io": "out",
+      "arg": "pgeo"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 15,
+      "io": "out",
+      "arg": "pgeoh"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 16,
+      "io": "out",
+      "arg": "pum1"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 17,
+      "io": "out",
+      "arg": "pvm1"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 18,
+      "io": "out",
+      "arg": "pverv"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 19,
+      "io": "out",
+      "arg": "ptte"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 20,
+      "io": "out",
+      "arg": "pqte"
+     },
+     {
+      "bind": "workspace",
+      "name": "nt_tl_ws",
+      "bytes": "16*(((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)))*(ncol) + 4*64 + 4*64 + 4*1"
+     },
+     {
+      "bind": "failure",
+      "slots": 4,
+      "source_ids": [
+       "tree/ad/phys/cumulus/cuda/nt_ad.cu:ntiedtke_convert__tl:nonfinite",
+       "tree/ad/phys/cumulus/cuda/nt_ad.cu:ntiedtke_convert__tl:tape-capacity"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "ntiedtke_convert__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "tf"
+     },
+     {
+      "bind": "primal",
+      "arg": "qvf"
+     },
+     {
+      "bind": "primal",
+      "arg": "uf"
+     },
+     {
+      "bind": "primal",
+      "arg": "vf"
+     },
+     {
+      "bind": "primal",
+      "arg": "omg"
+     },
+     {
+      "bind": "primal",
+      "arg": "ghtl"
+     },
+     {
+      "bind": "primal",
+      "arg": "ghti"
+     },
+     {
+      "bind": "primal",
+      "arg": "prsl"
+     },
+     {
+      "bind": "primal",
+      "arg": "qvftenz"
+     },
+     {
+      "bind": "primal",
+      "arg": "thftenz"
+     },
+     {
+      "bind": "primal",
+      "arg": "ztp1"
+     },
+     {
+      "bind": "primal",
+      "arg": "zqp1"
+     },
+     {
+      "bind": "primal",
+      "arg": "zqsat"
+     },
+     {
+      "bind": "primal",
+      "arg": "pgeo"
+     },
+     {
+      "bind": "primal",
+      "arg": "pgeoh"
+     },
+     {
+      "bind": "primal",
+      "arg": "pum1"
+     },
+     {
+      "bind": "primal",
+      "arg": "pvm1"
+     },
+     {
+      "bind": "primal",
+      "arg": "pverv"
+     },
+     {
+      "bind": "primal",
+      "arg": "ptte"
+     },
+     {
+      "bind": "primal",
+      "arg": "pqte"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cp"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rd"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rv"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xlv"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xls"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xlf"
+     },
+     {
+      "bind": "scalar",
+      "arg": "grav"
+     },
+     {
+      "bind": "primal",
+      "arg": "llo3_mask"
+     },
+     {
+      "bind": "scalar",
+      "arg": "expect_tpb"
+     },
+     {
+      "bind": "scalar",
+      "arg": "expect_nblocks"
+     },
+     {
+      "bind": "primal",
+      "arg": "geom_report"
+     },
+     {
+      "bind": "primal",
+      "arg": "order_report"
+     },
+     {
+      "bind": "primal",
+      "arg": "ticket"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 11,
+      "io": "in",
+      "arg": "ztp1"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 12,
+      "io": "in",
+      "arg": "zqp1"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 13,
+      "io": "in",
+      "arg": "zqsat"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 14,
+      "io": "in",
+      "arg": "pgeo"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 15,
+      "io": "in",
+      "arg": "pgeoh"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 16,
+      "io": "in",
+      "arg": "pum1"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 17,
+      "io": "in",
+      "arg": "pvm1"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 18,
+      "io": "in",
+      "arg": "pverv"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 19,
+      "io": "in",
+      "arg": "ptte"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 20,
+      "io": "in",
+      "arg": "pqte"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "accumulate",
+      "arg": "tf"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 2,
+      "io": "accumulate",
+      "arg": "qvf"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 3,
+      "io": "accumulate",
+      "arg": "uf"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 4,
+      "io": "accumulate",
+      "arg": "vf"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 5,
+      "io": "accumulate",
+      "arg": "omg"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 6,
+      "io": "accumulate",
+      "arg": "ghtl"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 7,
+      "io": "accumulate",
+      "arg": "ghti"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 8,
+      "io": "accumulate",
+      "arg": "prsl"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 9,
+      "io": "accumulate",
+      "arg": "qvftenz"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 10,
+      "io": "accumulate",
+      "arg": "thftenz"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 11,
+      "io": "accumulate",
+      "arg": "ztp1"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 12,
+      "io": "accumulate",
+      "arg": "zqp1"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 13,
+      "io": "accumulate",
+      "arg": "zqsat"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 14,
+      "io": "accumulate",
+      "arg": "pgeo"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 15,
+      "io": "accumulate",
+      "arg": "pgeoh"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 16,
+      "io": "accumulate",
+      "arg": "pum1"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 17,
+      "io": "accumulate",
+      "arg": "pvm1"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 18,
+      "io": "accumulate",
+      "arg": "pverv"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 19,
+      "io": "accumulate",
+      "arg": "ptte"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 20,
+      "io": "accumulate",
+      "arg": "pqte"
+     },
+     {
+      "bind": "scalar",
+      "value": 6193,
+      "dtype": "<i4",
+      "name": "nt_cap"
+     },
+     {
+      "bind": "workspace",
+      "name": "nt_ad_ws",
+      "bytes": "8*(((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)))*(ncol) + 32*6193*(ncol) + 8*(((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)) + ((nz+1)))*(ncol) + 8*(ncol) + 4*64 + 4*64 + 4*1"
+     },
+     {
+      "bind": "failure",
+      "slots": 4,
+      "source_ids": [
+       "tree/ad/phys/cumulus/cuda/nt_ad.cu:ntiedtke_convert__ad:nonfinite",
+       "tree/ad/phys/cumulus/cuda/nt_ad.cu:ntiedtke_convert__ad:tape-capacity"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

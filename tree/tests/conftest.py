@@ -45,15 +45,44 @@ os.environ["GPUWM_NUMERICS"] = "strict"
 
 ROOT = Path(__file__).resolve().parents[1]
 
+import importlib.util
 import sys
 
-if str(ROOT / "src") not in sys.path:
-    sys.path.insert(0, str(ROOT / "src"))
+# This tree's own src comes first, in this process and in every subprocess a test starts.
+# THE BREAKAGE THIS PREVENTS: an installed gpuwm-hex (0.4.x in a shared venv) shadowed the tree's hexcore, and
+# tests that start `python -m hexcore.ad.record` (or any `-m hexcore...`) in a subprocess could not find the
+# package at all, because sys.path does not travel to a child; test_ad_record_cpu.py failed 5 times on that alone.
+_SRC = str(ROOT / "src")
+while _SRC in sys.path:
+    sys.path.remove(_SRC)
+sys.path.insert(0, _SRC)
+_inherited = [p for p in os.environ.get("PYTHONPATH", "").split(os.pathsep) if p and p != _SRC]
+os.environ["PYTHONPATH"] = os.pathsep.join([_SRC, *_inherited])
+
+# The engine this tree declares must be the one installed.
+# THE BREAKAGE THIS PREVENTS: run on an interpreter with no gpuwm, or an older gpuwm 2.9.12 build without
+# gpuwm.backend / gpuwm.hip_backend / gpuwm.gpu_smi, 308 door tests failed on ModuleNotFoundError and hid the
+# failures that are real.  One refusal that names the fix replaces those hundreds of tracebacks.
+_MISSING_ENGINE = [name for name in ("gpuwm", "gpuwm.backend", "gpuwm.hip_backend", "gpuwm.gpu_smi")
+                   if importlib.util.find_spec(name.split(".")[0]) is None
+                   or importlib.util.find_spec(name) is None]
+if _MISSING_ENGINE:
+    raise pytest.UsageError(
+        f"this interpreter ({sys.executable}) lacks {', '.join(_MISSING_ENGINE)}: it does not carry the gpuwm "
+        "engine this tree declares in pyproject.toml.  Build the test environment with "
+        "`sh tools/battery/test_env.sh <venv-dir>` and run pytest with <venv-dir>/bin/python")
 
 # The x4 runner in the layout this tree runs in (tests/_layout.py).
 from _layout import RUNNER_PATH  # noqa: E402
 
-from hexcore.device_admission import native_device_floor_bytes
+import hexcore  # noqa: E402
+
+if Path(hexcore.__file__).resolve().parent != (ROOT / "src" / "hexcore").resolve():
+    raise pytest.UsageError(
+        f"hexcore resolves to {Path(hexcore.__file__).resolve().parent}, not this tree's src/hexcore: an "
+        "installed gpuwm-hex is shadowing the code under test")
+
+from hexcore.device_admission import native_device_floor_bytes  # noqa: E402
 
 #: Free device memory the x4.163842 full-physics tier requires: the same
 #: measured floor the driver admits on (the merged-tip x4 peak plus the

@@ -1,0 +1,573 @@
+{
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_transport_v841.py",
+ "mode": "exact",
+ "tables": [],
+ "launch": {
+  "grid": "forward grid",
+  "block": "forward block",
+  "shared_bytes": 0
+ },
+ "refusal": {
+  "on_invalid": "abort entire gradient; inspect all failure slots before use",
+  "buffer": "int32 device flags indexed by source_id minus one; host constructs AdFailureRecord after reading flags",
+  "code": 1
+ },
+ "source_ids": {
+  "1": "cuda_transport_v841.py:117:input-invalid",
+  "2": "cuda_transport_v841.py:117:output-invalid"
+ },
+ "kernel": "transport_interpolate_target_v841",
+ "line": 111,
+ "route": "hand",
+ "args": [
+  {
+   "name": "nvalues",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed topology or launch control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 101
+  },
+  {
+   "name": "weight",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1
+  },
+  {
+   "name": "rho_old",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "rho_old"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "shape_expression_flat": "[nvalues]",
+   "shape_note": "flat kernel over nvalues; every registered capture has product(shape) == nvalues (checked by tmp/c04eng_g36r_shape.py)"
+  },
+  {
+   "name": "rho_new",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "rho_new"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "shape_expression_flat": "[nvalues]",
+   "shape_note": "flat kernel over nvalues; every registered capture has product(shape) == nvalues (checked by tmp/c04eng_g36r_shape.py)"
+  },
+  {
+   "name": "target",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "target"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "shape_expression_flat": "[nvalues]",
+   "shape_note": "flat kernel over nvalues; every registered capture has product(shape) == nvalues (checked by tmp/c04eng_g36r_shape.py)"
+  }
+ ],
+ "saved": [
+  {
+   "name": "reverse_seed_target",
+   "from": "scheduler copy of incoming target cotangent immediately before reverse",
+   "lifetime": "one reverse invocation",
+   "reason": "global fixed-order reductions read this immutable snapshot while the entry clears the live output seed"
+  }
+ ],
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/cuda_transport_v841.py:116",
+   "predicate": "index >= nvalues",
+   "policy": "executed-arm",
+   "tie": "fixed integer bound",
+   "slot": 0,
+   "active": false,
+   "inactive_reason": "This branch decision depends only on fixed integer launch dimensions, topology, or loop indices; selected floating values remain active.",
+   "replay": "Recompute the same integer decision from the original launch and topology."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:42",
+   "predicate": "subnormal decode",
+   "policy": "rounding-helper",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 1,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:57",
+   "predicate": "subnormal packing",
+   "policy": "rounding-helper",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 2,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:78",
+   "predicate": "fast addition",
+   "policy": "rounding-helper",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 3,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:83",
+   "predicate": "subnormal addition",
+   "policy": "rounding-helper",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 4,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:93",
+   "predicate": "addition cancellation",
+   "policy": "rounding-helper",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 5,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:111",
+   "predicate": "fast subtraction",
+   "policy": "rounding-helper",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 6,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:116",
+   "predicate": "subnormal subtraction",
+   "policy": "inactive-unreachable",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 7,
+   "why": "The only mpas_sub call is 1.0f - weight. If its result exponent is at most 24, finite binary32 weight must equal 1.0f exactly: the left operand is normal with exponent 127, so neither a subnormal-operand fallback nor the two-small-operands cancellation fallback can be selected.",
+   "active": false,
+   "inactive_reason": "The only mpas_sub call is 1.0f - weight. If its result exponent is at most 24, finite binary32 weight must equal 1.0f exactly: the left operand is normal with exponent 127, so neither a subnormal-operand fallback nor the two-small-operands cancellation fallback can be selected.",
+   "replay": "Recompute the original fixed call operands; the true arm is unreachable for this call."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:123",
+   "predicate": "subtraction cancellation",
+   "policy": "inactive-unreachable",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 8,
+   "why": "The only mpas_sub call is 1.0f - weight. If its result exponent is at most 24, finite binary32 weight must equal 1.0f exactly: the left operand is normal with exponent 127, so neither a subnormal-operand fallback nor the two-small-operands cancellation fallback can be selected.",
+   "active": false,
+   "inactive_reason": "The only mpas_sub call is 1.0f - weight. If its result exponent is at most 24, finite binary32 weight must equal 1.0f exactly: the left operand is normal with exponent 127, so neither a subnormal-operand fallback nor the two-small-operands cancellation fallback can be selected.",
+   "replay": "Recompute the original fixed call operands; the true arm is unreachable for this call."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:142",
+   "predicate": "small product",
+   "policy": "rounding-helper",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 9,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:145",
+   "predicate": "nonzero product operands",
+   "policy": "rounding-helper",
+   "tie": "fallback preserves IEEE value; derivative is mathematical rounded operation; exceptional values refuse",
+   "slot": 10,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:45",
+   "predicate": "decoded subnormal sign",
+   "policy": "rounding-helper",
+   "tie": "bitwise sign of zero and subnormal",
+   "slot": 11,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:62",
+   "predicate": "packed subnormal sign",
+   "policy": "rounding-helper",
+   "tie": "binary64 sign bit",
+   "slot": 12,
+   "rounding_registry": "ad0-l08-runner-ext/configs/ledger/rounding_helpers.json",
+   "active_variables": "The original arithmetic operands and result remain active.",
+   "replay": "Recompute the original helper path; both registered arms implement the same IEEE-rounded operation."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_transport_v841.py:116",
+   "column": 15,
+   "operation": "predicate",
+   "predicate": "if (index >= nvalues) return;",
+   "policy": "inactive-index",
+   "active": false,
+   "inactive_reason": "This branch decision depends only on fixed integer launch dimensions, topology, or loop indices; selected floating values remain active.",
+   "tie": "Use the original integer comparison and loop bound.",
+   "replay": "Recompute the same integer decision from the original launch and topology.",
+   "active_variables": "integer topology affects validation only"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_transport_v841.py:116",
+   "column": 27,
+   "operation": "iteration",
+   "predicate": "return",
+   "policy": "iteration",
+   "active": false,
+   "inactive_reason": "This branch decision depends only on fixed integer launch dimensions, topology, or loop indices; selected floating values remain active.",
+   "tie": "Use the original integer comparison and loop bound.",
+   "replay": "Recompute the same integer decision from the original launch and topology.",
+   "active_variables": "integer topology affects validation only"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_transport_v841.py:118",
+   "column": 42,
+   "operation": "lookup",
+   "predicate": "rho_old[index]",
+   "policy": "lookup",
+   "active": false,
+   "inactive_reason": "The lookup index is a fixed integer choice, so it has no index derivative. This annotation does not deactivate a selected floating field or intermediate.",
+   "active_variables": "rho_old: selected continuous values remain active when declared as such; integer and validation-only values retain their declared roles",
+   "tie": "Use the same selected integer index; there is no index tie or index derivative.",
+   "replay": "Recompute the index from the original integer topology and loop counters; propagate to the selected active value and transpose the gather in reverse."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_transport_v841.py:119",
+   "column": 26,
+   "operation": "lookup",
+   "predicate": "rho_new[index]",
+   "policy": "lookup",
+   "active": false,
+   "inactive_reason": "The lookup index is a fixed integer choice, so it has no index derivative. This annotation does not deactivate a selected floating field or intermediate.",
+   "active_variables": "rho_new: selected continuous values remain active when declared as such; integer and validation-only values retain their declared roles",
+   "tie": "Use the same selected integer index; there is no index tie or index derivative.",
+   "replay": "Recompute the index from the original integer topology and loop counters; propagate to the selected active value and transpose the gather in reverse."
+  }
+ ],
+ "entries": {
+  "tl": {
+   "symbol": "transport_interpolate_target_v841__tl",
+   "cuda_arguments": [
+    "nvalues",
+    "weight",
+    "rho_old",
+    "rho_new",
+    "target",
+    "d_weight",
+    "d_rho_old",
+    "d_rho_new",
+    "d_target",
+    "branch_record",
+    "failure"
+   ]
+  },
+  "ad": {
+   "symbol": "transport_interpolate_target_v841__ad",
+   "cuda_arguments": [
+    "nvalues",
+    "weight",
+    "rho_old",
+    "rho_new",
+    "target",
+    "b_weight",
+    "b_rho_old",
+    "b_rho_new",
+    "b_target_live",
+    "b_target",
+    "branch_record",
+    "failure"
+   ]
+  },
+  "aug": null
+ },
+ "failure_slots": "One int32 device flag for each distinct source_id, in ascending source_id order; host clears and reads all flags.",
+ "alias_policy": "Incoming overwritten output cotangents, outgoing input cotangents, immutable seed snapshots and failure buffers are disjoint. Outside-mask seed slots stay unchanged.",
+ "reverse_reduction": "weight reduced in ascending element order by one owner using an f64 accumulator; densities are differenced before multiplication to avoid cancellation.",
+ "admission": "dimensions and index products must fit signed i32; all buffers contiguous, disjoint and sized to shapes; cell and topology indices valid; ntracers,nlev,ncells positive when used.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "transport_interpolate_target_v841__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nvalues"
+     },
+     {
+      "bind": "scalar",
+      "arg": "weight"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho_old"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho_new"
+     },
+     {
+      "bind": "primal",
+      "arg": "target",
+      "post": true
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "in",
+      "scalar_arg": "weight"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rho_old",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rho_new",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "target",
+      "field_id": 4,
+      "io": "out"
+     },
+     {
+      "bind": "branch_record",
+      "slots": 13
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cuda_transport_v841.py:117:input-invalid",
+       "cuda_transport_v841.py:117:output-invalid"
+      ],
+      "layout": "int32",
+      "bytes_per_slot": 4
+     }
+    ]
+   },
+   "ad": {
+    "function": "transport_interpolate_target_v841__ad",
+    "geometry": {
+     "grid": [
+      "ceil(nvalues/2048)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nvalues"
+     },
+     {
+      "bind": "scalar",
+      "arg": "weight"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho_old"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho_new"
+     },
+     {
+      "bind": "primal",
+      "arg": "target",
+      "post": true
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "accumulate",
+      "scalar_arg": "weight"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rho_old",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rho_new",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "target",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "saved",
+      "name": "reverse_seed_target",
+      "dtype": "f32",
+      "elems": {
+       "shape_like_forward_arg": "target"
+      },
+      "producer": "scheduler-copy:adjoint:target"
+     },
+     {
+      "bind": "branch_record",
+      "slots": 13
+     },
+     {
+      "bind": "workspace",
+      "name": "g8_w_part",
+      "bytes": "8*ceil(nvalues/2048)",
+      "init": "zero"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cuda_transport_v841.py:117:input-invalid",
+       "cuda_transport_v841.py:117:output-invalid"
+      ],
+      "layout": "int32",
+      "bytes_per_slot": 4
+     }
+    ]
+   },
+   "ad_weight": {
+    "function": "transport_interpolate_target_v841__ad_weight",
+    "geometry": {
+     "grid": [
+      1,
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nvalues"
+     },
+     {
+      "bind": "scalar",
+      "arg": "weight"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "accumulate",
+      "scalar_arg": "weight"
+     },
+     {
+      "bind": "workspace",
+      "name": "g8_w_part",
+      "bytes": "8*ceil(nvalues/2048)",
+      "init": "zero"
+     },
+     {
+      "bind": "scalar",
+      "value_from": "ceil(nvalues/2048)",
+      "dtype": "<i4"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cuda_transport_v841.py:117:input-invalid",
+       "cuda_transport_v841.py:117:output-invalid"
+      ],
+      "layout": "int32",
+      "bytes_per_slot": 4
+     }
+    ]
+   }
+  },
+  "branch_record_status": "Both entries re-execute the original helper predicates with uint32[13][2] counters. Floating-input probes and the two unreachable subtraction arms are recorded in the proof receipt.",
+  "failure_layout_status": "int32 device slots per COMMON-AD section 35; host creates the ABI-v1 failure record.",
+  "launch_order": {
+   "ad": [
+    "ad",
+    "ad_weight"
+   ]
+  },
+  "reverse_order": [
+   "ad",
+   "ad_weight"
+  ]
+ },
+ "polynomial_degree": 2,
+ "polynomial_reason": "Source line 117 is bilinear in active weight and density along a direction between unchanged helper branches; quadratic-floor proof uses the third difference and derivative-entry branch counters.",
+ "derivative_precision": "The primal is f32. The tangent and adjoint decode f32 operands, including subnormals, to f64 for arithmetic and round each public f32 derivative result with the pinned IEEE helper; the shared weight cotangent has one deterministic f64 accumulator.",
+ "seed_clearing": {
+  "incoming": [
+   "target"
+  ],
+  "written_slots": "target[i], for 0 <= i < nvalues and i covered by the forward launch",
+  "value": "exact +0.0f",
+  "outside": "preserved bitwise",
+  "buffers": "incoming inout and outgoing input cotangent are disjoint"
+ },
+ "g8": "G8 2026-11-06: serial/quadratic reverse loops rewritten (edge_to_slots CSR gathers, fixed-order two-level f64 reductions)"
+}

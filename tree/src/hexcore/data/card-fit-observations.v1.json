@@ -492,6 +492,42 @@
       "cuda_graph_replay": false,
       "evidence": "x1.655362 30 km uniform globe, GFS 2023-03-31 12Z, 6 h (a 1 h run peaked 60,372 MiB; both peaks in the first hour), the global door's forecast argv, MPAS physics convection_permitting, fast numerics, one member alone on an RTX PRO 6000, 2026-11-06 (device_admission.MPAS_ROUTE_RUN_PEAKS; replaces the hex 0.4.8 rows)",
       "instrument": "the run's processes' nvidia-smi compute-apps rows every 0.5 s"
+    },
+    {
+      "id": "mpas-route-uniform30km-654432-55l-188sm-cp-1card-6h-20261115",
+      "status": "complete",
+      "card": "96gib-188sm",
+      "levels": 55,
+      "cells": 654432,
+      "cards": 1,
+      "hours": 6,
+      "dt_seconds": 180,
+      "route": "mpas",
+      "suite": "convection_permitting",
+      "peak_process_vram_mib": 59318.0,
+      "engine_version": "hex 0.4.14 hosted measurement",
+      "numerics": "fast",
+      "cuda_graph_replay": false,
+      "evidence": "30 km uniform globe from the mesh generator (654,432 cells), GFS 2026-06-21 12Z, 6 h with hourly history, the hosted global door, MPAS physics convection_permitting, fast numerics, one member alone on an RTX PRO 6000 Blackwell Server, gpuwm-hex 0.4.14 on gpuwm 2.9.13, 2026-11-15; peak from the global-vr receipt (measured_peak_card_vram_mib). Memory only: no forecast wall here, so the runtime rows are unchanged",
+      "instrument": "1 s compute-process samples of the forecast's process group, the largest card"
+    },
+    {
+      "id": "mpas-route-uniform29km-700362-55l-188sm-cp-1card-6h-20261115",
+      "status": "complete",
+      "card": "96gib-188sm",
+      "levels": 55,
+      "cells": 700362,
+      "cards": 1,
+      "hours": 6,
+      "dt_seconds": 150,
+      "route": "mpas",
+      "suite": "convection_permitting",
+      "peak_process_vram_mib": 62778.0,
+      "engine_version": "hex 0.4.14 hosted measurement",
+      "numerics": "fast",
+      "cuda_graph_replay": false,
+      "evidence": "29 km uniform globe from the mesh generator (700,362 cells), GFS 2026-06-21 12Z, 6 h with hourly history, the hosted global door, MPAS physics convection_permitting, fast numerics, one member alone on an RTX PRO 6000 Blackwell Server, gpuwm-hex 0.4.14 on gpuwm 2.9.13, 2026-11-15; peak from the global-vr receipt (measured_peak_card_vram_mib). Memory only: no forecast wall here, so the runtime rows are unchanged",
+      "instrument": "1 s compute-process samples of the forecast's process group, the largest card"
     }
   ]
 }

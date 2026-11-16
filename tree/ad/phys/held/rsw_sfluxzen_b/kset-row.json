@@ -1,0 +1,148 @@
+{
+ "function": "rsw_sfluxzen_b",
+ "class": "rowed",
+ "gate_ready": true,
+ "window_launches_pkg18": 0,
+ "window_note": "pkg18 holds radiation as held uploads, so no launch binds until a radiation-live seal",
+ "arguments": [
+  {
+   "name": "ncol",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nlayers",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "laytrop",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "tab",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "ngb",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "laysolfr",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "jp",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "jt",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "jt1",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "colh2o",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "colco2",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "colch4",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "colo2",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "colo3",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "fac00",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "fac01",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "fac10",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "fac11",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "sfluxzen",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  }
+ ],
+ "derivative": {
+  "row": "ad/held-rsw_sfluxzen_b",
+  "root": "tree/ad/phys/held/rsw_sfluxzen_b",
+  "spec": {
+   "path": "tree/ad/phys/held/rsw_sfluxzen_b/rsw_sfluxzen_b.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/rsw_sfluxzen_b/cuda/rsw_sfluxzen_b.ad.cu"
+  },
+  "fatbin_sha256": "a5b027ae088052b094721a55da1b43b8f1eb068284d9cbc0e5ff1f45cd6f48c6",
+  "nvcc": [
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-gencode",
+   "arch=compute_80,code=compute_80",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false"
+  ]
+ },
+ "capture": {
+  "path": "<origin>/ad-phys/held/rsw_sfluxzen_b/caps/hrrrv5_x1.2562/rsw_sfluxzen_b/1/launch-000000/manifest.json"
+ }
+}

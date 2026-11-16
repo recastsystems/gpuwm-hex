@@ -87,18 +87,18 @@ def _float_shim(source: str) -> str:
 
 
 @lru_cache(maxsize=None)
-def _fast_column(tiny: str) -> str:
+def _fast_column(tiny: str, corrections: tuple = ()) -> str:
     from hexcore.mpasphys.rrfs import tempo_v325 as t
-    return t._column_source("fast")
+    return t._column_source("fast", corrections)
 
 
-def fast_column() -> str:
+def fast_column(corrections: tuple = ()) -> str:
     """The fast column of tempo_v303 (rrfs/tempo-yolo: fixed-speed register sedimentation, a1 binary32
     arithmetic, the all-binary32 layer with its binary32 blob, constant-bank parameters and intrinsics, tiny
     graupel absent). The all-float layer already holds the blob in binary32, so the phase split's own blob and
     shim edits (_float_blob, _float_shim) are not applied over it."""
     import os
-    return _fast_column(os.environ.get("GPUWM_HEX_TEMPO_TINY_MASS", "graupel").strip().lower())
+    return _fast_column(os.environ.get("GPUWM_HEX_TEMPO_TINY_MASS", "graupel").strip().lower(), tuple(corrections))
 
 
 _SHAPE_OLD_START = "#ifndef TEMPO_WARP\n#define TEMPO_WARP 0\n#endif"
@@ -732,9 +732,9 @@ def _tail_minblocks(variant: str) -> int:
 DEFAULT_INLINE = ""
 
 
-def phase_source(device_math_source: str, max_levels: int, inline: str = "") -> str:
+def phase_source(device_math_source: str, max_levels: int, inline: str = "", corrections: tuple = ()) -> str:
     """Module P: the phase column and the (level, cell) phase kernels."""
-    col = _inline(phase_column(fast_column()), "P" in inline.split("MB")[0].replace("TM", ""))
+    col = _inline(phase_column(fast_column(corrections)), "P" in inline.split("MB")[0].replace("TM", ""))
     work, tend = layout(col)
     binding, words = _work_binding(work, tend)
     return (f"#define TEMPO_NZ_MAX {max_levels}\n" + _shared_pow(device_math_source) + device_math_source
@@ -1012,10 +1012,10 @@ extern "C" __global__ void TEMPO_TAIL_LB tempo_phase_tail(int nz, int cells, int
 """
 
 
-def tail_source(device_math_source: str, max_levels: int, inline: str = "") -> str:
+def tail_source(device_math_source: str, max_levels: int, inline: str = "", corrections: tuple = ()) -> str:
     """Module S: the binary32-blob fast column in the warp shape, the warp kernel and the phase tail."""
     from hexcore.mpasphys.rrfs import tempo_v325 as t
-    col = _inline(fast_column(), "S" in inline.split("MB")[0].replace("TM", ""))
+    col = _inline(fast_column(corrections), "S" in inline.split("MB")[0].replace("TM", ""))
     work, tend = layout(col)
     words = len(work) + len(tend) + 1
     mb = _tail_minblocks(inline)
@@ -1035,7 +1035,7 @@ def _options():
 
 
 @lru_cache(maxsize=None)
-def _modules(device: int, device_math_source: str, max_levels: int, inline: str = ""):
+def _modules(device: int, device_math_source: str, max_levels: int, inline: str = "", corrections: tuple = ()):
     import cupy as cp
     from cupy.cuda import compiler, driver, function, runtime
     from hexcore.cuda_backend.aot import direct_image
@@ -1043,7 +1043,8 @@ def _modules(device: int, device_math_source: str, max_levels: int, inline: str 
     with cp.cuda.Device(device):
         arch = compiler._get_arch()
         mods = []
-        for src in (phase_source(device_math_source, max_levels, inline), tail_source(device_math_source, max_levels, inline)):
+        for src in (phase_source(device_math_source, max_levels, inline, corrections),
+                    tail_source(device_math_source, max_levels, inline, corrections)):
             image = direct_image(src, _options(), arch)
             module = function.Module()
             module.load(image)
@@ -1060,7 +1061,7 @@ def _modules(device: int, device_math_source: str, max_levels: int, inline: str 
             from gpuwm.backend import active_blocks_per_multiprocessor
             blocks = active_blocks_per_multiprocessor(kern.ptr, t.WARP_BLOCK, 0)
             resident[name] = max(1, sms * blocks) * (t.WARP_BLOCK // 32)
-        col = fast_column()
+        col = fast_column(corrections)
         work, tend = layout(col)
         words = len(work) + len(tend) + 1
         return mp, ms, sizes, resident, words
@@ -1110,7 +1111,7 @@ def _areas(device: int, nz: int, ntiles: int, words: int):
 
 
 def launch_steps(*, device, nz, cells, steps, dt, f, bl, s, profiles, tables, flags, first, presence, radii,
-                 device_math_source, force_warp=False):
+                 device_math_source, force_warp=False, corrections=()):
     """One fast TEMPO slot (all n_microp substeps): phases A, B, C per chunk, then the warp tail.
 
     Falls back to the binary32-blob warp kernel where the column has serial setup work the phases do not
@@ -1119,7 +1120,7 @@ def launch_steps(*, device, nz, cells, steps, dt, f, bl, s, profiles, tables, fl
     """
     import cupy as cp
     from hexcore.mpasphys.rrfs import tempo_v303 as t
-    mp, ms, sizes, resident, words = _modules(device, device_math_source, nz, inline_mode())
+    mp, ms, sizes, resident, words = _modules(device, device_math_source, nz, inline_mode(), tuple(corrections))
     blob = float_blob(tables)
     aero, hail, ml_bl, melt, hyper = (int(bool(v)) for v in flags)
     tiles = -(-cells // 32)

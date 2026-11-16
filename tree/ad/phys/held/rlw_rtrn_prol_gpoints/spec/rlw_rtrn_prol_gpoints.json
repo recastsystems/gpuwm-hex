@@ -1,0 +1,15 @@
+{
+ "kernel": "rlw_rtrn_prol_gpoints",
+ "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+ "derivative": "hand-written (held/rlw_rtrn_prol_gpoints/cuda/rlw_rtrn_prol_gpoints.ad.cuh); gen_kernel.py refuses the body (__ballot_sync, atomicOr on the integer icldlyr flag)",
+ "active_in": ["cldfmc", "taucmc", "secdiff"],
+ "active_out": ["odcld", "efclfrac"],
+ "inactive": ["ncol", "nl", "ngb", "icldlyr"],
+ "frozen": {"cldfmc == 1.0f (pinned .cu 9162)": "McICA 0/1 mask; executed branch frozen on the trajectory, clear branch has zero derivative"},
+ "fd_fixed": ["cldfmc"],
+ "columns_arg": "ncol",
+ "tape": 1,
+ "writes": 1,
+ "tape_note": "the entries use no tape: the adjoint recomputes the primal in registers; the harness still allocates threads x 1 slots",
+ "refused": []
+}

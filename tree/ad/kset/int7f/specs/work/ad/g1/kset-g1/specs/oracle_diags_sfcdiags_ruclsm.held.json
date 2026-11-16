@@ -1,0 +1,488 @@
+{
+ "kernel": "oracle_diags_sfcdiags_ruclsm",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py",
+ "line": 5322,
+ "body": {
+  "file": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py",
+  "line": 4761,
+  "function": "diags_sfcdiags_ruclsm",
+  "helpers": {
+   "diags_rslf": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4880",
+   "diags_rsif": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4902"
+  },
+  "native": "RRFS-MPAS 1d6e370e RUCLSM/MPAS/module_sf_sfcdiags_ruclsm.F L9-L243"
+ },
+ "route": "hand-written",
+ "mode": "exact-linearisation (selections frozen from the trajectory)",
+ "unit": "held/oracle_diags_sfcdiags_ruclsm",
+ "launch": {
+  "grid": "forward",
+  "block": "forward",
+  "shared_bytes": 0,
+  "threads": "one thread per tile cell c < nc; element (i,j) of a 2-D table array is word c + (i-ims)*nc + (j-jms)*nc*(ime-ims+1); 3-D arrays read at k = 1"
+ },
+ "args": [
+  {
+   "name": "ptrs",
+   "role": "pointer_table",
+   "dtype": "u64",
+   "shape": "[39]",
+   "active": true,
+   "table": [
+    "hfx",
+    "qfx",
+    "tsk",
+    "qsfc",
+    "cqs",
+    "cqs2",
+    "chs",
+    "chs2",
+    "t2",
+    "th2",
+    "q2",
+    "t3d",
+    "qv3d",
+    "dz",
+    "rho3d",
+    "p3d",
+    "psfc2d",
+    "cp",
+    "r_d",
+    "rovcp",
+    "globalcells",
+    "ids",
+    "ide",
+    "jds",
+    "jde",
+    "kds",
+    "kde",
+    "ims",
+    "ime",
+    "jms",
+    "jme",
+    "kms",
+    "kme",
+    "its",
+    "ite",
+    "jts",
+    "jte",
+    "kts",
+    "kte"
+   ],
+   "layout": "binder ruc_layout.rs DIAGNOSTICS (39 fields, no optional flags)",
+   "roles": {
+    "hfx": "in",
+    "qfx": "in",
+    "tsk": "in",
+    "qsfc": "in",
+    "cqs": "in",
+    "cqs2": "in",
+    "chs": "inactive: chs: read only by the dead flux=.false. arm (L72); zero partial, never written",
+    "chs2": "in",
+    "t2": "out, overwrite full",
+    "th2": "out, overwrite full",
+    "q2": "out, overwrite full",
+    "t3d": "in",
+    "qv3d": "in",
+    "dz": "in",
+    "rho3d": "in",
+    "p3d": "in",
+    "psfc2d": "in",
+    "cp": "inactive: cp (float32 physical constant per cell)",
+    "r_d": "inactive: r_d (float32 physical constant per cell, unread)",
+    "rovcp": "inactive: rovcp (float32 physical constant per cell)",
+    "globalcells": "inactive: globalcells (int32 cell id, diagnostic print only)",
+    "ids": "inactive: ids (int32 extent)",
+    "ide": "inactive: ide (int32 extent)",
+    "jds": "inactive: jds (int32 extent)",
+    "jde": "inactive: jde (int32 extent)",
+    "kds": "inactive: kds (int32 extent)",
+    "kde": "inactive: kde (int32 extent)",
+    "ims": "inactive: ims (int32 extent)",
+    "ime": "inactive: ime (int32 extent)",
+    "jms": "inactive: jms (int32 extent)",
+    "jme": "inactive: jme (int32 extent)",
+    "kms": "inactive: kms (int32 extent)",
+    "kme": "inactive: kme (int32 extent)",
+    "its": "inactive: its (int32 extent)",
+    "ite": "inactive: ite (int32 extent)",
+    "jts": "inactive: jts (int32 extent)",
+    "jte": "inactive: jte (int32 extent)",
+    "kts": "inactive: kts (int32 extent)",
+    "kte": "inactive: kte (int32 extent)"
+   }
+  },
+  {
+   "name": "tables",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "RUC constant tables; diags_sfcdiags_ruclsm reads only tb.targetcell (int, diagnostic print)"
+  },
+  {
+   "name": "work",
+   "role": "scratch",
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "arena scratch t2_alt/q2_alt (L132-L155): written then read by the same thread of this launch"
+  },
+  {
+   "name": "error",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "integer error word"
+  },
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "tile cell count"
+  }
+ ],
+ "linearisation": {
+  "outputs": "t2, th2, q2 overwritten: d out = J d in (13 active inputs: hfx qfx tsk qsfc cqs cqs2 chs2 t3d qv3d dz rho3d p3d psfc2d)",
+  "J": "formed per cell in float64 from the forward's float32 words (forward-mode over 13 unit directions); TL y = J x, AD b_in += J^T b_out, b_out = 0; one float32 rounding per written word",
+  "pow": "d pow(1e5/psfc, rovcp) = -rovcp E / psfc d psfc; d pow(1e-5 psfc, rovcp) = rovcp F / psfc d psfc",
+  "sat": "r = .622 es/(p-es): dr/dp = -.622 es/(p-es)^2, dr/des = .622 p/(p-es)^2, des/dx from the Horner coefficients, x = t-273.16 (0 if clamped at -80)"
+ },
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4788",
+   "predicate": "flux (= .true., L54)",
+   "policy": "inactive",
+   "inactive_reason": "source constant"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4789",
+   "predicate": "chs2 < 1e-5",
+   "policy": "trajectory"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4801",
+   "predicate": "tempc <= 0 (ice saturation)",
+   "policy": "trajectory"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4818",
+   "predicate": "cqs2 < 1e-5",
+   "policy": "trajectory"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4835",
+   "predicate": "dt > 0",
+   "policy": "trajectory"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4842",
+   "predicate": "dq > 0",
+   "policy": "trajectory"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4862",
+   "predicate": "tempc2 <= 0 (ice saturation)",
+   "policy": "trajectory"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4809,tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4827,tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4849,tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4868",
+   "predicate": "globalcells(i) == tb.targetcell",
+   "policy": "inactive",
+   "inactive_reason": "native diagnostic print only, omitted in the port; no physics mutation"
+  }
+ ],
+ "limiters": [
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4806",
+   "expression": "qlev1 = ruc_min(qsat, qlev1)",
+   "treatment": "selection frozen from the trajectory"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4836,tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4843",
+   "expression": "fh = ruc_min(ruc_max(1 - dt/10 | 1 - dq/0.003, 0.01), 1)",
+   "treatment": "selection frozen; a clamped fh has zero tangent"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4856-tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4857",
+   "expression": "t2 = clamp(t2_alt, min(tsk,t3d1), max(tsk,t3d1))",
+   "treatment": "selection frozen; the selected operand's tangent passes"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4859-tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4860",
+   "expression": "q2 = clamp(q2_alt, min(qsfcmr,qlev1), max(qsfcmr,qlev1))",
+   "treatment": "selection frozen"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4867",
+   "expression": "q2 = ruc_min(qsat(psfc, t2), q2)",
+   "treatment": "selection frozen"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4895,tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:4917",
+   "expression": "x = ruc_max(-80, t - 273.16) in rslf/rsif",
+   "treatment": "selection frozen; clamped x has zero tangent"
+  }
+ ],
+ "frozen_coefficients": "selectors only (min/max operand choice and the fh clamp); every arm differentiated exactly; ruc_min(a,b)=a<b?a:b and ruc_max(a,b)=a>b?a:b tie rules",
+ "precision": "float32 primal recomputed with the forward's __f*_rn, gfk_pow and gfk_log words (module shared math); float64 partials; one float32 rounding per written word; --fmad=false --ftz=false",
+ "alias": "outputs disjoint from every input and from each other; inputs disjoint or the identical view (checked per launch, slot 1); primal reads through the live table are the pre-launch values because the forward never writes its inputs",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "oracle_diags_sfcdiags_ruclsm__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc*64"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "ptrs",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "targets": [
+        "hfx",
+        "qfx",
+        "tsk",
+        "qsfc",
+        "cqs",
+        "cqs2",
+        "chs",
+        "chs2",
+        "t2",
+        "th2",
+        "q2",
+        "t3d",
+        "qv3d",
+        "dz",
+        "rho3d",
+        "p3d",
+        "psfc2d",
+        "cp",
+        "r_d",
+        "rovcp",
+        "globalcells",
+        "ids",
+        "ide",
+        "jds",
+        "jde",
+        "kds",
+        "kde",
+        "ims",
+        "ime",
+        "jms",
+        "jme",
+        "kms",
+        "kme",
+        "its",
+        "ite",
+        "jts",
+        "jte",
+        "kts",
+        "kte"
+       ],
+       "active_slots": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+       ],
+       "inactive_slots": {
+        "6": "chs: read only by the dead flux=.false. arm (L72); zero partial, never written",
+        "17": "cp (float32 physical constant per cell)",
+        "18": "r_d (float32 physical constant per cell, unread)",
+        "19": "rovcp (float32 physical constant per cell)",
+        "20": "globalcells (int32 cell id, diagnostic print only)",
+        "21": "ids (int32 extent)",
+        "22": "ide (int32 extent)",
+        "23": "jds (int32 extent)",
+        "24": "jde (int32 extent)",
+        "25": "kds (int32 extent)",
+        "26": "kde (int32 extent)",
+        "27": "ims (int32 extent)",
+        "28": "ime (int32 extent)",
+        "29": "jms (int32 extent)",
+        "30": "jme (int32 extent)",
+        "31": "kms (int32 extent)",
+        "32": "kme (int32 extent)",
+        "33": "its (int32 extent)",
+        "34": "ite (int32 extent)",
+        "35": "jts (int32 extent)",
+        "36": "jte (int32 extent)",
+        "37": "kts (int32 extent)",
+        "38": "kte (int32 extent)"
+       }
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "nonfinite primal intermediate, Jacobian entry, incoming tangent or cotangent",
+       "an output array overlaps an input or another output, or two inputs partially overlap"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "oracle_diags_sfcdiags_ruclsm__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc*64"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ptrs",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "targets": [
+        "hfx",
+        "qfx",
+        "tsk",
+        "qsfc",
+        "cqs",
+        "cqs2",
+        "chs",
+        "chs2",
+        "t2",
+        "th2",
+        "q2",
+        "t3d",
+        "qv3d",
+        "dz",
+        "rho3d",
+        "p3d",
+        "psfc2d",
+        "cp",
+        "r_d",
+        "rovcp",
+        "globalcells",
+        "ids",
+        "ide",
+        "jds",
+        "jde",
+        "kds",
+        "kde",
+        "ims",
+        "ime",
+        "jms",
+        "jme",
+        "kms",
+        "kme",
+        "its",
+        "ite",
+        "jts",
+        "jte",
+        "kts",
+        "kte"
+       ],
+       "active_slots": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+       ],
+       "inactive_slots": {
+        "6": "chs: read only by the dead flux=.false. arm (L72); zero partial, never written",
+        "17": "cp (float32 physical constant per cell)",
+        "18": "r_d (float32 physical constant per cell, unread)",
+        "19": "rovcp (float32 physical constant per cell)",
+        "20": "globalcells (int32 cell id, diagnostic print only)",
+        "21": "ids (int32 extent)",
+        "22": "ide (int32 extent)",
+        "23": "jds (int32 extent)",
+        "24": "jde (int32 extent)",
+        "25": "kds (int32 extent)",
+        "26": "kde (int32 extent)",
+        "27": "ims (int32 extent)",
+        "28": "ime (int32 extent)",
+        "29": "jms (int32 extent)",
+        "30": "jme (int32 extent)",
+        "31": "kms (int32 extent)",
+        "32": "kme (int32 extent)",
+        "33": "its (int32 extent)",
+        "34": "ite (int32 extent)",
+        "35": "jts (int32 extent)",
+        "36": "jte (int32 extent)",
+        "37": "kts (int32 extent)",
+        "38": "kte (int32 extent)"
+       }
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "nonfinite primal intermediate, Jacobian entry, incoming tangent or cotangent",
+       "an output array overlaps an input or another output, or two inputs partially overlap"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "launch_abi_limitations": [
+  "the mirrored pointer table needs the sweep (persistent) shadows: AD_DOT_PERSIST=1 in per-launch replays; the composed window always has them"
+ ],
+ "owner_task": "ad/held-oracle_diags_sfcdiags_ruclsm"
+}

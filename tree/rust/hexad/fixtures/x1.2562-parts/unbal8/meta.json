@@ -1,0 +1,74 @@
+{
+ "source_layouts": "x1.2562.part8.K3.npz",
+ "layouts_sha256": "45dc0cd82e13e25e9fa3ac94ce2f4d5de2e8bedc94e4aebe1f68361f725a7d30",
+ "part_sha256": "472aa6251aaa86894aa2ff10e0f4bdf33020e1bd2ed2c8de87be12d10cd9b1b0",
+ "mesh_sha256": "8a825312a713bbe959c33ed03c2b503e5ec626238de6b15a686cd0ad5b40c986",
+ "halo_rings": 3,
+ "n_partitions": 8,
+ "ranks": [
+  {
+   "owned_cells": 773,
+   "owned_edges": 2321,
+   "owned_vertices": 1551,
+   "cells": 1037,
+   "edges": 3200,
+   "vertexs": 2164
+  },
+  {
+   "owned_cells": 255,
+   "owned_edges": 764,
+   "owned_vertices": 513,
+   "cells": 444,
+   "edges": 1402,
+   "vertexs": 959
+  },
+  {
+   "owned_cells": 255,
+   "owned_edges": 761,
+   "owned_vertices": 498,
+   "cells": 450,
+   "edges": 1420,
+   "vertexs": 971
+  },
+  {
+   "owned_cells": 261,
+   "owned_edges": 780,
+   "owned_vertices": 527,
+   "cells": 450,
+   "edges": 1418,
+   "vertexs": 969
+  },
+  {
+   "owned_cells": 255,
+   "owned_edges": 794,
+   "owned_vertices": 541,
+   "cells": 447,
+   "edges": 1412,
+   "vertexs": 966
+  },
+  {
+   "owned_cells": 258,
+   "owned_edges": 768,
+   "owned_vertices": 506,
+   "cells": 450,
+   "edges": 1421,
+   "vertexs": 972
+  },
+  {
+   "owned_cells": 254,
+   "owned_edges": 748,
+   "owned_vertices": 496,
+   "cells": 445,
+   "edges": 1404,
+   "vertexs": 960
+  },
+  {
+   "owned_cells": 251,
+   "owned_edges": 744,
+   "owned_vertices": 488,
+   "cells": 440,
+   "edges": 1390,
+   "vertexs": 951
+  }
+ ]
+}

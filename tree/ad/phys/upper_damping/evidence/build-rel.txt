@@ -1,0 +1,6 @@
+# build.sh from the release line (2026-11-16, nvcc 13.5.37, 6 s on processors). The two images are byte for byte
+# the first build's (10f55ce9..., 8950cff1...); the sources differ from that build in one comment line each.
+10f55ce9a6bfe137b86ea5fd2df361181afc15bf37cc5dfed4bc1b4a65a17740  upper_cam_f32.fatbin
+8950cff1a3b12341179ab0731e895f6dcfc00cecc5909bbb3cfd87a03870fd9b  upper_rayleigh_f32.fatbin
+e6ddc9f86eaeca92500eadc97e5fe5ccc30169c8b79f7e347058df3924827a39  cuda/upper_cam_f32.ad.cu
+da2851dd7831624c1ab0741e393a1f1a0ce6b061ef2c84f37347bbdd5822d2a0  cuda/upper_rayleigh_f32.ad.cu

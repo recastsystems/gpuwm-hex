@@ -1,0 +1,12 @@
+[package]
+name = "tempo-ad-gen"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Generate the executed-branch TL/AD module of hex TEMPO (tempo_warp_steps) from the forward's own source"
+
+[[bin]]
+name = "tempo-ad-gen"
+path = "src/main.rs"
+
+[dependencies]

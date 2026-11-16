@@ -1,0 +1,732 @@
+{
+ "kernel": "rsw_spc_accum_b",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 2828,
+ "launch_site": "gpuwm/core/rrtmg_sw.py:3825 (gpuwm 2.9.12, sha256 b80bfbb7)",
+ "route": "hand",
+ "mode": "exact-local-linearisation",
+ "owner_task": "ad/held-rsw_spc_accum_b",
+ "replaces": "nothing: status was missing (no generated or taped derivative existed for this kernel)",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "kernel_line_in_source": 3147,
+  "body_line_in_source": 3035,
+  "launches_per_radiation_step": "1 with ample memory (1281 daylit columns), 7 under the 512 MiB capture lease (1281 + 5 x 256 + 1)"
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0,
+  "note": "the entries use no dynamic shared memory; the forward's 6144-byte tile is a transpose only"
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the daylit batch (or chunk), fixed by the wrapper."
+  },
+  {
+   "name": "nlayers",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count (60 on x1.2562), fixed by the wrapper; nlayers+1 output levels."
+  },
+  {
+   "name": "ngb",
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[112]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "RRTMG SW g-point -> band table (bands 16..29), a fixed integer table that selects the uv / ni band class.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "zincflx",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 112]",
+   "stagger": "none",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "every word",
+   "note": "incoming TOA solar flux per g-point (adjflux * sfluxzen * cossza), W m-2"
+  },
+  {
+   "name": "zcd",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "every word (level J of output K = nlayers - J)",
+   "note": "clear-sky downward flux, normalised, per g-point"
+  },
+  {
+   "name": "zcu",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "every word (level J of output K = nlayers - J)",
+   "note": "clear-sky upward flux"
+  },
+  {
+   "name": "zfd",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "reads": "every word (level J of output K = nlayers - J)",
+   "note": "total-sky downward flux"
+  },
+  {
+   "name": "zfu",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "reads": "every word (level J of output K = nlayers - J)",
+   "note": "total-sky upward flux"
+  },
+  {
+   "name": "ztdbt_nodel",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6,
+   "reads": "every word (level J of output K = nlayers - J)",
+   "note": "total-sky direct-beam transmittance (no delta scaling)"
+  },
+  {
+   "name": "ztdbtc_nodel",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "reads": "every word (level J of output K = nlayers - J)",
+   "note": "clear-sky direct-beam transmittance (no delta scaling)"
+  },
+  {
+   "name": "pbbfd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8,
+   "note": "sum over g-points of zincflx * zfd, all g-points"
+  },
+  {
+   "name": "pbbfu",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9,
+   "note": "sum over g-points of zincflx * zfu, all"
+  },
+  {
+   "name": "pbbcd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10,
+   "note": "sum over g-points of zincflx * zcd, all"
+  },
+  {
+   "name": "pbbcu",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 11,
+   "note": "sum over g-points of zincflx * zcu, all"
+  },
+  {
+   "name": "pbbfddir",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 12,
+   "note": "sum over g-points of zincflx * ztdbt_nodel, all"
+  },
+  {
+   "name": "pbbcddir",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 13,
+   "note": "sum over g-points of zincflx * ztdbtc_nodel, all"
+  },
+  {
+   "name": "puvfd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 14,
+   "note": "sum over g-points of zincflx * zfd, uv g-points (ngb-15 in 10..13)"
+  },
+  {
+   "name": "puvcd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 15,
+   "note": "sum over g-points of zincflx * zcd, uv"
+  },
+  {
+   "name": "puvfddir",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 16,
+   "note": "sum over g-points of zincflx * ztdbt_nodel, uv"
+  },
+  {
+   "name": "puvcddir",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 17,
+   "note": "sum over g-points of zincflx * ztdbtc_nodel, uv"
+  },
+  {
+   "name": "pnifd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 18,
+   "note": "sum over g-points of zincflx * zfd, ni g-points (ngb-15 == 14 or <= 9)"
+  },
+  {
+   "name": "pnicd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 19,
+   "note": "sum over g-points of zincflx * zcd, ni"
+  },
+  {
+   "name": "pnifddir",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 20,
+   "note": "sum over g-points of zincflx * ztdbt_nodel, ni"
+  },
+  {
+   "name": "pnicddir",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 21,
+   "note": "sum over g-points of zincflx * ztdbtc_nodel, ni"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:3110 (pin 44588ef0:2791)",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Store guard level <= nlayers (padded lanes of the last 32-level block are not stored)."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3098/3103 (pin 44588ef0:2779/2784)",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Band class from the integer ngb table (uv: 10 <= ngb-15 <= 13; ni: ngb-15 == 14 or <= 9)."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3079 (pin 44588ef0:2760)",
+   "operation": "clamp",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Tile input_level clamp to 0: reached only by padded lanes (level > nlayers), whose sums are never stored."
+  }
+ ],
+ "limiters": "none: the map is bilinear in (zincflx, z) with no clamp, min/max or state branch, so no frozen coefficient is needed",
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "zincflx and the six z arrays finite; every written derivative word finite"
+ },
+ "precondition": "the seven inputs and the 14 outputs are distinct, non-overlapping allocations or views (the forward reads the inputs through __restrict__). TL: one thread per (col, K) as in the forward. AD: block (col, 0) only, lanes own levels for the z cotangents (each z word belongs to one K), then lanes own g-points and sum the zincflx cotangent over K = 0..nlayers in order, then the seeds are zeroed; block barriers separate the phases; no atomics: deterministic.",
+ "precision": "partials and sums in double from the f32 primal and tangent words; one rounding to f32 per written derivative word (the glue-row rule); the harness-only __check reproduces the forward's f32 order and is bitwise to the forward image",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "rsw_spc_accum_b__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "zincflx"
+     },
+     {
+      "bind": "primal",
+      "arg": "zcd"
+     },
+     {
+      "bind": "primal",
+      "arg": "zcu"
+     },
+     {
+      "bind": "primal",
+      "arg": "zfd"
+     },
+     {
+      "bind": "primal",
+      "arg": "zfu"
+     },
+     {
+      "bind": "primal",
+      "arg": "ztdbt_nodel"
+     },
+     {
+      "bind": "primal",
+      "arg": "ztdbtc_nodel"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zincflx",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zcd",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zcu",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zfd",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zfu",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ztdbt_nodel",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ztdbtc_nodel",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbfd",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbfu",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbcd",
+      "field_id": 10,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbcu",
+      "field_id": 11,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbfddir",
+      "field_id": 12,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbcddir",
+      "field_id": 13,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "puvfd",
+      "field_id": 14,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "puvcd",
+      "field_id": 15,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "puvfddir",
+      "field_id": 16,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "puvcddir",
+      "field_id": 17,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pnifd",
+      "field_id": 18,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pnicd",
+      "field_id": 19,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pnifddir",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pnicddir",
+      "field_id": 21,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw.py:3825:nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rsw_spc_accum_b__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "zincflx"
+     },
+     {
+      "bind": "primal",
+      "arg": "zcd"
+     },
+     {
+      "bind": "primal",
+      "arg": "zcu"
+     },
+     {
+      "bind": "primal",
+      "arg": "zfd"
+     },
+     {
+      "bind": "primal",
+      "arg": "zfu"
+     },
+     {
+      "bind": "primal",
+      "arg": "ztdbt_nodel"
+     },
+     {
+      "bind": "primal",
+      "arg": "ztdbtc_nodel"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zincflx",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zcd",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zcu",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zfd",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zfu",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ztdbt_nodel",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ztdbtc_nodel",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbfd",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbfu",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbcd",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbcu",
+      "field_id": 11,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbfddir",
+      "field_id": 12,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbcddir",
+      "field_id": 13,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "puvfd",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "puvcd",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "puvfddir",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "puvcddir",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pnifd",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pnicd",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pnifddir",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pnicddir",
+      "field_id": 21,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw.py:3825:nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

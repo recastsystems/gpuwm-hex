@@ -1,0 +1,21 @@
+[package]
+name = "ad-phys-p7"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "P7 radiation derivative proofs on captured hrrrv5 launches (private autodiff program)"
+
+[[bin]]
+name = "p7-taumol"
+path = "src/bin/p7_taumol.rs"
+
+[dependencies]
+serde_json = "=1.0.149"
+sha2 = "=0.10.9"
+
+[profile.release]
+opt-level = 3
+
+[[bin]]
+name = "p7-launch"
+path = "src/bin/p7_launch.rs"

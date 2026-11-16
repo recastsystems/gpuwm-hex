@@ -64,6 +64,13 @@ def _mesh(arguments: argparse.Namespace):
     return Mesh.from_netcdf(arguments.grid, arguments.static)
 
 
+def version_line() -> str:
+    """``gpuwm-hex X.Y.Z``: the installed distribution and its version, read from the package's own metadata."""
+    from . import DISTRIBUTION_NAME, __version__
+
+    return f"{DISTRIBUTION_NAME} {__version__}"
+
+
 def _version(arguments: argparse.Namespace) -> int:
     from . import DISTRIBUTION_NAME, __version__
     from .forecast_door import PROJECT_ROOT
@@ -302,6 +309,9 @@ def _add_render_parser(commands: argparse._SubParsersAction) -> None:
 #:   (products without the drawing), ``add-nest`` beside export.
 #: * ``global`` and the doors after it compose every door above from a row;
 #:   ``regional`` is the limited-area counterpart of ``global``.
+#: * the differentiable-engine doors last (``tangent``, ``adjoint-test``, ``sensitivity``,
+#:   ``param-grad``): they replay a recorded forecast with its tangent and adjoint, so they come after the
+#:   doors that make forecasts.
 _DOORS: tuple[tuple[tuple[str, ...], Callable[[argparse._SubParsersAction], None]], ...] = (
     (("tc-verify",), _door(".tc_verify", "register_cli")),
     (("country",), _door(".country_door", "add_country_parser")),
@@ -340,6 +350,7 @@ _DOORS: tuple[tuple[tuple[str, ...], Callable[[argparse._SubParsersAction], None
     (("chem-sources",), _door(".chem_emissions", "add_parser")),
     (("global-cycle",), _door(".global_cycle", "add_global_cycle_parser")),
     (("regional",), _door(".regional_door", "add_regional_parser")),
+    (("tangent", "adjoint-test", "sensitivity", "param-grad"), _door(".ad_doors", "add_ad_parsers")),
 )
 
 
@@ -382,6 +393,8 @@ def build_parser(command: str | None = None) -> argparse.ArgumentParser:
             "model core (a port of MPAS-Atmosphere v8.4.2)"
         ),
     )
+    parser.add_argument("--version", action="version", version=version_line(),
+                        help="print the installed version and exit (the `version` door adds where it is installed)")
     parser.add_argument("--backend", choices=("cuda", "amd"),
                         help="execution backend (default: CUDA; AMD is experimental)")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -407,6 +420,46 @@ def _command_word(argv: Sequence[str]) -> str | None:
     """The door an argument vector names (its first word), or None for ``--help`` and the like."""
 
     return str(argv[0]) if argv and not str(argv[0]).startswith("-") else None
+
+
+#: Flags whose value is a signed coordinate list (LAT,LON[,...] or a S,N,W,E box).
+COORDINATE_FLAGS = frozenset({"--point", "--ellipse", "--blend-core", "--at", "--box"})
+
+
+def join_negative_coordinates(argv: Sequence[str]) -> list[str]:
+    """``--point -33.87,151.21`` as ``--point=-33.87,151.21``.
+
+    argparse reads a token that starts with ``-`` as an option unless it matches its negative-number pattern
+    (``^-\\d+$|^-\\d*\\.\\d+$``), which a comma-separated pair never does.  Only a coordinate flag followed by a
+    token made wholly of comma-separated numbers is joined, so ``--point --help`` still errors as it should.
+
+    THE BREAKAGE THIS PREVENTS (found 2026-11-15 beside the gpuwm 3.0.3 first-contact fixes; ArWen's door joins
+    these the same way): ``gpuwm-hex regional --point -33.9,151.2`` (Sydney), or any point south of the equator,
+    stopped at ``argument --point: expected one argument``.
+    """
+
+    def numeric(token: str) -> bool:
+        fields = token.split(",")
+        if not token.startswith("-") or not 1 <= len(fields) <= 5:
+            return False
+        try:
+            [float(field) for field in fields]
+        except ValueError:
+            return False
+        return True
+
+    argv = [str(token) for token in argv]
+    joined: list[str] = []
+    index = 0
+    while index < len(argv):
+        token = argv[index]
+        if token in COORDINATE_FLAGS and index + 1 < len(argv) and numeric(argv[index + 1]):
+            joined.append(f"{token}={argv[index + 1]}")
+            index += 2
+            continue
+        joined.append(token)
+        index += 1
+    return joined
 
 
 NUMERICS_HELP = (
@@ -456,6 +509,12 @@ def _fold_stochastic_switches(arguments: argparse.Namespace) -> None:
 
 def main(argv: Sequence[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else list(argv)
+    if argv and argv[0] == "--version":
+        # Answered here, before the engine is imported or any door's parser is built: the word a user types to
+        # learn what is installed works in an install whose engine is missing or broken. It used to print the
+        # usage line and exit 2.
+        print(version_line())
+        return 0
     try:
         from gpuwm.backend import consume_backend_option
         argv = consume_backend_option(argv, local_backend_commands=("verify-dycore",))
@@ -492,6 +551,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 def _main_once(argv: Sequence[str]) -> int:
+    argv = join_negative_coordinates(argv)
     try:
         parser = build_parser(_command_word(argv))
     except ModuleNotFoundError as error:

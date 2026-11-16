@@ -1,0 +1,601 @@
+{
+ "kernel": "mixing_scaling_f32",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_horizontal.py",
+ "line": 468,
+ "route": "hand",
+ "mode": "exact",
+ "launch": {
+  "grid": "capture forward grid, positive x; y=z=1",
+  "block": "capture forward block, 1..1024 threads; y=z=1",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "cells_on_edge",
+   "role": "index",
+   "field_id": 1,
+   "dtype": "i32",
+   "shape": "[nedges,2]",
+   "stagger": "edge",
+   "active": false,
+   "inactive_reason": "fixed mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  },
+  {
+   "name": "mesh_density",
+   "role": "in",
+   "field_id": 2,
+   "dtype": "f32",
+   "shape": "[ncells]",
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  },
+  {
+   "name": "nedges",
+   "role": "scalar",
+   "field_id": 3,
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "discrete launch extent or branch control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "scale_with_mesh",
+   "role": "scalar",
+   "field_id": 4,
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "discrete launch extent or branch control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "del2",
+   "role": "out",
+   "field_id": 5,
+   "dtype": "f32",
+   "shape": "[nedges]",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  },
+  {
+   "name": "del4",
+   "role": "out",
+   "field_id": 6,
+   "dtype": "f32",
+   "shape": "[nedges]",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  }
+ ],
+ "saved": [
+  {
+   "name": "mesh_density",
+   "from": "forward",
+   "reason": "required primal or validity input during reverse replay"
+  },
+  {
+   "name": "tape_pow2",
+   "from": "aug",
+   "dtype": "f32",
+   "shape": "[nedges]",
+   "reason": "the executed library result cannot be recovered bitwise from the rounded or clipped forward output"
+  },
+  {
+   "name": "tape_pow4",
+   "from": "aug",
+   "dtype": "f32",
+   "shape": "[nedges]",
+   "reason": "the executed library result cannot be recovered bitwise from the rounded or clipped forward output"
+  }
+ ],
+ "branches": [
+  {
+   "file_line": "cuda_horizontal.py:478",
+   "predicate": "scale_with_mesh == 0",
+   "policy": "inactive-config",
+   "tie": "zero selects constant outputs",
+   "active_variables": "none in the predicate; the selected arm may read active fields",
+   "replay": "recompute from unchanged primal and fixed controls",
+   "slot": 0,
+   "active": false,
+   "inactive_reason": "The launch, integer extent, configuration, or mesh topology controlling this decision is fixed; differentiable field values remain active."
+  },
+  {
+   "file_line": "cuda_horizontal.py:477",
+   "predicate": "launch bounds and fixed topology loop counts",
+   "policy": "inactive-index",
+   "tie": "indices on upper bound are excluded",
+   "active_variables": "none (integer extents and topology fixed)",
+   "replay": "recompute from unchanged primal and fixed controls",
+   "slot": 1,
+   "active": false,
+   "inactive_reason": "The launch, integer extent, configuration, or mesh topology controlling this decision is fixed; differentiable field values remain active.",
+   "column": 14,
+   "operation": "predicate",
+   "ledger_expression": "if (edge >= nedges) return;"
+  },
+  {
+   "file_line": "cuda_horizontal.py:477",
+   "column": 25,
+   "operation": "iteration",
+   "ledger_expression": "return",
+   "active": false,
+   "inactive_reason": "The predicate, loop count, return, or lookup index depends only on fixed launch dimensions, integer topology, configuration, or fixed mesh geometry; selected continuous state values remain active.",
+   "policy": "inactive-index",
+   "slot": 2
+  },
+  {
+   "file_line": "cuda_horizontal.py:481",
+   "column": 9,
+   "operation": "iteration",
+   "ledger_expression": "return",
+   "active": false,
+   "inactive_reason": "The predicate, loop count, return, or lookup index depends only on fixed launch dimensions, integer topology, configuration, or fixed mesh geometry; selected continuous state values remain active.",
+   "policy": "inactive-index",
+   "slot": 3
+  },
+  {
+   "file_line": "cuda_horizontal.py:485",
+   "column": 40,
+   "operation": "lookup",
+   "ledger_expression": "mesh_density[cell0]",
+   "active": false,
+   "inactive_reason": "The integer index and mesh topology select a fixed element; mesh_density remains active and its selected value is differentiated.",
+   "policy": "inactive-index",
+   "slot": 4
+  },
+  {
+   "file_line": "cuda_horizontal.py:485",
+   "column": 62,
+   "operation": "lookup",
+   "ledger_expression": "mesh_density[cell1]",
+   "active": false,
+   "inactive_reason": "The integer index and mesh topology select a fixed element; mesh_density remains active and its selected value is differentiated.",
+   "policy": "inactive-index",
+   "slot": 5
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "zero_divisors": true,
+  "slots": {
+   "tl": 2,
+   "ad": 3
+  },
+  "initialization": "one int32 slot per source_id; zero before launch; any nonzero refuses and is expanded to a host failure record",
+  "source_ids": {
+   "tl": [
+    "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:17:refusal",
+    "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:20:refusal"
+   ],
+   "ad": [
+    "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:37:refusal",
+    "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:43:refusal",
+    "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:48:refusal"
+   ]
+  },
+  "device_slot_bytes": 4,
+  "host_record_bytes": 32,
+  "domain_edges": [
+   {
+    "condition": "mean_density <= 0 or nonfinite",
+    "forward_source_ids": [
+     "cuda_horizontal.py:486:pow-domain",
+     "cuda_horizontal.py:487:pow-domain"
+    ],
+    "entry_slots": {
+     "tl": 0,
+     "ad": 1
+    },
+    "failure_source_ids": {
+     "tl": "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:17:refusal",
+     "ad": "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:43:refusal"
+    }
+   }
+  ]
+ },
+ "cuda_entries": {
+  "tl": {
+   "arguments": [
+    "cells_on_edge",
+    "mesh_density",
+    "nedges",
+    "scale_with_mesh",
+    "del2",
+    "del4",
+    "tape_pow2",
+    "tape_pow4",
+    "d_mesh_density",
+    "d_del2",
+    "d_del4",
+    "failures"
+   ],
+   "prototypes": [
+    "const int* cells_on_edge",
+    "const float* mesh_density",
+    "int nedges",
+    "int scale_with_mesh",
+    "float* del2",
+    "float* del4",
+    "const float* tape_pow2",
+    "const float* tape_pow4",
+    "const float* d_mesh_density",
+    "float* d_del2",
+    "float* d_del4",
+    "int* failures"
+   ]
+  },
+  "ad": {
+   "arguments": [
+    "cells_on_edge",
+    "mesh_density",
+    "nedges",
+    "scale_with_mesh",
+    "del2",
+    "del4",
+    "tape_pow2",
+    "tape_pow4",
+    "b_mesh_density",
+    "b_del2",
+    "b_del4",
+    "ncells",
+    "cell_edge_offsets",
+    "cell_edges",
+    "failures"
+   ],
+   "prototypes": [
+    "const int* cells_on_edge",
+    "const float* mesh_density",
+    "int nedges",
+    "int scale_with_mesh",
+    "float* del2",
+    "float* del4",
+    "const float* tape_pow2",
+    "const float* tape_pow4",
+    "float* b_mesh_density",
+    "float* b_del2",
+    "float* b_del4",
+    "int ncells",
+    "const int* cell_edge_offsets",
+    "const int* cell_edges",
+    "int* failures"
+   ]
+  },
+  "aug": {
+   "arguments": [
+    "cells_on_edge",
+    "mesh_density",
+    "nedges",
+    "scale_with_mesh",
+    "del2",
+    "del4",
+    "tape_pow2",
+    "tape_pow4"
+   ],
+   "prototypes": [
+    "const int* cells_on_edge",
+    "const float* mesh_density",
+    "int nedges",
+    "int scale_with_mesh",
+    "float* del2",
+    "float* del4",
+    "float* tape_pow2",
+    "float* tape_pow4"
+   ]
+  }
+ },
+ "reverse_incidence": "any extra CSR maps must be independently checked against the original immutable forward topology; include every repeated incidence and preserve ascending source slot order",
+ "cotangents": "Accumulate each input cotangent with deterministic gathers. A single thread block completes all gathers, synchronizes, then zeros exactly the fully overwritten output cotangent slots; no seed is read after clearing.",
+ "proof_status": "interim proofs passed on two steps; group reconcile owns proof of record",
+ "branch_record_status": "not needed for the fixed configuration and integer launch predicates; no active-valued predicate is declared",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "mixing_scaling_f32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "cells_on_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "mesh_density"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "scale_with_mesh"
+     },
+     {
+      "bind": "primal",
+      "arg": "del2"
+     },
+     {
+      "bind": "primal",
+      "arg": "del4"
+     },
+     {
+      "bind": "saved",
+      "name": "tape_pow2",
+      "dtype": "<f4",
+      "elems": "nedges",
+      "producer": "aug"
+     },
+     {
+      "bind": "saved",
+      "name": "tape_pow4",
+      "dtype": "<f4",
+      "elems": "nedges",
+      "producer": "aug"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_mesh_density",
+      "bytes": "8*(nedges)",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "field_id": 2,
+        "io": "in",
+        "arg": "mesh_density"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "tangent",
+      "field_id": 5,
+      "io": "out",
+      "arg": "del2"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 6,
+      "io": "out",
+      "arg": "del4"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:17:refusal",
+       "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:20:refusal"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mixing_scaling_f32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "cells_on_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "mesh_density"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "scale_with_mesh"
+     },
+     {
+      "bind": "primal",
+      "arg": "del2"
+     },
+     {
+      "bind": "primal",
+      "arg": "del4"
+     },
+     {
+      "bind": "saved",
+      "name": "tape_pow2",
+      "dtype": "<f4",
+      "elems": "nedges",
+      "producer": "aug"
+     },
+     {
+      "bind": "saved",
+      "name": "tape_pow4",
+      "dtype": "<f4",
+      "elems": "nedges",
+      "producer": "aug"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_mesh_density",
+      "bytes": "8*(nedges)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "field_id": 2,
+        "io": "accumulate",
+        "arg": "mesh_density"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 5,
+      "io": "inout",
+      "arg": "del2"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 6,
+      "io": "inout",
+      "arg": "del4"
+     },
+     {
+      "bind": "derived",
+      "name": "ncells",
+      "from": [
+       "mesh_density"
+      ],
+      "recipe": "hex-ad/tools/dycore/transpose.rs#f32-count",
+      "sha256": "3e2a9d17d8aea0946ccbc4086f4c0f29cfb1eb1ad83b2fc3228d3193c971bf3e",
+      "dtype": "<i4",
+      "as": "scalar"
+     },
+     {
+      "bind": "derived",
+      "name": "cell_edge_offsets",
+      "from": [
+       "cells_on_edge",
+       "mesh_density"
+      ],
+      "recipe": "hex-ad/tools/dycore/transpose.rs#pair",
+      "sha256": "4836aa73664068bacb61d5ff4bef377b654f3e12acfab2e9beab107914cec3f7"
+     },
+     {
+      "bind": "derived",
+      "name": "cell_edges",
+      "from": [
+       "cells_on_edge",
+       "mesh_density"
+      ],
+      "recipe": "hex-ad/tools/dycore/transpose.rs#pair",
+      "sha256": "ccae6cd072bfb62e3e9659e5d7889ff4347cd2308b0ddaed78fbf37ffb905ba6"
+     },
+     {
+      "bind": "failure",
+      "slots": 3,
+      "source_ids": [
+       "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:38:refusal",
+       "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:44:refusal",
+       "hex-ad/cuda/dycore/mixing_scaling_f32.ad.cu:49:refusal"
+      ]
+     }
+    ]
+   },
+   "aug": {
+    "function": "mixing_scaling_f32__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "cells_on_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "mesh_density"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "scale_with_mesh"
+     },
+     {
+      "bind": "primal",
+      "arg": "del2"
+     },
+     {
+      "bind": "primal",
+      "arg": "del4"
+     },
+     {
+      "bind": "saved",
+      "name": "tape_pow2",
+      "dtype": "<f4",
+      "elems": "nedges",
+      "producer": "aug",
+      "io": "out"
+     },
+     {
+      "bind": "saved",
+      "name": "tape_pow4",
+      "dtype": "<f4",
+      "elems": "nedges",
+      "producer": "aug",
+      "io": "out"
+     }
+    ]
+   }
+  }
+ },
+ "cotangent_accumulation": "Fixed-order repeated contributions are accumulated in float64 and rounded once at the float32 destination; separate outputs use deterministic gathers.",
+ "saved_value_policy": "The augmented forward retains the exact executed library value; its output is compared bitwise with the captured original on every proof input.",
+ "augmented_forward_source": {
+  "kernel": {
+   "path": "tree/src/hexcore/cuda_horizontal.py",
+   "lines": "468-488",
+   "sha256": "22a8f7388ef1199a9ac7362aed2007d1698ae107d6638735ff9699110cc6be83"
+  },
+  "helper_prelude": {
+   "path": "tree/src/hexcore/cuda_fp32.py",
+   "lines": "14-226",
+   "sha256": "6e18f76334c030c60361a3e6808fe75e5bf8275d36dd0bbe9fdbd986c5ffa806",
+   "hash_scope": "CUDA_FTZ_HELPERS string stripped of its surrounding newlines; embedded byte-identically in mpas_fp32.cuh",
+   "file_sha256": "ba6b962cac42454846b96d87bba73ef3ceedbf69cdf8ae6a7f880b31f25cc28e"
+  }
+ },
+ "seed_clearing": {
+  "overwritten_outputs": [
+   "del2",
+   "del4"
+  ],
+  "written_elements": "nedges",
+  "outside_unchanged": true,
+  "zero_work_writes_nothing": true,
+  "synchronization": "one participating block and __syncthreads; all other blocks return before touching the seeds"
+ },
+ "source_of_record": {
+  "kind": "captured horizontal module source",
+  "sha256": "25d720171edf628710cafc326531042621bcbfb20fcc8919f8052ac4ebd064e0",
+  "kernel_text_sha256": "45a5a218d16b9306aa60aaab87add59108c40485c340b5fc09b02543ff8c9e46",
+  "comparison": "byte-identical to the complete pinned source composed with CUDA_FTZ_HELPERS",
+  "evidence": "out/evidence/captured-source-audit.json"
+ },
+ "ledger_owner_task": "ad1-124-mixing_scaling_f32",
+ "ledger_reconciliation": {
+  "ledger": "ad0-l00-ledger/out/patch/contracts/branches.csv",
+  "owned_judgements": 5,
+  "key": "file,line,column,operation",
+  "evidence": "inactive lookups hold only the index fixed, never the selected active value"
+ }
+}

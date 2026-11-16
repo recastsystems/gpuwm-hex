@@ -1,0 +1,496 @@
+{
+ "kernel": "cupy_take",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source ",
+ "file": "tree/src/hexcore/mpasphys/cupy-generated",
+ "line": 0,
+ "module": "c97c3a1b00755a57aef013e492ea2fcacf862fe6cde140aa747116af352ba00b",
+ "image": "b9ed07f31c14ed8abdc62602e2dfe7900a323f7fdc26fb4d078cf42cbaefb6ec",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "a",
+   "field_id": 0,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_raw_indices",
+   "field_id": 1,
+   "role": "in",
+   "dtype": "i64",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": false,
+   "inactive_reason": "integer indices (frozen)"
+  },
+  {
+   "name": "ldim_",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "cdim_",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "rdim_",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "index_range_",
+   "field_id": 5,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "_raw_out",
+   "field_id": 6,
+   "role": "out",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_ind",
+   "field_id": 7,
+   "role": "scalar",
+   "dtype": "bytes40",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "CuPy CIndexer"
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "cupy_take: a repeated index (the adjoint would be a fan-in) or out aliasing a",
+   "cupy_take: an index that cannot be read safely (int64 read outside [0, 2^31)) or outside the claims workspace"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl_zero",
+    "tl_count",
+    "tl"
+   ],
+   "ad": [
+    "ad_zero",
+    "ad_count",
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl_zero": {
+    "function": "cupy_take__zero",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "ldim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "index_range_"
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "ldim_*index_range_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(ldim_*index_range_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_take: a repeated index (the adjoint would be a fan-in) or out aliasing a",
+       "cupy_take: an index that cannot be read safely (int64 read outside [0, 2^31)) or outside the claims workspace"
+      ]
+     }
+    ]
+   },
+   "tl_count": {
+    "function": "cupy_take__count",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "ldim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "index_range_"
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "ldim_*index_range_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(ldim_*index_range_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_take: a repeated index (the adjoint would be a fan-in) or out aliasing a",
+       "cupy_take: an index that cannot be read safely (int64 read outside [0, 2^31)) or outside the claims workspace"
+      ]
+     }
+    ]
+   },
+   "ad_zero": {
+    "function": "cupy_take__zero",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "ldim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "index_range_"
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "ldim_*index_range_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(ldim_*index_range_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_take: a repeated index (the adjoint would be a fan-in) or out aliasing a",
+       "cupy_take: an index that cannot be read safely (int64 read outside [0, 2^31)) or outside the claims workspace"
+      ]
+     }
+    ]
+   },
+   "ad_count": {
+    "function": "cupy_take__count",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "ldim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "index_range_"
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "ldim_*index_range_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(ldim_*index_range_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_take: a repeated index (the adjoint would be a fan-in) or out aliasing a",
+       "cupy_take: an index that cannot be read safely (int64 read outside [0, 2^31)) or outside the claims workspace"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "cupy_take__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "ldim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "index_range_"
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "ldim_*index_range_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(ldim_*index_range_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "tangent",
+      "arg": "a",
+      "field_id": 0,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "_raw_out",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_take: a repeated index (the adjoint would be a fan-in) or out aliasing a",
+       "cupy_take: an index that cannot be read safely (int64 read outside [0, 2^31)) or outside the claims workspace"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "cupy_take__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_out",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "ldim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "index_range_"
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "ldim_*index_range_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(ldim_*index_range_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "a",
+      "field_id": 0,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "_raw_out",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_take: a repeated index (the adjoint would be a fan-in) or out aliasing a",
+       "cupy_take: an index that cannot be read safely (int64 read outside [0, 2^31)) or outside the claims workspace"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

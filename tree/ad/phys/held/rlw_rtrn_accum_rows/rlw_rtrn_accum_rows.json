@@ -1,0 +1,116 @@
+{
+ "kernel": "rlw_rtrn_accum_rows",
+ "engine": "hex",
+ "pin": "0f364252",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 858,
+ "route": "hand",
+ "mode": "exact-linear",
+ "owner_task": "ad/held-rlw_rtrn_accum_rows",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "source_lines": "9050-9141",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "module_key": "rrtmg_lw_v842 _gpu_kernel(rlw_rtrn_accum_rows)",
+  "steps": [1, 3],
+  "launches_per_step": 13
+ },
+ "launch": {"grid": "capture", "block": "capture (64 x 1 x 1 required)", "shared_bytes": 0},
+ "derived_scalars": {"nlp1": "nl + 1"},
+ "args": [
+  {"name": "ncol", "role": "scalar", "dtype": "i32", "shape": [], "active": false, "inactive_reason": "Column count of the radiation chunk."},
+  {"name": "nl", "role": "scalar", "dtype": "i32", "shape": [], "active": false, "inactive_reason": "Layer count (64, or 65 for the extra-layer chunks)."},
+  {"name": "radld_p", "role": "in", "dtype": "f32", "shape": "[ncol, nl, 140]", "stagger": "layer x gpoint", "active": true, "field_id": 1, "overwrite": "none"},
+  {"name": "radclrd_p", "role": "in", "dtype": "f32", "shape": "[ncol, nl, 140]", "stagger": "layer x gpoint", "active": true, "field_id": 1, "overwrite": "none"},
+  {"name": "radlu_p", "role": "in", "dtype": "f32", "shape": "[ncol, nl, 140]", "stagger": "layer x gpoint", "active": true, "field_id": 1, "overwrite": "none"},
+  {"name": "radclru_p", "role": "in", "dtype": "f32", "shape": "[ncol, nl, 140]", "stagger": "layer x gpoint", "active": true, "field_id": 1, "overwrite": "none"},
+  {"name": "iclddn_p", "role": "in", "dtype": "u8", "shape": "[ncol, nl, 140]", "active": false, "inactive_reason": "Down-path cloud flags (0/1) from rlw_rtrn_march_coalesced: frozen selection, zero derivative."},
+  {"name": "radlu_sfc", "role": "in", "dtype": "f32", "shape": "[ncol, 140]", "stagger": "surface x gpoint", "active": true, "field_id": 1, "overwrite": "none"},
+  {"name": "radclru_sfc", "role": "in", "dtype": "f32", "shape": "[ncol, 140]", "stagger": "surface x gpoint", "active": true, "field_id": 1, "overwrite": "none"},
+  {"name": "ngs", "role": "in", "dtype": "i32", "shape": "[16]", "active": false, "inactive_reason": "RRTMG cumulative g-points per band (configuration table)."},
+  {"name": "delwave", "role": "in", "dtype": "f32", "shape": "[16]", "active": false, "inactive_reason": "Band widths in cm-1 (configuration table)."},
+  {"name": "wtdiff", "role": "scalar", "dtype": "f32", "shape": [], "active": false, "inactive_reason": "Diffusivity quadrature weight 0.5 (constant)."},
+  {"name": "totuflux", "role": "out", "dtype": "f32", "shape": "[ncol, nl + 1]", "stagger": "level", "active": true, "field_id": 1, "overwrite": "full"},
+  {"name": "totdflux", "role": "out", "dtype": "f32", "shape": "[ncol, nl + 1]", "stagger": "level", "active": true, "field_id": 1, "overwrite": "full", "note": "identically 0 at lev = nl"},
+  {"name": "totuclfl", "role": "out", "dtype": "f32", "shape": "[ncol, nl + 1]", "stagger": "level", "active": true, "field_id": 1, "overwrite": "full"},
+  {"name": "totdclfl", "role": "out", "dtype": "f32", "shape": "[ncol, nl + 1]", "stagger": "level", "active": true, "field_id": 1, "overwrite": "full", "note": "identically 0 at lev = nl"}
+ ],
+ "saved": [],
+ "branches": [
+  {"file_line": "captured .cu 683d7a07:9108-9113", "operation": "select", "active": false, "policy": "frozen-coefficient",
+   "rule": "down clear sum: iclddn[col,lev,g] ? clrd + radclrd : drad (reset to the all-sky running sum). With k = last lane of the band with flag 0, d totdclfl/d radld[g] = s_b for g <= k and d totdclfl/d radclrd[g] = s_b for g > k. The flag has zero derivative."},
+  {"file_line": "captured .cu 683d7a07:9115-9127", "operation": "select", "active": false, "policy": "frozen-coefficient",
+   "rule": "up clear sum: the same with the column flag iclddn[col,0,g] at every level."},
+  {"file_line": "captured .cu 683d7a07:9108", "operation": "predicate", "active": false, "policy": "inactive-index",
+   "rule": "lev <= nl-1: the down sums do not exist at lev = nl (totdflux = totdclfl = 0 there, tangent 0, seed consumed)."}
+ ],
+ "tables": [
+  {"name": "ngs", "policy": "inactive"}, {"name": "delwave", "policy": "inactive"}
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "block 64 x 1 x 1 (RLW_ACC_ROWS); every band 0 <= ng <= 16 (RLW_ACC_G); ngs[15] <= 140; gridDim.x * 64 >= ncol*(nl+1); written tangent / adjoint words and adjoint seeds finite"
+ },
+ "precondition": "Every input word inside the launch range is read by exactly one (column, level) row and every row is owned by one block, so the AD is a block-local gather with no atomics. The TL and AD read no float primal word (only iclddn, ngs, delwave, wtdiff), so they bind to the pre- or post-forward state alike and need no tape. Inputs and outputs are distinct allocations in every captured launch.",
+ "precision": "aug: the forward word for word in f32 (__fadd_rn/__fmul_rn), built --fmad=false --ftz=false, bitwise to the captured image. tl/ad: the forward's tile staging and order, double accumulation, coefficient s_b = (double)wtdiff*(double)delwave[b], one rounding to f32 per written word, +0.0 before rounding (zero stays +0).",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "rlw_rtrn_accum_rows__aug",
+    "geometry": "forward",
+    "args": [
+     {"bind": "scalar", "arg": "ncol"}, {"bind": "scalar", "arg": "nl"},
+     {"bind": "primal", "arg": "radld_p"}, {"bind": "primal", "arg": "radclrd_p"},
+     {"bind": "primal", "arg": "radlu_p"}, {"bind": "primal", "arg": "radclru_p"},
+     {"bind": "primal", "arg": "iclddn_p"},
+     {"bind": "primal", "arg": "radlu_sfc"}, {"bind": "primal", "arg": "radclru_sfc"},
+     {"bind": "primal", "arg": "ngs"}, {"bind": "primal", "arg": "delwave"}, {"bind": "scalar", "arg": "wtdiff"},
+     {"bind": "primal", "arg": "totuflux"}, {"bind": "primal", "arg": "totdflux"},
+     {"bind": "primal", "arg": "totuclfl"}, {"bind": "primal", "arg": "totdclfl"},
+     {"bind": "failure", "slots": 1, "source_ids": ["rrtmg_lw_v842.py:858:accum_rows_geometry"]}
+    ]
+   },
+   "tl": {
+    "function": "rlw_rtrn_accum_rows__tl",
+    "geometry": "forward",
+    "args": [
+     {"bind": "scalar", "arg": "ncol"}, {"bind": "scalar", "arg": "nl"},
+     {"bind": "primal", "arg": "iclddn_p"}, {"bind": "primal", "arg": "ngs"}, {"bind": "primal", "arg": "delwave"},
+     {"bind": "scalar", "arg": "wtdiff"},
+     {"bind": "tangent", "arg": "radld_p", "field_id": 1, "io": "in"},
+     {"bind": "tangent", "arg": "radclrd_p", "field_id": 1, "io": "in"},
+     {"bind": "tangent", "arg": "radlu_p", "field_id": 1, "io": "in"},
+     {"bind": "tangent", "arg": "radclru_p", "field_id": 1, "io": "in"},
+     {"bind": "tangent", "arg": "radlu_sfc", "field_id": 1, "io": "in"},
+     {"bind": "tangent", "arg": "radclru_sfc", "field_id": 1, "io": "in"},
+     {"bind": "tangent", "arg": "totuflux", "field_id": 1, "io": "out"},
+     {"bind": "tangent", "arg": "totdflux", "field_id": 1, "io": "out"},
+     {"bind": "tangent", "arg": "totuclfl", "field_id": 1, "io": "out"},
+     {"bind": "tangent", "arg": "totdclfl", "field_id": 1, "io": "out"},
+     {"bind": "failure", "slots": 1, "source_ids": ["rrtmg_lw_v842.py:858:accum_rows_geometry"]}
+    ]
+   },
+   "ad": {
+    "function": "rlw_rtrn_accum_rows__ad",
+    "geometry": "forward",
+    "args": [
+     {"bind": "scalar", "arg": "ncol"}, {"bind": "scalar", "arg": "nl"},
+     {"bind": "primal", "arg": "iclddn_p"}, {"bind": "primal", "arg": "ngs"}, {"bind": "primal", "arg": "delwave"},
+     {"bind": "scalar", "arg": "wtdiff"},
+     {"bind": "adjoint", "arg": "radld_p", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "radclrd_p", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "radlu_p", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "radclru_p", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "radlu_sfc", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "radclru_sfc", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "totuflux", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "totdflux", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "totuclfl", "field_id": 1, "io": "inout"},
+     {"bind": "adjoint", "arg": "totdclfl", "field_id": 1, "io": "inout"},
+     {"bind": "failure", "slots": 1, "source_ids": ["rrtmg_lw_v842.py:858:accum_rows_geometry"]}
+    ]
+   }
+  }
+ }
+}

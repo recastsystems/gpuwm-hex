@@ -1,0 +1,814 @@
+{
+ "kernel": "rlw_rtrn_march_coalesced",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 840,
+ "module": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+ "image": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+ "route": "hand",
+ "mode": "exact-branch, table node slope",
+ "owner_task": "ad/held-rlw_rtrn_march_coalesced",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch column count"
+  },
+  {
+   "name": "nl",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch layer count"
+  },
+  {
+   "name": "cldfmc",
+   "field_id": 2,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "odcld",
+   "field_id": 3,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "efclfrac",
+   "field_id": 4,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "icldlyr",
+   "field_id": 5,
+   "role": "in",
+   "dtype": "i32",
+   "shape": [
+    "ncol",
+    "nl"
+   ],
+   "active": false,
+   "inactive_reason": "integer cloudy-layer flag: branch selector (frozen)"
+  },
+  {
+   "name": "secdiff",
+   "field_id": 6,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    16
+   ],
+   "active": true
+  },
+  {
+   "name": "semiss",
+   "field_id": 7,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    16
+   ],
+   "active": true
+  },
+  {
+   "name": "planklay",
+   "field_id": 8,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    16
+   ],
+   "active": true
+  },
+  {
+   "name": "planklev",
+   "field_id": 9,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl+1",
+    16
+   ],
+   "active": true
+  },
+  {
+   "name": "plankbnd",
+   "field_id": 10,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    16
+   ],
+   "active": true
+  },
+  {
+   "name": "fracs",
+   "field_id": 11,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "taut",
+   "field_id": 12,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "tau_tbl",
+   "field_id": 13,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    10001
+   ],
+   "active": false,
+   "inactive_reason": "rtrnmc lookup table constant"
+  },
+  {
+   "name": "exp_tbl",
+   "field_id": 14,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    10001
+   ],
+   "active": false,
+   "inactive_reason": "rtrnmc lookup table constant"
+  },
+  {
+   "name": "tfn_tbl",
+   "field_id": 15,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    10001
+   ],
+   "active": false,
+   "inactive_reason": "rtrnmc lookup table constant"
+  },
+  {
+   "name": "bpade",
+   "field_id": 16,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "Pade constant (1/0.278)"
+  },
+  {
+   "name": "ngb",
+   "field_id": 17,
+   "role": "in",
+   "dtype": "i32",
+   "shape": [
+    140
+   ],
+   "active": false,
+   "inactive_reason": "g-point -> band map (integer)"
+  },
+  {
+   "name": "radld_p",
+   "field_id": 18,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "radclrd_p",
+   "field_id": 19,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "radlu_p",
+   "field_id": 20,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "radclru_p",
+   "field_id": 21,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "iclddn_p",
+   "field_id": 22,
+   "role": "out",
+   "dtype": "u8",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": false,
+   "inactive_reason": "integer result (cloud seen above, per g-point and layer): written words take a zero derivative"
+  },
+  {
+   "name": "radlu_sfc",
+   "field_id": 23,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "radclru_sfc",
+   "field_id": 24,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    140
+   ],
+   "active": true
+  }
+ ],
+ "saved": [
+  "p_secdiff",
+  "p_semiss",
+  "p_plankbnd",
+  "p_planklay",
+  "p_planklev"
+ ],
+ "branches": [
+  {
+   "where": ":2595 if (odepth < 0) odepth = 0",
+   "kind": "clamp",
+   "treatment": "frozen: tangent 0 where clamped"
+  },
+  {
+   "where": ":2597 :2711 icldlyr == 1; :2602 odtot < 0.06; :2617 :2669 odepth <= 0.06; :2690 :2727 iclddn",
+   "kind": "branch",
+   "treatment": "trajectory value (the executed branch)"
+  },
+  {
+   "where": ":2623 :2636 :2644 :2676 itr = int(TBLINT*od/(bpade+od) + 0.5); :2624-2650 :2677-2679 lookups",
+   "kind": "table index",
+   "treatment": "index frozen; the looked-up value is differentiated as the function the table samples, at the node (central slope of neighbouring nodes against tau_tbl); case C odepth = tau_tbl[itgas] has derivative 1. Exact-code alternative: entries __tl_exact/__ad_exact (lookup derivative 0)"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "nl > RLW_MAXLAY (128)"
+  ]
+ },
+ "affine": false,
+ "affine_reason": "radiance recurrences multiply state by transmittances that depend on the optical depth",
+ "tape_bytes": 0,
+ "precision": "primal recomputed in float32 with the forward's __f*_rn macros (built --fmad=false --ftz=false --prec-div=true --prec-sqrt=true); derivative arithmetic float64; one rounding per stored derivative word",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad",
+    "ad_reduce"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "rlw_rtrn_march_coalesced__tl",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "odcld"
+     },
+     {
+      "bind": "primal",
+      "arg": "efclfrac"
+     },
+     {
+      "bind": "primal",
+      "arg": "icldlyr"
+     },
+     {
+      "bind": "primal",
+      "arg": "secdiff"
+     },
+     {
+      "bind": "primal",
+      "arg": "semiss"
+     },
+     {
+      "bind": "primal",
+      "arg": "planklay"
+     },
+     {
+      "bind": "primal",
+      "arg": "planklev"
+     },
+     {
+      "bind": "primal",
+      "arg": "plankbnd"
+     },
+     {
+      "bind": "primal",
+      "arg": "fracs"
+     },
+     {
+      "bind": "primal",
+      "arg": "taut"
+     },
+     {
+      "bind": "primal",
+      "arg": "tau_tbl"
+     },
+     {
+      "bind": "primal",
+      "arg": "exp_tbl"
+     },
+     {
+      "bind": "primal",
+      "arg": "tfn_tbl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "bpade"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cldfmc",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "odcld",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "efclfrac",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "secdiff",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "semiss",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "planklay",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "planklev",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "plankbnd",
+      "field_id": 10,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fracs",
+      "field_id": 11,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "taut",
+      "field_id": 12,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "radld_p",
+      "field_id": 18,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "radclrd_p",
+      "field_id": 19,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "radlu_p",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "radclru_p",
+      "field_id": 21,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "radlu_sfc",
+      "field_id": 23,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "radclru_sfc",
+      "field_id": 24,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "iclddn_p",
+      "field_id": 22,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw rtrnmc march (captured .cu 683d7a07:2570) nl > RLW_MAXLAY (128): the forward returns without writing"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rlw_rtrn_march_coalesced__ad",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "odcld"
+     },
+     {
+      "bind": "primal",
+      "arg": "efclfrac"
+     },
+     {
+      "bind": "primal",
+      "arg": "icldlyr"
+     },
+     {
+      "bind": "primal",
+      "arg": "secdiff"
+     },
+     {
+      "bind": "primal",
+      "arg": "semiss"
+     },
+     {
+      "bind": "primal",
+      "arg": "planklay"
+     },
+     {
+      "bind": "primal",
+      "arg": "planklev"
+     },
+     {
+      "bind": "primal",
+      "arg": "plankbnd"
+     },
+     {
+      "bind": "primal",
+      "arg": "fracs"
+     },
+     {
+      "bind": "primal",
+      "arg": "taut"
+     },
+     {
+      "bind": "primal",
+      "arg": "tau_tbl"
+     },
+     {
+      "bind": "primal",
+      "arg": "exp_tbl"
+     },
+     {
+      "bind": "primal",
+      "arg": "tfn_tbl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "bpade"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "radld_p",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "radclrd_p",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "radlu_p",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "radclru_p",
+      "field_id": 21,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "radlu_sfc",
+      "field_id": 23,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "radclru_sfc",
+      "field_id": 24,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "iclddn_p",
+      "field_id": 22,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cldfmc",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "odcld",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "efclfrac",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fracs",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "taut",
+      "field_id": 12,
+      "io": "accumulate"
+     },
+     {
+      "bind": "saved",
+      "name": "p_secdiff",
+      "dtype": "f64",
+      "elems": "ncol*140"
+     },
+     {
+      "bind": "saved",
+      "name": "p_semiss",
+      "dtype": "f64",
+      "elems": "ncol*140"
+     },
+     {
+      "bind": "saved",
+      "name": "p_plankbnd",
+      "dtype": "f64",
+      "elems": "ncol*140"
+     },
+     {
+      "bind": "saved",
+      "name": "p_planklay",
+      "dtype": "f64",
+      "elems": "ncol*nl*140"
+     },
+     {
+      "bind": "saved",
+      "name": "p_planklev",
+      "dtype": "f64",
+      "elems": "ncol*(nl+1)*140"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw rtrnmc march (captured .cu 683d7a07:2570) nl > RLW_MAXLAY (128): the forward returns without writing"
+      ]
+     }
+    ]
+   },
+   "ad_reduce": {
+    "function": "rlw_rtrn_march_coalesced__ad_reduce",
+    "geometry": {
+     "grid": [
+      "ceil(ncol*(nl+1)/128)",
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "saved",
+      "name": "p_secdiff",
+      "dtype": "f64",
+      "elems": "ncol*140"
+     },
+     {
+      "bind": "saved",
+      "name": "p_semiss",
+      "dtype": "f64",
+      "elems": "ncol*140"
+     },
+     {
+      "bind": "saved",
+      "name": "p_plankbnd",
+      "dtype": "f64",
+      "elems": "ncol*140"
+     },
+     {
+      "bind": "saved",
+      "name": "p_planklay",
+      "dtype": "f64",
+      "elems": "ncol*nl*140"
+     },
+     {
+      "bind": "saved",
+      "name": "p_planklev",
+      "dtype": "f64",
+      "elems": "ncol*(nl+1)*140"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "secdiff",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "semiss",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "plankbnd",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "planklay",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "planklev",
+      "field_id": 9,
+      "io": "accumulate"
+     }
+    ]
+   }
+  },
+  "note": "tl and ad run in the forward's geometry (one thread per (col, g-point)). The per-band inputs (secdiff, semiss, plankbnd, planklay, planklev) are read by the 10-16 g-points of their band: ad writes each thread's partial into float64 saved buffers, ad_reduce sums each band's g-points in ascending order (deterministic, no atomics) and accumulates into the band cotangents."
+ }
+}

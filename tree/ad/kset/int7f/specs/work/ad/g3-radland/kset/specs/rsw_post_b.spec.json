@@ -1,0 +1,339 @@
+{
+ "kernel": "rsw_post_b",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 3c499c7b",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 2973,
+ "module": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+ "image": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+ "route": "hand",
+ "mode": "exact-branch",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "nlayers",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "heatfac",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "pdp",
+   "field_id": 3,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers"
+   ],
+   "active": true
+  },
+  {
+   "name": "pbbfu",
+   "field_id": 4,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "pbbfd",
+   "field_id": 5,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "pbbcu",
+   "field_id": 6,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "pbbcd",
+   "field_id": 7,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "swhr",
+   "field_id": 8,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers"
+   ],
+   "active": true
+  },
+  {
+   "name": "swhrc",
+   "field_id": 9,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers"
+   ],
+   "active": true
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": "rrtmg_sw_v842.py:2943 i == nlayers - 1",
+   "kind": "index",
+   "treatment": "top layer set to 0: zero tangent, cotangent consumed"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "rsw_post_b: an output aliases an input"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "rsw_post_b__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "heatfac"
+     },
+     {
+      "bind": "primal",
+      "arg": "pdp"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbbfu"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbbfd"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbbcu"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbbcd"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pdp",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbfu",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbfd",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbcu",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbbcd",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "swhr",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "swhrc",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rsw_post_b: an output aliases an input"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rsw_post_b__ad",
+    "geometry": {
+     "grid": [
+      "ceil(ncol/128)",
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "heatfac"
+     },
+     {
+      "bind": "primal",
+      "arg": "pdp"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbbfu"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbbfd"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbbcu"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbbcd"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pdp",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbfu",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbfd",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbcu",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbbcd",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "swhr",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "swhrc",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rsw_post_b: an output aliases an input"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

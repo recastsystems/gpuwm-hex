@@ -253,21 +253,26 @@
         "built_source_rev": "5bf7ed8ca24e0b759c43f987c77fb70496405cf9"
       },
       "rw_mpas_convert": {
-        "bytes": 4345616,
-        "sha256": "c38b6f950e7fc69793dee6c368737c768c4914af36590060c135d5f5b2d9e998",
+        "release_tag": "engine-bridges-v0.6.0",
+        "bytes": 4197416,
+        "sha256": "092b26d430d7799c6638741340cc5848abf2c5fd76f56318dac298b5ad4d54c4",
         "provenance": {
-          "bytes": 4345616,
+          "bytes": 4197416,
           "diag_stream_patch_sha256": "7fd2d1e21922db062f7f6466acb83d942e7061e6760fa27976cceb210fc70910",
-          "engine_source": "gpuwm 5bf7ed8ca24e0b759c43f987c77fb70496405cf9",
-          "engine_version_declaration_sha256": "b4f978905315d8983c42f97ddf6c97ec68d989034bc7dd1f720f0caaf6cbcba6",
+          "engine_fixes": {
+            "global-start-float32-pole": "f717cd5e2c9399e75e2233593547f58729f5dad9"
+          },
+          "engine_source": "gpuwm f717cd5e2c9399e75e2233593547f58729f5dad9",
+          "engine_version_declaration_sha256": "24221489f4c4719eb8449a368272508a569a37c90cf844bf073c176b1973008d",
           "invariants_patch_sha256": "77cc459b9d33e86026da30239b04888242392821b5d82173b6b9ef5e961a27d3",
           "patch_sha256": "8870109a9d7da253e2be9f928679c78fe235c2840ee994beb0b193823dd2445a",
           "recipe_sha256": "cae5af857f8e696e7e9203da1f7cb4b9e1d29a214ed6f8bfcf0fdb0c8dc560c9",
           "schema": "gpuwm-hex.chemistry-converter-build/v1",
-          "sha256": "c38b6f950e7fc69793dee6c368737c768c4914af36590060c135d5f5b2d9e998"
+          "sha256": "092b26d430d7799c6638741340cc5848abf2c5fd76f56318dac298b5ad4d54c4"
         },
-        "gpuwm_source_rev": "5bf7ed8ca24e0b759c43f987c77fb70496405cf9",
-        "built_source_rev": "5bf7ed8ca24e0b759c43f987c77fb70496405cf9"
+        "gpuwm_source_rev": "f717cd5e2c9399e75e2233593547f58729f5dad9",
+        "cargo_lock_sha256": "946e453d80ac753d4b885bc0207aa988fa10e48c69cbcce44e1776bafa0cd4f2",
+        "built_source_rev": "f717cd5e2c9399e75e2233593547f58729f5dad9"
       }
     }
   },

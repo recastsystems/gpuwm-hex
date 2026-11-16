@@ -1,0 +1,499 @@
+{
+ "kernel": "mpas_lw_outputs",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 597,
+ "launch_site": "rrtmg_lw_v842.py:1239-1241",
+ "route": "hand",
+ "mode": "exact-with-frozen-mask",
+ "owner_task": "ad/held-mpas_lw_outputs",
+ "affine": false,
+ "affine_reason": "linear in u, d, uc, dc, hr and a under the frozen mask; rational in exner (tendency = hr/86400/exner)",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "source_lines": "9633-9647",
+  "steps": [
+   1,
+   6,
+   12
+  ],
+  "launches_per_radiation_step": "2-3 (one per LW wrapper batch)"
+ },
+ "launch": {
+  "grid": "forward ((nc+31)/32)",
+  "block": "forward (32)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Column count of the LW wrapper batch (fixed by the batch plan)."
+  },
+  {
+   "name": "nm",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "MPAS layer count (59 on x1.2562 hrrrv5), fixed by the mesh."
+  },
+  {
+   "name": "nl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Radiation layer count of the batch (64, or 65 with the added top layer), fixed by the layer groups."
+  },
+  {
+   "name": "icloud",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Cloud switch from the namelist (1 on hrrrv5); selects the mask, never a state value."
+  },
+  {
+   "name": "m",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, 12, nm]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "field 11 (exner) actively; field 7 (cloud fraction) only through the frozen cloud mask; fields 0-6, 8-10 unread"
+  },
+  {
+   "name": "a",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, 12, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "fields 9..11 (re_cloud, re_ice, re_snow) at k < nm; everything else unread"
+  },
+  {
+   "name": "u",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "levels 0 and nl (surface and top upward all-sky flux)"
+  },
+  {
+   "name": "d",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "reads": "levels 0 and nl (downward all-sky flux)"
+  },
+  {
+   "name": "uc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "reads": "levels 0 and nl (upward clear-sky flux)"
+  },
+  {
+   "name": "dc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6,
+   "reads": "levels 0 and nl (downward clear-sky flux)"
+  },
+  {
+   "name": "hr",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "reads": "k < nm (all-sky heating rate, K/day); the nl-nm added top layers are unread"
+  },
+  {
+   "name": "tendency",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, nm]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8,
+   "note": "rthratenlw = hr/86400/exner (K/s, theta tendency)"
+  },
+  {
+   "name": "radii",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, 3, nm]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9,
+   "note": "rre_cloud/rre_ice/rre_snow = a[9+j] where icloud>0 and cf>0, else 0"
+  },
+  {
+   "name": "flux",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, 11]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10,
+   "note": "glw, lwupt, lwcf (uc[nl]-u[nl]), olrtoa, lwuptc, lwdnt, lwdntc, lwupb, lwupbc, lwdnb, lwdnbc"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 683d7a07:9644",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Thread index against the fixed column count."
+  },
+  {
+   "file_line": "capture source 683d7a07:9638",
+   "operation": "loop",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Layer loop over the fixed MPAS layer count."
+  },
+  {
+   "file_line": "capture source 683d7a07:9639",
+   "operation": "select",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "frozen": "cloud mask icloud>0 && m[7][k]>0 evaluated on the trajectory (primal m); d radii/d cf = 0",
+   "reason": "step function of cloud fraction: its derivative is 0 almost everywhere and undefined at cf = 0"
+  }
+ ],
+ "limiters": "one: the cloud mask select on radii (frozen from the trajectory, documented in the entry header and RESULT.md hazard 1)",
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "exner != 0 and finite on k < nm; hr finite; every written derivative word finite"
+ },
+ "precondition": "the 10 array arguments are distinct allocations or disjoint views; each column owns its rows of every argument, so threads never share a written word; nl >= 1 (levels 0 and nl distinct)",
+ "precision": "aug: the forward word for word in f32 (__f*_rn), built --fmad=false --ftz=false, bitwise to the forward image. tl/ad: the f32 primal word q = hr/86400 recomputed as the forward, local partials in double, one rounding to f32 per written word (the glue-row rule); AD sums the duplicated flux seeds (flux 0+9 on d[0]; 1+3-2 on u[nl]; 2+4 on uc[nl]) in double before the one rounding.",
+ "binder_roles": "deriv.rs roles(): m, a, u, d, uc, dc, hr TL in, AD accumulate (never snapshotted); tendency, radii, flux TL out, AD inout (seed read and consumed in place). Primal m and hr are pre-launch words; the kernel writes neither.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "mpas_lw_outputs__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nm"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "icloud"
+     },
+     {
+      "bind": "primal",
+      "arg": "m"
+     },
+     {
+      "bind": "primal",
+      "arg": "a"
+     },
+     {
+      "bind": "primal",
+      "arg": "u"
+     },
+     {
+      "bind": "primal",
+      "arg": "d"
+     },
+     {
+      "bind": "primal",
+      "arg": "uc"
+     },
+     {
+      "bind": "primal",
+      "arg": "dc"
+     },
+     {
+      "bind": "primal",
+      "arg": "hr"
+     },
+     {
+      "bind": "primal",
+      "arg": "tendency"
+     },
+     {
+      "bind": "primal",
+      "arg": "radii"
+     },
+     {
+      "bind": "primal",
+      "arg": "flux"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:597:mpas_lw_outputs:exner-zero-or-nonfinite"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "mpas_lw_outputs__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nm"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "icloud"
+     },
+     {
+      "bind": "primal",
+      "arg": "m"
+     },
+     {
+      "bind": "primal",
+      "arg": "hr"
+     },
+     {
+      "bind": "tangent",
+      "arg": "m",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "a",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "u",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "uc",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dc",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "hr",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tendency",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "radii",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "flux",
+      "field_id": 10,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:597:mpas_lw_outputs:exner-zero-or-nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_lw_outputs__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nm"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "icloud"
+     },
+     {
+      "bind": "primal",
+      "arg": "m"
+     },
+     {
+      "bind": "primal",
+      "arg": "hr"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "m",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "a",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "u",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "uc",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dc",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "hr",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tendency",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "radii",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "flux",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:597:mpas_lw_outputs:exner-zero-or-nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

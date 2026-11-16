@@ -1,0 +1,166 @@
+{
+ "kernel": "profile_from_mpas",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 9b6ced0f",
+ "file": "tree/src/hexcore/mpasphys/radshared_v842.py",
+ "line": 407,
+ "module": "9b6ced0f2dd9624292f9069b7bd167cce5409c9ceb453202c7bf3eeae7ed1cdc",
+ "image": "65e9c5c0a39e38ebb66b489c50ba9e17e1e319f9be9a777f98882937e8880ccb",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "nz",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "ntotal",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "src",
+   "field_id": 3,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nz",
+    "ntotal"
+   ],
+   "active": true
+  },
+  {
+   "name": "dst",
+   "field_id": 4,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz"
+   ],
+   "active": true
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "profile_from_mpas: nc > ntotal (not injective) or src == dst"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "profile_from_mpas__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ntotal"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst",
+      "field_id": 4,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "profile_from_mpas: nc > ntotal (not injective) or src == dst"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "profile_from_mpas__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ntotal"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "profile_from_mpas: nc > ntotal (not injective) or src == dst"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

@@ -126,7 +126,8 @@ class ResidentSfclaySlot:
                                     self.len_disp, self.threshold, np.int32(self.frac), np.int32(n)))
         kwargs = dict(vegtype=self.vegetation, errors=self.errors, xice_threshold=self.threshold,
                       itimestep=call.itimestep,
-                      initflag=int(not (self.restart or self.cycling or call.itimestep > 1)))
+                      initflag=int(not (self.restart or self.cycling or call.itimestep > 1)),
+                      corrections=getattr(call, 'corrections', ()))
         from ...wave_surface import feedback
         kwargs['ocean_z0'] = feedback(self.provider)
         self.sfc.run_packed(self.packed, self.options, **kwargs)

@@ -1,0 +1,180 @@
+{
+ "kernel": "mpas_pressure_mb",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 609,
+ "module_source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+ "module_image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/held-mpas_pressure_mb",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "n",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Launch constant: word count (cells x levels of the radiation pressure column set).",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "p",
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "stagger": "radiation-column-level",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1
+  },
+  {
+   "name": "out",
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "stagger": "radiation-column-level",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "683d7a07.cu:9656",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "i < n: integer bound test on a launch constant."
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "named": []
+ },
+ "affine": true,
+ "affine_reason": "out = p / 100 is linear in the one active input with a constant coefficient (no limiter, clamp or real-valued branch).",
+ "affine_rounding_model": "scale-one-input-f32",
+ "tape_bytes": 0,
+ "precision": "derivative arithmetic float64 (coefficient applied as a float64 division by 100), one rounding per stored derivative word; one writer per word, no atomics",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "mpas_pressure_mb__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "683d7a07.cu:9656 non-finite p/out or derivative word",
+       "rrtmg_lw_v842.py:1407 (and rrfs sites) out shadow aliases p shadow (handled exactly; named only)"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "mpas_pressure_mb__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "tangent",
+      "arg": "p",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "out",
+      "field_id": 2,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "683d7a07.cu:9656 non-finite p/out or derivative word",
+       "rrtmg_lw_v842.py:1407 (and rrfs sites) out shadow aliases p shadow (handled exactly; named only)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_pressure_mb__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "p",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "out",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "683d7a07.cu:9656 non-finite p/out or derivative word",
+       "rrtmg_lw_v842.py:1407 (and rrfs sites) out shadow aliases p shadow (handled exactly; named only)"
+      ]
+     }
+    ]
+   }
+  },
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  }
+ }
+}

@@ -148,7 +148,7 @@ def author_case(path, *, track=None, cycle, storm=None, best_track=False, templa
                 hours=12.0, source='gfs', dt_seconds=None, physics_args=None,
                 target='tc', point=None, user_path=None, segment=None, boundary_field='dewpoint',
                 object_field=None, object_threshold=None, check_minutes=None, lead_hours=0,
-                from_last_hour=False, target_config=None):
+                from_last_hour=False, target_config=None, member=None):
     """Seed from an exact analysis position and earlier fixes, never future observations.
 
     ``target`` picks what the fine region follows: ``tc`` (a tropical cyclone from a track position), or a
@@ -163,6 +163,14 @@ def author_case(path, *, track=None, cycle, storm=None, best_track=False, templa
         raise MovingCaseError(f'--target {target!r} is not one of {", ".join(TARGETS)}')
     source_row = resolve_source(load_table(), source)
     source = source_row['id']
+    # ``member``: the source's own member the case starts from (GEFS: 0 is the control), written as
+    # ``init_member``, which ``moving stage`` hands to the source table; the table checks it is one the source
+    # declares before anything is fetched. THE BREAKAGE THIS PREVENTS (2026-11-13 walk of the hex orders the site accepts): a storm-following hex run from GEFS had no way to name its member, so `moving stage` refused it after the order, "source 'gefs' is an ensemble; pass --member".
+    if member is not None:
+        if type(member) is not int or member < 0:
+            raise MovingCaseError('--member must be a nonnegative integer source-member number')
+        if source_row.get('members') is None:
+            raise MovingCaseError(f'source {source!r} declares no members; --member {member} would be ignored')
     source_cycle = timestamp(cycle)
     if source_cycle.minute or source_cycle.second or source_cycle.microsecond:
         raise MovingCaseError('--cycle must be a whole UTC analysis hour')
@@ -217,6 +225,7 @@ def author_case(path, *, track=None, cycle, storm=None, best_track=False, templa
         case['tracker'] = dict(case.get('tracker') or {})
         case['tracker'].pop('initial_center_deg', None)
         case.pop('gfs_cycle', None)
+        case.pop('init_member', None)
     else:
         mesh = mesh_block(fine_km, background_km, fine_radius_km)
         fine, radius = mesh['fine_km'], mesh['fine_radius_km']
@@ -270,6 +279,8 @@ def author_case(path, *, track=None, cycle, storm=None, best_track=False, templa
                 'path': "Fine region on the user's path (not a tracker)"}[target]
     case.update(case=Path(path).stem, description=describe,
                 start_time=analysis.strftime('%Y-%m-%d_%H:%M:%S'), hours=duration, init_source=source)
+    if member is not None:
+        case['init_member'] = member
     if lead:
         case['init_cycle'] = source_cycle.strftime('%Y-%m-%d_%H:%M:%S')
         case['init_lead_hours'] = lead

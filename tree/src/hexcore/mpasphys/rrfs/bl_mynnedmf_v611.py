@@ -12101,3 +12101,8 @@ def run_slot(call):
             native.put_field(pool, name, value, level=1,
                              nlevels=native._fields[pool, name][2])
     return result
+
+
+# GPUWM_HEX_AD_PARAMS (default unset: nothing changes) runs the forward at chosen values of the carried constants.
+from .. import ad_params_override as _ad_params_override
+_ad_params_override.patch_module(globals(), "mynnedmf")

@@ -1,0 +1,2 @@
+#pragma once
+namespace std { typedef decltype(sizeof(0)) size_t; }

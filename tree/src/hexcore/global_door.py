@@ -883,7 +883,10 @@ def _fetch_mesh(mesh: Mapping[str, Any], grid: Path, status) -> dict[str, Any]:
                 f"is not the published mesh and was removed")
     from gpuwm.table_assets import _rw_asset
     from gpuwm.geog_assets import GeogFetchError
-    decoder = shutil.which("rapidgzip")
+    # rapidgzip is a declared dependency, so pip puts its executable beside this interpreter. A user who runs the
+    # venv's gpuwm-hex by its full path (cron, a service, no activated venv) has that folder off PATH; look there too.
+    import sysconfig
+    decoder = shutil.which("rapidgzip") or shutil.which("rapidgzip", path=sysconfig.get_path("scripts"))
     if decoder is None:
         raise GlobalDoorError("rapidgzip is missing; reinstall gpuwm-hex to get the parallel mesh decoder")
     # The Rust tar reader walks the decoded stream once, checking paths and

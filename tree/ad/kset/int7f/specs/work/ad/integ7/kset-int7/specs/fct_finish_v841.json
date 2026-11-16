@@ -1,0 +1,2364 @@
+{
+ "kernel": "fct_finish_v841",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_transport_v841.py",
+ "line": 358,
+ "route": "hand",
+ "mode": "exact",
+ "launch": {
+  "grid": "forward captured geometry",
+  "block": "forward captured block",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ntracers",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "nlev",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "ncells",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "nedges",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "max_edges",
+   "field_id": 5,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n_edges_on_cell",
+   "field_id": 6,
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[ncells]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "edges_on_cell",
+   "field_id": 7,
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[ncells,max_edges]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "acoustic_sign",
+   "field_id": 8,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncells,max_edges]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "inv_area_cell",
+   "field_id": 9,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncells]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "rdzw",
+   "field_id": 10,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "strides": "dense row-major",
+   "stagger": "level",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "horizontal_residual",
+   "field_id": 11,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ntracers,nlev,nedges]",
+   "strides": "dense row-major",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "reference_scale": 1147726.6440894548,
+   "reference_scale_reason": "RMS of tracer 0 of horizontal_residual from convection_permitting_x1.2562 fct_finish_v841 step 2; same field and stagger, used as the characteristic scale when the dry capture is identically zero; object SHA256 71b3cdc613ce71ae3dbd0343027ea9d21c824d006429b77d9bd233079ed27d3b."
+  },
+  {
+   "name": "vertical_residual",
+   "field_id": 12,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ntracers,nlev+1,ncells]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "reference_scale": 0.0018082824302326197,
+   "reference_scale_reason": "RMS of tracer 0 of vertical_residual from convection_permitting_x1.2562 fct_finish_v841 step 2; same field and stagger, used as the characteristic scale when the dry capture is identically zero; object SHA256 3a123ccce221f075f894eee3d859dee1f1f308071bec9195d306b044222cb1d7."
+  },
+  {
+   "name": "target_density",
+   "field_id": 13,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "mass",
+   "field_id": 14,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ntracers,nlev,ncells]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "reference_scale": 0.005474915012028822,
+   "reference_scale_reason": "RMS of tracer 0 of mass from convection_permitting_x1.2562 fct_finish_v841 step 2; same field and stagger, used as the characteristic scale when the dry capture is identically zero; object SHA256 c89b48902b5978fbae7f24e3c2197a88c58b2d411a46d337fe005477ed8de2b1."
+  },
+  {
+   "name": "output",
+   "field_id": 15,
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ntracers,nlev,ncells]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "cuda_transport_v841.py:367",
+   "predicate": "cell >= ncells",
+   "policy": "executed-arm",
+   "tie": "integer fixed",
+   "slot": 0,
+   "recording": "inactive-index",
+   "class": "inactive-index",
+   "inactive_reason": "This predicate depends only on fixed launch indices or discrete configuration, not on any active floating-point input.",
+   "active": false,
+   "column": 14,
+   "operation": "predicate"
+  },
+  {
+   "file_line": "cuda_transport_v841.py:373",
+   "predicate": "slot < n_edges_on_cell[cell]",
+   "policy": "iteration",
+   "tie": "integer fixed",
+   "slot": 1,
+   "recording": "inactive-config",
+   "class": "inactive-config",
+   "inactive_reason": "This predicate depends only on fixed launch indices or discrete configuration, not on any active floating-point input.",
+   "active": false,
+   "column": 13,
+   "operation": "iteration"
+  },
+  {
+   "file_line": "cuda_transport_v841.py:385",
+   "predicate": "max(0, value / target_density)",
+   "policy": "min-max",
+   "tie": "at equal numerical values constant left arm",
+   "slot": 2,
+   "recording": "tangent entry branch_record",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "column": 29,
+   "operation": "min-max"
+  },
+  {
+   "file_line": "cuda_fp32.py:42",
+   "predicate": "subnormal float decode",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 3,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:36-49",
+   "rounding_helper_both_arms": "exact value of the float32 input as a double: ldexp(mantissa,-149) with sign for a subnormal, (double)value otherwise"
+  },
+  {
+   "file_line": "cuda_fp32.py:45",
+   "predicate": "decode sign",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 4,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:43-46",
+   "rounding_helper_both_arms": "sign selection of the same decoded magnitude"
+  },
+  {
+   "file_line": "cuda_fp32.py:57",
+   "predicate": "subnormal float packing",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 5,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:51-67",
+   "rounding_helper_both_arms": "round-to-nearest-even float32 of the double: packed subnormal mantissa rint(|v|*2^149), __double2float_rn otherwise"
+  },
+  {
+   "file_line": "cuda_fp32.py:62",
+   "predicate": "packing sign",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 6,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:60-64",
+   "rounding_helper_both_arms": "sign bit of the same packed result"
+  },
+  {
+   "file_line": "cuda_fp32.py:78",
+   "predicate": "addition fast return",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 7,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:69-100",
+   "rounding_helper_both_arms": "left+right rounded to float32 (ordinary sum, or the double sum rounded once)"
+  },
+  {
+   "file_line": "cuda_fp32.py:83",
+   "predicate": "addition subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 8,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:69-100",
+   "rounding_helper_both_arms": "left+right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:93",
+   "predicate": "addition subnormal cancellation",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 9,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:69-100",
+   "rounding_helper_both_arms": "left+right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:111",
+   "predicate": "subtraction fast return",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 10,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:102-130",
+   "rounding_helper_both_arms": "left-right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:116",
+   "predicate": "subtraction subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 11,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:102-130",
+   "rounding_helper_both_arms": "left-right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:123",
+   "predicate": "subtraction subnormal cancellation",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 12,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:102-130",
+   "rounding_helper_both_arms": "left-right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:142",
+   "predicate": "multiplication subnormal-result envelope",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 13,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:132-151",
+   "rounding_helper_both_arms": "left*right rounded to float32 (ordinary product, or the double product rounded once)"
+  },
+  {
+   "file_line": "cuda_fp32.py:145",
+   "predicate": "multiplication nonzero operands",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 14,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:132-151",
+   "rounding_helper_both_arms": "left*right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:162",
+   "predicate": "division subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 15,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:153-178",
+   "rounding_helper_both_arms": "left/right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:170",
+   "predicate": "division subnormal-result envelope",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 16,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:153-178",
+   "rounding_helper_both_arms": "left/right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:207",
+   "predicate": "minimum subnormal operand",
+   "policy": "executed-arm",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 17,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "class": "false-candidate",
+   "inactive_reason": "The min helper is not invoked by this kernel; this copied helper branch is unreachable.",
+   "active": false
+  },
+  {
+   "file_line": "cuda_fp32.py:219",
+   "predicate": "maximum subnormal operand",
+   "policy": "executed-arm",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 18,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record."
+  },
+  {
+   "slot": 19,
+   "file_line": "cuda_transport_v841.py:367",
+   "column": 25,
+   "operation": "iteration",
+   "predicate": "return",
+   "policy": "iteration",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 20,
+   "file_line": "cuda_transport_v841.py:368",
+   "column": 32,
+   "operation": "lookup",
+   "predicate": "inv_area_cell[cell]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 21,
+   "file_line": "cuda_transport_v841.py:369",
+   "column": 5,
+   "operation": "iteration",
+   "predicate": "for (int tracer = 0; tracer < ntracers; ++tracer)",
+   "policy": "iteration",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 22,
+   "file_line": "cuda_transport_v841.py:369",
+   "column": 33,
+   "operation": "predicate",
+   "predicate": "for (int tracer = 0; tracer < ntracers; ++tracer) {",
+   "policy": "executed-arm",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 23,
+   "file_line": "cuda_transport_v841.py:372",
+   "column": 27,
+   "operation": "lookup",
+   "predicate": "mass[index]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 24,
+   "file_line": "cuda_transport_v841.py:373",
+   "column": 37,
+   "operation": "predicate",
+   "predicate": "for (int slot = 0; slot < n_edges_on_cell[cell]; ++slot) {",
+   "policy": "executed-arm",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 25,
+   "file_line": "cuda_transport_v841.py:373",
+   "column": 39,
+   "operation": "lookup",
+   "predicate": "n_edges_on_cell[cell]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 26,
+   "file_line": "cuda_transport_v841.py:374",
+   "column": 34,
+   "operation": "lookup",
+   "predicate": "edges_on_cell[CES(cell, slot, max_edges)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 27,
+   "file_line": "cuda_transport_v841.py:375",
+   "column": 37,
+   "operation": "lookup",
+   "predicate": "acoustic_sign[CES(cell, slot, max_edges)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 28,
+   "file_line": "cuda_transport_v841.py:377",
+   "column": 21,
+   "operation": "lookup",
+   "predicate": "horizontal_residual[QE3( tracer, k, edge, nlev, nedges)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 29,
+   "file_line": "cuda_transport_v841.py:380",
+   "column": 46,
+   "operation": "lookup",
+   "predicate": "rdzw[k]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 30,
+   "file_line": "cuda_transport_v841.py:381",
+   "column": 17,
+   "operation": "lookup",
+   "predicate": "vertical_residual[QI3( tracer, k + 1, cell, nlev, ncells)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 31,
+   "file_line": "cuda_transport_v841.py:383",
+   "column": 17,
+   "operation": "lookup",
+   "predicate": "vertical_residual[QI3( tracer, k, cell, nlev, ncells)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 32,
+   "file_line": "cuda_transport_v841.py:386",
+   "column": 33,
+   "operation": "lookup",
+   "predicate": "target_density[C2(k, cell, ncells)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "policy": "refuse entire gradient for invalid indices, nonfinite inputs, singular division and nonfinite intermediates/results",
+  "source_id": {
+   "1": "invalid topology or bounds",
+   "2": "nonfinite input or seed",
+   "3": "nonfinite intermediate or result"
+  }
+ },
+ "entry_points": {
+  "tl": {
+   "symbol": "fct_finish_v841__tl",
+   "arguments": [
+    "ntracers",
+    "nlev",
+    "ncells",
+    "nedges",
+    "max_edges",
+    "n_edges_on_cell",
+    "edges_on_cell",
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass",
+    "output",
+    "d_acoustic_sign",
+    "d_inv_area_cell",
+    "d_rdzw",
+    "d_horizontal_residual",
+    "d_vertical_residual",
+    "d_target_density",
+    "d_mass",
+    "d_output",
+    "failure",
+    "branch_record"
+   ],
+   "abi": [
+    {
+     "name": "ntracers",
+     "declaration": "int ntracers",
+     "field_id": 1,
+     "source_argument": "ntracers",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nlev",
+     "declaration": "int nlev",
+     "field_id": 2,
+     "source_argument": "nlev",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "ncells",
+     "declaration": "int ncells",
+     "field_id": 3,
+     "source_argument": "ncells",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nedges",
+     "declaration": "int nedges",
+     "field_id": 4,
+     "source_argument": "nedges",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "max_edges",
+     "declaration": "int max_edges",
+     "field_id": 5,
+     "source_argument": "max_edges",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "n_edges_on_cell",
+     "declaration": "const int *n_edges_on_cell",
+     "field_id": 6,
+     "source_argument": "n_edges_on_cell",
+     "role": "index",
+     "shape": "[ncells]"
+    },
+    {
+     "name": "edges_on_cell",
+     "declaration": "const int *edges_on_cell",
+     "field_id": 7,
+     "source_argument": "edges_on_cell",
+     "role": "index",
+     "shape": "[ncells,max_edges]"
+    },
+    {
+     "name": "acoustic_sign",
+     "declaration": "const float *acoustic_sign",
+     "field_id": 8,
+     "source_argument": "acoustic_sign",
+     "role": "in",
+     "shape": "[ncells,max_edges]"
+    },
+    {
+     "name": "inv_area_cell",
+     "declaration": "const float *inv_area_cell",
+     "field_id": 9,
+     "source_argument": "inv_area_cell",
+     "role": "in",
+     "shape": "[ncells]"
+    },
+    {
+     "name": "rdzw",
+     "declaration": "const float *rdzw",
+     "field_id": 10,
+     "source_argument": "rdzw",
+     "role": "in",
+     "shape": "[nlev]"
+    },
+    {
+     "name": "horizontal_residual",
+     "declaration": "const float *horizontal_residual",
+     "field_id": 11,
+     "source_argument": "horizontal_residual",
+     "role": "in",
+     "shape": "[ntracers,nlev,nedges]"
+    },
+    {
+     "name": "vertical_residual",
+     "declaration": "const float *vertical_residual",
+     "field_id": 12,
+     "source_argument": "vertical_residual",
+     "role": "in",
+     "shape": "[ntracers,nlev+1,ncells]"
+    },
+    {
+     "name": "target_density",
+     "declaration": "const float *target_density",
+     "field_id": 13,
+     "source_argument": "target_density",
+     "role": "in",
+     "shape": "[nlev,ncells]"
+    },
+    {
+     "name": "mass",
+     "declaration": "const float *mass",
+     "field_id": 14,
+     "source_argument": "mass",
+     "role": "in",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "output",
+     "declaration": "const float *output",
+     "field_id": 15,
+     "source_argument": "output",
+     "role": "out",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "d_acoustic_sign",
+     "declaration": "const float *d_acoustic_sign",
+     "field_id": 8,
+     "source_argument": "acoustic_sign",
+     "role": "tangent",
+     "shape": "[ncells,max_edges]"
+    },
+    {
+     "name": "d_inv_area_cell",
+     "declaration": "const float *d_inv_area_cell",
+     "field_id": 9,
+     "source_argument": "inv_area_cell",
+     "role": "tangent",
+     "shape": "[ncells]"
+    },
+    {
+     "name": "d_rdzw",
+     "declaration": "const float *d_rdzw",
+     "field_id": 10,
+     "source_argument": "rdzw",
+     "role": "tangent",
+     "shape": "[nlev]"
+    },
+    {
+     "name": "d_horizontal_residual",
+     "declaration": "const float *d_horizontal_residual",
+     "field_id": 11,
+     "source_argument": "horizontal_residual",
+     "role": "tangent",
+     "shape": "[ntracers,nlev,nedges]"
+    },
+    {
+     "name": "d_vertical_residual",
+     "declaration": "const float *d_vertical_residual",
+     "field_id": 12,
+     "source_argument": "vertical_residual",
+     "role": "tangent",
+     "shape": "[ntracers,nlev+1,ncells]"
+    },
+    {
+     "name": "d_target_density",
+     "declaration": "const float *d_target_density",
+     "field_id": 13,
+     "source_argument": "target_density",
+     "role": "tangent",
+     "shape": "[nlev,ncells]"
+    },
+    {
+     "name": "d_mass",
+     "declaration": "const float *d_mass",
+     "field_id": 14,
+     "source_argument": "mass",
+     "role": "tangent",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "d_output",
+     "declaration": "float *d_output",
+     "field_id": 15,
+     "source_argument": "output",
+     "role": "tangent",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "failure",
+     "declaration": "Failure *failure",
+     "role": "failure-slot-array",
+     "slot_bytes": 4
+    },
+    {
+     "name": "branch_record",
+     "declaration": "unsigned int *branch_record",
+     "role": "branch-record",
+     "slots": 19
+    }
+   ]
+  },
+  "ad": {
+   "symbol": "fct_finish_v841__ad",
+   "arguments": [
+    "ntracers",
+    "nlev",
+    "ncells",
+    "nedges",
+    "max_edges",
+    "n_edges_on_cell",
+    "edges_on_cell",
+    "acoustic_sign",
+    "inv_area_cell",
+    "rdzw",
+    "horizontal_residual",
+    "vertical_residual",
+    "target_density",
+    "mass",
+    "b_output",
+    "b_acoustic_sign",
+    "b_inv_area_cell",
+    "b_rdzw",
+    "b_horizontal_residual",
+    "b_vertical_residual",
+    "b_target_density",
+    "b_mass",
+    "failure"
+   ],
+   "abi": [
+    {
+     "name": "ntracers",
+     "declaration": "int ntracers",
+     "field_id": 1,
+     "source_argument": "ntracers",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nlev",
+     "declaration": "int nlev",
+     "field_id": 2,
+     "source_argument": "nlev",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "ncells",
+     "declaration": "int ncells",
+     "field_id": 3,
+     "source_argument": "ncells",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nedges",
+     "declaration": "int nedges",
+     "field_id": 4,
+     "source_argument": "nedges",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "max_edges",
+     "declaration": "int max_edges",
+     "field_id": 5,
+     "source_argument": "max_edges",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "n_edges_on_cell",
+     "declaration": "const int *n_edges_on_cell",
+     "field_id": 6,
+     "source_argument": "n_edges_on_cell",
+     "role": "index",
+     "shape": "[ncells]"
+    },
+    {
+     "name": "edges_on_cell",
+     "declaration": "const int *edges_on_cell",
+     "field_id": 7,
+     "source_argument": "edges_on_cell",
+     "role": "index",
+     "shape": "[ncells,max_edges]"
+    },
+    {
+     "name": "acoustic_sign",
+     "declaration": "const float *acoustic_sign",
+     "field_id": 8,
+     "source_argument": "acoustic_sign",
+     "role": "in",
+     "shape": "[ncells,max_edges]"
+    },
+    {
+     "name": "inv_area_cell",
+     "declaration": "const float *inv_area_cell",
+     "field_id": 9,
+     "source_argument": "inv_area_cell",
+     "role": "in",
+     "shape": "[ncells]"
+    },
+    {
+     "name": "rdzw",
+     "declaration": "const float *rdzw",
+     "field_id": 10,
+     "source_argument": "rdzw",
+     "role": "in",
+     "shape": "[nlev]"
+    },
+    {
+     "name": "horizontal_residual",
+     "declaration": "const float *horizontal_residual",
+     "field_id": 11,
+     "source_argument": "horizontal_residual",
+     "role": "in",
+     "shape": "[ntracers,nlev,nedges]"
+    },
+    {
+     "name": "vertical_residual",
+     "declaration": "const float *vertical_residual",
+     "field_id": 12,
+     "source_argument": "vertical_residual",
+     "role": "in",
+     "shape": "[ntracers,nlev+1,ncells]"
+    },
+    {
+     "name": "target_density",
+     "declaration": "const float *target_density",
+     "field_id": 13,
+     "source_argument": "target_density",
+     "role": "in",
+     "shape": "[nlev,ncells]"
+    },
+    {
+     "name": "mass",
+     "declaration": "const float *mass",
+     "field_id": 14,
+     "source_argument": "mass",
+     "role": "in",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "b_output",
+     "declaration": "float *b_output",
+     "field_id": 15,
+     "source_argument": "output",
+     "role": "cotangent",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "b_acoustic_sign",
+     "declaration": "float *b_acoustic_sign",
+     "field_id": 8,
+     "source_argument": "acoustic_sign",
+     "role": "cotangent",
+     "shape": "[ncells,max_edges]"
+    },
+    {
+     "name": "b_inv_area_cell",
+     "declaration": "float *b_inv_area_cell",
+     "field_id": 9,
+     "source_argument": "inv_area_cell",
+     "role": "cotangent",
+     "shape": "[ncells]"
+    },
+    {
+     "name": "b_rdzw",
+     "declaration": "float *b_rdzw",
+     "field_id": 10,
+     "source_argument": "rdzw",
+     "role": "cotangent",
+     "shape": "[nlev]"
+    },
+    {
+     "name": "b_horizontal_residual",
+     "declaration": "float *b_horizontal_residual",
+     "field_id": 11,
+     "source_argument": "horizontal_residual",
+     "role": "cotangent",
+     "shape": "[ntracers,nlev,nedges]"
+    },
+    {
+     "name": "b_vertical_residual",
+     "declaration": "float *b_vertical_residual",
+     "field_id": 12,
+     "source_argument": "vertical_residual",
+     "role": "cotangent",
+     "shape": "[ntracers,nlev+1,ncells]"
+    },
+    {
+     "name": "b_target_density",
+     "declaration": "float *b_target_density",
+     "field_id": 13,
+     "source_argument": "target_density",
+     "role": "cotangent",
+     "shape": "[nlev,ncells]"
+    },
+    {
+     "name": "b_mass",
+     "declaration": "float *b_mass",
+     "field_id": 14,
+     "source_argument": "mass",
+     "role": "cotangent",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "failure",
+     "declaration": "Failure *failure",
+     "role": "failure-slot-array",
+     "slot_bytes": 4
+    }
+   ]
+  },
+  "aug": null,
+  "ad_clear": {
+   "symbol": "fct_finish_v841__ad_clear",
+   "arguments": [
+    "ntracers",
+    "nlev",
+    "ncells",
+    "b_output"
+   ],
+   "abi": [
+    {
+     "name": "ntracers",
+     "declaration": "int ntracers",
+     "field_id": 1,
+     "source_argument": "ntracers",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nlev",
+     "declaration": "int nlev",
+     "field_id": 2,
+     "source_argument": "nlev",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "ncells",
+     "declaration": "int ncells",
+     "field_id": 3,
+     "source_argument": "ncells",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "b_output",
+     "declaration": "float *b_output",
+     "field_id": 15,
+     "source_argument": "output",
+     "role": "cotangent",
+     "shape": "[ntracers,nlev,ncells]"
+    }
+   ]
+  },
+  "adjoint_phases": "Launch ad then ad_clear in that order on the same CUDA stream, checking refusal records before publishing gradients. The incoming output cotangent buffers and outgoing input cotangent buffers are disjoint; the final phase consumes the former."
+ },
+ "workspace": {
+  "tape_bytes": 0,
+  "refusal_records": 40,
+  "record_bytes": 4,
+  "refusal_ownership": "One int32 slot per source ID; device threads set the slot atomically; any nonzero slot refuses the derivative.",
+  "initialization": "zero all records before each launch; inspect all records and refuse the entire derivative if any is nonzero",
+  "aliases": "all distinct primal, tangent, cotangent and failure buffers are disjoint, except the explicitly described in-place tangent buffers",
+  "accumulation": "Each destination has one owner. Duplicate cotangent contributions are gathered in fixed index order into a float64 register, then rounded once into the float32 destination; no unordered floating-point atomics.",
+  "refusal_device_layout": "int32 per source ID, initialized to zero; any nonzero value refuses the derivative"
+ },
+ "implementation_status": "draft: branch records implemented; branch-case and exceptional-input proofs are incomplete",
+ "affine": false,
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "fct_finish_v841__tl",
+    "geometry": {
+     "grid": [
+      "ceil(ncells*nlev/128)",
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "max_edges"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "acoustic_sign"
+     },
+     {
+      "bind": "primal",
+      "arg": "inv_area_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "horizontal_residual"
+     },
+     {
+      "bind": "primal",
+      "arg": "vertical_residual"
+     },
+     {
+      "bind": "primal",
+      "arg": "target_density"
+     },
+     {
+      "bind": "primal",
+      "arg": "mass"
+     },
+     {
+      "bind": "primal",
+      "arg": "output"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_acoustic_sign",
+      "bytes": "8*(ncells)*(max_edges)",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "arg": "acoustic_sign",
+        "field_id": 8,
+        "io": "in"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_inv_area_cell",
+      "bytes": "8*(ncells)",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "arg": "inv_area_cell",
+        "field_id": 9,
+        "io": "in"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "arg": "rdzw",
+        "field_id": 10,
+        "io": "in"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "horizontal_residual",
+      "field_id": 11,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "vertical_residual",
+      "field_id": 12,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "target_density",
+      "field_id": 13,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "mass",
+      "field_id": 14,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "output",
+      "field_id": 15,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 40,
+      "source_ids": [
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-0",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-1",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-2",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-3",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-4",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-5",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-6",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-7",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-8",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-9",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-10",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-11",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-13",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-14",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-15",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-16",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-17",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-18",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-19",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-20",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-21",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:77:failure-23",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:69:failure-24",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-25",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-26",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:71:failure-27",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:86:failure-28",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:98:failure-29",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:104:failure-30",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-31",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-32",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-33",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-34",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-35",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-36",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-37",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-38",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-39"
+      ]
+     },
+     {
+      "bind": "branch_record",
+      "slots": 33
+     }
+    ]
+   },
+   "ad": {
+    "function": "fct_finish_v841__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "max_edges"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "acoustic_sign"
+     },
+     {
+      "bind": "primal",
+      "arg": "inv_area_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "horizontal_residual"
+     },
+     {
+      "bind": "primal",
+      "arg": "vertical_residual"
+     },
+     {
+      "bind": "primal",
+      "arg": "target_density"
+     },
+     {
+      "bind": "primal",
+      "arg": "mass"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "output",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_acoustic_sign",
+      "bytes": "8*(ncells)*(max_edges)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "arg": "acoustic_sign",
+        "field_id": 8,
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_inv_area_cell",
+      "bytes": "8*(ncells)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "arg": "inv_area_cell",
+        "field_id": 9,
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "arg": "rdzw",
+        "field_id": 10,
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "horizontal_residual",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "vertical_residual",
+      "field_id": 12,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "target_density",
+      "field_id": 13,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "mass",
+      "field_id": 14,
+      "io": "accumulate"
+     },
+     {
+      "bind": "failure",
+      "slots": 40,
+      "source_ids": [
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-0",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-1",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-2",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-3",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-4",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-5",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-6",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-7",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-8",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-9",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-10",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-11",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-13",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-14",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-15",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-16",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-17",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-18",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-19",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-20",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-21",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:77:failure-23",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:69:failure-24",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-25",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-26",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:71:failure-27",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:86:failure-28",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:98:failure-29",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:104:failure-30",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-31",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-32",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-33",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-34",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-35",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-36",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-37",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-38",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-39"
+      ]
+     }
+    ]
+   },
+   "ad_clear": {
+    "function": "fct_finish_v841__ad_clear",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "output",
+      "field_id": 15,
+      "io": "inout"
+     }
+    ]
+   },
+   "ad_edges": {
+    "function": "fct_finish_v841__ad_edges",
+    "geometry": {
+     "grid": [
+      "ceil(ntracers*nlev*nedges/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "max_edges"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "acoustic_sign"
+     },
+     {
+      "bind": "primal",
+      "arg": "inv_area_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "horizontal_residual"
+     },
+     {
+      "bind": "primal",
+      "arg": "vertical_residual"
+     },
+     {
+      "bind": "primal",
+      "arg": "target_density"
+     },
+     {
+      "bind": "primal",
+      "arg": "mass"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "output",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "horizontal_residual",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "derived",
+      "name": "edge_offsets",
+      "from": [
+       "n_edges_on_cell",
+       "edges_on_cell"
+      ],
+      "recipe": "hex-ad/rust/acoustic/transpose.rs::edge_to_slots",
+      "sha256": "8f94553fc42d6d8d8d4fb38368cb54b9fa950c2f7c9d7b177e436616485cd15c",
+      "g8_mesh": "pkg18 x1.2562 (edge_offsets 8f94553f, edge_cell_slots 5a984e6e restated by the binder recipe)",
+      "g8_note": "edge_to_slots CSR (edge -> cell*max_edges+slot, cell then slot ascending); G8 gather"
+     },
+     {
+      "bind": "derived",
+      "name": "edge_cell_slots",
+      "from": [
+       "n_edges_on_cell",
+       "edges_on_cell"
+      ],
+      "recipe": "hex-ad/rust/acoustic/transpose.rs::edge_to_slots",
+      "sha256": "5a984e6ebb1e02c7a5aa0b08224a6a1ab296c740032ee37b2472e28700fad1aa",
+      "g8_mesh": "pkg18 x1.2562 (edge_offsets 8f94553f, edge_cell_slots 5a984e6e restated by the binder recipe)",
+      "g8_note": "edge_to_slots CSR (edge -> cell*max_edges+slot, cell then slot ascending); G8 gather"
+     },
+     {
+      "bind": "failure",
+      "slots": 40,
+      "source_ids": [
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-0",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-1",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-2",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-3",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-4",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-5",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-6",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-7",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-8",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-9",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-10",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-11",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-13",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-14",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-15",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-16",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-17",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-18",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-19",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-20",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-21",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:77:failure-23",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:69:failure-24",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-25",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-26",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:71:failure-27",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:86:failure-28",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:98:failure-29",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:104:failure-30",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-31",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-32",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-33",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-34",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-35",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-36",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-37",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-38",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-39"
+      ]
+     }
+    ]
+   },
+   "ad_rdzw_part": {
+    "function": "fct_finish_v841__ad_rdzw_part",
+    "geometry": {
+     "grid": [
+      "ceil(ncells*ntracers/2048)",
+      "nlev",
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "max_edges"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "acoustic_sign"
+     },
+     {
+      "bind": "primal",
+      "arg": "inv_area_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "horizontal_residual"
+     },
+     {
+      "bind": "primal",
+      "arg": "vertical_residual"
+     },
+     {
+      "bind": "primal",
+      "arg": "target_density"
+     },
+     {
+      "bind": "primal",
+      "arg": "mass"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "output",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "workspace",
+      "name": "g8_rdzw_part",
+      "bytes": "8*nlev*ceil(ncells*ntracers/2048)",
+      "init": "zero"
+     },
+     {
+      "bind": "failure",
+      "slots": 40,
+      "source_ids": [
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-0",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-1",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-2",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-3",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-4",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-5",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-6",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-7",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-8",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-9",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-10",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-11",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-13",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-14",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-15",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-16",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-17",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-18",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-19",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-20",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-21",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:77:failure-23",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:69:failure-24",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-25",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-26",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:71:failure-27",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:86:failure-28",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:98:failure-29",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:104:failure-30",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-31",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-32",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-33",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-34",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-35",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-36",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-37",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-38",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-39"
+      ]
+     }
+    ]
+   },
+   "ad_rdzw": {
+    "function": "fct_finish_v841__ad_rdzw",
+    "geometry": {
+     "grid": [
+      "nlev",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "arg": "rdzw",
+        "field_id": 10,
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "workspace",
+      "name": "g8_rdzw_part",
+      "bytes": "8*nlev*ceil(ncells*ntracers/2048)",
+      "init": "zero"
+     },
+     {
+      "bind": "scalar",
+      "value_from": "ceil(ncells*ntracers/2048)",
+      "dtype": "<i4"
+     },
+     {
+      "bind": "failure",
+      "slots": 40,
+      "source_ids": [
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-0",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-1",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-2",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-3",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-4",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-5",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-6",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-7",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-8",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-9",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-10",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-11",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-13",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-14",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-15",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-16",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-17",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-18",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-19",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-20",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-21",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:77:failure-23",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:69:failure-24",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-25",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-26",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:71:failure-27",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:86:failure-28",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:98:failure-29",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:104:failure-30",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-31",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-32",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-33",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-34",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-35",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-36",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-37",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-38",
+       "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-39"
+      ]
+     }
+    ]
+   }
+  },
+  "reverse_order": [
+   "ad",
+   "ad_edges",
+   "ad_rdzw_part",
+   "ad_rdzw",
+   "ad_clear"
+  ],
+  "launch_order": {
+   "ad": [
+    "ad",
+    "ad_edges",
+    "ad_rdzw_part",
+    "ad_rdzw",
+    "ad_clear"
+   ]
+  }
+ },
+ "failure_slots": [
+  {
+   "slot": 0,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-0",
+   "condition": "count<0"
+  },
+  {
+   "slot": 1,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-1",
+   "condition": "e<0"
+  },
+  {
+   "slot": 2,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-2",
+   "condition": "!fin(inv_area_cell[c])"
+  },
+  {
+   "slot": 3,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:31:failure-3",
+   "condition": "!fin(d_inv_area_cell[c])"
+  },
+  {
+   "slot": 4,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-4",
+   "condition": "!fin(target_density[r])"
+  },
+  {
+   "slot": 5,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-5",
+   "condition": "!fin(mass[i])"
+  },
+  {
+   "slot": 6,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-6",
+   "condition": "!fin(d_mass[i])"
+  },
+  {
+   "slot": 7,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-7",
+   "condition": "!fin(rdzw[k])"
+  },
+  {
+   "slot": 8,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-8",
+   "condition": "!fin(d_rdzw[k])"
+  },
+  {
+   "slot": 9,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-9",
+   "condition": "!fin(vertical_residual[lo])"
+  },
+  {
+   "slot": 10,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-10",
+   "condition": "!fin(vertical_residual[hi])"
+  },
+  {
+   "slot": 11,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-11",
+   "condition": "!fin(d_vertical_residual[lo])"
+  },
+  {
+   "slot": 12,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:34:failure-12",
+   "condition": "!fin(d_vertical_residual[hi])"
+  },
+  {
+   "slot": 13,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-13",
+   "condition": "!fin(acoustic_sign[j])"
+  },
+  {
+   "slot": 14,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-14",
+   "condition": "!fin(d_acoustic_sign[j])"
+  },
+  {
+   "slot": 15,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-15",
+   "condition": "!fin(horizontal_residual[h])"
+  },
+  {
+   "slot": 16,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:37:failure-16",
+   "condition": "!fin(d_horizontal_residual[h])"
+  },
+  {
+   "slot": 17,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-17",
+   "condition": "!fin(z.x)"
+  },
+  {
+   "slot": 18,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:43:failure-18",
+   "condition": "!fin(z.d)"
+  },
+  {
+   "slot": 19,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-19",
+   "condition": "count<0"
+  },
+  {
+   "slot": 20,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-20",
+   "condition": "e<0"
+  },
+  {
+   "slot": 21,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-21",
+   "condition": "!fin(den)"
+  },
+  {
+   "slot": 22,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-22",
+   "condition": "!fin(v)"
+  },
+  {
+   "slot": 23,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:77:failure-23",
+   "condition": "!fin(b_acoustic_sign[j])"
+  },
+  {
+   "slot": 24,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:69:failure-24",
+   "condition": "!fin(b_mass[i])"
+  },
+  {
+   "slot": 25,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-25",
+   "condition": "!fin(b_vertical_residual[p])"
+  },
+  {
+   "slot": 26,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:84:failure-26",
+   "condition": "!fin(b_vertical_residual[p])"
+  },
+  {
+   "slot": 27,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:71:failure-27",
+   "condition": "!fin(b_target_density[r])"
+  },
+  {
+   "slot": 28,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:86:failure-28",
+   "condition": "!fin(b_inv_area_cell[c])"
+  },
+  {
+   "slot": 29,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:98:failure-29",
+   "condition": "!fin(b_horizontal_residual[h])"
+  },
+  {
+   "slot": 30,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:104:failure-30",
+   "condition": "!fin(b_rdzw[k])"
+  },
+  {
+   "slot": 31,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:29:failure-31",
+   "condition": "count>max_edges"
+  },
+  {
+   "slot": 32,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:30:failure-32",
+   "condition": "e>=nedges"
+  },
+  {
+   "slot": 33,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-33",
+   "condition": "!ad_nonzero(target_density[r])"
+  },
+  {
+   "slot": 34,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:33:failure-34",
+   "condition": "!fin(d_target_density[r])"
+  },
+  {
+   "slot": 35,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:57:failure-35",
+   "condition": "count>max_edges"
+  },
+  {
+   "slot": 36,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:58:failure-36",
+   "condition": "e>=nedges"
+  },
+  {
+   "slot": 37,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:61:failure-37",
+   "condition": "!ad_nonzero(den)"
+  },
+  {
+   "slot": 38,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-38",
+   "condition": "!fin(ratio)"
+  },
+  {
+   "slot": 39,
+   "source_id": "hex-ad/cuda/transport/fct_finish_v841.ad.cu:64:failure-39",
+   "condition": "!fin(bo)"
+  }
+ ],
+ "forward_branch_ftz": {
+  "define": "HEX_AD_FORWARD_FTZ=1",
+  "evidence": "hexcore/cuda_backend/compile_contract.py:8 and hexcore/cuda_fp32.py:3",
+  "note": "The capture does not itself record effective NVRTC options; validate against the image."
+ },
+ "owner_task": "ad1-257-fct_finish_v841",
+ "group_task": "ad1-g37-transport-transport-v841-b",
+ "seed_lifetime": {
+  "policy": "consume-overwritten-output-cotangents",
+  "incoming_binding": "adjoint inout",
+  "outgoing_binding": "separate adjoint accumulate",
+  "outputs": [
+   "output"
+  ],
+  "mask": "forward threads cell < ncells, each tracer and level",
+  "zero_work": "no output slots overwritten and no seed slots cleared",
+  "launch_contract": "Use the pinned host wrapper geometry, which covers its count. The final phase also preserves slots outside any partial forward write mask.",
+  "launch_source": "cuda_transport_v841.py:1035-1047"
+ },
+ "g8": "G8 2026-11-06: serial/quadratic reverse loops rewritten (edge_to_slots CSR gathers, fixed-order two-level f64 reductions)"
+}

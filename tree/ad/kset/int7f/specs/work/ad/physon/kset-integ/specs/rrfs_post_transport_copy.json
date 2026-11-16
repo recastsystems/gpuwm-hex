@@ -1,0 +1,5868 @@
+{
+ "kernel": "rrfs_post_transport_copy",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrfs/driver_rrfs.py",
+ "line": 2737,
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad2-hrrrv5-glue",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "dst_arg0",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg0"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2
+  },
+  {
+   "name": "src_arg0",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg0"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1
+  },
+  {
+   "name": "count0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_0",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg1",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg1"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4
+  },
+  {
+   "name": "src_arg1",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg1"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3
+  },
+  {
+   "name": "count1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_1",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg2"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6
+  },
+  {
+   "name": "src_arg2",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg2"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5
+  },
+  {
+   "name": "count2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_2",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg3",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg3"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8
+  },
+  {
+   "name": "src_arg3",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg3"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7
+  },
+  {
+   "name": "count3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_3",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg4",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg4"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10
+  },
+  {
+   "name": "src_arg4",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg4"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9
+  },
+  {
+   "name": "count4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_4",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg5",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg5"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 12
+  },
+  {
+   "name": "src_arg5",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg5"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 11
+  },
+  {
+   "name": "count5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_5",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg6",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg6"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 14
+  },
+  {
+   "name": "src_arg6",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg6"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 13
+  },
+  {
+   "name": "count6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_6",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg7",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg7"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 16
+  },
+  {
+   "name": "src_arg7",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg7"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 15
+  },
+  {
+   "name": "count7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_7",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg8",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg8"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 18
+  },
+  {
+   "name": "src_arg8",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg8"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 17
+  },
+  {
+   "name": "count8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_8",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg9",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg9"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 20
+  },
+  {
+   "name": "src_arg9",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg9"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 19
+  },
+  {
+   "name": "count9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_9",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg10",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg10"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 22
+  },
+  {
+   "name": "src_arg10",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg10"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 21
+  },
+  {
+   "name": "count10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_10",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dst_arg11",
+   "role": "out",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "dst_arg11"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 24
+  },
+  {
+   "name": "src_arg11",
+   "role": "in",
+   "dtype": "f32",
+   "shape": {
+    "shape_like_forward_arg": "src_arg11"
+   },
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 23
+  },
+  {
+   "name": "count11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n1_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n2_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n3_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d0_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d1_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d2_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "d3_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s0_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s1_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s2_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "s3_11",
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer copy extent or stride fixed by the transport coupling layout.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": true
+ },
+ "precondition": "Forward destination word addresses are unique and disjoint from all source word addresses, as required by glue_plan.py:209-226. Source maps may overlap, repeat or broadcast; the general reverse accumulates in reverse op order and ascending element order in binary64 and rounds each distinct source address once.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "rrfs_post_transport_copy__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "dst_arg0"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_0"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg1"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_1"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg2"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_2"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg3"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_3"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg4"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_4"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg5"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_5"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg6"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_6"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg7"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_7"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg8"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_8"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg9"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_9"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg10"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_10"
+     },
+     {
+      "bind": "primal",
+      "arg": "dst_arg11"
+     },
+     {
+      "bind": "primal",
+      "arg": "src_arg11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_11"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:2749:nonfinite"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "rrfs_post_transport_copy__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "tangent",
+      "arg": "src_arg0",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg0",
+      "field_id": 2,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_0"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg1",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg1",
+      "field_id": 4,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_1"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg2",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg2",
+      "field_id": 6,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_2"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg3",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg3",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_3"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg4",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg4",
+      "field_id": 10,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_4"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg5",
+      "field_id": 11,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg5",
+      "field_id": 12,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_5"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg6",
+      "field_id": 13,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg6",
+      "field_id": 14,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_6"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg7",
+      "field_id": 15,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg7",
+      "field_id": 16,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_7"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg8",
+      "field_id": 17,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg8",
+      "field_id": 18,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_8"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg9",
+      "field_id": 19,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg9",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_9"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg10",
+      "field_id": 21,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg10",
+      "field_id": 22,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_10"
+     },
+     {
+      "bind": "tangent",
+      "arg": "src_arg11",
+      "field_id": 23,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dst_arg11",
+      "field_id": 24,
+      "io": "out"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_11"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:2749:nonfinite"
+      ]
+     }
+    ]
+   },
+   "l4_check": {
+    "function": "rrfs_post_transport_copy__l4_check",
+    "geometry": {
+     "grid": [
+      1,
+      1,
+      1
+     ],
+     "block": [
+      1,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "adjoint",
+      "arg": "src_arg0",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg0",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_0"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg1",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg1",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_1"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg2",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg2",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_2"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg3",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg3",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_3"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg4",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg4",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_4"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg5",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg5",
+      "field_id": 12,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_5"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg6",
+      "field_id": 13,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg6",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_6"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg7",
+      "field_id": 15,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg7",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_7"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg8",
+      "field_id": 17,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg8",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_8"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg9",
+      "field_id": 19,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg9",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_9"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg10",
+      "field_id": 21,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg10",
+      "field_id": 22,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_10"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg11",
+      "field_id": 23,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg11",
+      "field_id": 24,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_11"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_flag",
+      "bytes": 4
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:2749:nonfinite"
+      ]
+     }
+    ]
+   },
+   "l4_direct": {
+    "function": "rrfs_post_transport_copy__l4_direct",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "adjoint",
+      "arg": "src_arg0",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg0",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_0"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg1",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg1",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_1"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg2",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg2",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_2"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg3",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg3",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_3"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg4",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg4",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_4"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg5",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg5",
+      "field_id": 12,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_5"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg6",
+      "field_id": 13,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg6",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_6"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg7",
+      "field_id": 15,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg7",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_7"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg8",
+      "field_id": 17,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg8",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_8"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg9",
+      "field_id": 19,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg9",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_9"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg10",
+      "field_id": 21,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg10",
+      "field_id": 22,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_10"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg11",
+      "field_id": 23,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg11",
+      "field_id": 24,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_11"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_flag",
+      "bytes": 4
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:2749:nonfinite"
+      ]
+     }
+    ]
+   },
+   "l4_serial": {
+    "function": "rrfs_post_transport_copy__l4_serial",
+    "geometry": {
+     "grid": [
+      1,
+      1,
+      1
+     ],
+     "block": [
+      1,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "adjoint",
+      "arg": "src_arg0",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg0",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_0"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg1",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg1",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_1"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg2",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg2",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_2"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg3",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg3",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_3"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg4",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg4",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_4"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg5",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg5",
+      "field_id": 12,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_5"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg6",
+      "field_id": 13,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg6",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_6"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg7",
+      "field_id": 15,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg7",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_7"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg8",
+      "field_id": 17,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg8",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_8"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg9",
+      "field_id": 19,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg9",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_9"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg10",
+      "field_id": 21,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg10",
+      "field_id": 22,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_10"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "src_arg11",
+      "field_id": 23,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dst_arg11",
+      "field_id": 24,
+      "io": "inout"
+     },
+     {
+      "bind": "scalar",
+      "arg": "count11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "d3_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s0_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s1_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s2_11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "s3_11"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_0",
+      "bytes": "32*count0",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_1",
+      "bytes": "32*count1",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_2",
+      "bytes": "32*count2",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_3",
+      "bytes": "32*count3",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_4",
+      "bytes": "32*count4",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_5",
+      "bytes": "32*count5",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_6",
+      "bytes": "32*count6",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_7",
+      "bytes": "32*count7",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_8",
+      "bytes": "32*count8",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_9",
+      "bytes": "32*count9",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_10",
+      "bytes": "32*count10",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "copy_hash_11",
+      "bytes": "32*count11",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_flag",
+      "bytes": 4
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:2749:nonfinite"
+      ]
+     }
+    ]
+   }
+  },
+  "reverse_order": [
+   "l4_check",
+   "l4_direct",
+   "l4_serial"
+  ],
+  "launch_order": {
+   "ad": [
+    "l4_check",
+    "l4_direct",
+    "l4_serial"
+   ]
+  },
+  "l4_speed": "ad/window-L4-speed: reverse entries ['l4_check', 'l4_direct', 'l4_serial'] replace the reference single reverse entry; tangent unchanged; see phys/l4speed/README.md"
+ },
+ "affine": true,
+ "affine_reason": "Twelve fixed-index copies of 32-bit words: the identity map on each copied element.",
+ "generated": false,
+ "why": "The fused twelve-row 64-bit strided copy specialization is outside the frozen ad-gen operation set; the general copy-plan derivative and binder admission are not implemented here.",
+ "general_transpose": {
+  "order": "reverse operation order, then ascending logical element",
+  "accumulation": "binary64 per distinct physical source address, rounded once",
+  "workspace": "2 hash buckets per logical copy element; fixed zero initialization",
+  "fast_path": "none"
+ }
+}

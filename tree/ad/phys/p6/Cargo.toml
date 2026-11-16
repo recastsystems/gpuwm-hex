@@ -1,0 +1,18 @@
+[package]
+name = "ad-phys-p6"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "ad/phys P6: whole-launch RUC sea-ice derivative proof on real hrrrv5 captures (private autodiff program)"
+
+[[bin]]
+name = "ad-phys-p6"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = "=1.0.149"
+sha2 = "=0.10.9"
+
+[profile.release]
+opt-level = 3

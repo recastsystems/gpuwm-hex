@@ -1,0 +1,67 @@
+{
+ "function": "rlw_taut",
+ "class": "radiation",
+ "gate_ready": false,
+ "derivative": {
+  "row": "ad/held-rlw_taut",
+  "spec": {
+   "path": "/work/ad/held/rlw_taut/kset/specs/rlw_taut.spec.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/rlw_taut/cuda/rlw_taut.ad.cu"
+  },
+  "nvcc": [
+   "-fatbin",
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false",
+   "--prec-div=true",
+   "--prec-sqrt=true"
+  ]
+ },
+ "capture": {
+  "plan": "not in pkg18 (radiation is a held upload there); captures hrrrv5_x1.2562 steps 1, 6, 12, 2 launches each (ad/held-rlw_taut recapture)"
+ },
+ "arguments": [
+  {
+   "name": "ncol",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nl",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "taug",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "taua",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "ngb",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "taut",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  }
+ ]
+}

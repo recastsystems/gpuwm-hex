@@ -1,0 +1,111 @@
+{
+ "kernel": "mpas_init_rwgt",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 2326,
+ "module_source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+ "module_image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/held-mpas_init_rwgt",
+ "launch": {
+  "grid": [
+   1,
+   1,
+   1
+  ],
+  "block": [
+   1,
+   1,
+   1
+  ],
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "rwgt",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[256]",
+   "stagger": "rrtmg-band-gpoint",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 0,
+   "constant_output": "written from compiled-in __device__ const tables only (683d7a07.cu:10536-10550); d rwgt = 0"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "683d7a07.cu:10538",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "threadIdx.x||blockIdx.x: only thread 0 writes."
+  },
+  {
+   "file_line": "683d7a07.cu:10541",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-constant",
+   "inactive_reason": "ngc[band] < 16 tests a compiled-in constant table."
+  }
+ ],
+ "tables": [
+  "mpas_static_ngc[16]",
+  "mpas_static_ngn[140]",
+  "mpas_static_ngm[256]",
+  "mpas_static_wt[16]"
+ ],
+ "refusal": {
+  "nonfinite": false,
+  "named": [],
+  "why": "rwgt is overwritten with a constant: any incoming derivative word, non-finite included, is discarded exactly; a failure slot would abort the window step (window.rs:497, :791) for nothing"
+ },
+ "affine": true,
+ "affine_reason": "rwgt_post is a constant (no state input); the derivative is the zero map on rwgt.",
+ "affine_rounding_model": "constant-output",
+ "tape_bytes": 0,
+ "precision": "stored derivative words +0.0 (bit pattern 0); no arithmetic",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "mpas_init_rwgt__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "tangent",
+      "arg": "rwgt",
+      "field_id": 0,
+      "io": "out"
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_init_rwgt__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "adjoint",
+      "arg": "rwgt",
+      "field_id": 0,
+      "io": "inout"
+     }
+    ]
+   }
+  },
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  }
+ }
+}

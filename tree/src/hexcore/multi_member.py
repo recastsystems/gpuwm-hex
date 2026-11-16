@@ -14,6 +14,7 @@ import errno
 import hashlib
 import json
 import os
+from hexcore import card_queue
 from pathlib import Path
 import shutil
 import sys
@@ -871,7 +872,7 @@ def _run_members(arguments, door, root, scratch, admit_co_tenancy):
     result = {"schema": "gpuwm-hex.multi-member/v1", "status": "incomplete",
               "admission": admission, "mesh_binding": bind_receipt,
               "default_enabled": False, "members": []}
-    physical_card = os.environ.get("GPU_MUTEX_CARDS", "").split(",")[0]
+    physical_card = card_queue.get(card_queue.CARDS).split(",")[0]
     if not physical_card.isdecimal():
         physical_card = str(door.time_ledger.card_index())
     card = int(physical_card) if physical_card.isdecimal() else None

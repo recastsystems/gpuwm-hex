@@ -1,0 +1,17 @@
+[package]
+name = "tempo-ad-proof"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Whole-launch proof of the generated TEMPO tangent/adjoint on captured hex hrrrv5 launches"
+
+[[bin]]
+name = "tempo-ad-proof"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = "=1.0.149"
+sha2 = "=0.10.9"
+
+[profile.release]
+opt-level = 3

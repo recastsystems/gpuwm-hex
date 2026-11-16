@@ -43,6 +43,10 @@ tests/test_native_licence_stubs.py
 tests/test_file_lock.py
 tests/test_init_door.py
 tests/test_init_sources.py
+tests/test_ifs_publication_eras.py
+tests/test_ifs_ens_publication_eras.py
+tests/test_snow_donor.py
+tests/test_aifs_ifs_soil.py
 # A row's cycle window refused from the table before any transfer, and its surface input (IFS sea ice from
 # the same cycle's GFS ICEC) (fix/hex-ifs-0p1-first-cycle); host-only, network stubbed.
 tests/test_source_cycles.py
@@ -182,6 +186,9 @@ tests/test_device_admission.py
 tests/test_domain_size_agreement.py
 tests/test_dt_admission.py
 tests/test_mpas_defaults_retired_gates.py
+tests/test_mpas_onecard_curve.py
+tests/test_first_contact_point_and_wait.py
+tests/test_rrfs_fork_corrections.py
 tests/test_dual_edge_admission.py
 tests/test_native_free_init_admission_305.py
 tests/test_partition_device_admission.py
@@ -192,6 +199,7 @@ tests/test_regional_mesh_admission.py
 # been superseded twice, and an arithmetic change here silently moves the size
 # of the largest forecast this port will accept.  The arithmetic runs on CPU.
 tests/test_capacity_copy_elisions.py
+tests/test_card_queue.py
 tests/test_device_memory_capacity_tools.py
 tests/test_device_memory_ledger_probes.py
 # Resolve the current engine YSU probe loader with device calls replaced on CPU.
@@ -247,6 +255,10 @@ tests/test_regional_runtime.py
 # They arrived with the door and were named by no tier list, which is the
 # forty-first file tests/test_tier_membership.py exists to catch.
 tests/test_hrrr_intermediate.py
+tests/test_blend_hrrr_gfs_row.py
+tests/test_blend_outside_init.py
+tests/test_init_balance.py
+tests/test_soil_handover.py
 tests/test_mesh_point.py
 tests/test_mesh_rows.py
 tests/test_regional_class_band.py
@@ -605,6 +617,9 @@ tests/test_seaice_v842.py
 
 # Register pre-existing foundation CPU fixtures found by the tier audit.
 tests/test_country_door.py
+tests/test_country_endpoint_workers.py
+tests/test_country_geog_first.py
+tests/test_icon_gefs_regions.py
 tests/test_samehost_restart.py
 tests/test_fractional_history_schedule.py
 tests/test_native_advection_order.py
@@ -640,6 +655,7 @@ tests/test_regional_native_v842_acoustic.py
 tests/test_wsm6_v842.py
 # p12-bl-mynn CPU contracts and GPU lease admission metadata
 tests/test_mpas_mynn_v842_contract.py
+tests/mpas_mynn_v842/test_mynn_rp8_boulac_down_sign.py
 # p11-ysu: CPU proof guards; strict native/artifact members skip when unavailable.
 tests/mpas_ysu_v842/test_oracle.py
 
@@ -1024,6 +1040,7 @@ tests/test_high_top_vertical.py
 tests/test_ivt_products.py
 tests/test_lts_stochastic.py
 tests/test_moving_author.py
+tests/test_moving_member.py
 tests/test_moving_checkpoint_stochastic.py
 tests/test_moving_ensemble.py
 tests/test_ocean_mixed_layer.py
@@ -1036,6 +1053,8 @@ tests/test_scorer_build_target.py
 # One-command regional door (HRRR limited area): stage composition, receipts, class minting from
 # measured runs; stand-in engines, no card, no network.
 tests/test_regional_door.py
+tests/test_regional_analysis_boundaries.py
+tests/test_region_offstep_ends.py
 tests/test_regional_mint.py
 tests/test_suite_history_snapshot.py
 tests/test_skip_score_watcher.py
@@ -1135,6 +1154,7 @@ tests/test_moving_surface_roles.py
 tests/test_lts_clock_top.py
 # Fold-everything batch 1 rows (host-only): init-source stall hedge, MPAS suite route dycore flags.
 tests/test_fetch_stall_hedge.py
+tests/test_fetch_slow_down.py
 tests/test_suite_dycore_flags.py
 # Storm-following admission: a due move reuses only admitted members; no-safe-radius cases refused at load (host-only).
 tests/test_storm_follow_admission.py
@@ -1487,3 +1507,72 @@ tests/test_physics_refusal_transport.py
 tests/test_producer_cloud.py
 tests/test_producer_increment.py
 tests/test_pick_cumulus_contract.py
+# hex 0.6.0 differentiable-engine doors and their helpers, host-only (cards hidden, no assets, no network): 391 pass on processors.
+tests/test_ad_assets.py
+tests/test_ad_door_card_before_assets.py
+tests/test_ad_door_card_visible.py
+tests/test_ad_door_check_once.py
+tests/test_ad_door_dist43.py
+tests/test_ad_door_dist44.py
+tests/test_ad_door_dist45.py
+tests/test_ad_door_dist46.py
+tests/test_ad_door_cloud_number.py
+tests/test_ad_door_bl_guard.py
+tests/test_ad_door_dist47.py
+tests/test_ad_door_dist48_bl.py
+tests/test_ad_cumulus_rows.py
+tests/test_ad_door_full_row_drag_held.py
+tests/test_ad_door_plan_date.py
+tests/test_ad_door_dot_dead.py
+tests/test_ad_door_gradient_mesh.py
+tests/test_ad_door_host_memory.py
+tests/test_ad_door_init_needs_recorder.py
+tests/test_ad_door_no_local_gpu.py
+tests/test_ad_door_optional_pins.py
+tests/test_ad_door_door_steps.py
+tests/test_ad_door_param_grad_any.py
+tests/test_ad_door_plan_libraries.py
+tests/test_ad_door_ranks.py
+tests/test_ad_door_record_end.py
+tests/test_ad_door_record_forms.py
+tests/test_ad_door_refuse_before_assets.py
+tests/test_ad_door_seed.py
+tests/test_ad_door_session.py
+tests/test_ad_door_speed.py
+tests/test_ad_doors.py
+tests/test_check_bar.py
+tests/test_ad_door_strict_legs.py
+tests/test_ad_door_zero_direction.py
+tests/test_ad_params.py
+tests/test_ad_record_cpu.py
+tests/test_ad_record_lam.py
+tests/test_ad_record_runner_packaged.py
+tests/test_ad_rows.py
+tests/test_ad_start_winds.py
+tests/test_forecast_door_soil_levels.py
+tests/test_rank_gather.py
+tests/test_tempo_first_column_split.py
+tests/test_sdist_one_date.py
+tests/test_ad_door_first_contact.py
+tests/test_ad_door_first_contact_d49.py
+tests/test_ad_door_window_host.py
+tests/test_ad_door_physics_mode.py
+tests/test_ad_door_q12_example.py
+tests/test_ad_door_route_doors.py
+tests/test_mesh_scaling_gnu_powf.py
+tests/test_native_lbc_order.py
+tests/test_hrrrv5_noaa_deck.py
+tests/test_rrfs_44c0849_ntiedtke_route.py
+tests/test_clamp_once_after_callback.py
+tests/test_ad_door_known_limits.py
+tests/test_ad_door_output_details.py
+tests/test_ad_door_cloud_rows.py
+tests/test_ad_door_cumulus_hold_12km.py
+tests/test_ad_door_hidden_card.py
+tests/test_ad_door_plant_error.py
+tests/test_ad_door_cloud_number_window.py
+tests/test_ad_door_fct_live_3km.py
+tests/test_ad_example_scripts_exit.py
+tests/test_ad_row_holds_words.py
+tests/test_engine_bridges_release_tag.py
+tests/test_ad_door_storm_measures.py

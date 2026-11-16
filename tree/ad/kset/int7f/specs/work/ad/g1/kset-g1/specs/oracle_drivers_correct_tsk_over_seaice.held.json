@@ -1,0 +1,304 @@
+{
+ "kernel": "oracle_drivers_correct_tsk_over_seaice",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py",
+ "line": 5436,
+ "body": {
+  "file": "captured .cu e6fd85f0",
+  "line": 6354,
+  "function": "drivers_correct_tsk_over_seaice",
+  "native": "RRFS-MPAS 1d6e370e mpas_atmphys_lsm_shared.F:22-57 (L40-L55)"
+ },
+ "route": "hand-written",
+ "mode": "exact-linearisation, frozen switches",
+ "unit": "held/oracle_drivers_correct_tsk_over_seaice",
+ "launch": {
+  "grid": "forward",
+  "block": "forward",
+  "shared_bytes": 0,
+  "threads": "one thread per tile cell c < nc; element (i,j) of every table array is word c + (i-ims)*nc + (j-jms)*nc*(ime-ims+1)"
+ },
+ "args": [
+  {
+   "name": "ptrs",
+   "role": "pointer_table",
+   "dtype": "u64",
+   "shape": "[13]",
+   "active": true,
+   "table": [
+    "ims",
+    "ime",
+    "jms",
+    "jme",
+    "its",
+    "ite",
+    "jts",
+    "jte",
+    "xice_thresh",
+    "xice",
+    "tsk",
+    "tsk_sea",
+    "tsk_ice"
+   ],
+   "layout": "binder ruc_layout.rs ICE_TSK (13 fields, no optional flags)",
+   "roles": {
+    "ims": "int32 extent, inactive",
+    "ime": "int32 extent, inactive",
+    "jms": "int32 extent, inactive",
+    "jme": "int32 extent, inactive",
+    "its": "int32 extent, inactive",
+    "ite": "int32 extent, inactive",
+    "jts": "int32 extent, inactive",
+    "jte": "int32 extent, inactive",
+    "xice_thresh": "in, switch predicate only (inactive)",
+    "xice": "in, switch predicate only (inactive)",
+    "tsk": "in",
+    "tsk_sea": "out, overwrite on its..ite x jts..jte",
+    "tsk_ice": "out, overwrite on its..ite x jts..jte"
+   }
+  },
+  {
+   "name": "tables",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "RUC constant tables; drivers_correct_tsk_over_seaice reads none"
+  },
+  {
+   "name": "work",
+   "role": "scratch",
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "arena scratch; drivers_correct_tsk_over_seaice takes no arena rows (mark/restore only)"
+  },
+  {
+   "name": "error",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "integer error word"
+  },
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "tile cell count"
+  }
+ ],
+ "linearisation": {
+  "tsk_sea": "d = (ice && !(tsk > 271.4)) ? 0 : d_tsk   [ice = xice >= xice_thresh && xice <= 1]",
+  "tsk_ice": "d = (ice && (L51 fired || L52 fired)) ? 0 : d_tsk   [L51: xice < 0.2 && tsk < 253.15; L52: xice < 0.1 && tsk_ice(after L51) < 263.15]",
+  "adjoint": "b_tsk += (L51||L52 ? 0 : b_tsk_ice) + (sea clamp ? 0 : b_tsk_sea); b_tsk_sea = b_tsk_ice = 0"
+ },
+ "branches": [
+  {
+   "file_line": "captured .cu e6fd85f0:6363 (L45)",
+   "predicate": "xice >= xice_thresh && xice <= 1",
+   "policy": "frozen-from-trajectory",
+   "inactive_reason": "outputs are piecewise constant in xice and xice_thresh"
+  },
+  {
+   "file_line": "captured .cu e6fd85f0:6359-6360 (L40/L41)",
+   "predicate": "i in its..ite, j in jts..jte",
+   "policy": "inactive-index",
+   "inactive_reason": "integer extents"
+  }
+ ],
+ "limiters": [
+  {
+   "file_line": "captured .cu e6fd85f0:6364 (L47)",
+   "expression": "tsk_sea = ruc_max(tsk_sea, 271.4f)  [a > b ? a : b]",
+   "treatment": "frozen coefficient from the trajectory: derivative 1 if tsk > 271.4 else 0 (tie -> the constant, 0)"
+  },
+  {
+   "file_line": "captured .cu e6fd85f0:6365 (L51)",
+   "expression": "if (xice < 0.2 && tsk_ice < 253.15) tsk_ice = 253.15",
+   "treatment": "frozen coefficient from the trajectory: derivative 0 where it fires, else 1 (strict compare: tie passes)"
+  },
+  {
+   "file_line": "captured .cu e6fd85f0:6366 (L52)",
+   "expression": "if (xice < 0.1 && tsk_ice < 263.15) tsk_ice = 263.15",
+   "treatment": "frozen coefficient from the trajectory, evaluated on the L51 result: derivative 0 where it fires"
+  }
+ ],
+ "frozen_coefficients": "three clamps (L47, L51, L52) and the ice predicate (L45), each frozen on the trajectory primal tsk, xice, xice_thresh (never written by the forward)",
+ "precision": "float32; TL is copies and zeros only (exact); AD adds with __fadd_rn; --fmad=false --ftz=false",
+ "range_hazards": [
+  {
+   "file_line": "captured .cu e6fd85f0:6364 (L47)",
+   "expression": "tsk > 271.4",
+   "hazard": "derivative switch: tsk_sea jumps from slope 1 to 0 at tsk = 271.4 over ice; a perturbation larger than the margin |tsk - 271.4| crosses it (Taylor sees the kink)"
+  },
+  {
+   "file_line": "captured .cu e6fd85f0:6365 (L51)",
+   "expression": "tsk_ice < 253.15 where xice < 0.2",
+   "hazard": "derivative switch at 253.15 K on thin ice"
+  },
+  {
+   "file_line": "captured .cu e6fd85f0:6366 (L52)",
+   "expression": "tsk_ice < 263.15 where xice < 0.1",
+   "hazard": "derivative switch at 263.15 K on very thin ice"
+  },
+  {
+   "file_line": "captured .cu e6fd85f0:6363 (L45)",
+   "expression": "xice >= xice_thresh && xice <= 1",
+   "hazard": "a cell changing ice state switches all three clamps on or off; xice is not differentiated (zero derivative), a jump in tsk_sea of max(0, 271.4 - tsk) is not seen by the TL"
+  }
+ ],
+ "alias": "outputs disjoint from inputs and from each other (checked per launch, slot 1); primal reads through the live table are the pre-launch values because the forward never writes tsk, xice or xice_thresh",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "oracle_drivers_correct_tsk_over_seaice__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc*64"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "ptrs",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "targets": [
+        "ims",
+        "ime",
+        "jms",
+        "jme",
+        "its",
+        "ite",
+        "jts",
+        "jte",
+        "xice_thresh",
+        "xice",
+        "tsk",
+        "tsk_sea",
+        "tsk_ice"
+       ],
+       "active_slots": [
+        10,
+        11,
+        12
+       ],
+       "inactive_slots": {
+        "0": "ims (int32 extent)",
+        "1": "ime (int32 extent)",
+        "2": "jms (int32 extent)",
+        "3": "jme (int32 extent)",
+        "4": "its (int32 extent)",
+        "5": "ite (int32 extent)",
+        "6": "jts (int32 extent)",
+        "7": "jte (int32 extent)",
+        "8": "xice_thresh: switch predicate only (piecewise-constant output, zero derivative)",
+        "9": "xice: switch predicate only (piecewise-constant output, zero derivative)"
+       }
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "nonfinite tangent, cotangent or primal tsk",
+       "an output pointer equals an input pointer or the other output"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "oracle_drivers_correct_tsk_over_seaice__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc*64"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ptrs",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "targets": [
+        "ims",
+        "ime",
+        "jms",
+        "jme",
+        "its",
+        "ite",
+        "jts",
+        "jte",
+        "xice_thresh",
+        "xice",
+        "tsk",
+        "tsk_sea",
+        "tsk_ice"
+       ],
+       "active_slots": [
+        10,
+        11,
+        12
+       ],
+       "inactive_slots": {
+        "0": "ims (int32 extent)",
+        "1": "ime (int32 extent)",
+        "2": "jms (int32 extent)",
+        "3": "jme (int32 extent)",
+        "4": "its (int32 extent)",
+        "5": "ite (int32 extent)",
+        "6": "jts (int32 extent)",
+        "7": "jte (int32 extent)",
+        "8": "xice_thresh: switch predicate only (piecewise-constant output, zero derivative)",
+        "9": "xice: switch predicate only (piecewise-constant output, zero derivative)"
+       }
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "nonfinite tangent, cotangent or primal tsk",
+       "an output pointer equals an input pointer or the other output"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "launch_abi_limitations": [
+  "the mirrored pointer table needs the sweep (persistent) shadows: AD_DOT_PERSIST=1 in per-launch replays; the composed window always has them"
+ ],
+ "owner_task": "ad/held-oracle_drivers_correct_tsk_over_seaice"
+}

@@ -1,0 +1,263 @@
+{
+ "kernel": "oracle_drivers_seaice_finish",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py",
+ "line": 5398,
+ "forward_lines": {
+  "device": "5019-5054 drivers_seaice_finish (RRFS-MPAS mpas_atmphys_driver_seaice.F:571-601)",
+  "adapter": "5398-5435",
+  "host": "5982-5991 _finish_ice"
+ },
+ "route": "hand (P6 seaice.ad.cu:309-402, unchanged) + extent guard",
+ "mode": "exact",
+ "launch": {
+  "grid": "ceil(nc/32)",
+  "block": "32",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ptrs",
+   "field_id": 1,
+   "role": "index",
+   "dtype": "u64",
+   "shape": "[33]",
+   "pointer_depth": 2,
+   "table_role": "RUC named-array table (ruc.rs pointer_table, layout ICE_FINISH), one float32/int32 array of nc words per entry, column c at word c (ncells per column = 1)",
+   "entries": [
+    "ncells",
+    "xice_threshold",
+    "config_frac_seaice",
+    "mynn",
+    "xice_p",
+    "flhc_p",
+    "flhc_sea",
+    "flqc_p",
+    "flqc_sea",
+    "cqs_p",
+    "cqs_sea",
+    "cpm_p",
+    "cpm_sea",
+    "chs_p",
+    "chs_sea",
+    "chs2_p",
+    "chs2_sea",
+    "cqs2_p",
+    "cqs2_sea",
+    "hfx_p",
+    "hfx_sea",
+    "lh_p",
+    "lh_sea",
+    "qfx_p",
+    "qfx_sea",
+    "qgh_p",
+    "qgh_sea",
+    "qsfc_p",
+    "qsfc_sea",
+    "tsk_p",
+    "tsk_sea",
+    "sfc_albedo_p",
+    "sfc_emiss_p"
+   ],
+   "active_entries": {
+    "in": [
+     "xice_p",
+     "flhc_sea",
+     "flqc_sea",
+     "cqs_sea",
+     "cpm_sea",
+     "chs_sea",
+     "chs2_sea",
+     "cqs2_sea",
+     "hfx_sea",
+     "lh_sea",
+     "qfx_sea",
+     "qgh_sea",
+     "qsfc_sea",
+     "tsk_sea"
+    ],
+    "inout": [
+     "flhc_p",
+     "flqc_p",
+     "cqs_p",
+     "cpm_p",
+     "chs_p",
+     "chs2_p",
+     "cqs2_p",
+     "hfx_p",
+     "lh_p",
+     "qfx_p",
+     "qgh_p",
+     "qsfc_p",
+     "tsk_p",
+     "sfc_albedo_p",
+     "sfc_emiss_p"
+    ],
+    "inactive": [
+     "ncells",
+     "xice_threshold",
+     "config_frac_seaice",
+     "mynn"
+    ]
+   }
+  },
+  {
+   "name": "tables",
+   "role": "const",
+   "active": false,
+   "inactive_reason": "RUC table storage, unread here"
+  },
+  {
+   "name": "work",
+   "role": "scratch",
+   "active": false,
+   "inactive_reason": "forward arena, unread here"
+  },
+  {
+   "name": "error",
+   "role": "out",
+   "active": false,
+   "inactive_reason": "forward status word"
+  },
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false
+  }
+ ],
+ "branches": [
+  {
+   "site": "L575 xice_p >= xice_threshold && xice_p < 1",
+   "treatment": "frozen: the arm is taken from the pre-launch primal; no derivative across the switch (blend on one side, identity on the other). At xice = 1 both sides agree (x*a + 0*s = a), so the only jump is at xice = xice_threshold."
+  },
+  {
+   "site": "L454 config_frac_seaice, L579 mynn",
+   "treatment": "fixed integer flags"
+  }
+ ],
+ "refusal": {
+  "5026/5028/5033/5046": "nonfinite primal or derivative word (P6 si_check)",
+  "5398": "extent guard: ncells != 1 in a column or a null table word"
+ },
+ "primal_preservation": "pre-launch copies of every table target (deriv.rs indirect.primal_pre)",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "guard",
+    "tl"
+   ],
+   "ad": [
+    "guard",
+    "ad"
+   ]
+  },
+  "entries": {
+   "guard": {
+    "function": "oracle_drivers_seaice_finish__guard",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc"
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": "nc",
+      "bytes_per_slot": 4,
+      "source_ids": []
+     }
+    ]
+   },
+   "tl": {
+    "function": "oracle_drivers_seaice_finish__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "ptrs",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": "nc",
+      "bytes_per_slot": 4,
+      "source_ids": []
+     },
+     {
+      "bind": "branch_record",
+      "slots": 3
+     }
+    ]
+   },
+   "ad": {
+    "function": "oracle_drivers_seaice_finish__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ptrs",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": "nc",
+      "bytes_per_slot": 4,
+      "source_ids": []
+     }
+    ]
+   }
+  }
+ }
+}

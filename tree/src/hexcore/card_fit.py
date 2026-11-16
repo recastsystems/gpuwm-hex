@@ -89,6 +89,17 @@ def whole_run_curve(rows: Sequence[Mapping[str, Any]], count: int, *,
         else:
             curve = ys[0] * x / xs[0]
             basis = "one measured whole run: cell-linear past its size"
+    elif x > xs[-1] and xs[-2] > 0.75 * xs[-1] and xs[0] <= 0.75 * xs[-1]:
+        # Past the largest run when its neighbour is close: the steepest of the last segment and the chords into the
+        # largest run from the runs with at most three quarters of its cells.  THE BREAKAGE IT PREVENTS (uniform
+        # MPAS-physics globes on one 96 GB card, 2026-11-15): two runs a few per cent apart (654,432 and 700,362
+        # cells, whose peaks differ by run-to-run spread as much as by size) make a last segment of 0.028 MiB a cell,
+        # a third of what the route holds between 60 and 29 km, and would admit a 22 km globe one card cannot fit.
+        # A curve whose last two runs are spread out keeps its last segment, as before.
+        slope = max([(ys[-1] - ys[-2]) / (xs[-1] - xs[-2]),
+                     *((ys[-1] - y) / (xs[-1] - xi) for xi, y in zip(xs, ys) if xi <= 0.75 * xs[-1])])
+        curve = ys[-1] + slope * (x - xs[-1])
+        basis = "the steepest chord into the largest run past it (its neighbour is close)"
     else:
         segment = next((i for i in range(1, len(xs)) if x <= xs[i]), len(xs) - 1)
         x0, x1, y0, y1 = xs[segment - 1], xs[segment], ys[segment - 1], ys[segment]

@@ -1,0 +1,19 @@
+# The image rebuilt from the release line (2026-11-16): build.sh on the forward text of this tree
+# (hexcore.mpasphys.ntiedtke_v842.cuda_source(), sha256 34f44240..., then the driver's forcing fold
+# _CONVECTION_FORCING_CUDA, sha256 4b530672...), nvcc 13.5.37, 127 s for the card image on 24 processors.
+# nt_ad.fatbin and the three processor harnesses are byte for byte the first build's (build-b5.txt).
+# nt_ad.cu and nt_ad.cuh differ from that build in comment lines only.
+# proof-rel.log: host/proof.sh run with this build's harnesses on the same 23 launches of real 12 km columns
+# (48 s on processors). Every number equals proof-rep1.log's; that log's FD lines were written before the
+# harness printed the worst column.
+59e5f609404256490fb031444181b213f1c72d943c143e83a982507cd6f35088  nt-forward.cu
+bf517a373321f7e99d862d888e89abdaace633bd2c8c64e4db27b1a8afc0602c  nt_R.inc
+d496a7a0d2972f0ca2cefc09c5579f96e9ae5b1d3bf2b2bf25119165e98a8fd2  nt_entries.inc
+9155efed32edf6a44361ddbec0d8cddb3bec6ebb50deb7fd4d252f113550c133  nt_kernels.json
+647afe8dc7ee1561907aa305b7171ae3c919bd887c24075ec66750748e629def  tables.json
+2d2cc181c004bcd693b9622452f2b9cc25e4626e69c78cc571a1432d1ce6a1b0  nt_ad.cu
+2ddd4560dfaaa52070bce9bb9ca7a441b95d4af88c19b5315bc4ff868e7cf9d6  nt_ad.cuh
+7eab4ec696af41d58c62cc6a41a5c0fff2bd3c25cec2378ff8acec9ea698d90e  nt_ad.fatbin
+4e1d465793f734f350cecf0102920c950d982d718cc1d9fdb76a979ea1029cc4  nthost-p0
+b1a7d574758e987652bcee15b04a24e2b23718b380dbd245862576d4eaaa3e63  nthost-p1
+ffd41144d8b2f92e20c5b02fdfb6b00cccb77152c2c8d1aece4ba2e18971b52d  nthost-p2

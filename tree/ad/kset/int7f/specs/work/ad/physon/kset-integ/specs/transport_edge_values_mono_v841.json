@@ -1,0 +1,2392 @@
+{
+ "kernel": "transport_edge_values_mono_v841",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_transport_v841.py",
+ "line": 236,
+ "route": "hand",
+ "mode": "exact",
+ "launch": {
+  "grid": "forward captured geometry",
+  "block": "forward captured block",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ntracers",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "nlev",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "ncells",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "nedges",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "width",
+   "field_id": 5,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "coefficient",
+   "field_id": 6,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "[]",
+   "strides": "by-value",
+   "stagger": "none",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "stage",
+   "field_id": 7,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ntracers,nlev,ncells]",
+   "strides": "dense row-major",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "reference_scale": 0.005126229024215507,
+   "reference_scale_reason": "RMS of tracer 0 of stage from convection_permitting_x1.2562 transport_edge_values_mono_v841 step 2; same field and stagger, used as the characteristic scale when the dry capture is identically zero; object SHA256 f1c25b7378eb8374f9194139d7e581d179382573606ab1ed4f58cc271a4af87d."
+  },
+  {
+   "name": "velocity",
+   "field_id": 8,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,nedges]",
+   "strides": "dense row-major",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "adv",
+   "field_id": 9,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nedges,width]",
+   "strides": "dense row-major",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "adv3",
+   "field_id": 10,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nedges,width]",
+   "strides": "dense row-major",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "n_adv",
+   "field_id": 11,
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[nedges]",
+   "strides": "dense row-major",
+   "stagger": "edge",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "adv_cells",
+   "field_id": 12,
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[nedges,width]",
+   "strides": "dense row-major",
+   "stagger": "edge",
+   "active": false,
+   "inactive_reason": "fixed integer dimensions, branch controls, or mesh topology",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "edge_values",
+   "field_id": 13,
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ntracers,nlev,nedges]",
+   "strides": "dense row-major",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "cuda_transport_v841.py:244",
+   "predicate": "edge >= nedges",
+   "policy": "executed-arm",
+   "tie": "integer fixed",
+   "slot": 0,
+   "recording": "inactive-index",
+   "class": "inactive-index",
+   "inactive_reason": "This predicate depends only on fixed launch indices or discrete configuration, not on any active floating-point input.",
+   "active": false,
+   "column": 14,
+   "operation": "predicate"
+  },
+  {
+   "file_line": "cuda_transport_v841.py:246",
+   "predicate": "count == 10",
+   "policy": "executed-arm",
+   "tie": "integer fixed",
+   "slot": 1,
+   "recording": "inactive-config",
+   "class": "inactive-config",
+   "inactive_reason": "This predicate depends only on fixed launch indices or discrete configuration, not on any active floating-point input.",
+   "active": false,
+   "column": 5,
+   "operation": "predicate"
+  },
+  {
+   "file_line": "cuda_transport_v841.py:249",
+   "predicate": "copysign(1, velocity)",
+   "policy": "executed-arm",
+   "tie": "velocity sign bit, including signed zero; zero sign derivative",
+   "slot": 2,
+   "recording": "tangent entry branch_record",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "column": 32,
+   "operation": "copysign"
+  },
+  {
+   "file_line": "cuda_transport_v841.py:257",
+   "predicate": "slot < 10",
+   "policy": "iteration",
+   "tie": "integer fixed",
+   "slot": 3,
+   "recording": "inactive-config",
+   "class": "inactive-config",
+   "inactive_reason": "This predicate depends only on fixed launch indices or discrete configuration, not on any active floating-point input.",
+   "active": false,
+   "column": 17,
+   "operation": "iteration"
+  },
+  {
+   "file_line": "cuda_transport_v841.py:275",
+   "predicate": "slot < count",
+   "policy": "iteration",
+   "tie": "integer fixed",
+   "slot": 4,
+   "recording": "inactive-config",
+   "class": "inactive-config",
+   "inactive_reason": "This predicate depends only on fixed launch indices or discrete configuration, not on any active floating-point input.",
+   "active": false,
+   "column": 9,
+   "operation": "iteration"
+  },
+  {
+   "file_line": "cuda_transport_v841.py:279",
+   "predicate": "copysign(1, velocity)",
+   "policy": "executed-arm",
+   "tie": "velocity sign bit, including signed zero; zero sign derivative",
+   "slot": 5,
+   "recording": "tangent entry branch_record",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "column": 36,
+   "operation": "copysign"
+  },
+  {
+   "file_line": "cuda_fp32.py:42",
+   "predicate": "subnormal float decode",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 6,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:36-49",
+   "rounding_helper_both_arms": "exact value of the float32 input as a double: ldexp(mantissa,-149) with sign for a subnormal, (double)value otherwise"
+  },
+  {
+   "file_line": "cuda_fp32.py:45",
+   "predicate": "decode sign",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 7,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:43-46",
+   "rounding_helper_both_arms": "sign selection of the same decoded magnitude"
+  },
+  {
+   "file_line": "cuda_fp32.py:57",
+   "predicate": "subnormal float packing",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 8,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:51-67",
+   "rounding_helper_both_arms": "round-to-nearest-even float32 of the double: packed subnormal mantissa rint(|v|*2^149), __double2float_rn otherwise"
+  },
+  {
+   "file_line": "cuda_fp32.py:62",
+   "predicate": "packing sign",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 9,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:60-64",
+   "rounding_helper_both_arms": "sign bit of the same packed result"
+  },
+  {
+   "file_line": "cuda_fp32.py:78",
+   "predicate": "addition fast return",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 10,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:69-100",
+   "rounding_helper_both_arms": "left+right rounded to float32 (ordinary sum, or the double sum rounded once)"
+  },
+  {
+   "file_line": "cuda_fp32.py:83",
+   "predicate": "addition subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 11,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:69-100",
+   "rounding_helper_both_arms": "left+right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:93",
+   "predicate": "addition subnormal cancellation",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 12,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:69-100",
+   "rounding_helper_both_arms": "left+right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:111",
+   "predicate": "subtraction fast return",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 13,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "class": "false-candidate",
+   "inactive_reason": "The sub helper is not invoked by this kernel; this copied helper branch is unreachable.",
+   "active": false,
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:102-130",
+   "rounding_helper_both_arms": "left-right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:116",
+   "predicate": "subtraction subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 14,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "class": "false-candidate",
+   "inactive_reason": "The sub helper is not invoked by this kernel; this copied helper branch is unreachable.",
+   "active": false,
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:102-130",
+   "rounding_helper_both_arms": "left-right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:123",
+   "predicate": "subtraction subnormal cancellation",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 15,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "class": "false-candidate",
+   "inactive_reason": "The sub helper is not invoked by this kernel; this copied helper branch is unreachable.",
+   "active": false,
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:102-130",
+   "rounding_helper_both_arms": "left-right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:142",
+   "predicate": "multiplication subnormal-result envelope",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 16,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:132-151",
+   "rounding_helper_both_arms": "left*right rounded to float32 (ordinary product, or the double product rounded once)"
+  },
+  {
+   "file_line": "cuda_fp32.py:145",
+   "predicate": "multiplication nonzero operands",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 17,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "active_variables": [
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3"
+   ],
+   "replay": "Recompute this predicate in the tangent entry from captured primal operands using the forward tie order; store the two-arm counts in branch_record.",
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:132-151",
+   "rounding_helper_both_arms": "left*right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:162",
+   "predicate": "division subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 18,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "class": "false-candidate",
+   "inactive_reason": "The div helper is not invoked by this kernel; this copied helper branch is unreachable.",
+   "active": false,
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:153-178",
+   "rounding_helper_both_arms": "left/right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:170",
+   "predicate": "division subnormal-result envelope",
+   "policy": "rounding-helper",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 19,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "class": "false-candidate",
+   "inactive_reason": "The div helper is not invoked by this kernel; this copied helper branch is unreachable.",
+   "active": false,
+   "rounding_helper_registry": "COMMON-AD 58.3; configs/ledger/rounding_helpers.json",
+   "rounding_helper_source": "cuda_fp32.py:153-178",
+   "rounding_helper_both_arms": "left/right rounded to float32"
+  },
+  {
+   "file_line": "cuda_fp32.py:207",
+   "predicate": "minimum subnormal operand",
+   "policy": "executed-arm",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 20,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "class": "false-candidate",
+   "inactive_reason": "The min helper is not invoked by this kernel; this copied helper branch is unreachable.",
+   "active": false
+  },
+  {
+   "file_line": "cuda_fp32.py:219",
+   "predicate": "maximum subnormal operand",
+   "policy": "executed-arm",
+   "tie": "recompute the helper predicate from its primal operands; the helper itself computes the primal",
+   "slot": 21,
+   "recording": "tangent entry branch_record; zero if this helper is not invoked",
+   "class": "false-candidate",
+   "inactive_reason": "The max helper is not invoked by this kernel; this copied helper branch is unreachable.",
+   "active": false
+  },
+  {
+   "slot": 22,
+   "file_line": "cuda_transport_v841.py:244",
+   "column": 25,
+   "operation": "iteration",
+   "predicate": "return",
+   "policy": "iteration",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 23,
+   "file_line": "cuda_transport_v841.py:245",
+   "column": 23,
+   "operation": "lookup",
+   "predicate": "n_adv[edge]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 24,
+   "file_line": "cuda_transport_v841.py:246",
+   "column": 15,
+   "operation": "predicate",
+   "predicate": "if (count == 10) {",
+   "policy": "executed-arm",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 25,
+   "file_line": "cuda_transport_v841.py:248",
+   "column": 31,
+   "operation": "lookup",
+   "predicate": "velocity[E2(k, edge, nedges)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 26,
+   "file_line": "cuda_transport_v841.py:250",
+   "column": 13,
+   "operation": "iteration",
+   "predicate": "for (int tracer = 0; tracer < ntracers; ++tracer)",
+   "policy": "iteration",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 27,
+   "file_line": "cuda_transport_v841.py:250",
+   "column": 41,
+   "operation": "predicate",
+   "predicate": "for (int tracer = 0; tracer < ntracers; ++tracer) {",
+   "policy": "executed-arm",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 28,
+   "file_line": "cuda_transport_v841.py:251",
+   "column": 40,
+   "operation": "lookup",
+   "predicate": "adv_cells[ADV(edge, 0, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 29,
+   "file_line": "cuda_transport_v841.py:252",
+   "column": 41,
+   "operation": "lookup",
+   "predicate": "adv[ADV(edge, 0, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 30,
+   "file_line": "cuda_transport_v841.py:254",
+   "column": 25,
+   "operation": "lookup",
+   "predicate": "adv3[ADV(edge, 0, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 31,
+   "file_line": "cuda_transport_v841.py:256",
+   "column": 21,
+   "operation": "lookup",
+   "predicate": "stage[Q3(tracer, k, first_cell, nlev, ncells)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 32,
+   "file_line": "cuda_transport_v841.py:257",
+   "column": 41,
+   "operation": "predicate",
+   "predicate": "for (int slot = 1; slot < 10; ++slot) {",
+   "policy": "executed-arm",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 33,
+   "file_line": "cuda_transport_v841.py:258",
+   "column": 38,
+   "operation": "lookup",
+   "predicate": "adv_cells[ADV(edge, slot, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 34,
+   "file_line": "cuda_transport_v841.py:259",
+   "column": 39,
+   "operation": "lookup",
+   "predicate": "adv[ADV(edge, slot, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 35,
+   "file_line": "cuda_transport_v841.py:261",
+   "column": 29,
+   "operation": "lookup",
+   "predicate": "adv3[ADV(edge, slot, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 36,
+   "file_line": "cuda_transport_v841.py:263",
+   "column": 25,
+   "operation": "lookup",
+   "predicate": "stage[Q3(tracer, k, cell, nlev, ncells)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 37,
+   "file_line": "cuda_transport_v841.py:270",
+   "column": 9,
+   "operation": "iteration",
+   "predicate": "for (int tracer = 0; tracer < ntracers; ++tracer)",
+   "policy": "iteration",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 38,
+   "file_line": "cuda_transport_v841.py:270",
+   "column": 37,
+   "operation": "predicate",
+   "predicate": "for (int tracer = 0; tracer < ntracers; ++tracer) {",
+   "policy": "executed-arm",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 39,
+   "file_line": "cuda_transport_v841.py:275",
+   "column": 33,
+   "operation": "predicate",
+   "predicate": "for (int slot = 0; slot < count; ++slot) {",
+   "policy": "executed-arm",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 40,
+   "file_line": "cuda_transport_v841.py:276",
+   "column": 30,
+   "operation": "lookup",
+   "predicate": "adv_cells[ADV(edge, slot, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 41,
+   "file_line": "cuda_transport_v841.py:278",
+   "column": 35,
+   "operation": "lookup",
+   "predicate": "velocity[E2(k, edge, nedges)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 42,
+   "file_line": "cuda_transport_v841.py:280",
+   "column": 48,
+   "operation": "lookup",
+   "predicate": "adv[ADV(edge, slot, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 43,
+   "file_line": "cuda_transport_v841.py:282",
+   "column": 25,
+   "operation": "lookup",
+   "predicate": "adv3[ADV(edge, slot, width)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 44,
+   "file_line": "cuda_transport_v841.py:284",
+   "column": 17,
+   "operation": "iteration",
+   "predicate": "for (int tracer = 0; tracer < ntracers; ++tracer)",
+   "policy": "iteration",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 45,
+   "file_line": "cuda_transport_v841.py:284",
+   "column": 45,
+   "operation": "predicate",
+   "predicate": "for (int tracer = 0; tracer < ntracers; ++tracer) {",
+   "policy": "executed-arm",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-config",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 46,
+   "file_line": "cuda_transport_v841.py:286",
+   "column": 51,
+   "operation": "lookup",
+   "predicate": "edge_values[index]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  },
+  {
+   "slot": 47,
+   "file_line": "cuda_transport_v841.py:288",
+   "column": 29,
+   "operation": "lookup",
+   "predicate": "stage[Q3(tracer, k, cell, nlev, ncells)]",
+   "policy": "lookup",
+   "tie": "fixed integer or compile-time selection",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The address, loop bound or predicate is determined by integer launch dimensions and topology; indexed floating-point data remain active as declared in args.",
+   "active_variables": [
+    "none; integer indices or fixed configuration"
+   ],
+   "replay": "Integer topology and launch configuration are held fixed."
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "policy": "refuse entire gradient for invalid indices, nonfinite inputs, singular division and nonfinite intermediates/results",
+  "source_id": {
+   "1": "invalid topology or bounds",
+   "2": "nonfinite input or seed",
+   "3": "nonfinite intermediate or result"
+  }
+ },
+ "entry_points": {
+  "tl": {
+   "symbol": "transport_edge_values_mono_v841__tl",
+   "arguments": [
+    "ntracers",
+    "nlev",
+    "ncells",
+    "nedges",
+    "width",
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3",
+    "n_adv",
+    "adv_cells",
+    "edge_values",
+    "d_coefficient",
+    "d_stage",
+    "d_velocity",
+    "d_adv",
+    "d_adv3",
+    "d_edge_values",
+    "failure",
+    "branch_record"
+   ],
+   "abi": [
+    {
+     "name": "ntracers",
+     "declaration": "int ntracers",
+     "field_id": 1,
+     "source_argument": "ntracers",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nlev",
+     "declaration": "int nlev",
+     "field_id": 2,
+     "source_argument": "nlev",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "ncells",
+     "declaration": "int ncells",
+     "field_id": 3,
+     "source_argument": "ncells",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nedges",
+     "declaration": "int nedges",
+     "field_id": 4,
+     "source_argument": "nedges",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "width",
+     "declaration": "int width",
+     "field_id": 5,
+     "source_argument": "width",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "coefficient",
+     "declaration": "float coefficient",
+     "field_id": 6,
+     "source_argument": "coefficient",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "stage",
+     "declaration": "const float *stage",
+     "field_id": 7,
+     "source_argument": "stage",
+     "role": "in",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "velocity",
+     "declaration": "const float *velocity",
+     "field_id": 8,
+     "source_argument": "velocity",
+     "role": "in",
+     "shape": "[nlev,nedges]"
+    },
+    {
+     "name": "adv",
+     "declaration": "const float *adv",
+     "field_id": 9,
+     "source_argument": "adv",
+     "role": "in",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "adv3",
+     "declaration": "const float *adv3",
+     "field_id": 10,
+     "source_argument": "adv3",
+     "role": "in",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "n_adv",
+     "declaration": "const int *n_adv",
+     "field_id": 11,
+     "source_argument": "n_adv",
+     "role": "index",
+     "shape": "[nedges]"
+    },
+    {
+     "name": "adv_cells",
+     "declaration": "const int *adv_cells",
+     "field_id": 12,
+     "source_argument": "adv_cells",
+     "role": "index",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "edge_values",
+     "declaration": "const float *edge_values",
+     "field_id": 13,
+     "source_argument": "edge_values",
+     "role": "out",
+     "shape": "[ntracers,nlev,nedges]"
+    },
+    {
+     "name": "d_coefficient",
+     "declaration": "const float *d_coefficient",
+     "field_id": 6,
+     "source_argument": "coefficient",
+     "role": "tangent",
+     "shape": "[]"
+    },
+    {
+     "name": "d_stage",
+     "declaration": "const float *d_stage",
+     "field_id": 7,
+     "source_argument": "stage",
+     "role": "tangent",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "d_velocity",
+     "declaration": "const float *d_velocity",
+     "field_id": 8,
+     "source_argument": "velocity",
+     "role": "tangent",
+     "shape": "[nlev,nedges]"
+    },
+    {
+     "name": "d_adv",
+     "declaration": "const float *d_adv",
+     "field_id": 9,
+     "source_argument": "adv",
+     "role": "tangent",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "d_adv3",
+     "declaration": "const float *d_adv3",
+     "field_id": 10,
+     "source_argument": "adv3",
+     "role": "tangent",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "d_edge_values",
+     "declaration": "float *d_edge_values",
+     "field_id": 13,
+     "source_argument": "edge_values",
+     "role": "tangent",
+     "shape": "[ntracers,nlev,nedges]"
+    },
+    {
+     "name": "failure",
+     "declaration": "Failure *failure",
+     "role": "failure-slot-array",
+     "slot_bytes": 4
+    },
+    {
+     "name": "branch_record",
+     "declaration": "unsigned int *branch_record",
+     "role": "branch-record",
+     "slots": 22
+    }
+   ]
+  },
+  "ad": {
+   "symbol": "transport_edge_values_mono_v841__ad",
+   "arguments": [
+    "ntracers",
+    "nlev",
+    "ncells",
+    "nedges",
+    "width",
+    "coefficient",
+    "stage",
+    "velocity",
+    "adv",
+    "adv3",
+    "n_adv",
+    "adv_cells",
+    "b_edge_values",
+    "b_coefficient",
+    "b_stage",
+    "b_velocity",
+    "b_adv",
+    "b_adv3",
+    "failure"
+   ],
+   "abi": [
+    {
+     "name": "ntracers",
+     "declaration": "int ntracers",
+     "field_id": 1,
+     "source_argument": "ntracers",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nlev",
+     "declaration": "int nlev",
+     "field_id": 2,
+     "source_argument": "nlev",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "ncells",
+     "declaration": "int ncells",
+     "field_id": 3,
+     "source_argument": "ncells",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nedges",
+     "declaration": "int nedges",
+     "field_id": 4,
+     "source_argument": "nedges",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "width",
+     "declaration": "int width",
+     "field_id": 5,
+     "source_argument": "width",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "coefficient",
+     "declaration": "float coefficient",
+     "field_id": 6,
+     "source_argument": "coefficient",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "stage",
+     "declaration": "const float *stage",
+     "field_id": 7,
+     "source_argument": "stage",
+     "role": "in",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "velocity",
+     "declaration": "const float *velocity",
+     "field_id": 8,
+     "source_argument": "velocity",
+     "role": "in",
+     "shape": "[nlev,nedges]"
+    },
+    {
+     "name": "adv",
+     "declaration": "const float *adv",
+     "field_id": 9,
+     "source_argument": "adv",
+     "role": "in",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "adv3",
+     "declaration": "const float *adv3",
+     "field_id": 10,
+     "source_argument": "adv3",
+     "role": "in",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "n_adv",
+     "declaration": "const int *n_adv",
+     "field_id": 11,
+     "source_argument": "n_adv",
+     "role": "index",
+     "shape": "[nedges]"
+    },
+    {
+     "name": "adv_cells",
+     "declaration": "const int *adv_cells",
+     "field_id": 12,
+     "source_argument": "adv_cells",
+     "role": "index",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "b_edge_values",
+     "declaration": "float *b_edge_values",
+     "field_id": 13,
+     "source_argument": "edge_values",
+     "role": "cotangent",
+     "shape": "[ntracers,nlev,nedges]"
+    },
+    {
+     "name": "b_coefficient",
+     "declaration": "float *b_coefficient",
+     "field_id": 6,
+     "source_argument": "coefficient",
+     "role": "cotangent",
+     "shape": "[]"
+    },
+    {
+     "name": "b_stage",
+     "declaration": "float *b_stage",
+     "field_id": 7,
+     "source_argument": "stage",
+     "role": "cotangent",
+     "shape": "[ntracers,nlev,ncells]"
+    },
+    {
+     "name": "b_velocity",
+     "declaration": "float *b_velocity",
+     "field_id": 8,
+     "source_argument": "velocity",
+     "role": "cotangent",
+     "shape": "[nlev,nedges]"
+    },
+    {
+     "name": "b_adv",
+     "declaration": "float *b_adv",
+     "field_id": 9,
+     "source_argument": "adv",
+     "role": "cotangent",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "b_adv3",
+     "declaration": "float *b_adv3",
+     "field_id": 10,
+     "source_argument": "adv3",
+     "role": "cotangent",
+     "shape": "[nedges,width]"
+    },
+    {
+     "name": "failure",
+     "declaration": "Failure *failure",
+     "role": "failure-slot-array",
+     "slot_bytes": 4
+    }
+   ]
+  },
+  "aug": null,
+  "ad_clear": {
+   "symbol": "transport_edge_values_mono_v841__ad_clear",
+   "arguments": [
+    "ntracers",
+    "nlev",
+    "nedges",
+    "b_edge_values"
+   ],
+   "abi": [
+    {
+     "name": "ntracers",
+     "declaration": "int ntracers",
+     "field_id": 1,
+     "source_argument": "ntracers",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nlev",
+     "declaration": "int nlev",
+     "field_id": 2,
+     "source_argument": "nlev",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "nedges",
+     "declaration": "int nedges",
+     "field_id": 4,
+     "source_argument": "nedges",
+     "role": "scalar",
+     "shape": "[]"
+    },
+    {
+     "name": "b_edge_values",
+     "declaration": "float *b_edge_values",
+     "field_id": 13,
+     "source_argument": "edge_values",
+     "role": "cotangent",
+     "shape": "[ntracers,nlev,nedges]"
+    }
+   ]
+  },
+  "adjoint_phases": "Launch ad then ad_clear in that order on the same CUDA stream, checking refusal records before publishing gradients. The incoming output cotangent buffers and outgoing input cotangent buffers are disjoint; the final phase consumes the former."
+ },
+ "workspace": {
+  "tape_bytes": 0,
+  "refusal_records": 31,
+  "record_bytes": 4,
+  "refusal_ownership": "One int32 slot per source ID; device threads set the slot atomically; any nonzero slot refuses the derivative.",
+  "initialization": "zero all records before each launch; inspect all records and refuse the entire derivative if any is nonzero",
+  "aliases": "all distinct primal, tangent, cotangent and failure buffers are disjoint, except the explicitly described in-place tangent buffers",
+  "accumulation": "Each destination has one owner. Duplicate cotangent contributions are gathered in fixed index order into a float64 register, then rounded once into the float32 destination; no unordered floating-point atomics.",
+  "refusal_device_layout": "int32 per source ID, initialized to zero; any nonzero value refuses the derivative"
+ },
+ "implementation_status": "draft: branch records implemented; branch-case and exceptional-input proofs are incomplete",
+ "affine": false,
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "transport_edge_values_mono_v841__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "width"
+     },
+     {
+      "bind": "scalar",
+      "arg": "coefficient"
+     },
+     {
+      "bind": "primal",
+      "arg": "stage"
+     },
+     {
+      "bind": "primal",
+      "arg": "velocity"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv3"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv_cells"
+     },
+     {
+      "bind": "primal",
+      "arg": "edge_values"
+     },
+     {
+      "bind": "tangent",
+      "scalar_arg": "coefficient",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "stage",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "velocity",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "adv",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "adv3",
+      "field_id": 10,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "edge_values",
+      "field_id": 13,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 31,
+      "source_ids": [
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-0",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-1",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-2",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-3",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-4",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-5",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-6",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-7",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-8",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-9",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-10",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-11",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-13",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-14",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-15",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:48:failure-16",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:49:failure-17",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:50:failure-18",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-19",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-20",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-21",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-23",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:56:failure-24",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:76:failure-25",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:82:failure-26",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-27",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-28",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-29",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-30"
+      ]
+     },
+     {
+      "bind": "branch_record",
+      "slots": 48
+     }
+    ]
+   },
+   "ad_clear": {
+    "function": "transport_edge_values_mono_v841__ad_clear",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "edge_values",
+      "field_id": 13,
+      "io": "inout"
+     }
+    ]
+   },
+   "l4_inv_count": {
+    "function": "transport_edge_values_mono_v841__l4_inv_count",
+    "geometry": {
+     "grid": [
+      "ceil((nedges)/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "width"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv_cells"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_inv",
+      "bytes": "4*(2*ncells+1+nedges*width)"
+     }
+    ]
+   },
+   "l4_inv_scan": {
+    "function": "transport_edge_values_mono_v841__l4_inv_scan",
+    "geometry": {
+     "grid": [
+      1,
+      1,
+      1
+     ],
+     "block": [
+      1024,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_inv",
+      "bytes": "4*(2*ncells+1+nedges*width)"
+     }
+    ]
+   },
+   "l4_inv_fill": {
+    "function": "transport_edge_values_mono_v841__l4_inv_fill",
+    "geometry": {
+     "grid": [
+      "ceil((nedges)/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "width"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv_cells"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_inv",
+      "bytes": "4*(2*ncells+1+nedges*width)"
+     }
+    ]
+   },
+   "l4_inv_sort": {
+    "function": "transport_edge_values_mono_v841__l4_inv_sort",
+    "geometry": {
+     "grid": [
+      "ceil((ncells)/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_inv",
+      "bytes": "4*(2*ncells+1+nedges*width)"
+     }
+    ]
+   },
+   "l4_vel": {
+    "function": "transport_edge_values_mono_v841__l4_vel",
+    "geometry": {
+     "grid": [
+      "ceil((nlev*nedges)/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "width"
+     },
+     {
+      "bind": "scalar",
+      "arg": "coefficient"
+     },
+     {
+      "bind": "primal",
+      "arg": "stage"
+     },
+     {
+      "bind": "primal",
+      "arg": "velocity"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv3"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv_cells"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "edge_values",
+      "field_id": 13,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "velocity",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "failure",
+      "slots": 31,
+      "source_ids": [
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-0",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-1",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-2",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-3",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-4",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-5",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-6",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-7",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-8",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-9",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-10",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-11",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-13",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-14",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-15",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:48:failure-16",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:49:failure-17",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:50:failure-18",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-19",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-20",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-21",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-23",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:56:failure-24",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:76:failure-25",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:82:failure-26",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-27",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-28",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-29",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-30"
+      ]
+     }
+    ]
+   },
+   "l4_adv": {
+    "function": "transport_edge_values_mono_v841__l4_adv",
+    "geometry": {
+     "grid": [
+      "ceil((nedges*width)/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "width"
+     },
+     {
+      "bind": "scalar",
+      "arg": "coefficient"
+     },
+     {
+      "bind": "primal",
+      "arg": "stage"
+     },
+     {
+      "bind": "primal",
+      "arg": "velocity"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv_cells"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "edge_values",
+      "field_id": 13,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "adv",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "adv3",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "failure",
+      "slots": 31,
+      "source_ids": [
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-0",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-1",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-2",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-3",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-4",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-5",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-6",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-7",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-8",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-9",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-10",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-11",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-13",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-14",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-15",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:48:failure-16",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:49:failure-17",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:50:failure-18",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-19",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-20",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-21",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-23",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:56:failure-24",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:76:failure-25",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:82:failure-26",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-27",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-28",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-29",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-30"
+      ]
+     }
+    ]
+   },
+   "l4_stage": {
+    "function": "transport_edge_values_mono_v841__l4_stage",
+    "geometry": {
+     "grid": [
+      "ceil((ntracers*nlev*ncells)/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "width"
+     },
+     {
+      "bind": "scalar",
+      "arg": "coefficient"
+     },
+     {
+      "bind": "primal",
+      "arg": "velocity"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv3"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_adv"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "edge_values",
+      "field_id": 13,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "stage",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_inv",
+      "bytes": "4*(2*ncells+1+nedges*width)"
+     },
+     {
+      "bind": "failure",
+      "slots": 31,
+      "source_ids": [
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-0",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-1",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-2",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-3",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-4",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-5",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-6",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-7",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-8",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-9",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-10",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-11",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-13",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-14",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-15",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:48:failure-16",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:49:failure-17",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:50:failure-18",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-19",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-20",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-21",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-23",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:56:failure-24",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:76:failure-25",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:82:failure-26",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-27",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-28",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-29",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-30"
+      ]
+     }
+    ]
+   },
+   "l4_coef_partial": {
+    "function": "transport_edge_values_mono_v841__l4_coef_partial",
+    "geometry": {
+     "grid": [
+      "ceil((nedges)/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ntracers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "width"
+     },
+     {
+      "bind": "primal",
+      "arg": "stage"
+     },
+     {
+      "bind": "primal",
+      "arg": "velocity"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv3"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_adv"
+     },
+     {
+      "bind": "primal",
+      "arg": "adv_cells"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "edge_values",
+      "field_id": 13,
+      "io": "inout"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_part",
+      "bytes": "8*nedges"
+     }
+    ]
+   },
+   "l4_coef_reduce": {
+    "function": "transport_edge_values_mono_v841__l4_coef_reduce",
+    "geometry": {
+     "grid": [
+      1,
+      1,
+      1
+     ],
+     "block": [
+      1024,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "workspace",
+      "name": "l4_part",
+      "bytes": "8*nedges"
+     },
+     {
+      "bind": "adjoint",
+      "scalar_arg": "coefficient",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "failure",
+      "slots": 31,
+      "source_ids": [
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-0",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-1",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-2",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-3",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-4",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-5",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-6",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-7",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-8",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-9",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-10",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-11",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-12",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-13",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-14",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-15",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:48:failure-16",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:49:failure-17",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:50:failure-18",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-19",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-20",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-21",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-22",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-23",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:56:failure-24",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:76:failure-25",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:82:failure-26",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-27",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-28",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-29",
+       "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-30"
+      ]
+     }
+    ]
+   }
+  },
+  "reverse_order": [
+   "l4_inv_count",
+   "l4_inv_scan",
+   "l4_inv_fill",
+   "l4_inv_sort",
+   "l4_vel",
+   "l4_adv",
+   "l4_stage",
+   "l4_coef_partial",
+   "l4_coef_reduce",
+   "ad_clear"
+  ],
+  "launch_order": {
+   "ad": [
+    "l4_inv_count",
+    "l4_inv_scan",
+    "l4_inv_fill",
+    "l4_inv_sort",
+    "l4_vel",
+    "l4_adv",
+    "l4_stage",
+    "l4_coef_partial",
+    "l4_coef_reduce",
+    "ad_clear"
+   ]
+  },
+  "l4_speed": "ad/window-L4-speed: reverse entries ['l4_inv_count', 'l4_inv_scan', 'l4_inv_fill', 'l4_inv_sort', 'l4_vel', 'l4_adv', 'l4_stage', 'l4_coef_partial', 'l4_coef_reduce', 'ad_clear'] replace the reference single reverse entry; tangent unchanged; see phys/l4speed/README.md"
+ },
+ "failure_slots": [
+  {
+   "slot": 0,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-0",
+   "condition": "count<0"
+  },
+  {
+   "slot": 1,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-1",
+   "condition": "c<0"
+  },
+  {
+   "slot": 2,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-2",
+   "condition": "!fin(coefficient)"
+  },
+  {
+   "slot": 3,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:21:failure-3",
+   "condition": "!fin(*d_coefficient)"
+  },
+  {
+   "slot": 4,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-4",
+   "condition": "!fin(vel)"
+  },
+  {
+   "slot": 5,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:22:failure-5",
+   "condition": "!fin(d_velocity[v])"
+  },
+  {
+   "slot": 6,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-6",
+   "condition": "!fin(adv[j])"
+  },
+  {
+   "slot": 7,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-7",
+   "condition": "!fin(d_adv[j])"
+  },
+  {
+   "slot": 8,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-8",
+   "condition": "!fin(adv3[j])"
+  },
+  {
+   "slot": 9,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-9",
+   "condition": "!fin(d_adv3[j])"
+  },
+  {
+   "slot": 10,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-10",
+   "condition": "!fin(stage[i])"
+  },
+  {
+   "slot": 11,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:26:failure-11",
+   "condition": "!fin(d_stage[i])"
+  },
+  {
+   "slot": 12,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-12",
+   "condition": "!fin(value.x)"
+  },
+  {
+   "slot": 13,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:34:failure-13",
+   "condition": "!fin(value.d)"
+  },
+  {
+   "slot": 14,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-14",
+   "condition": "count<0"
+  },
+  {
+   "slot": 15,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-15",
+   "condition": "c<0"
+  },
+  {
+   "slot": 16,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:48:failure-16",
+   "condition": "!fin(coefficient)"
+  },
+  {
+   "slot": 17,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:49:failure-17",
+   "condition": "!fin(vel)"
+  },
+  {
+   "slot": 18,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:50:failure-18",
+   "condition": "!fin(bo)"
+  },
+  {
+   "slot": 19,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-19",
+   "condition": "!fin(adv[j])"
+  },
+  {
+   "slot": 20,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-20",
+   "condition": "!fin(adv3[j])"
+  },
+  {
+   "slot": 21,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:51:failure-21",
+   "condition": "!fin(x)"
+  },
+  {
+   "slot": 22,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-22",
+   "condition": "!fin(b_adv[j])"
+  },
+  {
+   "slot": 23,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:64:failure-23",
+   "condition": "!fin(b_adv3[j])"
+  },
+  {
+   "slot": 24,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:56:failure-24",
+   "condition": "!fin(b_velocity[vi])"
+  },
+  {
+   "slot": 25,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:76:failure-25",
+   "condition": "!fin(b_stage[i])"
+  },
+  {
+   "slot": 26,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:82:failure-26",
+   "condition": "!fin(*b_coefficient)"
+  },
+  {
+   "slot": 27,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-27",
+   "condition": "count>width"
+  },
+  {
+   "slot": 28,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:20:failure-28",
+   "condition": "c>=ncells"
+  },
+  {
+   "slot": 29,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-29",
+   "condition": "count>width"
+  },
+  {
+   "slot": 30,
+   "source_id": "hex-ad/cuda/transport/transport_edge_values_mono_v841.ad.cu:47:failure-30",
+   "condition": "c>=ncells"
+  }
+ ],
+ "forward_branch_ftz": {
+  "define": "HEX_AD_FORWARD_FTZ=1",
+  "evidence": "hexcore/cuda_backend/compile_contract.py:8 and hexcore/cuda_fp32.py:3",
+  "note": "The capture does not itself record effective NVRTC options; validate against the image."
+ },
+ "owner_task": "ad1-254-transport_edge_values_mono_v841",
+ "group_task": "ad1-g37-transport-transport-v841-b",
+ "seed_lifetime": {
+  "policy": "consume-overwritten-output-cotangents",
+  "incoming_binding": "adjoint inout",
+  "outgoing_binding": "separate adjoint accumulate",
+  "outputs": [
+   "edge_values"
+  ],
+  "mask": "forward threads edge < nedges, each tracer and level",
+  "zero_work": "no output slots overwritten and no seed slots cleared",
+  "launch_contract": "Use the pinned host wrapper geometry, which covers its count. The final phase also preserves slots outside any partial forward write mask.",
+  "launch_source": "cuda_transport_v841.py:1035-1047"
+ }
+}

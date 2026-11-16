@@ -1,13 +1,14 @@
 # gpuwm-hex
 
-MPAS-Atmosphere v8.4.2 on the GPU. gpuwm-hex 0.5.0 ports the whole model to
+MPAS-Atmosphere v8.4.2 on the GPU. gpuwm-hex 0.6.0 ports the whole model to
 CUDA: the dynamical core, both MPAS physics suites and their scheme options,
 initialization and static fields, the incremental analysis update, limited-area
 runs, streams, restart and diagnostics (the scheme list and what is not yet in
 are in `tree/README.md`). MPAS's own physics is the default; ArWen's physics
 stays one flag away (`--physics-suite arwen_mpas_column`), and hex adds
 capabilities MPAS does not have: one-command global forecasts, local time
-stepping and an experimental storm-following region. It runs on one consumer
+stepping, an experimental storm-following region, and a tangent-linear and
+adjoint model of its own forecast step. It runs on one consumer
 card.
 
 This is the repository. The distribution it builds lives in [`tree/`](tree/),
@@ -21,7 +22,7 @@ what it is matched against and how that is checked.
 
 ---
 
-## What 0.5.0 claims, and how far
+## What 0.6.0 claims, and how far
 
 Each line is measured, and each carries its scope. Nothing outside the scope
 is claimed. [`tree/README.md`](tree/README.md) gives the detail.
@@ -40,7 +41,9 @@ Kernels compile with fast numerics by default (FMA contraction, flush-to-zero); 
 | A storm-following 3 km region, experimental: `gpuwm-hex moving`. | ArWen physics, three 48-hour tropical cyclone runs; the balanced remap between moves is the default. |
 | RRFS-MPAS runs end to end from a pip install: the GSL fork's dycore and table-admitted physics run on the GPU by default. `hrrrv5`, `rrfs_convection_permitting`, `rrfs_mesoscale_reference`, and RRFS New Tiedtke use the ported framework without a native library. Native comparison backends remain explicit site builds. | With every physics slot on the native library (`--physics-default-backend native-cpu`), a one-hour `hrrrv5` run on `x1.2562`, one process, is bitwise to the native fork build in every field hex writes; each GPU port is bitwise as a module replay. RRFS initial conditions and hourly boundaries come from `gpuwm-hex init --physics-suite hrrrv5`, the fork's init ported to Rust ([RRFS init](tree/docs/rrfs-init.md)). |
 | A whole `hrrrv5` (RRFS-MPAS) forecast with every physics slot on the GPU is bitwise identical to the native fork build in every history, diagnostics and restart word hex writes, at 8 ranks and on one card. | `x1.40962` 120 km, 59 levels, 2023-03-31 12Z, 24 h, strict numerics: 8 same-host ranks on one card against 8 MPI ranks on the same partition, 1,958,644,100 words, 0 different; one card against one rank, 786,309,080 words, 0 different. The reference is the pinned 44c0849 strict build with four labelled source lines where native reads values it never set; it is rebuildable and always called patched (`tree/README.md`). |
+| A plain `--physics-suite hrrrv5` forecast is NOAA's hrrrv5 deck (RRFS v2's configuration), and its one-hour forecast on a limited-area mesh, exact mode with strict numerics, is bitwise identical to the native fork build in every history, diagnostics and restart word hex writes. | HRRR 2024-05-21 15Z start, one process on one RTX 5090, once each, through the plain door: a 12 km cut of 2,890 cells with NOAA's 12 km cumulus on, 0 of 86,751,014 words different in 27 of 27 files; a 3 km storm box of 38,278 cells, 0 of 624,931,668 words in 11 of 11. The same 12 km hour on one RTX 4090: 0 of 86,751,014. The reference is the patched 44c0849 strict build, as above. |
 | Native MPAS restart files restart the dynamics on every MPAS physics suite. With `--numerics strict` a restart reproduces native's own restart; on the default route it continues the run exactly, which native's restart does not. | Strict: 0 of 540,860,379 words against native restarted from its own file (`x1.40962`, one card). Default: 0 of 1,208,871,000 words against the uninterrupted run (`x1.40962`, 8 ranks) and 0 of 452,696,265 (`x1.163842`, 8 ranks, restarted at +24 h). |
+| The tangent-linear and adjoint model of NOAA's exact hrrrv5 configuration (the exact-mode forecast step, `--physics-mode exact`; not the correct-mode forecast `gpuwm-hex forecast` runs by default, whose gradient is refused in one sentence), dynamics and physics, on the GPU, in four commands: `gpuwm-hex tangent`, `adjoint-test`, `sensitivity` and `param-grad`. `adjoint-test` checks the adjoint against the tangent-linear model (within 4 single-precision roundings of the dot on every direction, with no one-signed lean over 8 or more) and the gradient against the forecast's own response (within 1 per cent along each resolved direction), and prints PASS or FAIL; the readings of this release are in [the limits](tree/docs/differentiable/LIMITS.md). | A 12 km cut of the storm box (2,890 cells, 15 steps) that runs on a 32 GB card, a 3 km storm-box example (38,278 cells, a 15-minute window of 59 steps) and a 120 km global example (`x1.40962`, `hrrrv5`) of three steps (36 minutes), the last two on a 96 GB card; NVIDIA cards of compute capability 12.0 only (GeForce RTX 50 series, RTX PRO Blackwell), Python 3.14. On the 12 km example `adjoint-test` ends PASS (the bump and the steepest descent inside; near-ground moisture named as about 2 to 4 per cent short); on the 3 km example it ends PASS on its default route (the bump and the steepest descent inside) and FAIL on the exact route; on the 120 km rows, over a 1-step window, PASS. The checks are consistency and short-window checks: how far in time the gradient predicts the forecast was measured separately, by mesh and window, in the table "How far the gradient can be trusted" of [the differentiable engine](tree/docs/differentiable/README.md). A measure built on radar reflectivity does not pass the gradient check and is refused by name. Held by name: on the 12 km row the boundary layer's seven species outputs and the cumulus scheme; on the 12 km row and the 120 km default row the transport limiter's coefficients (the 3 km row differentiates the limiter on windows up to 30 minutes, the 120 km full-physics row on its window); on the 12 km and 3 km rows the boundary layer's mixing length and the plume's own speed, area and condensation, the lateral-boundary driving data (zero tangent) and, on the 3 km row's default cloud route, two riming terms; on the 120 km default row the boundary layer's turbulence closure and whole plume, and radiation and cloud fraction (the full-physics row differentiates the plume, its speed on a ramp); on both 120 km rows the mountain-drag closure. The 120 km full-physics row runs a floored boundary layer by default. [What each row differentiates](tree/docs/differentiable/README.md). |
 
 Named gaps, each with its reason, are listed in
 [`tree/README.md`](tree/README.md#not-in-this-release).

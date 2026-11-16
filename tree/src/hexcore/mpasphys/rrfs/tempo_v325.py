@@ -4586,33 +4586,36 @@ extern "C" __global__ void tempo_warp_steps(int nz,int columns,int steps,float d
 """
 
 
-def _column_source(numerics: str | None = None) -> str:
+def _column_source(numerics: str | None = None, corrections=()) -> str:
     """The column support for this numerics mode: strict is ``_COLUMN`` byte for byte; fast applies the
-    tempo_v303 fast transforms that hold for this column (tempo_fast_v325.fast_column)."""
+    tempo_v303 fast transforms that hold for this column (tempo_fast_v325.fast_column).
+    ``corrections``: correct mode's fork ids this column takes (corrected_column); none is ``_COLUMN`` itself."""
+    column = corrected_column(corrections)
     if not _base._fast(numerics):
-        return _COLUMN
+        return column
     from hexcore.mpasphys.rrfs.tempo_fast_v325 import fast_column
-    return fast_column(_COLUMN)
+    return fast_column(column)
 
 
-def cuda_source(device_math_source: str, *, max_levels: int = 100, numerics: str | None = None) -> str:
+def cuda_source(device_math_source: str, *, max_levels: int = 100, numerics: str | None = None,
+                corrections=()) -> str:
     """The column-per-thread module (replays and tests), as tempo_v303.cuda_source."""
     if not device_math_source.strip():
         raise ValueError("TEMPO requires the shared device mathematics header")
     if type(max_levels) is not int or max_levels < 1:
         raise ValueError("TEMPO column capacity must be a positive integer")
     return (f"#define TEMPO_NZ_MAX {max_levels}\n" + _base._shared_pow_define(device_math_source)
-            + device_math_source + _column_source(numerics) + _DRIVER + _base._mpas_source(numerics))
+            + device_math_source + _column_source(numerics, corrections) + _DRIVER + _base._mpas_source(numerics))
 
 
 @lru_cache(maxsize=None)
-def _compiled(device: int, device_math_source: str, max_levels: int):
+def _compiled(device: int, device_math_source: str, max_levels: int, corrections: tuple = ()):
     """Compile without CuPy RawModule's appended FTZ=true override (as tempo_v303._compiled)."""
     import cupy as cp
     from cupy.cuda import compiler, function
     with cp.cuda.Device(device):
         image, _ = compiler.compile_using_nvrtc(
-            cuda_source(device_math_source, max_levels=max_levels),
+            cuda_source(device_math_source, max_levels=max_levels, corrections=corrections),
             options=_hex_numerics.options(COMPILE_OPTIONS), cache_in_memory=True)
         module = function.Module()
         module.load(image)
@@ -4621,24 +4624,25 @@ def _compiled(device: int, device_math_source: str, max_levels: int):
         return module, tuple(map(int, sizes.get()))
 
 
-def warp_source(device_math_source: str, *, max_levels: int = 100, numerics: str | None = None) -> str:
+def warp_source(device_math_source: str, *, max_levels: int = 100, numerics: str | None = None,
+                corrections=()) -> str:
     """The warp-per-column module the forecast runs (as tempo_v303.warp_source)."""
     if not device_math_source.strip():
         raise ValueError("TEMPO requires the shared device mathematics header")
     if type(max_levels) is not int or max_levels < 1:
         raise ValueError("TEMPO column capacity must be a positive integer")
     return (f"#define TEMPO_NZ_MAX {max_levels}\n#define TEMPO_WARP 1\n" + _base._shared_pow_define(device_math_source)
-            + device_math_source + _column_source(numerics) + _WARP + _base._mpas_source(numerics))
+            + device_math_source + _column_source(numerics, corrections) + _WARP + _base._mpas_source(numerics))
 
 
 @lru_cache(maxsize=None)
-def _compiled_warp(device: int, device_math_source: str, max_levels: int):
+def _compiled_warp(device: int, device_math_source: str, max_levels: int, corrections: tuple = ()):
     """The warp module, from the AOT kernel pack when it holds this source, else NVRTC (as tempo_v303)."""
     import cupy as cp
     from cupy.cuda import compiler, function
     from hexcore.cuda_backend.aot import direct_image
     with cp.cuda.Device(device):
-        image = direct_image(warp_source(device_math_source, max_levels=max_levels),
+        image = direct_image(warp_source(device_math_source, max_levels=max_levels, corrections=corrections),
                              _hex_numerics.options(COMPILE_OPTIONS), compiler._get_arch())
         module = function.Module()
         module.load(image)
@@ -4701,16 +4705,18 @@ def launch_mpas(p, *, dt_dyn, flags, bucket, diagnostics, hourly):
     if type(p["n_microp"]) is not int or p["n_microp"]<1:
         raise ValueError("native manager must supply a positive microphysics substep count")
     phase=_base._phase_mode()
+    # Correct mode's fork ids this column takes (tempo_v303.run_slot sets them); none in exact mode.
+    corrections=_corrections_key(p.get("corrections",()))
     if phase:
         # Fast numerics: the (level, cell) phase kernels and the warp tail (tempo_phase_v325), as tempo_v303.
         from hexcore.mpasphys.rrfs import tempo_phase_v325 as _phase
-        pmod,module,sizes,_,_=_phase._modules(device,p["device_math_source"],nz,_phase.inline_mode())
+        pmod,module,sizes,_,_=_phase._modules(device,p["device_math_source"],nz,_phase.inline_mode(),corrections)
         tables=_phase.float_blob(p["tables"])
         if not tables.flags.c_contiguous or tables.nbytes!=sizes[2]:
             raise ValueError("TEMPO table blob has a different layout than the native module")
         _base._set_scalars(pmod,tables);_base._set_scalars(module,tables)
     else:
-        module,sizes,resident=_compiled_warp(device,p["device_math_source"],nz)
+        module,sizes,resident=_compiled_warp(device,p["device_math_source"],nz,corrections)
         tables=_base._device_tables(module,p["tables"],sizes[2])
     FA,MA,TA,SA=_base.FIELD_ARGUMENTS,_base.MODEL_ARGUMENTS,_base.TEND_ARGUMENTS,_base.SURFACE_ARGUMENTS
     for names,values in ((FA[:12]+FA[17:]+(FA[12:15] if flags[0] else ())+(FA[15:17] if flags[1] else ()),fields),
@@ -4748,7 +4754,7 @@ def launch_mpas(p, *, dt_dyn, flags, bucket, diagnostics, hourly):
         _phase.launch_steps(device=device,nz=nz,cells=cells,steps=p["n_microp"],dt=p["dt_microp"],f=f,bl=pbl,s=s,
                             profiles=profiles,tables=tables,flags=flags,first=bool(p["first_call_main"]),
                             presence=presence,radii=bool(p.get("radii",True)),device_math_source=p["device_math_source"],
-                            force_warp=(phase=="warp"))
+                            force_warp=(phase=="warp"),corrections=corrections)
     else:
         _launch_warp(module,resident,sizes,device,nz,cells,f,pbl,s,profiles,p,flags,presence,tables)
     p["first_call_main"]=False
@@ -4774,3 +4780,62 @@ def _launch_warp(module,resident,sizes,device,nz,cells,f,pbl,s,profiles,p,flags,
         pbl if pbl is not None else np.uint64(0),s,profiles,tables,
         *(np.int32(bool(v)) for v in flags),np.int32(bool(p["first_call_main"])),np.int32(presence),
         states,work,blwork,order,cost,np.int32(bool(p.get("radii",True)))))
+
+
+# ---------------------------------------------------------------------------------------------------
+# Correct mode: the fork corrections this column takes (hexcore.mpasphys.rrfs.fork_corrections).
+# v3.2.5 already carries TP1, TP2 and TP3 in its own text (main:2303, :3340, driver:404); TP4 and TP5 are
+# later than the tag.  Exact mode and every caller that passes no id get _COLUMN itself.
+# ---------------------------------------------------------------------------------------------------
+#: The fork correction ids this column applies as a text pair.
+CORRECTIONS = ("TP4", "TP5")
+#: TP4 (NCAR/TEMPO 71588d1, #62, check_over_depletion): the riming graupel volume terms follow their mass
+#: terms through the cloud-water limiter, in upstream's order (after prg_gcw, before prh_hcw).
+_TP4_OLD = """        T.prg_gcw[k] = T.prg_gcw[k] * ratio;
+        T.prh_hcw[k] = T.prh_hcw[k] * ratio;
+"""
+_TP4_NEW = """        T.prg_gcw[k] = T.prg_gcw[k] * ratio;
+        // Correct mode TP4 (TEMPO 71588d1): the volume of the riming terms scales with their mass.
+        T.pbg_scw[k] = T.pbg_scw[k] * ratio;
+        T.pbg_gcw[k] = T.pbg_gcw[k] * ratio;
+        T.prh_hcw[k] = T.prh_hcw[k] * ratio;
+"""
+#: TP5 (NCAR/TEMPO ace0eae, #59): snow_moments' two branches the right way round.  With bm_s = 2 (TEMPO's value) the
+#: mass moment smob IS the second moment; the temperature fit turns another bm_s moment into the second.  The pinned
+#: text ran the fit for bm_s = 2 and took smob otherwise.  The rain-snow collection table was built with the same
+#: flip and is NOT rebuilt here (fork_corrections TP5 says so).
+_TP5_HEAD = ("""  if (bm_s > 2.0f - 1.e-3f && bm_s < 2.0f + 1.e-3f) {
+    loga_ = SA(1) + SA(2) * tc + SA(3) * bm_s + SA(4) * tc * bm_s + SA(5) * tc * tc
+""", """  if (bm_s > 2.0f - 1.e-3f && bm_s < 2.0f + 1.e-3f) {
+    // Correct mode TP5 (TEMPO ace0eae): with bm_s = 2 the mass moment is the second moment itself.
+    smo2_ = *smob;
+  } else {
+    loga_ = SA(1) + SA(2) * tc + SA(3) * bm_s + SA(4) * tc * bm_s + SA(5) * tc * tc
+""")
+_TP5_TAIL = ("""    smo2_ = tempo_pow((*smob / a_), (1.0f / b_));
+  } else {
+    smo2_ = *smob;
+  }
+""", """    smo2_ = tempo_pow((*smob / a_), (1.0f / b_));
+  }
+""")
+
+
+def _corrections_key(corrections) -> tuple:
+    """The ids of ``corrections`` this column applies, in a fixed order (the module cache key)."""
+    return tuple(sorted(set(corrections or ()) & set(CORRECTIONS)))
+
+
+def corrected_column(corrections=()) -> str:
+    """``_COLUMN`` with this column's corrections in ``corrections`` applied; ``_COLUMN`` itself with none."""
+    column = _COLUMN
+    if "TP4" in _corrections_key(corrections):
+        if column.count(_TP4_OLD) != 1:
+            raise ValueError(f"TEMPO v3.2.5 correct mode: TP4 anchor found {column.count(_TP4_OLD)} times")
+        column = column.replace(_TP4_OLD, _TP4_NEW)
+    if "TP5" in _corrections_key(corrections):
+        for old, new in (_TP5_HEAD, _TP5_TAIL):
+            if column.count(old) != 1:
+                raise ValueError(f"TEMPO v3.2.5 correct mode: TP5 anchor found {column.count(old)} times")
+            column = column.replace(old, new)
+    return column

@@ -1,0 +1,106 @@
+{
+ "kernel": "mpas_lw_prepare",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 412,
+ "body_lines": "captured source 683d7a07 lines 9281-9463 (mpas_lw_prepare_one 9400-9455, wrapper 9457-9463)",
+ "native_source": "MPAS-A v8.4.2 module_ra_rrtmg_lw.F:11810-12164, module_ra_rrtmg_vinterp.F:21-179",
+ "route": "hand",
+ "mode": "exact",
+ "launch": {"grid": "capture", "block": "capture", "shared_bytes": 0},
+ "args": [
+  {"name": "nc", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "column count of this layer-count group, launch control"},
+  {"name": "nm", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "model layers"},
+  {"name": "nl", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "radiation layers of the group (mpas_layer_counts, an integer)"},
+  {"name": "icloud", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "namelist switch"},
+  {"name": "reqc", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "namelist switch"},
+  {"name": "reqi", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "namelist switch"},
+  {"name": "reqs", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "namelist switch"},
+  {"name": "o3input", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "namelist switch (2: interpolated ozone climatology)"},
+  {"name": "nz", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "ozone input levels"},
+  {"name": "presence", "role": "scalar", "dtype": "i32", "shape": "[]", "active": false, "inactive_reason": "bit set of present hydrometeor and cloud-fraction fields"},
+  {"name": "m", "role": "in", "dtype": "f32", "shape": "[nc,12,nm]", "stagger": "cell", "active": true, "overwrite": "none", "field_id": 1,
+   "fields": "pressure, temperature, dz, qv, qc, qi, qs, cloud fraction, re_cloud, re_ice, re_snow, exner (exner unread)"},
+  {"name": "interfaces", "role": "in", "dtype": "f32", "shape": "[nc,2,nm+1]", "stagger": "cell", "active": true, "overwrite": "none", "field_id": 2,
+   "fields": "interface pressure, interface temperature (the top interface temperature is overwritten by S5 and has no influence)"},
+  {"name": "surface", "role": "in", "dtype": "f32", "shape": "[nc,6]", "stagger": "cell", "active": true, "overwrite": "none", "field_id": 3,
+   "fields": "skin temperature, emissivity, xland, xice, snow, lat (xland/xice/snow reach the derivative only through the reqc == 0 liquid radius)"},
+  {"name": "pin", "role": "in", "dtype": "f32", "shape": "[nz]", "stagger": "none", "active": true, "overwrite": "none", "field_id": 4,
+   "note": "ozone input pressure levels, shared by every column: the adjoint is a cross-column sum, made deterministic through the workspace rows"},
+  {"name": "ozone", "role": "in", "dtype": "f32", "shape": "[nc,nz]", "stagger": "cell", "active": true, "overwrite": "none", "field_id": 5,
+   "note": "read only when o3input == 2 (per-column slice c*nz); every captured launch has o3input == 2"},
+  {"name": "a", "role": "out", "dtype": "f32", "shape": "[nc,12,nl]", "stagger": "cell", "active": true, "overwrite": "full", "field_id": 6},
+  {"name": "lev", "role": "out", "dtype": "f32", "shape": "[nc,2,nl+1]", "stagger": "cell", "active": true, "overwrite": "full", "field_id": 7}
+ ],
+ "branches": [
+  {"slot": 0, "site": "S2 P(k+1) = max(P(k)-4, 0)", "rule": "frozen coefficient: 1 iff P(k)-4 > 0"},
+  {"slot": 1, "site": "S2 max(qv, 1e-12)", "rule": "frozen coefficient: 1 iff qv > 1e-12"},
+  {"slot": 2, "site": "S7 vinterp p < pin[0]", "rule": "executed arm"},
+  {"slot": 3, "site": "S7 vinterp p > pin[nz-1]", "rule": "executed arm (constant ozone[nz-1])"},
+  {"slot": 4, "site": "S8 max(q, 0) for qc, qi, qs", "rule": "frozen coefficient: 1 iff q > 0"},
+  {"slot": 5, "site": "S8 denom = max(0.01, cf)", "rule": "frozen coefficient: 1 iff cf > 0.01"},
+  {"slot": 6, "site": "S8 re floors max(2.5|5|10, re*1e6) and the floor replacements (rel 10.5/7.5, rei ice_radius(t,75))", "rule": "frozen coefficient / executed arm"},
+  {"slot": 7, "site": "S8 snow re cap res > 130 (factor = (130/res)^2, res = 130)", "rule": "executed arm"},
+  {"slot": 8, "site": "S6 climatology max(P - phalf, 0) overlaps (o3input != 2)", "rule": "frozen coefficient: 1 iff P - phalf > 0"}
+ ],
+ "frozen_integers": ["profile table segment j (S4, S5)", "ice-radius table index j and the integer part of t (S8)", "vinterp search index upper (S7)"],
+ "refusal": {
+  "slots": ["5101 shape: nm < 1, nl < nm, nl + 1 > 256 (LWP_NLMAX, the per-thread primal level array), or o3input == 2 with nz < 2",
+            "5102 two of the seven derivative views overlap (the AD writes outputs in place and accumulates inputs per column)",
+            "5103 nonfinite recomputed primal, partial coefficient or tangent/adjoint result",
+            "5104 nonfinite incoming tangent (TL) or seed (AD)"]
+ },
+ "alias_contract": "the seven derivative views are disjoint (refused otherwise); the primal reads are the pre-launch words",
+ "primal_preservation": "primal bindings are the pre-launch copies; the entries recompute every intermediate from the inputs in the forward's operations and order (bitwise to the forward's post words on all 60 captured launches) and never read the output words",
+ "denormal_compile_contract": "--fmad=false --ftz=false, explicit __f*_rn intrinsics",
+ "window_launches_pkg18": 0,
+ "window_note": "pkg18 holds radiation as held uploads, so no launch binds until a radiation-live seal",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "mpas_lw_prepare__tl",
+    "geometry": "forward",
+    "args": [
+     {"bind": "scalar", "arg": "nc"}, {"bind": "scalar", "arg": "nm"}, {"bind": "scalar", "arg": "nl"}, {"bind": "scalar", "arg": "icloud"},
+     {"bind": "scalar", "arg": "reqc"}, {"bind": "scalar", "arg": "reqi"}, {"bind": "scalar", "arg": "reqs"}, {"bind": "scalar", "arg": "o3input"},
+     {"bind": "scalar", "arg": "nz"}, {"bind": "scalar", "arg": "presence"},
+     {"bind": "primal", "arg": "m"}, {"bind": "primal", "arg": "interfaces"}, {"bind": "primal", "arg": "surface"},
+     {"bind": "primal", "arg": "pin"}, {"bind": "primal", "arg": "ozone"},
+     {"bind": "tangent", "arg": "m", "field_id": 1, "io": "in"},
+     {"bind": "tangent", "arg": "interfaces", "field_id": 2, "io": "in"},
+     {"bind": "tangent", "arg": "surface", "field_id": 3, "io": "in"},
+     {"bind": "tangent", "arg": "pin", "field_id": 4, "io": "in"},
+     {"bind": "tangent", "arg": "ozone", "field_id": 5, "io": "in"},
+     {"bind": "tangent", "arg": "a", "field_id": 6, "io": "out"},
+     {"bind": "tangent", "arg": "lev", "field_id": 7, "io": "out"},
+     {"bind": "failure", "slots": 4, "source_ids": ["5101 shape outside the entry contract", "5102 derivative views overlap",
+                                                     "5103 nonfinite primal, partial or result", "5104 nonfinite incoming tangent"]},
+     {"bind": "branch_record", "slots": 9}
+    ]
+   },
+   "ad": {
+    "function": "mpas_lw_prepare__ad",
+    "geometry": "forward",
+    "args": [
+     {"bind": "scalar", "arg": "nc"}, {"bind": "scalar", "arg": "nm"}, {"bind": "scalar", "arg": "nl"}, {"bind": "scalar", "arg": "icloud"},
+     {"bind": "scalar", "arg": "reqc"}, {"bind": "scalar", "arg": "reqi"}, {"bind": "scalar", "arg": "reqs"}, {"bind": "scalar", "arg": "o3input"},
+     {"bind": "scalar", "arg": "nz"}, {"bind": "scalar", "arg": "presence"},
+     {"bind": "primal", "arg": "m"}, {"bind": "primal", "arg": "interfaces"}, {"bind": "primal", "arg": "surface"},
+     {"bind": "primal", "arg": "pin"}, {"bind": "primal", "arg": "ozone"},
+     {"bind": "adjoint", "arg": "m", "field_id": 1, "io": "accumulate"},
+     {"bind": "adjoint", "arg": "interfaces", "field_id": 2, "io": "accumulate"},
+     {"bind": "adjoint", "arg": "surface", "field_id": 3, "io": "accumulate"},
+     {"bind": "adjoint", "arg": "pin", "field_id": 4, "io": "accumulate"},
+     {"bind": "adjoint", "arg": "ozone", "field_id": 5, "io": "accumulate"},
+     {"bind": "adjoint", "arg": "a", "field_id": 6, "io": "inout"},
+     {"bind": "adjoint", "arg": "lev", "field_id": 7, "io": "inout"},
+     {"bind": "workspace", "name": "lwp_pin_rows", "bytes": "4*nc*nz+16", "init": "zero"},
+     {"bind": "failure", "slots": 4, "source_ids": ["5101 shape outside the entry contract", "5102 derivative views overlap",
+                                                     "5103 nonfinite primal, partial or result", "5104 nonfinite incoming seed"]}
+    ]
+   }
+  }
+ }
+}

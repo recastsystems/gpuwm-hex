@@ -1,0 +1,38 @@
+#pragma once
+// NVRTC stand-in for <cmath> (card build of the joined MYNN backward only): the std:: names the block
+// headers use, mapped onto CUDA's own device math. Float overloads call the float functions, so a float
+// primal is recomputed in float exactly as the CPU build's std:: overloads do (results may differ from
+// glibc by the libraries' last-place rounding; the card test reports how many words that moves).
+namespace std {
+#define CARD_F1(name) __device__ inline float name(float x) { return ::name##f(x); } \
+                      __device__ inline double name(double x) { return ::name(x); }
+// CARD_FLOAT_VIA_DOUBLE_ALL (test images only): every float transcendental is evaluated in double and rounded to
+// float once (nearer glibc's correctly rounded float functions than CUDA's float ones); sqrt, fabs, floor, ceil and
+// round are exact either way. CARD_FLOAT_VIA_DOUBLE alone moves only pow (the 2026-11-13 jc120d image).
+#ifdef CARD_FLOAT_VIA_DOUBLE_ALL
+#define CARD_FT(name) __device__ inline float name(float x) { return float(::name(double(x))); } \
+                      __device__ inline double name(double x) { return ::name(x); }
+#ifndef CARD_FLOAT_VIA_DOUBLE
+#define CARD_FLOAT_VIA_DOUBLE
+#endif
+#else
+#define CARD_FT(name) CARD_F1(name)
+#endif
+CARD_F1(sqrt) CARD_FT(exp) CARD_FT(log) CARD_FT(log10) CARD_FT(atan) CARD_F1(fabs) CARD_FT(tanh) CARD_FT(erf)
+CARD_F1(floor) CARD_F1(ceil) CARD_F1(round)
+#undef CARD_F1
+#undef CARD_FT
+#ifdef CARD_FLOAT_VIA_DOUBLE
+__device__ inline float pow(float a, float b) { return float(::pow(double(a), double(b))); }
+#else
+__device__ inline float pow(float a, float b) { return ::powf(a, b); }
+#endif
+__device__ inline double pow(double a, double b) { return ::pow(a, b); }
+__device__ inline float copysign(float a, float b) { return ::copysignf(a, b); }
+__device__ inline double copysign(double a, double b) { return ::copysign(a, b); }
+__device__ inline float abs(float a) { return ::fabsf(a); }
+__device__ inline double abs(double a) { return ::fabs(a); }
+__device__ inline int abs(int a) { return a < 0 ? -a : a; }
+__device__ inline bool signbit(float a) { return (__float_as_uint(a) >> 31) != 0u; }
+__device__ inline bool signbit(double a) { return __double_as_longlong(a) < 0; }
+}

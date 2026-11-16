@@ -1,0 +1,309 @@
+{
+ "kernel": "mpas_vinterp_level_chain",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 325,
+ "route": "hand",
+ "mode": "frozen-selection-local-linearisation",
+ "owner_task": "ad/held-mpas_vinterp_level_chain",
+ "replaces": "nothing: status missing (no derivative work before this row)",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "kernel_line_in_source": 9370,
+  "launch_site": "rrtmg_lw_v842.py:988 (vinterp_ozn_device)",
+  "launches_per_radiation_step": 59
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the LW call, fixed by the wrapper."
+  },
+  {
+   "name": "nl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer model layer count (59 on hrrrv5 x1.2562), fixed by the wrapper."
+  },
+  {
+   "name": "nz",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer ozone climatology level count (noznlev = 59), fixed by the configuration."
+  },
+  {
+   "name": "k",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer level of this launch (the wrapper launches k = nl-1 .. 0)."
+  },
+  {
+   "name": "pmid",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nl]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "pmid[c, k] for c < nc (model layer pressure in hPa, from mpas_pressure_mb)"
+  },
+  {
+   "name": "pin",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nz]",
+   "stagger": "climatology-level",
+   "active": false,
+   "inactive_reason": "Fixed ozone climatology pressure coordinate (pools['atm_input']['pin'], rrtmg_lw_v842.py:1400), read from the init file and never written by the model."
+  },
+  {
+   "name": "ozone",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell-climatology-level",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "ozone[c, 0] (top), ozone[c, nz-1] (bottom) or ozone[c, u..u+1] (interior) per column"
+  },
+  {
+   "name": "starts",
+   "role": "inout",
+   "dtype": "i32",
+   "shape": "[nl]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer common search start per level; the forward atomicMin-reduces starts[k-1]. Not differentiable; the derivative reads its pre-launch words to rebuild the trajectory's bracket."
+  },
+  {
+   "name": "upper",
+   "role": "inout",
+   "dtype": "i32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "Integer bracket index carried per column across levels. Not differentiable; the derivative reads its pre-launch words."
+  },
+  {
+   "name": "out",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[nc, nl]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "writes": "out[c, k] for c < nc (o3vmr at level k); every other word untouched (identity)"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 683d7a07:9374",
+   "operation": "predicate",
+   "predicate": "c < nc",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Launch index against the fixed column count."
+  },
+  {
+   "file_line": "capture source 683d7a07:9376",
+   "operation": "lookup",
+   "predicate": "pin[kk] < p && p <= pin[kk+1] (search from starts[k])",
+   "policy": "lookup",
+   "active": false,
+   "inactive_reason": "The bracket index u is an integer choice frozen at the trajectory (rebuilt from the pre-launch pmid, pin, starts, upper); the selected ozone words and p stay active."
+  },
+  {
+   "file_line": "capture source 683d7a07:9378-9379",
+   "operation": "predicate",
+   "predicate": "p < pin[0] / p > pin[nz-1]",
+   "policy": "executed-arm",
+   "tie": "the arm the forward executed at the trajectory; the map is continuous at both knots, so the frozen arm gives the one-sided derivative",
+   "active": false
+  },
+  {
+   "file_line": "capture source 683d7a07:9381-9382",
+   "operation": "predicate",
+   "predicate": "u+1 < nz",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Integer bound on the bracket index; the forward's zero continuation is constant (no tangent)."
+  }
+ ],
+ "limiters": "frozen-coefficient: the bottom arm p > pin[nz-1] is a constant clamp (out = ozone[c,nz-1], d out/d p = 0); the top arm scales to zero (out = ozone[c,0]*p/pin[0]); the interior is linear between bracketing levels. Branch and bracket are frozen at the trajectory and only the executed piece is differentiated. No min/max of active values.",
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "p, coefficients, seeds and written derivative words finite; interior bracket index u in [0, nz-1]"
+ },
+ "precondition": "pmid, pin, ozone, starts, upper, out are distinct allocations (no aliasing); one thread per column owns pmid[c,k], ozone[c,*] and out[c,k], so the adjoint is deterministic with no atomics; the primal starts/upper are the pre-launch words (the window binds primal without post to its pre-launch copy)",
+ "precision": "the f32 primal words the partials use (dpu, dpl, dpl+dpu) are formed as the forward forms them (__f*_rn, --fmad=false --ftz=false; the harness-only __check is bitwise to the forward image on out, upper and starts); local partials in double; one rounding to f32 per written derivative word (the glue-row rule)",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "mpas_vinterp_level_chain__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "k"
+     },
+     {
+      "bind": "primal",
+      "arg": "pmid"
+     },
+     {
+      "bind": "primal",
+      "arg": "pin"
+     },
+     {
+      "bind": "primal",
+      "arg": "ozone"
+     },
+     {
+      "bind": "primal",
+      "arg": "starts"
+     },
+     {
+      "bind": "primal",
+      "arg": "upper"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pmid",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ozone",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "out",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:988:nonfinite-or-bracket"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_vinterp_level_chain__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "k"
+     },
+     {
+      "bind": "primal",
+      "arg": "pmid"
+     },
+     {
+      "bind": "primal",
+      "arg": "pin"
+     },
+     {
+      "bind": "primal",
+      "arg": "ozone"
+     },
+     {
+      "bind": "primal",
+      "arg": "starts"
+     },
+     {
+      "bind": "primal",
+      "arg": "upper"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pmid",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ozone",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "out",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:988:nonfinite-or-bracket"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

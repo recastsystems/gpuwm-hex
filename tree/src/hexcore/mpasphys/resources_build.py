@@ -1477,7 +1477,8 @@ def _rrfs_module_present(module: str) -> bool:
 
 def build_mynnedmf_image(cache: Path, log: Callable[[str], None] = _log, *,
                         arch: str | None = None,
-                        module: str = "rrfs.bl_mynnedmf_c942418") -> dict[str, str]:
+                        module: str = "rrfs.bl_mynnedmf_c942418",
+                        corrections: tuple = ()) -> dict[str, str]:
     """The RRFS MYNN-EDMF CUDA image for this host's device, compiled once and cached.
 
     rrfs.bl_mynnedmf_c942418.load_cuda_packet accepts it only when its source,
@@ -1497,7 +1498,9 @@ def build_mynnedmf_image(cache: Path, log: Callable[[str], None] = _log, *,
     from ..mynn_glibc_math import mynn_glibc_source
     import importlib
     port = importlib.import_module("." + module, __package__)
-    source = CUDA_FTZ_HELPERS + mynn_glibc_source() + port.ARRAY_SUPPORT + port.MODULE_CUDA
+    # corrections: correct mode's fork ids (fork_corrections); the corrected source has its own cache entry.
+    body = port.module_cuda(tuple(corrections)) if corrections else port.MODULE_CUDA
+    source = CUDA_FTZ_HELPERS + mynn_glibc_source() + port.ARRAY_SUPPORT + body
     options = list(_hex_numerics.options(port.CUDA_OPTIONS)) + ["--gpu-architecture=" + arch]
     source_sha = hashlib.sha256(source.encode()).hexdigest()
     # The options (numerics mode) are part of the entry's name: without them a strict run and a fast run

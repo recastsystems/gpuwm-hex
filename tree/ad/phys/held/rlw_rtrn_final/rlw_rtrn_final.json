@@ -1,0 +1,470 @@
+{
+ "kernel": "rlw_rtrn_final",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 882,
+ "route": "hand",
+ "mode": "exact",
+ "affine": false,
+ "affine_reason": "linear in the fluxes, rational in pz (heating rate divides by the layer pressure thickness)",
+ "owner_task": "ad/held-rlw_rtrn_final",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "source_lines": "2192-2232",
+  "source_file": "gpuwm/core/kernels/rrtmg_lw_chain.cu (captured source 683d7a07)",
+  "steps": [
+   1,
+   6,
+   12
+  ],
+  "launches_per_step": 2
+ },
+ "launch": {
+  "grid": "forward ((ncol+63)/64)",
+  "block": "forward (64)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Column count of the LW batch (fixed by the batch plan)."
+  },
+  {
+   "name": "nl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Layer count of the batch (64, or 65 with the added top layer)."
+  },
+  {
+   "name": "pz",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "units": "hPa, level pressure, pz[nl] = 0 at the model top"
+  },
+  {
+   "name": "fluxfac",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Configuration constant pi*2e4 (rrtmg_lw_v842.py K[\"fluxfac\"])."
+  },
+  {
+   "name": "heatfac",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Configuration constant g*86400/(cp*100) (rrtmg_lw_v842.py K[\"heatfac\"])."
+  },
+  {
+   "name": "totuflux",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "note": "in: spectrally summed radiance (rlw_rtrn_accum_rows); out: fluxfac * in (W m-2)"
+  },
+  {
+   "name": "totdflux",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "note": "in: spectrally summed radiance (rlw_rtrn_accum_rows); out: fluxfac * in (W m-2)"
+  },
+  {
+   "name": "totuclfl",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "note": "in: spectrally summed radiance (rlw_rtrn_accum_rows); out: fluxfac * in (W m-2)"
+  },
+  {
+   "name": "totdclfl",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "note": "in: spectrally summed radiance (rlw_rtrn_accum_rows); out: fluxfac * in (W m-2)"
+  },
+  {
+   "name": "fnet",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6,
+   "note": "net flux u - d"
+  },
+  {
+   "name": "fnetc",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "note": "net flux u - d"
+  },
+  {
+   "name": "htr",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8,
+   "note": "heating rate K/day; word nl is the constant 0 (tangent 0, cotangent dropped)"
+  },
+  {
+   "name": "htrc",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9,
+   "note": "heating rate K/day; word nl is the constant 0 (tangent 0, cotangent dropped)"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "rrtmg_lw_chain.cu:2206",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Thread index against the fixed column count."
+  },
+  {
+   "file_line": "rrtmg_lw_chain.cu:2214",
+   "operation": "loop",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Level loop over the fixed layer count."
+  }
+ ],
+ "limiters": "none: no clamp, min/max, table index or state-dependent branch, so no frozen-coefficient treatment is applied",
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "pz[l] - pz[l+1] != 0 for l < nl; all words finite"
+ },
+ "precondition": "pz, the four fluxes and the four outputs are distinct allocations or disjoint views; each column owns words col*(nl+1) .. col*(nl+1)+nl of every argument, so threads never share a written word.",
+ "precision": "aug: the forward word for word in f32 (__f*_rn), built --fmad=false --ftz=false, bitwise to the forward image. tl/ad: f32 primal words recomputed exactly as the forward (u1, F, N, dp), local partials in double, one rounding to f32 per written word (the glue-row rule).",
+ "binder_roles": "deriv.rs roles(): fluxes TL in+out (incoming tangent snapshotted, shadow overwritten), AD in+accumulate (seed snapshotted, shadow cleared, accumulated); fnet/fnetc/htr/htrc TL out, AD inout (seed read and consumed in place); pz TL in, AD accumulate (spec role in, never snapshotted).",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "rlw_rtrn_final__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "pz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "fluxfac"
+     },
+     {
+      "bind": "scalar",
+      "arg": "heatfac"
+     },
+     {
+      "bind": "primal",
+      "arg": "totuflux"
+     },
+     {
+      "bind": "primal",
+      "arg": "totdflux"
+     },
+     {
+      "bind": "primal",
+      "arg": "totuclfl"
+     },
+     {
+      "bind": "primal",
+      "arg": "totdclfl"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pz",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "totuflux",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "totdflux",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "totuclfl",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "totdclfl",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "totuflux",
+      "field_id": 2,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "totdflux",
+      "field_id": 3,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "totuclfl",
+      "field_id": 4,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "totdclfl",
+      "field_id": 5,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fnet",
+      "field_id": 6,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fnetc",
+      "field_id": 7,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "htr",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "htrc",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_chain.cu:rlw_rtrn_final:2222-2227:dp-zero-or-nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rlw_rtrn_final__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "pz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "fluxfac"
+     },
+     {
+      "bind": "scalar",
+      "arg": "heatfac"
+     },
+     {
+      "bind": "primal",
+      "arg": "totuflux"
+     },
+     {
+      "bind": "primal",
+      "arg": "totdflux"
+     },
+     {
+      "bind": "primal",
+      "arg": "totuclfl"
+     },
+     {
+      "bind": "primal",
+      "arg": "totdclfl"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pz",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "totuflux",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "totdflux",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "totuclfl",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "totdclfl",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "totuflux",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "totdflux",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "totuclfl",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "totdclfl",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fnet",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fnetc",
+      "field_id": 7,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "htr",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "htrc",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_chain.cu:rlw_rtrn_final:2222-2227:dp-zero-or-nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "integ7_no_aug": "integ7 2026-11-07: no aug entry. THE BREAKAGE THIS PREVENTS: the window binder runs __aug on the pre-launch primal copies before __tl/__ad, and __aug repeats the forward in place (totuflux/totdflux/totuclfl/totdclfl := fluxfac * input). __tl/__ad recompute u1 = fluxfac*u0 from those words, so F and N = heatfac*(F[l]-F[l+1]) came out fluxfac (62831.85) times too large and the -N*ddp/dp^2 term of dhtr was 62832x (least-squares fit rel 9e-7 on all six launches of steps 1-4, msb-window/integrate-20261107 diag d4). TL and AD stayed mutually consistent (dots pass) but both were wrong against FD: 4-step Taylor JthA/XA <x,g> -1.989 vs FD 0.402, the radiation-live tangent grew 1e4-1e5 per step and overflowed at step 9. Without aug, both entries read the untouched pre-launch copies: 4-step <x,g> 0.40096 vs FD 0.4011-0.4022 (err 4.1e-4)."
+}

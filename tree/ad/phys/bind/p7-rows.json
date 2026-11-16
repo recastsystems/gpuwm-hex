@@ -1,0 +1,242 @@
+{
+ "schema": "ad.scheme.rows/v1",
+ "lane": "ad/window-L2-bindings",
+ "unit": "P7",
+ "rows": [
+  {
+   "function": "rlw_inatm",
+   "unit": "P7",
+   "kind": "p7_launch",
+   "harness": "p7-launch (tree/ad/phys/p7/crate)",
+   "spec": "p7/specs/rlw_inatm.json",
+   "active_in": [
+    "plev"
+   ],
+   "active_out": [
+    "wkl",
+    "wx",
+    "coldry",
+    "wbrodl",
+    "pwvcm_v"
+   ],
+   "tape": {
+    "entries_per_layer": 57,
+    "entries_base": 7,
+    "writes_per_layer": 13,
+    "writes_base": 1,
+    "margin": "ceil(1.10 * n) + 64",
+    "measured": {
+     "65": {
+      "entries": 3712,
+      "writes": 846,
+      "receipt": "rlw_inatm-s3-l1.json"
+     },
+     "64": {
+      "entries": 3655,
+      "writes": 833,
+      "receipt": "rlw_inatm-s3-l5.json"
+     }
+    }
+   },
+   "layer_scalars": [
+    "nlayers",
+    "nl",
+    "nlay"
+   ],
+   "plan_binding": "named gap, owner P7: radiation is a held upload in pkg18, so these launches are not in the plan's command stream yet"
+  },
+  {
+   "function": "rlw_rtrn_final",
+   "unit": "P7",
+   "kind": "p7_launch",
+   "harness": "p7-launch (tree/ad/phys/p7/crate)",
+   "spec": "p7/specs/rlw_rtrn_final.json",
+   "active_in": [
+    "pz"
+   ],
+   "active_out": [
+    "totuflux",
+    "totdflux",
+    "totuclfl",
+    "totdclfl",
+    "fnet",
+    "fnetc",
+    "htr",
+    "htrc"
+   ],
+   "tape": {
+    "entries_per_layer": 22,
+    "entries_base": 10,
+    "writes_per_layer": 8,
+    "writes_base": 8,
+    "margin": "ceil(1.10 * n) + 64",
+    "measured": {
+     "65": {
+      "entries": 1440,
+      "writes": 528,
+      "receipt": "rlw_rtrn_final-s1-l1.json"
+     },
+     "64": {
+      "entries": 1418,
+      "writes": 520,
+      "receipt": "rlw_rtrn_final-s3-l5-r2.json"
+     }
+    }
+   },
+   "layer_scalars": [
+    "nlayers",
+    "nl",
+    "nlay"
+   ],
+   "plan_binding": "named gap, owner P7: radiation is a held upload in pkg18, so these launches are not in the plan's command stream yet"
+  },
+  {
+   "function": "rlw_rtrn_secdiff",
+   "unit": "P7",
+   "kind": "p7_launch",
+   "harness": "p7-launch (tree/ad/phys/p7/crate)",
+   "spec": "p7/specs/rlw_rtrn_secdiff.json",
+   "active_in": [
+    "pwvcm_v"
+   ],
+   "active_out": [
+    "secdiff"
+   ],
+   "tape": {
+    "entries_per_layer": 0,
+    "entries_base": 29,
+    "writes_per_layer": 0,
+    "writes_base": 16,
+    "margin": "ceil(1.10 * n) + 64",
+    "measured": {
+     "None": {
+      "entries": 29,
+      "writes": 16,
+      "receipt": "rlw_rtrn_secdiff-s3-l1.json"
+     }
+    }
+   },
+   "layer_scalars": [
+    "nlayers",
+    "nl",
+    "nlay"
+   ],
+   "plan_binding": "named gap, owner P7: radiation is a held upload in pkg18, so these launches are not in the plan's command stream yet"
+  },
+  {
+   "function": "rlw_setcoef",
+   "unit": "P7",
+   "kind": "p7_launch",
+   "harness": "p7-launch (tree/ad/phys/p7/crate)",
+   "spec": "p7/specs/rlw_setcoef.json",
+   "active_in": [
+    "pavel",
+    "tavel",
+    "tz",
+    "tbound_v",
+    "semiss",
+    "coldry",
+    "wkl",
+    "wbroad"
+   ],
+   "active_out": [
+    "planklay",
+    "planklev",
+    "plankbnd",
+    "colh2o",
+    "colco2",
+    "colo3",
+    "coln2o",
+    "colco",
+    "colch4",
+    "colo2",
+    "colbrd",
+    "fac00",
+    "fac01",
+    "fac10",
+    "fac11",
+    "rat_h2oco2",
+    "rat_h2oco2_1",
+    "rat_h2oo3",
+    "rat_h2oo3_1",
+    "rat_h2on2o",
+    "rat_h2on2o_1",
+    "rat_h2och4",
+    "rat_h2och4_1",
+    "rat_n2oco2",
+    "rat_n2oco2_1",
+    "rat_o3co2",
+    "rat_o3co2_1",
+    "selffac",
+    "selffrac",
+    "forfac",
+    "forfrac",
+    "minorfrac",
+    "scaleminor",
+    "scaleminorn2"
+   ],
+   "tape": {
+    "entries_per_layer": 143,
+    "entries_base": 255,
+    "writes_per_layer": 57,
+    "writes_base": 382,
+    "margin": "ceil(1.10 * n) + 64",
+    "measured": {
+     "65": {
+      "entries": 9550,
+      "writes": 4087,
+      "receipt": "rlw_setcoef-s3-l1-r2.json"
+     },
+     "64": {
+      "entries": 9407,
+      "writes": 4030,
+      "receipt": "rlw_setcoef-s1-l0.json"
+     }
+    }
+   },
+   "layer_scalars": [
+    "nlayers",
+    "nl",
+    "nlay"
+   ],
+   "plan_binding": "named gap, owner P7: radiation is a held upload in pkg18, so these launches are not in the plan's command stream yet",
+   "window_entry": "tree/ad/phys/held/rlw_setcoef: hand-written ad.entry/v1 kset row (rlw_setcoef.json, cuda/rlw_setcoef.ad.cu); same maths without the tape; the binding route for the composed window"
+  },
+  {
+   "function": "rlw_taumol_batched",
+   "unit": "P7",
+   "kind": "p7_taumol",
+   "harness": "p7-taumol (tree/ad/phys/p7/crate)",
+   "tape": {
+    "per_column_layer": 512,
+    "grows_with_layers": false,
+    "why": "the tape is reset for every (column, layer) inside the thread (taumol_ad_kernels.cuh), P7_TMAX 512"
+   },
+   "plan_binding": "named gap, owner P7: radiation is a held upload in pkg18"
+  },
+  {
+   "function": "rlw_rtrn_prol_gpoints",
+   "unit": "P7",
+   "kind": "p7_launch",
+   "harness": "p7-launch (tree/ad/phys/p7/crate)",
+   "spec": "held/rlw_rtrn_prol_gpoints/spec/rlw_rtrn_prol_gpoints.json",
+   "derivative": "hand-written: held/rlw_rtrn_prol_gpoints/cuda/rlw_rtrn_prol_gpoints.ad.cuh, appended to the pinned source by held/rlw_rtrn_prol_gpoints/assemble.py (gen_kernel.py refuses the body: __ballot_sync, atomicOr)",
+   "active_in": [
+    "cldfmc",
+    "taucmc",
+    "secdiff"
+   ],
+   "active_out": [
+    "odcld",
+    "efclfrac"
+   ],
+   "frozen": "cldfmc == 1.0f: McICA 0/1 mask, executed branch frozen",
+   "tape": {
+    "none": true,
+    "why": "no tape: the adjoint recomputes the primal in registers. Run with the spec as is (tape 1, writes 1); do not size it with p7_rows.py size, whose 64-entry margin would reserve 64 slots for each of up to 20.7 M threads"
+   },
+   "proof": "held lane rlw_rtrn_prol_gpoints, 2026-11-06: steps 1, 6, 12 x 2 launches, dot rel <= 4.4e-13, zero 0, reverse bitwise in and across processes",
+   "plan_binding": "named gap, owner P7: radiation is a held upload in pkg18, so these launches are not in the plan's command stream yet"
+  }
+ ]
+}

@@ -1,0 +1,618 @@
+{
+ "kernel": "tempo_to",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py",
+ "line": 4486,
+ "module": "477158923b00908cd095c141ec83c76b4ff7aeec5dd55276ccca6d6c4ea4a64c",
+ "route": "hand",
+ "mode": "exact-branch",
+ "owner_task": "ad/held-tempo_to",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "m",
+   "field_id": 0,
+   "role": "index",
+   "dtype": "u64",
+   "shape": "[16]",
+   "pointer_depth": 2,
+   "active": false,
+   "inactive_reason": "fixed device pointer words; the float32 arrays behind them are active",
+   "table_role": "MODEL_ARGUMENTS qv qc qr qi qs qg ni nr nc nwfa nifa ng volg theta_m rho_zz w",
+   "pointee": {
+    "active": true,
+    "dtype": "f32",
+    "shape": "[nz,nc] (zgrid [nz+1,nc]; d[8], d[9] [nc])"
+   }
+  },
+  {
+   "name": "mesh",
+   "field_id": 1,
+   "role": "index",
+   "dtype": "u64",
+   "shape": "[2]",
+   "pointer_depth": 2,
+   "active": false,
+   "inactive_reason": "fixed device pointer words; the float32 arrays behind them are active",
+   "table_role": "zz zgrid",
+   "pointee": {
+    "active": true,
+    "dtype": "f32",
+    "shape": "[nz,nc] (zgrid [nz+1,nc]; d[8], d[9] [nc])"
+   }
+  },
+  {
+   "name": "d",
+   "field_id": 2,
+   "role": "index",
+   "dtype": "u64",
+   "shape": "[10]",
+   "pointer_depth": 2,
+   "active": false,
+   "inactive_reason": "fixed device pointer words; the float32 arrays behind them are active",
+   "table_role": "DIAG_ARGUMENTS exner pressure_base pressure_p exner_base rtheta_base rtheta_p dtheta_dt_mp rt_diabatic_tend surface_pressure tend_sfc_pressure",
+   "pointee": {
+    "active": true,
+    "dtype": "f32",
+    "shape": "[nz,nc] (zgrid [nz+1,nc]; d[8], d[9] [nc])"
+   }
+  },
+  {
+   "name": "t",
+   "field_id": 3,
+   "role": "index",
+   "dtype": "u64",
+   "shape": "[12]",
+   "pointer_depth": 2,
+   "active": false,
+   "inactive_reason": "fixed device pointer words; the float32 arrays behind them are active",
+   "table_role": "TEND_ARGUMENTS rthmpten rqvmpten rqcmpten rqrmpten rqimpten rqsmpten rqgmpten rnimpten rnrmpten rncmpten rnifampten rnwfampten",
+   "pointee": {
+    "active": true,
+    "dtype": "f32",
+    "shape": "[nz,nc] (zgrid [nz+1,nc]; d[8], d[9] [nc])"
+   }
+  },
+  {
+   "name": "f",
+   "field_id": 4,
+   "role": "index",
+   "dtype": "u64",
+   "shape": "[20]",
+   "pointer_depth": 2,
+   "active": false,
+   "inactive_reason": "fixed device pointer words; the float32 arrays behind them are active",
+   "table_role": "FIELD_ARGUMENTS th p w dz qv qc qr qi qs qg ni nr nc nwfa nifa ng qb pii rho z",
+   "pointee": {
+    "active": true,
+    "dtype": "f32",
+    "shape": "[nz,nc] (zgrid [nz+1,nc]; d[8], d[9] [nc])"
+   }
+  },
+  {
+   "name": "nz",
+   "field_id": 5,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "nc",
+   "field_id": 6,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "aero",
+   "field_id": 7,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "hail",
+   "field_id": 8,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "dt",
+   "field_id": 9,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "rv",
+   "field_id": 10,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "rd",
+   "field_id": 11,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "rvord",
+   "field_id": 12,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "p0",
+   "field_id": 13,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "rcv",
+   "field_id": 14,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "grav",
+   "field_id": 15,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "mp_top_level",
+   "field_id": 16,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch constant (integer switch or physical constant), not a state word"
+  },
+  {
+   "name": "compmax",
+   "field_id": 17,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "nc"
+   ],
+   "active": true,
+   "nullable": true
+  },
+  {
+   "name": "comp",
+   "field_id": 18,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc"
+   ],
+   "active": true
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": "tempo_v303.py:4492 k < mp_top_level",
+   "kind": "integer switch",
+   "treatment": "launch value"
+  },
+  {
+   "where": "tempo_v303.py:4500 j<8 || (j<11?aero:hail)",
+   "kind": "integer switch",
+   "treatment": "launch value"
+  },
+  {
+   "where": "tempo_v303.py:4503 tmax(0.0f, m[0])",
+   "kind": "max",
+   "treatment": "frozen executed operand: slope 1 where !(0 > m0)"
+  },
+  {
+   "where": "tempo_v303.py:4508 compmax = tmax(compmax, comp)",
+   "kind": "max",
+   "treatment": "frozen executed operand (ties to comp, as the forward)"
+  }
+ ],
+ "tables": [
+  "m",
+  "mesh",
+  "d",
+  "t",
+  "f"
+ ],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "mpas_powf base X <= 0",
+   "dz1 + dz2 == 0"
+  ]
+ },
+ "affine": false,
+ "affine_reason": "theta_m, rtheta_p and dtheta_dt_mp are rational in qv; exner is X^rcv; pressure_p is a product of exner with rtheta; the rest are copies and (new - old)/dt tendencies.",
+ "tape_bytes": 0,
+ "precision": "primal recomputed in float32 in the forward's order (strict, --fmad=false); derivative coefficients and products float64; one rounding per stored derivative word",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "tempo_to__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "m",
+      "indirect": {
+       "arg": "m",
+       "mirror": true,
+       "target_bytes": "4*(nz+1)*nc"
+      }
+     },
+     {
+      "bind": "primal",
+      "arg": "mesh",
+      "indirect": {
+       "arg": "mesh",
+       "mirror": true,
+       "target_bytes": "4*(nz+1)*nc"
+      }
+     },
+     {
+      "bind": "primal",
+      "arg": "d",
+      "indirect": {
+       "arg": "d",
+       "mirror": true,
+       "target_bytes": "4*(nz+1)*nc"
+      }
+     },
+     {
+      "bind": "primal",
+      "arg": "f",
+      "indirect": {
+       "arg": "f",
+       "mirror": true,
+       "target_bytes": "4*(nz+1)*nc"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "m",
+      "field_id": 0,
+      "io": "inout",
+      "indirect": {
+       "arg": "m",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "mesh",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "mesh",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "d",
+      "field_id": 2,
+      "io": "inout",
+      "indirect": {
+       "arg": "d",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "t",
+      "field_id": 3,
+      "io": "inout",
+      "indirect": {
+       "arg": "t",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "f",
+      "field_id": 4,
+      "io": "inout",
+      "indirect": {
+       "arg": "f",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "aero"
+     },
+     {
+      "bind": "scalar",
+      "arg": "hail"
+     },
+     {
+      "bind": "scalar",
+      "arg": "dt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rv"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rd"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rvord"
+     },
+     {
+      "bind": "scalar",
+      "arg": "p0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rcv"
+     },
+     {
+      "bind": "scalar",
+      "arg": "grav"
+     },
+     {
+      "bind": "scalar",
+      "arg": "mp_top_level"
+     },
+     {
+      "bind": "primal",
+      "arg": "compmax"
+     },
+     {
+      "bind": "primal",
+      "arg": "comp"
+     },
+     {
+      "bind": "tangent",
+      "arg": "compmax",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "comp",
+      "field_id": 18,
+      "io": "in"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "tempo_v303.py:4497 mpas_powf base X <= 0 (d X^rcv / dX undefined)",
+       "tempo_v303.py:4510-4511 dz1 + dz2 == 0 (surface-pressure extrapolation)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "tempo_to__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "m",
+      "indirect": {
+       "arg": "m",
+       "mirror": true,
+       "target_bytes": "4*(nz+1)*nc"
+      }
+     },
+     {
+      "bind": "primal",
+      "arg": "mesh",
+      "indirect": {
+       "arg": "mesh",
+       "mirror": true,
+       "target_bytes": "4*(nz+1)*nc"
+      }
+     },
+     {
+      "bind": "primal",
+      "arg": "d",
+      "indirect": {
+       "arg": "d",
+       "mirror": true,
+       "target_bytes": "4*(nz+1)*nc"
+      }
+     },
+     {
+      "bind": "primal",
+      "arg": "f",
+      "indirect": {
+       "arg": "f",
+       "mirror": true,
+       "target_bytes": "4*(nz+1)*nc"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "m",
+      "field_id": 0,
+      "io": "inout",
+      "indirect": {
+       "arg": "m",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "mesh",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "mesh",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d",
+      "field_id": 2,
+      "io": "inout",
+      "indirect": {
+       "arg": "d",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "t",
+      "field_id": 3,
+      "io": "inout",
+      "indirect": {
+       "arg": "t",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "f",
+      "field_id": 4,
+      "io": "inout",
+      "indirect": {
+       "arg": "f",
+       "mirror": true
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "aero"
+     },
+     {
+      "bind": "scalar",
+      "arg": "hail"
+     },
+     {
+      "bind": "scalar",
+      "arg": "dt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rv"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rd"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rvord"
+     },
+     {
+      "bind": "scalar",
+      "arg": "p0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rcv"
+     },
+     {
+      "bind": "scalar",
+      "arg": "grav"
+     },
+     {
+      "bind": "scalar",
+      "arg": "mp_top_level"
+     },
+     {
+      "bind": "primal",
+      "arg": "compmax"
+     },
+     {
+      "bind": "primal",
+      "arg": "comp"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "compmax",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "comp",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "tempo_v303.py:4497 mpas_powf base X <= 0 (d X^rcv / dX undefined)",
+       "tempo_v303.py:4510-4511 dz1 + dz2 == 0 (surface-pressure extrapolation)"
+      ]
+     }
+    ]
+   }
+  },
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "note": "Pointer tables: tangent/adjoint through U9 mirrors (persistent sweep shadows; AD_DOT_PERSIST=1 in the per-launch dot), primal through the deriv.rs primal mirror of this branch (pre-launch copies of every target)."
+ }
+}

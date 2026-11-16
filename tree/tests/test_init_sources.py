@@ -162,7 +162,7 @@ def test_an_unstructured_source_is_rows_sets_and_a_remap_stage():
     plans = src.plan_products(icon, src.Cycle.parse("2026-10-11T12"), None)
     assert len(plans) == 2 + 90 + 12 + 8 + 8
     t850 = [p for p in plans if p.filename.endswith("_000_850_T.grib2")]
-    assert len(t850) == 1 and t850[0].remap == {"selector": "0,0,0,100,85000,255,0", "method": "idw4"}
+    assert len(t850) == 1 and t850[0].remap == {"selector": "0,0,0,100,85000,255,0", "method": "idw4", "lead": "0"}
     assert t850[0].url.startswith("https://opendata.dwd.de/weather/nwp/icon/grib/12/t/")
     assert t850[0].codec == "bz2" and t850[0].url.endswith(".grib2.bz2")
     layer = [p for p in plans if p.filename.endswith("_000_9_W_SO.grib2")][0]

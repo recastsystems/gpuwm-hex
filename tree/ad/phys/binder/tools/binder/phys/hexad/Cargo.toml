@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: Apache-2.0
+# libhexad-phys: the C ABI v2 cdylib over the physics window runner
+# (the same sources as ad-binder; build.rs is the runner's).
+[package]
+name = "hexad-phys"
+version = "0.2.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+build = "../runner/build.rs"
+
+[lib]
+name = "hexad_phys"
+path = "../../../../runtime/src/binder/phys/main.rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.149"
+sha2 = "=0.10.9"
+flate2 = { version = "=1.1.9", features = ["zlib-rs"] }  # integ8: zlib-rs inflate (as the runner)
+
+[features]
+default = ["capi-exports"]
+capi-exports = []

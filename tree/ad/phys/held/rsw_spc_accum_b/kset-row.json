@@ -1,0 +1,178 @@
+{
+ "function": "rsw_spc_accum_b",
+ "class": "rowed",
+ "gate_ready": true,
+ "window_launches_pkg18": 0,
+ "window_note": "pkg18 holds radiation as held uploads, so no launch binds until a radiation-live seal",
+ "arguments": [
+  {
+   "name": "ncol",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nlayers",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "ngb",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "zincflx",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "zcd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "zcu",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "zfd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "zfu",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "ztdbt_nodel",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "ztdbtc_nodel",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pbbfd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pbbfu",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pbbcd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pbbcu",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pbbfddir",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pbbcddir",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "puvfd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "puvcd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "puvfddir",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "puvcddir",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pnifd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pnicd",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pnifddir",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "pnicddir",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  }
+ ],
+ "derivative": {
+  "row": "ad/held-rsw_spc_accum_b",
+  "root": "tree/ad/phys/held/rsw_spc_accum_b",
+  "spec": {
+   "path": "tree/ad/phys/held/rsw_spc_accum_b/rsw_spc_accum_b.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/rsw_spc_accum_b/cuda/rsw_spc_accum_b.ad.cu"
+  },
+  "fatbin_sha256": "dfc33875b7636b0bfb1eab64d083f7cdb605fe0f7cf488fa3b741869f385b664",
+  "nvcc": [
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-gencode",
+   "arch=compute_80,code=compute_80",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false"
+  ]
+ },
+ "capture": {
+  "path": "<origin>/ad-phys/held/rsw_spc_accum_b/caps/hrrrv5_x1.2562/rsw_spc_accum_b/1/launch-000000/manifest.json"
+ }
+}

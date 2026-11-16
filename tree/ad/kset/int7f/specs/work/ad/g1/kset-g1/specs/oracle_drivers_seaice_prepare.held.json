@@ -1,0 +1,64 @@
+{
+ "kernel": "oracle_drivers_seaice_prepare",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py",
+ "line": 5386,
+ "body_lines": "5001-5015",
+ "native_source": "RRFS-MPAS 1d6e370e src/core_atmosphere/physics/mpas_atmphys_driver_seaice.F:436-442",
+ "route": "hand",
+ "mode": "exact",
+ "launch": {"grid": "ceil(nc/32)", "block": "32", "shared_bytes": 0},
+ "args": [
+  {"name": "ptrs", "role": "index", "dtype": "u64", "shape": "[7]", "active": false,
+   "inactive_reason": "RUC oracle pointer table (ruc.rs pointer_table, layout ICE_PREPARE); the device pointer values are fixed, the float targets 2-6 are active",
+   "pointer_depth": 2,
+   "table_role": "slots 0 ncells i32, 1 xice_threshold f32, 2 xice f32 in, 3 sfc_albedo f32 in, 4 sfc_emiss f32 in, 5 sfc_albedo_p f32 out (full overwrite), 6 sfc_emiss_p f32 out (full overwrite); every view is nc words",
+   "pointee": {"active": true, "dtype": "f32", "shape": "[7,nc]", "role": "inout", "weight": "none"}},
+  {"name": "tables", "role": "const", "dtype": "f32", "shape": "unresolved", "active": false, "inactive_reason": "module saturation tables; this entry reads none"},
+  {"name": "work", "role": "workspace", "dtype": "f32", "shape": "unresolved", "active": false, "inactive_reason": "RUC arena scratch; this entry uses none"},
+  {"name": "error", "role": "out", "dtype": "i32", "shape": "unresolved", "active": false, "inactive_reason": "forward error word, integer"},
+  {"name": "nc", "role": "scalar", "dtype": "i32", "shape": "scalar", "active": false, "inactive_reason": "column count, launch control"}
+ ],
+ "branches": [
+  {"slot": 0, "site": "L436 xice >= xice_threshold && xice < 1", "rule": "executed arm of the pre-launch xice; switch, not a clamp; no frozen coefficient"},
+  {"slot": 1, "site": "L436 xice >= xice_threshold"},
+  {"slot": 2, "site": "L436 xice < 1 (given slot 1 true)"}
+ ],
+ "refusal": {
+  "slots": ["ncells outside [0,1]: each RUC view holds nc words (ruc.rs address())",
+            "an output view overlaps an input or the other output: the rule assumes disjoint outputs (checked on the derivative mirror)",
+            "x == 0 in the active arm (unreachable for xice_threshold > 0)",
+            "nonfinite active-arm primal (sfc_albedo, sfc_emiss) or derivative result",
+            "nonfinite active-arm incoming tangent or seed"]
+ },
+ "alias_contract": "outputs 5 and 6 disjoint from each other and from inputs 2-4 (refused otherwise); inputs may alias each other (the adjoint accumulates one input at a time)",
+ "primal_preservation": "the entries read the primal through indirect.primal_snapshot: every target view copied before the forward launch into the tape; the output words are not read (A, E recomputed from the inputs in the forward's rounding)",
+ "denormal_compile_contract": "--fmad=false --ftz=false, explicit __f*_rn intrinsics",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "oracle_drivers_seaice_prepare__tl",
+    "geometry": "forward",
+    "args": [
+     {"bind": "primal", "arg": "ptrs", "indirect": {"arg": "ptrs", "mirror": true, "primal_snapshot": true, "slot_bytes": "4*nc"}},
+     {"bind": "tangent", "arg": "ptrs", "field_id": 1, "io": "inout", "indirect": {"arg": "ptrs", "mirror": true}},
+     {"bind": "scalar", "arg": "nc"},
+     {"bind": "failure", "slots": 5, "source_ids": ["5006 ncells outside [0,1]", "5007 output view overlaps input or output", "5008 x == 0 in active arm", "5009/5011 nonfinite active-arm primal or result", "5010 nonfinite active-arm tangent"]},
+     {"bind": "branch_record", "slots": 3}
+    ]
+   },
+   "ad": {
+    "function": "oracle_drivers_seaice_prepare__ad",
+    "geometry": "forward",
+    "args": [
+     {"bind": "primal", "arg": "ptrs", "indirect": {"arg": "ptrs", "mirror": true, "primal_snapshot": true, "slot_bytes": "4*nc"}},
+     {"bind": "adjoint", "arg": "ptrs", "field_id": 1, "io": "inout", "indirect": {"arg": "ptrs", "mirror": true}},
+     {"bind": "scalar", "arg": "nc"},
+     {"bind": "failure", "slots": 5, "source_ids": ["5006 ncells outside [0,1]", "5007 output view overlaps input or output", "5008 x == 0 in active arm", "5009/5011 nonfinite active-arm primal or result", "5010 nonfinite active-arm seed"]}
+    ]
+   }
+  }
+ }
+}

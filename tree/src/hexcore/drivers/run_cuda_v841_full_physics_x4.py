@@ -464,7 +464,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # person).  No code line differs from the copy the H1 identities above
     # ran on.  No card run for this merge.
     "src/hexcore/cuda_driver.py": (
-        "98b0f786620a5e81f7e625da4c2f3727823f0d416338c64f09b7d69f3ad70a29"
+        "5cf4bd473b2435476f0a56db17a2d1b15fbbc2e366f190fde95e007cf1a672de"
     ),
     # THE BREAKAGE THIS PREVENTS: cuda_driver.py now executes host
     # preparation through hexcore.prep_cache.  Unpinned, an edit to the key
@@ -827,7 +827,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # (hexcore.rkind_libm; float64 evaluation is a byte no-op).  Every
     # affected proof re-runs against this digest.
     "src/hexcore/mixing.py": (
-        "1fd749a6c2a8599acf9bac7b2fc9764c0cb8ceb428be50b19a4e93e3a094d554"
+        "025a09079f180ed38529bb329c32b60abe43351d576d99ceaaf3bba355f679be"
     ),
     # Re-frozen for the regional CPU authority lane: the
     # deformation-weight halo guard now CYCLES exactly as native
@@ -860,7 +860,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
         "5ab71636a60a6081ea55fda8337f222cfd9178888a88c3a24538b91fdcc8f699"
     ),
     "src/hexcore/cuda_horizontal.py": (
-        "d4e4face383eab6f19f21598613b7bd58e37eb75e067b7b9e817060a2ec015cd"
+        "e0fc005bcd591f312e01f60a1ffddb206ec3f86161e3b62c873f228cd2d554fc"
     ),
     "src/hexcore/cuda_horizontal_v841.py": (
         "3ad69a2c612bb12a03f57f78825d4c35e020d4b7584e6db5a201a3c092eb3703"

@@ -239,18 +239,32 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("src", type=Path)
     a.add_argument("dst", type=Path)
     a.add_argument("--engine-source", type=Path, required=True, help="apply content hygiene inside this export using the engine cut rules")
+    a.add_argument("--private-patterns", type=Path,
+                   help="the private pattern file the content hygiene reads (default: $HEX_PRIVATE_PATTERNS); never packaged")
     c = sub.add_parser("check")
     c.add_argument("tree", type=Path)
     args = parser.parse_args(argv)
     holds = load_holds()
     if args.command == "apply":
-        report = apply(args.src.resolve(), args.dst.resolve(), holds)
-        findings = check(args.dst.resolve(), holds)
         import importlib.util
         spec = importlib.util.spec_from_file_location("hex_release_hygiene", Path(__file__).with_name("release_hygiene.py"))
         hygiene = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = hygiene
         spec.loader.exec_module(hygiene)
+        # THE BREAKAGE THIS PREVENTS: the cut rewrites the lines its content rules find; with no private pattern
+        # file those rules are the generic one alone, and every private line would pass into the export.
+        try:
+            if args.private_patterns is not None:
+                hygiene.configure(args.private_patterns)
+        except RuntimeError as error:
+            print(f"licence_export apply: {error}", file=sys.stderr)
+            return 2
+        if not hygiene._content.PRIVATE_LOADED:
+            print("licence_export apply: no private pattern file (--private-patterns or $HEX_PRIVATE_PATTERNS); "
+                  "the export's content hygiene cannot run without it", file=sys.stderr)
+            return 2
+        report = apply(args.src.resolve(), args.dst.resolve(), holds)
+        findings = check(args.dst.resolve(), holds)
         report["content_hygiene"] = hygiene.fix_export(args.dst.resolve(), args.engine_source.resolve())
         remaining = hygiene.export_tree_findings(args.dst.resolve())
         findings.extend({"path": path, "line": line, "reason": kind} for path, line, kind, _ in remaining)

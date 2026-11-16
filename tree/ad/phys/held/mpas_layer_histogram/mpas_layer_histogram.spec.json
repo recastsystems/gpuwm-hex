@@ -1,0 +1,57 @@
+{
+  "kernel": "mpas_layer_histogram",
+  "engine": "hex",
+  "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+  "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+  "line": 562,
+  "module_source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "module_image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "route": "hand",
+  "mode": "exact",
+  "owner_task": "ad/held-mpas_layer_histogram",
+  "policy": "inactive integer kernel (P8 rules.rs class inactive: outputs zero in both directions; tempo_order_hist form)",
+  "launch": {"grid": "capture", "block": "capture", "shared_bytes": 0},
+  "args": [
+    {"name": "nc", "role": "scalar", "dtype": "i32", "shape": "[]", "stagger": "none", "active": false,
+     "inactive_reason": "Integer wrapper column count.", "overwrite": "none", "alias_group": null, "weight": "none"},
+    {"name": "base", "role": "scalar", "dtype": "i32", "shape": "[]", "stagger": "none", "active": false,
+     "inactive_reason": "Integer nm+1, the lowest possible wrapper layer count.", "overwrite": "none", "alias_group": null, "weight": "none"},
+    {"name": "nbins", "role": "scalar", "dtype": "i32", "shape": "[]", "stagger": "none", "active": false,
+     "inactive_reason": "Integer histogram width (_LAYER_HISTOGRAM_BINS = 1024).", "overwrite": "none", "alias_group": null, "weight": "none"},
+    {"name": "counts", "role": "in", "dtype": "i32", "shape": "[nc]", "stagger": "cell", "active": false,
+     "inactive_reason": "Wrapper layer counts from mpas_layer_counts (integer NINT of the top pressure); no float dependence here.",
+     "overwrite": "none", "alias_group": null, "weight": "none", "field_id": 1},
+    {"name": "hist", "role": "inout", "dtype": "i32", "shape": "[nbins+1]", "stagger": "none", "active": false,
+     "inactive_reason": "Integer column counts per layer count (atomicAdd); the host clears it (cp.zeros) before every launch and reads it back as launch metadata. Derivative words zero.",
+     "overwrite": "accumulate-integer", "alias_group": null, "weight": "none", "field_id": 2}
+  ],
+  "saved": [],
+  "branches": [
+    {"file_line": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py:563", "operation": "predicate", "predicate": "c>=nc",
+     "policy": "inactive-index", "tie": "not applicable", "slot": 0, "proof_config": "Thread guard on a launch constant."},
+    {"file_line": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py:564", "operation": "clamp", "predicate": "(b<0||b>=nbins)?nbins:b",
+     "policy": "inactive-index", "tie": "not applicable", "slot": 1,
+     "proof_config": "Integer bin index range test (overflow bin). Index selection, nothing to freeze."}
+  ],
+  "tables": [],
+  "refusal": {"nonfinite": false},
+  "launch_abi": {
+    "schema": "ad.entry/v1",
+    "entries": {
+      "tl": {"function": "mpas_layer_histogram__tl", "geometry": "forward", "args": [
+        {"bind": "scalar", "arg": "nc"},
+        {"bind": "scalar", "arg": "base"},
+        {"bind": "scalar", "arg": "nbins"},
+        {"bind": "tangent", "arg": "counts", "field_id": 1, "io": "in"},
+        {"bind": "tangent", "arg": "hist", "field_id": 2, "io": "out"}]},
+      "ad": {"function": "mpas_layer_histogram__ad", "geometry": "forward", "args": [
+        {"bind": "scalar", "arg": "nc"},
+        {"bind": "scalar", "arg": "base"},
+        {"bind": "scalar", "arg": "nbins"},
+        {"bind": "adjoint", "arg": "counts", "field_id": 1, "io": "accumulate"},
+        {"bind": "adjoint", "arg": "hist", "field_id": 2, "io": "inout"}]}
+    }
+  },
+  "piecewise_affine": true,
+  "piecewise_affine_arms": "Constant (zero) map on hist for every executed bin selection."
+}

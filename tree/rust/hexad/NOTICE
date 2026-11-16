@@ -1,0 +1,16 @@
+hexad (gpuwm-hex: the differentiable-engine runner, ad-binder and libhexad_phys)
+Licensed under the Apache License, Version 2.0 (see the distribution's LICENSE).
+
+The derivative rules in this crate are the tangent-linear and adjoint forms of the
+gpuwm-hex forecast kernels. Where those kernels are ports of MPAS-Atmosphere v8.4.2
+(LANL/UCAR) or of the MMM / RRFS physics it calls, the BSD-3-Clause terms and
+notices reproduced in the distribution's NOTICE govern the derived portions here
+too, and the marking that licence requires applies: this is a modified work, not
+the version available from LANS and UCAR.
+
+At run time the runner opens, by path and pinned sha256 taken from the recorded
+plan, the CUB / Thrust and cuBLAS host libraries the recorded forecast used (CuPy's
+and NVIDIA's). It does not ship or link them.
+
+The Rust crates the two products link are listed with their licence texts in
+licenses/THIRD-PARTY-LICENSES-helper-binaries.txt (program row D).

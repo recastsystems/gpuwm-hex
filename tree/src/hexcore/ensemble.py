@@ -16,6 +16,7 @@ import json
 import math
 import multiprocessing
 import os
+from hexcore import card_queue
 from pathlib import Path
 import shutil
 import subprocess
@@ -851,7 +852,7 @@ def run_ensemble(args):
     else:
         dimensions = validate_inputs(data, state_hashes=state_hashes, reference_path=reference_path)
     visible = [s.strip() for s in os.environ.get("CUDA_VISIBLE_DEVICES", "").split(",") if s.strip()]
-    if not visible or not os.environ.get("GPU_MUTEX_CARDS"):
+    if not visible or not card_queue.get(card_queue.CARDS):
         raise EnsembleRefusal("no card grant; run the ensemble through the host card queue with --cards N --min-cards 1")
     import cupy as cp
     from .device_admission import card_profile_from_attributes, model_for_card
@@ -1014,8 +1015,8 @@ def run_ensemble(args):
             residents = slots.count(card) if slots else 1
             env = dict(os.environ, CUDA_VISIBLE_DEVICES=visible[card],
                        GPUWM_HEX_MEMBER_MEMORY="shared-card" if residents > 1 else "single",
-                       GPU_MUTEX_CARDS=os.environ["GPU_MUTEX_CARDS"].replace(",", " ").split()[card],
                        GPUWM_HEX_MESH_ROWS=assets["mesh_rows"])
+            card_queue.put(env, card_queue.CARDS, card_queue.granted()[card])
             # Respect a caller's warm caches; a fresh root would recompile and
             # re-prepare the 30 km host state once per member.
             env.setdefault("GPUWM_HEX_PREP_CACHE", str(output.parent / "hostprep-cache"))

@@ -1,0 +1,290 @@
+{
+ "kernel": "solar",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 8a580fc9",
+ "file": "tree/src/hexcore/mpasphys/rrfs/radiation_rrfs.py",
+ "line": 43,
+ "module": "8a580fc96de5861f2f1c7de3b425865894dafcb0c6cc3911038bd8001de9cedf",
+ "image": "a3f0e2b39ef41d6218b8337cd0f098c84a5b948b67880ad5c569dbbdee28ecd8",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "n",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "julian",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "xtime",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "gmt",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "radt",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "degrad",
+   "field_id": 5,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "declin",
+   "field_id": 6,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "lat",
+   "field_id": 7,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  },
+  {
+   "name": "lon",
+   "field_id": 8,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  },
+  {
+   "name": "coszr",
+   "field_id": 9,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  },
+  {
+   "name": "eot",
+   "field_id": 10,
+   "role": "scalar",
+   "dtype": "u64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "equation-of-time output pointer: NULL in the hrrrv5 slot (state-free, julian only); non-null refused, slot 0"
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "radiation_rrfs.py:43 solar: non-null eot pointer (not the hrrrv5 slot)",
+   "solar: coszr aliases lat or lon"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "solar__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "scalar",
+      "arg": "julian"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xtime"
+     },
+     {
+      "bind": "scalar",
+      "arg": "gmt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "radt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "degrad"
+     },
+     {
+      "bind": "scalar",
+      "arg": "declin"
+     },
+     {
+      "bind": "primal",
+      "arg": "lat"
+     },
+     {
+      "bind": "primal",
+      "arg": "lon"
+     },
+     {
+      "bind": "scalar",
+      "arg": "eot"
+     },
+     {
+      "bind": "tangent",
+      "arg": "lat",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "lon",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coszr",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "radiation_rrfs.py:43 solar: non-null eot pointer (not the hrrrv5 slot)",
+       "solar: coszr aliases lat or lon"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "solar__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "scalar",
+      "arg": "julian"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xtime"
+     },
+     {
+      "bind": "scalar",
+      "arg": "gmt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "radt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "degrad"
+     },
+     {
+      "bind": "scalar",
+      "arg": "declin"
+     },
+     {
+      "bind": "primal",
+      "arg": "lat"
+     },
+     {
+      "bind": "primal",
+      "arg": "lon"
+     },
+     {
+      "bind": "scalar",
+      "arg": "eot"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "lat",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "lon",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coszr",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "radiation_rrfs.py:43 solar: non-null eot pointer (not the hrrrv5 slot)",
+       "solar: coszr aliases lat or lon"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

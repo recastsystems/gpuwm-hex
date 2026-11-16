@@ -1,0 +1,361 @@
+{
+ "kernel": "rrfs_surface_spacing",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrfs/driver_rrfs.py",
+ "line": 1317,
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad2-hrrrv5-glue",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "n",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer element count is fixed.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "density",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[n]",
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1
+  },
+  {
+   "name": "length",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2
+  },
+  {
+   "name": "dx",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[n]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3
+  }
+ ],
+ "saved": [
+  {
+   "name": "forward_pow",
+   "from": "aug",
+   "bytes_per_column": 4
+  }
+ ],
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/driver_rrfs.py:1320",
+   "column": 5,
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "The launch index and fixed integer count alone determine this guard."
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/driver_rrfs.py:1320",
+   "column": 11,
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Fixed integer launch index i and element count n."
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/driver_rrfs.py:1320",
+   "column": 68,
+   "operation": "lookup",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "The selected cell index is fixed; density at that index remains active."
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "density must be positive and finite"
+ },
+ "precondition": "n is nonnegative; density and dx each have n disjoint elements.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "rrfs_surface_spacing__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "primal",
+      "arg": "density"
+     },
+     {
+      "bind": "scalar",
+      "arg": "length"
+     },
+     {
+      "bind": "primal",
+      "arg": "dx"
+     },
+     {
+      "bind": "saved",
+      "name": "forward_pow",
+      "dtype": "f32",
+      "elems": "n"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:1320:invalid-density-or-nonfinite"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "rrfs_surface_spacing__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "primal",
+      "arg": "density"
+     },
+     {
+      "bind": "scalar",
+      "arg": "length"
+     },
+     {
+      "bind": "saved",
+      "name": "forward_pow",
+      "dtype": "f32",
+      "elems": "n"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_density",
+      "bytes": "8*(n)",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "arg": "density",
+        "field_id": 1,
+        "io": "in"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_length",
+      "bytes": "8",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "scalar_arg": "length",
+        "io": "in"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "dx",
+      "field_id": 3,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:1320:invalid-density-or-nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rrfs_surface_spacing__ad",
+    "geometry": {
+     "grid": [
+      "ceil(n/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "primal",
+      "arg": "density"
+     },
+     {
+      "bind": "scalar",
+      "arg": "length"
+     },
+     {
+      "bind": "saved",
+      "name": "forward_pow",
+      "dtype": "f32",
+      "elems": "n"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_density",
+      "bytes": "8*(n)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "arg": "density",
+        "field_id": 1,
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_length",
+      "bytes": "8",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "scalar_arg": "length",
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dx",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "workspace",
+      "name": "g8_len_part",
+      "bytes": "8*ceil(n/256)",
+      "init": "zero"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:1320:invalid-density-or-nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad_length": {
+    "function": "rrfs_surface_spacing__ad_length",
+    "geometry": {
+     "grid": [
+      1,
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "scalar",
+      "arg": "length"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_length",
+      "bytes": "8",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "scalar_arg": "length",
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "workspace",
+      "name": "g8_len_part",
+      "bytes": "8*ceil(n/256)",
+      "init": "zero"
+     },
+     {
+      "bind": "scalar",
+      "value_from": "ceil(n/256)",
+      "dtype": "<i4"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "driver_rrfs.py:1320:invalid-density-or-nonfinite"
+      ]
+     }
+    ]
+   }
+  },
+  "launch_order": {
+   "ad": [
+    "ad",
+    "ad_length"
+   ]
+  },
+  "reverse_order": [
+   "ad",
+   "ad_length"
+  ]
+ },
+ "g8": "G8 2026-11-06: serial/quadratic reverse loops rewritten (edge_to_slots CSR gathers, fixed-order two-level f64 reductions)"
+}

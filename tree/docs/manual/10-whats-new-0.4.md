@@ -263,7 +263,7 @@ CUDA ports ship in 0.4, as US Government code (`NOTICE` sections 8 and 9).
 ![48-hour global rain](../img/0.4/04-products-global-24h-precip-f048.png)
 
 *Map.* Rain and snow during the second day of a 30 km global forecast, one of
-426 maps the door drew from that run.
+426 maps the door rendered from that run.
 
 - **Reach it:** nothing extra. `gpuwm-hex forecast` ends by drawing the
   standard set into `<out>/products`. The drawing runs as its own CPU-only

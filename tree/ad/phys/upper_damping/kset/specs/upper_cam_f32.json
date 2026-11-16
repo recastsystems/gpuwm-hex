@@ -1,0 +1,225 @@
+{
+ "kernel": "upper_cam_f32",
+ "engine": "hex",
+ "forward_source_sha256": "803b7ff5234a38237c5089fbb5eb31f3ebd0d593e969d2a12ccb4c2c9b4b23dc",
+ "file": "tree/src/hexcore/cuda_upper_damping_v841.py",
+ "line": 5,
+ "route": "hand",
+ "mode": "exact",
+ "why": "NOAA's hrrrv5 deck (config_mpas_cam_coef 2.0 on 8 levels) runs this launch every step; no kernel set had a row, so the window refused any recording on the deck",
+ "args": [
+  {
+   "name": "nl",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "fixed discrete dimension, launch extent or level count",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "nc",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "fixed discrete dimension, launch extent or level count",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "solved",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "fixed discrete dimension, launch extent or level count",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "levels",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "fixed discrete dimension, launch extent or level count",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "length",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "mesh length scale (dcEdge-derived), fixed geometry",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "coefficient",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "namelist config_mpas_cam_coef",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "values",
+   "role": "inout",
+   "field_id": 1,
+   "dtype": "f32",
+   "shape": "[nl,nc]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  }
+ ],
+ "branches": [
+  {
+   "file_line": "cuda_upper_damping_v841.py:10",
+   "predicate": "max(values, floor(k))",
+   "policy": "executed-arm",
+   "tie": "values == floor takes the floor arm (derivative 0)",
+   "replay": "recompute floor(k) from the fixed scalars; compare with the bound primal values"
+  }
+ ],
+ "polynomial_degree": 1,
+ "polynomial_reason": "piecewise identity: values or a constant",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "upper_cam_f32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "solved"
+     },
+     {
+      "bind": "scalar",
+      "arg": "levels"
+     },
+     {
+      "bind": "scalar",
+      "arg": "length"
+     },
+     {
+      "bind": "scalar",
+      "arg": "coefficient"
+     },
+     {
+      "bind": "primal",
+      "arg": "values"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "in",
+      "arg": "values"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "out",
+      "arg": "values"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "ad/phys/upper_damping/cuda/upper_cam_f32.ad.cu:25:nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "upper_cam_f32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "solved"
+     },
+     {
+      "bind": "scalar",
+      "arg": "levels"
+     },
+     {
+      "bind": "scalar",
+      "arg": "length"
+     },
+     {
+      "bind": "scalar",
+      "arg": "coefficient"
+     },
+     {
+      "bind": "primal",
+      "arg": "values"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "accumulate",
+      "arg": "values"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "in",
+      "arg": "values"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "ad/phys/upper_damping/cuda/upper_cam_f32.ad.cu:39:nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

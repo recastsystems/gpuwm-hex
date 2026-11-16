@@ -1,0 +1,118 @@
+{
+ "function": "mpas_lw_outputs",
+ "class": "glue",
+ "gate_ready": true,
+ "window_launches_pkg18": 0,
+ "window_note": "pkg18 holds radiation (4 held_upload_ranges 'held: radiation (milestone 1)' per radiation step); the row binds when a plan carries the LW launches",
+ "arguments": [
+  {
+   "name": "nc",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nm",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nl",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "icloud",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "m",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "a",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "u",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "d",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "uc",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "dc",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "hr",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "tendency",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "radii",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "flux",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  }
+ ],
+ "derivative": {
+  "row": "ad/held-mpas_lw_outputs",
+  "root": "tree/ad/phys/held/mpas_lw_outputs",
+  "spec": {
+   "path": "tree/ad/phys/held/mpas_lw_outputs/mpas_lw_outputs.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/mpas_lw_outputs/cuda/mpas_lw_outputs.ad.cu"
+  },
+  "fatbin_sha256": "8c4a5acd96f9369262d23d345170f8b55dace0cc3bc846bd780493a2bc2eb6f1",
+  "nvcc": [
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-gencode",
+   "arch=compute_80,code=compute_80",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false"
+  ]
+ },
+ "capture": {
+  "path": "<origin>/ad-phys/held/mpas_lw_outputs/caps/hrrrv5_x1.2562/mpas_lw_outputs/1/launch-000000/manifest.json"
+ }
+}

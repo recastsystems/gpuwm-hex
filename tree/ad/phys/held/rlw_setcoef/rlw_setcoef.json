@@ -1,0 +1,1420 @@
+{
+ "kernel": "rlw_setcoef",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 766,
+ "route": "hand",
+ "mode": "exact-local-linearisation",
+ "owner_task": "ad/held-rlw_setcoef",
+ "replaces": "P7 generic taped row (bind/p7-rows.json, p7-launch harness, per-thread tape, 32 KB per-thread stack): same maths, no tape",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "kernel_line_in_source": 711
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the layer group, fixed by the wrapper."
+  },
+  {
+   "name": "nlayers",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count of the layer group (64 or 65 on x1.2562), fixed by the wrapper."
+  },
+  {
+   "name": "istart",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer first band (1 on hrrrv5), selects the band-16 table form."
+  },
+  {
+   "name": "pavel",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1
+  },
+  {
+   "name": "tavel",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2
+  },
+  {
+   "name": "tz",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3
+  },
+  {
+   "name": "tbound_v",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4
+  },
+  {
+   "name": "semiss",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 16]",
+   "stagger": "column-band",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5
+  },
+  {
+   "name": "coldry",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6
+  },
+  {
+   "name": "wkl",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 38, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "reads": "rows 1..7 (h2o, co2, o3, n2o, co, ch4, o2 column amounts); rows 8..38 not read"
+  },
+  {
+   "name": "wbroad",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8
+  },
+  {
+   "name": "totplnk",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[181, 16]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Constant RRTMG LW table (setup, step 0); read only.",
+   "overwrite": "none"
+  },
+  {
+   "name": "totplk16",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[181]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Constant RRTMG LW table (setup, step 0); read only.",
+   "overwrite": "none"
+  },
+  {
+   "name": "preflog",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[59]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Constant RRTMG LW table (setup, step 0); read only.",
+   "overwrite": "none"
+  },
+  {
+   "name": "tref",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[59]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Constant RRTMG LW table (setup, step 0); read only.",
+   "overwrite": "none"
+  },
+  {
+   "name": "chi_mls",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[7, 59]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Constant RRTMG LW table (setup, step 0); read only.",
+   "overwrite": "none"
+  },
+  {
+   "name": "laytrop_v",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol]",
+   "stagger": "column",
+   "active": false,
+   "inactive_reason": "Integer table index / layer count derived from the state: frozen (executed branch).",
+   "overwrite": "full"
+  },
+  {
+   "name": "jp",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index / layer count derived from the state: frozen (executed branch).",
+   "overwrite": "full"
+  },
+  {
+   "name": "jt",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index / layer count derived from the state: frozen (executed branch).",
+   "overwrite": "full"
+  },
+  {
+   "name": "jt1",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index / layer count derived from the state: frozen (executed branch).",
+   "overwrite": "full"
+  },
+  {
+   "name": "planklay",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 16]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9
+  },
+  {
+   "name": "planklev",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 16]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10
+  },
+  {
+   "name": "plankbnd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, 16]",
+   "stagger": "column-band",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 11
+  },
+  {
+   "name": "colh2o",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 12
+  },
+  {
+   "name": "colco2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 13
+  },
+  {
+   "name": "colo3",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 14
+  },
+  {
+   "name": "coln2o",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 15
+  },
+  {
+   "name": "colco",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 16
+  },
+  {
+   "name": "colch4",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 17
+  },
+  {
+   "name": "colo2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 18
+  },
+  {
+   "name": "colbrd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 19
+  },
+  {
+   "name": "fac00",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 20
+  },
+  {
+   "name": "fac01",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 21
+  },
+  {
+   "name": "fac10",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 22
+  },
+  {
+   "name": "fac11",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 23
+  },
+  {
+   "name": "rat_h2oco2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 24,
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_h2oco2_1",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 25,
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_h2oo3",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 26,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_h2oo3_1",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 27,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_h2on2o",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 28,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_h2on2o_1",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 29,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_h2och4",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 30,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_h2och4_1",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 31,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_n2oco2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 32,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_n2oco2_1",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 33,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_o3co2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 34,
+   "writes": "upper-set layers only (ln p <= 4.56, src 929); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "rat_o3co2_1",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 35,
+   "writes": "upper-set layers only (ln p <= 4.56, src 929); other words untouched",
+   "derivative": "zero on the written words (ratios of chi_mls table entries)"
+  },
+  {
+   "name": "selffac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 36
+  },
+  {
+   "name": "selffrac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 37,
+   "writes": "lower-set layers only (!(ln p <= 4.56), src 894); other words untouched"
+  },
+  {
+   "name": "indself",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index / layer count derived from the state: frozen (executed branch).",
+   "overwrite": "partial"
+  },
+  {
+   "name": "forfac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 38
+  },
+  {
+   "name": "forfrac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 39
+  },
+  {
+   "name": "indfor",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index / layer count derived from the state: frozen (executed branch).",
+   "overwrite": "full"
+  },
+  {
+   "name": "minorfrac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 40
+  },
+  {
+   "name": "scaleminor",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 41
+  },
+  {
+   "name": "scaleminorn2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 42
+  },
+  {
+   "name": "indminor",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": false,
+   "inactive_reason": "Integer table index / layer count derived from the state: frozen (executed branch).",
+   "overwrite": "full"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 683d7a07:769-789",
+   "operation": "index",
+   "active": false,
+   "policy": "frozen-index",
+   "inactive_reason": "Planck table indices clamp((int)(T - 159), 1, 180) keep their primal value; the fraction keeps slope 1."
+  },
+  {
+   "file_line": "capture source 683d7a07:868",
+   "operation": "clamp",
+   "active": false,
+   "policy": "frozen-coefficient",
+   "inactive_reason": "Purity guard p <= 0 -> 1e-6: a constant where it fires, so d ln p = 0 there (never fires on the measured steps)."
+  },
+  {
+   "file_line": "capture source 683d7a07:870-890",
+   "operation": "index",
+   "active": false,
+   "policy": "frozen-index",
+   "inactive_reason": "jp, jt, jt1 clamped table indices keep their primal value; fp, ft, ft1 keep their local slope (extrapolated past a clamp)."
+  },
+  {
+   "file_line": "capture source 683d7a07:894",
+   "operation": "predicate",
+   "active": false,
+   "policy": "executed-branch",
+   "inactive_reason": "Lower/upper set !(ln p <= 4.56) and the laytrop count keep their primal value."
+  },
+  {
+   "file_line": "capture source 683d7a07:899,905,915,943",
+   "operation": "index",
+   "active": false,
+   "policy": "frozen-index",
+   "inactive_reason": "indfor, indself, indminor clamped indices keep their primal value; the fractions keep slopes -1/36 or 1/36, 1/7.2, 1/7.2."
+  },
+  {
+   "file_line": "capture source 683d7a07:960-964",
+   "operation": "predicate",
+   "active": false,
+   "policy": "executed-branch",
+   "inactive_reason": "Where 1e-20 wkl rounds to 0 the replacement 1e-32 coldry is differentiated (d col = 1e-32 d coldry); that gas row tangent is dropped there."
+  }
+ ],
+ "limiters": "frozen coefficients for every clamp and index (branches); the fractions keep their exact local slope",
+ "tables": [
+  "totplnk",
+  "totplk16",
+  "preflog",
+  "tref",
+  "chi_mls"
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "read inputs finite; every written derivative word finite"
+ },
+ "precondition": "inputs, tables and outputs are distinct allocations (no aliasing); one thread per column owns that column's words, so the adjoint is deterministic with no atomics",
+ "precision": "f32 primal words formed as the forward forms them (__f*_rn, gfk_log copied, --fmad=false --ftz=false; the harness-only __check is bitwise to the forward image); local partials in double; one rounding to f32 per written derivative word, +0.0 for a zero tangent",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "rlw_setcoef__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "istart"
+     },
+     {
+      "bind": "primal",
+      "arg": "pavel"
+     },
+     {
+      "bind": "primal",
+      "arg": "tavel"
+     },
+     {
+      "bind": "primal",
+      "arg": "tz"
+     },
+     {
+      "bind": "primal",
+      "arg": "tbound_v"
+     },
+     {
+      "bind": "primal",
+      "arg": "semiss"
+     },
+     {
+      "bind": "primal",
+      "arg": "coldry"
+     },
+     {
+      "bind": "primal",
+      "arg": "wkl"
+     },
+     {
+      "bind": "primal",
+      "arg": "wbroad"
+     },
+     {
+      "bind": "primal",
+      "arg": "totplnk"
+     },
+     {
+      "bind": "primal",
+      "arg": "totplk16"
+     },
+     {
+      "bind": "primal",
+      "arg": "preflog"
+     },
+     {
+      "bind": "primal",
+      "arg": "tref"
+     },
+     {
+      "bind": "primal",
+      "arg": "chi_mls"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pavel",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tavel",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tz",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tbound_v",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "semiss",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coldry",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "wkl",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "wbroad",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "planklay",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "planklev",
+      "field_id": 10,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "plankbnd",
+      "field_id": 11,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colh2o",
+      "field_id": 12,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colco2",
+      "field_id": 13,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colo3",
+      "field_id": 14,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coln2o",
+      "field_id": 15,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colco",
+      "field_id": 16,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colch4",
+      "field_id": 17,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colo2",
+      "field_id": 18,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "colbrd",
+      "field_id": 19,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fac00",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fac01",
+      "field_id": 21,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fac10",
+      "field_id": 22,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fac11",
+      "field_id": 23,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_h2oco2",
+      "field_id": 24,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_h2oco2_1",
+      "field_id": 25,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_h2oo3",
+      "field_id": 26,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_h2oo3_1",
+      "field_id": 27,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_h2on2o",
+      "field_id": 28,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_h2on2o_1",
+      "field_id": 29,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_h2och4",
+      "field_id": 30,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_h2och4_1",
+      "field_id": 31,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_n2oco2",
+      "field_id": 32,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_n2oco2_1",
+      "field_id": 33,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_o3co2",
+      "field_id": 34,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rat_o3co2_1",
+      "field_id": 35,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "selffac",
+      "field_id": 36,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "selffrac",
+      "field_id": 37,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "forfac",
+      "field_id": 38,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "forfrac",
+      "field_id": 39,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "minorfrac",
+      "field_id": 40,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "scaleminor",
+      "field_id": 41,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "scaleminorn2",
+      "field_id": 42,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:766:nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rlw_setcoef__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "istart"
+     },
+     {
+      "bind": "primal",
+      "arg": "pavel"
+     },
+     {
+      "bind": "primal",
+      "arg": "tavel"
+     },
+     {
+      "bind": "primal",
+      "arg": "tz"
+     },
+     {
+      "bind": "primal",
+      "arg": "tbound_v"
+     },
+     {
+      "bind": "primal",
+      "arg": "semiss"
+     },
+     {
+      "bind": "primal",
+      "arg": "coldry"
+     },
+     {
+      "bind": "primal",
+      "arg": "wkl"
+     },
+     {
+      "bind": "primal",
+      "arg": "wbroad"
+     },
+     {
+      "bind": "primal",
+      "arg": "totplnk"
+     },
+     {
+      "bind": "primal",
+      "arg": "totplk16"
+     },
+     {
+      "bind": "primal",
+      "arg": "preflog"
+     },
+     {
+      "bind": "primal",
+      "arg": "tref"
+     },
+     {
+      "bind": "primal",
+      "arg": "chi_mls"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pavel",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tavel",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tz",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tbound_v",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "semiss",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coldry",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "wkl",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "wbroad",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "planklay",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "planklev",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "plankbnd",
+      "field_id": 11,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colh2o",
+      "field_id": 12,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colco2",
+      "field_id": 13,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colo3",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coln2o",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colco",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colch4",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colo2",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "colbrd",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fac00",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fac01",
+      "field_id": 21,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fac10",
+      "field_id": 22,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fac11",
+      "field_id": 23,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_h2oco2",
+      "field_id": 24,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_h2oco2_1",
+      "field_id": 25,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_h2oo3",
+      "field_id": 26,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_h2oo3_1",
+      "field_id": 27,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_h2on2o",
+      "field_id": 28,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_h2on2o_1",
+      "field_id": 29,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_h2och4",
+      "field_id": 30,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_h2och4_1",
+      "field_id": 31,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_n2oco2",
+      "field_id": 32,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_n2oco2_1",
+      "field_id": 33,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_o3co2",
+      "field_id": 34,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rat_o3co2_1",
+      "field_id": 35,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "selffac",
+      "field_id": 36,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "selffrac",
+      "field_id": 37,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "forfac",
+      "field_id": 38,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "forfrac",
+      "field_id": 39,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "minorfrac",
+      "field_id": 40,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "scaleminor",
+      "field_id": 41,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "scaleminorn2",
+      "field_id": 42,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:766:nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

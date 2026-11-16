@@ -1,0 +1,184 @@
+{
+  "kernel": "tempo_order_scatter",
+  "engine": "hex",
+  "file": "hexcore/mpasphys/rrfs/tempo_v303.py",
+  "line": 4043,
+  "module": "pkg18 module 477158923b00908c",
+  "route": "hand",
+  "mode": "exact",
+  "owner_task": "ad/held-tempo_order_scatter",
+  "policy": "inactive integer kernel (COMMON-AD 87.1; P8 rules.rs class inactive: outputs zero in both directions)",
+  "launch": {
+    "grid": "capture",
+    "block": "capture",
+    "shared_bytes": 0
+  },
+  "args": [
+    {
+      "name": "cost",
+      "role": "in",
+      "dtype": "u32",
+      "shape": "[n]",
+      "stagger": "cell",
+      "active": false,
+      "inactive_reason": "Per-column cycle counts >> 4 from tempo_warp_steps clock64 (:4121, scheduling only); integer, no float dependence.",
+      "overwrite": "none",
+      "alias_group": null,
+      "weight": "none",
+      "field_id": 1
+    },
+    {
+      "name": "n",
+      "role": "scalar",
+      "dtype": "i32",
+      "shape": "[]",
+      "stagger": "none",
+      "active": false,
+      "inactive_reason": "Integer column count.",
+      "overwrite": "none",
+      "alias_group": null,
+      "weight": "none"
+    },
+    {
+      "name": "start",
+      "role": "inout",
+      "dtype": "u32",
+      "shape": "[128]",
+      "stagger": "none",
+      "active": false,
+      "inactive_reason": "Scanned bucket offsets, advanced by atomicAdd; integer. Derivative words zero.",
+      "overwrite": "accumulate-integer",
+      "alias_group": null,
+      "weight": "none",
+      "field_id": 2
+    },
+    {
+      "name": "order",
+      "role": "out",
+      "dtype": "i32",
+      "shape": "[n]",
+      "stagger": "cell",
+      "active": false,
+      "inactive_reason": "Column schedule (permutation of 0..n-1) read by tempo_warp_steps as an index only; integer. Derivative words zero.",
+      "overwrite": "full",
+      "alias_group": null,
+      "weight": "none",
+      "field_id": 3
+    }
+  ],
+  "saved": [],
+  "branches": [
+    {
+      "file_line": "hexcore/mpasphys/rrfs/tempo_v303.py:4032",
+      "operation": "predicate",
+      "predicate": "c==0u",
+      "policy": "inactive-index",
+      "tie": "not applicable",
+      "slot": 0,
+      "proof_config": "Integer bucket selection."
+    },
+    {
+      "file_line": "hexcore/mpasphys/rrfs/tempo_v303.py:4034",
+      "operation": "predicate",
+      "predicate": "e>=2",
+      "policy": "inactive-index",
+      "tie": "not applicable",
+      "slot": 1,
+      "proof_config": "Integer shift direction."
+    },
+    {
+      "file_line": "hexcore/mpasphys/rrfs/tempo_v303.py:4035",
+      "operation": "clamp",
+      "predicate": "imin(key,127)",
+      "policy": "inactive-index",
+      "tie": "not applicable",
+      "slot": 2,
+      "proof_config": "Integer key clamp (no-op for 32-bit c: key <= 127). Index selection, nothing to freeze."
+    },
+    {
+      "file_line": "hexcore/mpasphys/rrfs/tempo_v303.py:4045",
+      "operation": "predicate",
+      "predicate": "i<n",
+      "policy": "inactive-index",
+      "tie": "not applicable",
+      "slot": 3,
+      "proof_config": "Thread guard."
+    },
+    {
+      "file_line": "hexcore/mpasphys/rrfs/tempo_v303.py:4045",
+      "operation": "atomic-slot",
+      "predicate": "atomicAdd(&start[b],1u)",
+      "policy": "inactive-index",
+      "tie": "nondeterministic slot order within a bucket",
+      "slot": 4,
+      "proof_config": "Integer scatter index; order words are integers, never differentiated."
+    }
+  ],
+  "tables": [],
+  "refusal": {
+    "nonfinite": false
+  },
+  "launch_abi": {
+    "schema": "ad.entry/v1",
+    "entries": {
+      "tl": {
+        "function": "tempo_order_scatter__tl",
+        "geometry": "forward",
+        "args": [
+          {
+            "bind": "scalar",
+            "arg": "n"
+          },
+          {
+            "bind": "tangent",
+            "arg": "cost",
+            "field_id": 1,
+            "io": "in"
+          },
+          {
+            "bind": "tangent",
+            "arg": "start",
+            "field_id": 2,
+            "io": "out"
+          },
+          {
+            "bind": "tangent",
+            "arg": "order",
+            "field_id": 3,
+            "io": "out"
+          }
+        ]
+      },
+      "ad": {
+        "function": "tempo_order_scatter__ad",
+        "geometry": "forward",
+        "args": [
+          {
+            "bind": "scalar",
+            "arg": "n"
+          },
+          {
+            "bind": "adjoint",
+            "arg": "cost",
+            "field_id": 1,
+            "io": "accumulate"
+          },
+          {
+            "bind": "adjoint",
+            "arg": "start",
+            "field_id": 2,
+            "io": "inout"
+          },
+          {
+            "bind": "adjoint",
+            "arg": "order",
+            "field_id": 3,
+            "io": "inout"
+          }
+        ]
+      }
+    }
+  },
+  "piecewise_affine": true,
+  "piecewise_affine_arms": "Constant (zero) map on start and order for every executed bucket selection and slot order."
+}

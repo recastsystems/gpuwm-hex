@@ -351,7 +351,11 @@ def physics_inventory(numerics=None, *, mynn_math_source=None):
     # without changing either the kernel text or the process's numerics mode.
     from hexcore.mpasphys.driver_v842 import correct_source
     mode = _hex_numerics.mode() if numerics is None else _hex_numerics.normalise(numerics)
-    for corrections in (frozenset(), frozenset({"RP7"})):
+    # Every subset of the correct-mode text corrections (RP7 always in correct mode; RP8 with mixlength 1; either
+    # can be skipped by config_physics_correct_skip), so no correct-mode run compiles MYNN at its first call.
+    from itertools import combinations
+    _ids = sorted(bl.MYNN_TEXT_CORRECTIONS)
+    for corrections in (frozenset(c) for n in range(len(_ids) + 1) for c in combinations(_ids, n)):
         numerical = correct_source(bl.MYNN_MODULE_CUDA, bl.MYNN_TEXT_CORRECTIONS,
                                    corrections, "bl_mynn hex-cuda")
         if mode == "fast":
@@ -527,6 +531,16 @@ def physics_inventory(numerics=None, *, mynn_math_source=None):
                            "options": list(_hex_numerics.options(tempo_v325.COMPILE_OPTIONS, numerics=numerics)),
                            "route": "direct-nvrtc", "filename": "kern.cu"}),
                  "physics_family": "tempo_rrfs_v325"})
+    # The same module as correct mode (the default) compiles it: with the fork corrections tempo_v325 applies as
+    # text (fork_corrections; TP4).  THE BREAKAGE THIS ENDS: the row above is the uncorrected text, which only a
+    # run that skips TP4 asks for, so every default strict hrrrv5 run compiled the corrected module on one core at
+    # its first microphysics step.
+    rows.append({**recipe({"source": tempo_v325.warp_source(resources.tempo_maths(resources._vendored_maths()),
+                                                             max_levels=TEMPO_RRFS_LEVELS, numerics=numerics,
+                                                             corrections=tempo_v325.CORRECTIONS),
+                           "options": list(_hex_numerics.options(tempo_v325.COMPILE_OPTIONS, numerics=numerics)),
+                           "route": "direct-nvrtc", "filename": "kern.cu"}),
+                 "physics_family": "tempo_rrfs_v325"})
     # TEMPO's reflectivity of a given state (tempo_refl_v303: the f000 frame of a correct-mode TEMPO forecast
     # and the state analysis posterior observers). It asks for the same text and strict options under both
     # numerics, but the engine drops --fmad=false from every compile of a fast process (gpuwm.numerics
@@ -545,6 +559,15 @@ def physics_inventory(numerics=None, *, mynn_math_source=None):
                            "options": refl_options,
                            "route": "direct-nvrtc", "filename": "kern.cu", "cache_in_memory": True}),
                  "physics_family": "tempo_rrfs_refl_v325"})
+    # The same two modules as a default (correct mode) run compiles them: with the snow-moments correction
+    # (TP5, tempo_refl.REFL_CORRECTIONS).  THE BREAKAGE THIS ENDS: with only the two rows above, every default
+    # TEMPO forecast compiled its f000 reflectivity module on one core beside its set-up.
+    for version, family in (("v3.0.3", "tempo_rrfs_refl"), ("v3.2.5", "tempo_rrfs_refl_v325")):
+        rows.append({**recipe({"source": tempo_refl.module_source(TEMPO_RRFS_LEVELS, version,
+                                                                  tempo_refl.REFL_CORRECTIONS),
+                               "options": refl_options,
+                               "route": "direct-nvrtc", "filename": "kern.cu", "cache_in_memory": True}),
+                     "physics_family": family})
     # The same NGW image contains initialization, column execution and writeback.
     # RRFS L60 otherwise compiled it for 599.7 s at first use on NVRTC 13.4.
     from hexcore.mpasphys import ugwp_ngw_v842 as ngw
@@ -568,8 +591,13 @@ def physics_inventory(numerics=None, *, mynn_math_source=None):
                          "physics_family": family})
         # The same two modules for the default TEMPO, v3.2.5 (tempo_phase_v325._modules).
         from hexcore.mpasphys.rrfs import tempo_phase_v325
+        # Each twice: as correct mode (the default) compiles it, with tempo_v325's fork corrections (TP4), and the
+        # uncorrected text a run that skips TP4 asks for.
+        fixed = tuple(tempo_v325.CORRECTIONS)
         for family, source in (("tempo_rrfs_phase_v325", tempo_phase_v325.phase_source(maths, TEMPO_RRFS_LEVELS, inline)),
-                               ("tempo_rrfs_tail_v325", tempo_phase_v325.tail_source(maths, TEMPO_RRFS_LEVELS, inline))):
+                               ("tempo_rrfs_tail_v325", tempo_phase_v325.tail_source(maths, TEMPO_RRFS_LEVELS, inline)),
+                               ("tempo_rrfs_phase_v325", tempo_phase_v325.phase_source(maths, TEMPO_RRFS_LEVELS, inline, fixed)),
+                               ("tempo_rrfs_tail_v325", tempo_phase_v325.tail_source(maths, TEMPO_RRFS_LEVELS, inline, fixed))):
             rows.append({**recipe({"source": source,
                                    "options": list(_hex_numerics.options(tempo_v325.COMPILE_OPTIONS, numerics="fast")),
                                    "route": "direct-nvrtc", "filename": "kern.cu"}),

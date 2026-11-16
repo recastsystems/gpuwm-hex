@@ -87,7 +87,7 @@ def _author(arguments: argparse.Namespace) -> int:
         boundary_field=arguments.boundary_field, object_field=arguments.object_field,
         object_threshold=arguments.object_threshold, check_minutes=arguments.check_minutes,
         lead_hours=arguments.lead_hours, from_last_hour=arguments.from_last_hour,
-        target_config=arguments.target_config)
+        target_config=arguments.target_config, member=arguments.member)
     _print(json.dumps(dict(case=str(arguments.out), storm=case['storm'], authoring=case['authoring'],
                            **({'beyond_source': case['beyond_source']} if 'beyond_source' in case else {})),
                       indent=2))
@@ -376,6 +376,9 @@ def add_moving_parser(commands) -> None:
     author.add_argument('--out', required=True, type=Path, help='new case JSON; never overwrites a case')
     author.add_argument('--template', type=Path, help='existing case geometry/physics; event metadata is replaced')
     author.add_argument('--source', default='gfs', help='init-source row for staging')
+    author.add_argument('--member', type=int, default=None,
+                        help="the source's member to start from, for a source with members of its own "
+                             "(GEFS: 0 is the control); written as the case's init_member, which stage reads")
     author.add_argument('--hours', type=float, default=12.0)
     author.add_argument('--fine-km', type=float, default=3.0)
     author.add_argument('--background-km', type=float, default=None,

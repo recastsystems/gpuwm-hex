@@ -108,15 +108,45 @@ def test_v610_source_is_the_v600_source_plus_its_cited_edits():
         assert bound.__code__ is getattr(v600, name).__code__ and bound.__globals__ is vars(v610)
 
 
+#: The differentiable engine's parameter hook, the last lines of each pinned module since 0.5.1. With
+#: GPUWM_HEX_AD_PARAMS unset (the default) it changes nothing; the route's own text is everything before it.
+_AD_PARAMS_HOOK = ('\n\n# GPUWM_HEX_AD_PARAMS (default unset: nothing changes) runs the forward at chosen values of the '
+                   'carried constants.\nfrom .. import ad_params_override as _ad_params_override\n'
+                   '_ad_params_override.patch_module(globals(), "{scheme}")\n')
+
+
 def _pinned_module_body(path, scheme):
-    return Path(path).read_bytes()
+    """The pinned route's text: the module less the parameter hook, which must be its last lines, once, naming this
+    scheme. THE BREAKAGE THIS ANSWERS: the pins were read against the whole file, so the hook 0.5.1 appended failed
+    both tests on every build since (0.5.1, dist45, dist46, dist47), with the route's text unchanged."""
+    text = Path(path).read_bytes()
+    hook = _AD_PARAMS_HOOK.format(scheme=scheme).encode()
+    assert text.endswith(hook) and text.count(hook) == 1, f'{path}: the parameter hook is not its last lines, once'
+    return text[:-len(hook)]
+
+
+@pytest.mark.parametrize('module, scheme', [('sf_mynnsfc_v600', 'mynnsfc'), ('bl_mynnedmf_c6d08709', 'mynnedmf')])
+def test_the_pinned_modules_parameter_hook_changes_nothing_when_unset(module, scheme, monkeypatch):
+    from hexcore.mpasphys import ad_params_override
+    monkeypatch.delenv('GPUWM_HEX_AD_PARAMS', raising=False)
+    mod = importlib.import_module(f'hexcore.mpasphys.rrfs.{module}')
+    before = dict(vars(mod))
+    ad_params_override.patch_module(vars(mod), scheme)
+    assert all(vars(mod)[k] is v for k, v in before.items()) and set(vars(mod)) == set(before)
 
 
 def test_pinned_module_text_is_untouched():
-    # sha256 of sf_mynnsfc_v600.py at gpuwm-hex 0.4.15 (4eee442f): the pinned route's source never changes.
-    path = importlib.import_module('hexcore.mpasphys.rrfs.sf_mynnsfc_v600').__file__
-    assert hashlib.sha256(_pinned_module_body(path, 'mynnsfc')).hexdigest() == (
-        '2333e36ec80b3b3ee8c4735cdfd6920fc8b92fcf5bd0aa90076a82d17d0111a7')
+    # The pinned route's CUDA text never changes: sha256 of SOURCE, read at 3c9b42ac0, where the whole file still
+    # had its gpuwm-hex 0.4.15 (4eee442f) hash 2333e36e.  Exact mode and every caller that names no fork id
+    # compile exactly this text.
+    mod = importlib.import_module('hexcore.mpasphys.rrfs.sf_mynnsfc_v600')
+    assert hashlib.sha256(mod.SOURCE.encode()).hexdigest() == (
+        '98df75d230195487a65c9f944be38aae0ac5b6c064b7a2e83f3f7248e7bf22f4')
+    assert mod.cuda_source(corrections=('MY1', 'TP4')) == mod.cuda_source() != mod.cuda_source(corrections=('SF1',))
+    # The file around that text: re-pinned once for correct mode's SF1 text pair and its keyword
+    # (fork_corrections); any later edit to this file still fails here.
+    assert hashlib.sha256(_pinned_module_body(mod.__file__, 'mynnsfc')).hexdigest() == (
+        '18413e380d3b2b1fbc29c37b7e05ecfc41caf5e87706b0752dd53cc6dfd07002')
 
 
 def test_v61_selects_edmf_v611_with_its_own_image():
@@ -146,10 +176,18 @@ def test_every_edmf_image_the_table_names_is_packed():
 
 
 def test_pinned_edmf_module_text_is_untouched():
-    # sha256 of bl_mynnedmf_c6d08709.py at gpuwm-hex 0.4.15 (4eee442f): the pinned route's source never changes.
-    path = importlib.import_module('hexcore.mpasphys.rrfs.bl_mynnedmf_c6d08709').__file__
-    assert hashlib.sha256(_pinned_module_body(path, 'mynnedmf')).hexdigest() == (
-        '00ebad3fb487ef10541c757deb3a21bc44512c23d1a7b7f26e272c6f3a265cb0')
+    # The pinned route's CUDA text never changes: sha256 of MODULE_CUDA and ARRAY_SUPPORT, read at 3c9b42ac0,
+    # where the whole file still had its gpuwm-hex 0.4.15 (4eee442f) hash 00ebad3f.
+    mod = importlib.import_module('hexcore.mpasphys.rrfs.bl_mynnedmf_c6d08709')
+    assert hashlib.sha256(mod.MODULE_CUDA.encode()).hexdigest() == (
+        '32ce71b78a8438c208a62e375ff44eab3e2aa57cfdabdee8e4f62ab11c228c43')
+    assert hashlib.sha256(mod.ARRAY_SUPPORT.encode()).hexdigest() == (
+        'd9410165f9d1be5ed13fbc3bd315698474ae8484387b37866dd1dc54a24d2ebe')
+    assert mod.module_cuda() is mod.MODULE_CUDA and mod.module_cuda(('SF1', 'TP4')) is mod.MODULE_CUDA
+    # The file around that text: re-pinned for correct mode's MY1 and MY2 text pairs, then MY3 to MY5 (fork_corrections);
+    # any later edit to this file still fails here.
+    assert hashlib.sha256(_pinned_module_body(mod.__file__, 'mynnedmf')).hexdigest() == (
+        '653efdd6613914f3a2faba26402aba5abd6e3b6c98dc98824fea65d3e99603c5')
 
 
 def test_v611_is_its_own_unit_on_the_44c0849_host():

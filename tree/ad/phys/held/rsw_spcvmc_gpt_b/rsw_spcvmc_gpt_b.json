@@ -1,0 +1,944 @@
+{
+ "kernel": "rsw_spcvmc_gpt_b",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 2665,
+ "route": "hand",
+ "mode": "exact-local-linearisation (executed branches frozen; exp table differentiated as exp)",
+ "owner_task": "ad/held-rsw_spcvmc_gpt_b",
+ "replaces": "nothing bound: status was missing in the kernel set. The 11-02 draft (ad2-rrtmg-sw-solver, multi-entry with incomplete launch ABI) is not used.",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "kernel_line_in_source": 2984,
+  "body_line_in_source": 2767,
+  "launches_per_radiation_step": "1 with ample memory (1281 daylit columns on x1.2562); the wrapper chunks by free memory"
+ },
+ "launch": {
+  "grid": "entry geometry (one block per column, grid-stride)",
+  "block": 128,
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the daylit batch (or free-memory chunk), fixed by the SW wrapper."
+  },
+  {
+   "name": "nlayers",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count (60 on x1.2562), fixed by the wrapper."
+  },
+  {
+   "name": "tab",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[104303]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Packed RRTMG SW coefficient tables; this kernel reads only the exponential table at offset 94302 (10001 words), constants written once at setup (mpas_init_tables). Not trainable."
+  },
+  {
+   "name": "ngb",
+   "role": "in",
+   "dtype": "i32",
+   "shape": "[112]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer g-point to band map (16..29), constant."
+  },
+  {
+   "name": "palbd",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 14]",
+   "stagger": "band",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "every word of the ncol rows",
+   "note": "surface diffuse albedo per band; shared by the band's g-points (block reduction in g order)"
+  },
+  {
+   "name": "palbp",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 14]",
+   "stagger": "band",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "every word of the ncol rows",
+   "note": "surface direct albedo per band; shared by the band's g-points (block reduction in g order)"
+  },
+  {
+   "name": "pcldfmc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 112]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_cloud_slab",
+   "weight": "none",
+   "field_id": 3,
+   "reads": "every word of the ncol rows",
+   "note": "McICA cloud fraction per g-point (0 or 1 on every captured word); the cf > 1e-12 test is frozen"
+  },
+  {
+   "name": "ptaucmc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 112]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_cloud_slab",
+   "weight": "none",
+   "field_id": 4,
+   "reads": "every word of the ncol rows",
+   "note": "McICA cloud optical depth"
+  },
+  {
+   "name": "pasycmc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 112]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_cloud_slab",
+   "weight": "none",
+   "field_id": 5,
+   "reads": "every word of the ncol rows",
+   "note": "McICA cloud asymmetry"
+  },
+  {
+   "name": "pomgcmc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 112]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_cloud_slab",
+   "weight": "none",
+   "field_id": 6,
+   "reads": "every word of the ncol rows",
+   "note": "McICA cloud single-scattering albedo"
+  },
+  {
+   "name": "ptaormc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 112]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "reads": "every word of the ncol rows",
+   "note": "unscaled cloud optical depth (nodel products only)"
+  },
+  {
+   "name": "ptaua",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 14, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8,
+   "reads": "every word of the ncol rows",
+   "note": "aerosol optical depth per band; shared by the band's g-points (block reduction in g order)"
+  },
+  {
+   "name": "pasya",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 14, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9,
+   "reads": "every word of the ncol rows",
+   "note": "aerosol asymmetry per band; shared (block reduction)"
+  },
+  {
+   "name": "pomga",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 14, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10,
+   "reads": "every word of the ncol rows",
+   "note": "aerosol single-scattering albedo per band; shared (block reduction)"
+  },
+  {
+   "name": "prmu0",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 11,
+   "reads": "every word of the ncol rows",
+   "note": "cosine of the solar zenith angle; shared by the column's 112 g-points (block reduction)"
+  },
+  {
+   "name": "adjflux",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 14]",
+   "stagger": "band",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 12,
+   "reads": "every word of the ncol rows",
+   "note": "Earth-Sun distance flux factor per band; shared (block reduction)"
+  },
+  {
+   "name": "sfluxzen",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 112]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 13,
+   "reads": "every word of the ncol rows",
+   "note": "TOA solar source per g-point"
+  },
+  {
+   "name": "taug",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 112]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 14,
+   "reads": "every word of the ncol rows",
+   "note": "gas optical depth"
+  },
+  {
+   "name": "taur",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 112]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 15,
+   "reads": "every word of the ncol rows",
+   "note": "Rayleigh optical depth"
+  },
+  {
+   "name": "zincflx",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, 112]",
+   "stagger": "none",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 16,
+   "note": "incident flux adjflux*sfluxzen*mu"
+  },
+  {
+   "name": "zcd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 17,
+   "note": "clear-sky downward flux"
+  },
+  {
+   "name": "zcu",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 18,
+   "note": "clear-sky upward flux"
+  },
+  {
+   "name": "zfd",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 19,
+   "note": "total-sky downward flux"
+  },
+  {
+   "name": "zfu",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 20,
+   "note": "total-sky upward flux"
+  },
+  {
+   "name": "ztdbt_nodel_out",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 21,
+   "note": "total-sky unscaled direct-beam transmittance product"
+  },
+  {
+   "name": "ztdbtc_nodel_out",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1, 112]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 22,
+   "note": "clear-sky unscaled direct-beam transmittance product"
+  },
+  {
+   "name": "wk",
+   "role": "scratch",
+   "dtype": "f32",
+   "shape": "[ncol*112, 16*(nlayers+1)]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "The solver's private workspace (its own allocation): every word read in a launch is written earlier in the same launch (rrtmg_sw_v842.py:2516-2531, 2560-2619), and no other kernel reads it. No derivative; not bound by the entries."
+  },
+  {
+   "name": "wkc",
+   "role": "scratch",
+   "dtype": "u8",
+   "shape": "[ncol*112, 0]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Retained null ABI slot (RSW_SPCVMC_WKC = 0)."
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:2988-2989 (rrtmg_sw_v842.py:2669-2670)",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Launch index against ncol*112."
+  },
+  {
+   "file_line": "3c499c7b:2848 (py 2529)",
+   "operation": "cloud test pcldfmc > 1e-12",
+   "active": true,
+   "policy": "frozen-executed-branch"
+  },
+  {
+   "file_line": "3c499c7b:2593-2598 (py 2274-2279)",
+   "operation": "g != 1; w > 0 && denom != 0",
+   "active": true,
+   "policy": "frozen-executed-branch (selector only)"
+  },
+  {
+   "file_line": "3c499c7b:2600 (py 2281)",
+   "operation": "wo >= 0.9999995 (conservative-scattering form)",
+   "active": true,
+   "policy": "frozen-executed-branch"
+  },
+  {
+   "file_line": "3c499c7b:2605, 2638, 2640 (py 2286, 2319, 2321)",
+   "operation": "min(x, 500) clamps",
+   "active": true,
+   "policy": "frozen: zero derivative when clamped"
+  },
+  {
+   "file_line": "3c499c7b:2612 (py 2293)",
+   "operation": "ze2 == 1 reset to (0, 1, 0, 1)",
+   "active": true,
+   "policy": "frozen: constants"
+  },
+  {
+   "file_line": "3c499c7b:2665 (py 2346)",
+   "operation": "|zdenr| <= 1e-8 limiter",
+   "active": true,
+   "policy": "frozen: pref = eps constant, ptra = zem2 differentiated"
+  },
+  {
+   "file_line": "3c499c7b:1411, 2642, 2650 (py 1092, 2323, 2331)",
+   "operation": "x <= od_lo polynomial vs exp table",
+   "active": true,
+   "policy": "executed branch; polynomial differentiated exactly"
+  }
+ ],
+ "limiters": "frozen-coefficient treatment of the min(x,500) clamps and the |zdenr| <= 1e-8 limiter (zero derivative on the clamped side), documented in the entry header",
+ "tables": [
+  {
+   "name": "exponential table (tab + 94302, 10001 words)",
+   "index_fixed": true,
+   "weights_active": false,
+   "entries_trainable": false,
+   "derivative": "d exp(-x) = -exp(-x) dx in double from the f32 argument (the function the nearest-entry table tabulates); the staircase's zero executed-branch derivative is not used"
+  }
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "every input word, recomputed primal word and written derivative word finite; exp-table index inside 0..10000; nlayers >= 1 and ngb in 16..29"
+ },
+ "precondition": "Inputs are read-only in the forward (pre = post). Outputs are distinct allocations and fully overwritten. Per-(col,g) inputs and outputs are owned by one thread; band- and column-shared cotangents are reduced inside the column's block in increasing g order (no atomics): deterministic.",
+ "precision": "primal words recomputed with the forward's own add/sub/mul.rn, __fdiv_rn, __fsqrt_rn and NaN wrappers (--fmad=false --ftz=false; __check is bitwise to the captured forward on every output word); derivatives in double; tangent and adjoint workspaces in double; one f32 rounding per written derivative word",
+ "cost": {
+  "workspace_bytes": {
+   "tl": "16384*(nlayers+1)*64",
+   "ad": "16384*(nlayers+1)*320"
+  },
+  "stack_bytes_ad_sm120": 880
+ },
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "rsw_spcvmc_gpt_b__tl",
+    "geometry": {
+     "grid": [
+      128,
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "primal",
+      "arg": "tab"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "palbd"
+     },
+     {
+      "bind": "primal",
+      "arg": "palbp"
+     },
+     {
+      "bind": "primal",
+      "arg": "pcldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ptaucmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "pasycmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "pomgcmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ptaormc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ptaua"
+     },
+     {
+      "bind": "primal",
+      "arg": "pasya"
+     },
+     {
+      "bind": "primal",
+      "arg": "pomga"
+     },
+     {
+      "bind": "primal",
+      "arg": "prmu0"
+     },
+     {
+      "bind": "primal",
+      "arg": "adjflux"
+     },
+     {
+      "bind": "primal",
+      "arg": "sfluxzen"
+     },
+     {
+      "bind": "primal",
+      "arg": "taug"
+     },
+     {
+      "bind": "primal",
+      "arg": "taur"
+     },
+     {
+      "bind": "tangent",
+      "arg": "palbd",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "palbp",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pcldfmc",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ptaucmc",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pasycmc",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pomgcmc",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ptaormc",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ptaua",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pasya",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pomga",
+      "field_id": 10,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "prmu0",
+      "field_id": 11,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "adjflux",
+      "field_id": 12,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "sfluxzen",
+      "field_id": 13,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "taug",
+      "field_id": 14,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "taur",
+      "field_id": 15,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zincflx",
+      "field_id": 16,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zcd",
+      "field_id": 17,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zcu",
+      "field_id": 18,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zfd",
+      "field_id": 19,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zfu",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ztdbt_nodel_out",
+      "field_id": 21,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ztdbtc_nodel_out",
+      "field_id": 22,
+      "io": "out"
+     },
+     {
+      "bind": "workspace",
+      "name": "spc_tl",
+      "bytes": "16384*(nlayers+1)*64",
+      "init": "none"
+     },
+     {
+      "bind": "failure",
+      "slots": 4,
+      "source_ids": [
+       "rrtmg_sw_v842.py:2665:nonfinite-primal",
+       "rrtmg_sw_v842.py:2665:nonfinite-derivative",
+       "rrtmg_sw_v842.py:2665:exp-table-index",
+       "rrtmg_sw_v842.py:2665:shape"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rsw_spcvmc_gpt_b__ad",
+    "geometry": {
+     "grid": [
+      128,
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "primal",
+      "arg": "tab"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "palbd"
+     },
+     {
+      "bind": "primal",
+      "arg": "palbp"
+     },
+     {
+      "bind": "primal",
+      "arg": "pcldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ptaucmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "pasycmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "pomgcmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ptaormc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ptaua"
+     },
+     {
+      "bind": "primal",
+      "arg": "pasya"
+     },
+     {
+      "bind": "primal",
+      "arg": "pomga"
+     },
+     {
+      "bind": "primal",
+      "arg": "prmu0"
+     },
+     {
+      "bind": "primal",
+      "arg": "adjflux"
+     },
+     {
+      "bind": "primal",
+      "arg": "sfluxzen"
+     },
+     {
+      "bind": "primal",
+      "arg": "taug"
+     },
+     {
+      "bind": "primal",
+      "arg": "taur"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "palbd",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "palbp",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pcldfmc",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ptaucmc",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pasycmc",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pomgcmc",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ptaormc",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ptaua",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pasya",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pomga",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "prmu0",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "adjflux",
+      "field_id": 12,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "sfluxzen",
+      "field_id": 13,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "taug",
+      "field_id": 14,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "taur",
+      "field_id": 15,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zincflx",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zcd",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zcu",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zfd",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zfu",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ztdbt_nodel_out",
+      "field_id": 21,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ztdbtc_nodel_out",
+      "field_id": 22,
+      "io": "inout"
+     },
+     {
+      "bind": "workspace",
+      "name": "spc_ad",
+      "bytes": "16384*(nlayers+1)*320",
+      "init": "none"
+     },
+     {
+      "bind": "failure",
+      "slots": 4,
+      "source_ids": [
+       "rrtmg_sw_v842.py:2665:nonfinite-primal",
+       "rrtmg_sw_v842.py:2665:nonfinite-derivative",
+       "rrtmg_sw_v842.py:2665:exp-table-index",
+       "rrtmg_sw_v842.py:2665:shape"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

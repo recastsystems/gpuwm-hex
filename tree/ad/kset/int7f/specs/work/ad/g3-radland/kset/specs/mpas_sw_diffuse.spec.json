@@ -1,0 +1,152 @@
+{
+ "kernel": "mpas_sw_diffuse",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 3c499c7b",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 3251,
+ "module": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+ "image": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "n",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "total",
+   "field_id": 1,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  },
+  {
+   "name": "direct",
+   "field_id": 2,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  },
+  {
+   "name": "out",
+   "field_id": 3,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "n"
+   ],
+   "active": true
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "mpas_sw_diffuse: out aliases an input"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "mpas_sw_diffuse__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "tangent",
+      "arg": "total",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "direct",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "out",
+      "field_id": 3,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "mpas_sw_diffuse: out aliases an input"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_sw_diffuse__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "n"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "total",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "direct",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "out",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "mpas_sw_diffuse: out aliases an input"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

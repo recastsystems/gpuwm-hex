@@ -1,0 +1,65 @@
+.version 7.0
+.target sm_80
+.address_size 64
+
+	// .globl	ad_mynn_ws_relayout
+
+.visible .entry ad_mynn_ws_relayout(
+	.param .u64 ad_mynn_ws_relayout_param_0,
+	.param .u64 ad_mynn_ws_relayout_param_1,
+	.param .u32 ad_mynn_ws_relayout_param_2,
+	.param .u32 ad_mynn_ws_relayout_param_3,
+	.param .u32 ad_mynn_ws_relayout_param_4,
+	.param .u32 ad_mynn_ws_relayout_param_5
+)
+{
+	.reg .pred 	%p<3>;
+	.reg .b32 	%r<27>;
+	.reg .b64 	%rd<9>;
+
+
+	ld.param.u64 	%rd3, [ad_mynn_ws_relayout_param_0];
+	ld.param.u64 	%rd4, [ad_mynn_ws_relayout_param_1];
+	ld.param.u32 	%r8, [ad_mynn_ws_relayout_param_2];
+	ld.param.u32 	%r9, [ad_mynn_ws_relayout_param_3];
+	ld.param.u32 	%r10, [ad_mynn_ws_relayout_param_4];
+	ld.param.u32 	%r11, [ad_mynn_ws_relayout_param_5];
+	mov.u32 	%r1, %ntid.x;
+	mov.u32 	%r12, %ctaid.x;
+	mov.u32 	%r13, %tid.x;
+	mad.lo.s32 	%r26, %r12, %r1, %r13;
+	setp.ge.u32 	%p1, %r26, %r8;
+	@%p1 bra 	$L__BB0_3;
+
+	mul.lo.s32 	%r3, %r11, %r9;
+	add.s32 	%r4, %r9, -1;
+	mov.u32 	%r14, %nctaid.x;
+	mul.lo.s32 	%r5, %r14, %r1;
+	cvta.to.global.u64 	%rd1, %rd4;
+	cvta.to.global.u64 	%rd2, %rd3;
+
+$L__BB0_2:
+	div.u32 	%r15, %r26, %r3;
+	mul.lo.s32 	%r16, %r15, %r3;
+	sub.s32 	%r17, %r26, %r16;
+	div.u32 	%r18, %r17, %r11;
+	mul.lo.s32 	%r19, %r18, %r11;
+	sub.s32 	%r20, %r17, %r19;
+	mad.lo.s32 	%r21, %r15, %r11, %r20;
+	div.u32 	%r22, %r21, %r10;
+	mad.lo.s32 	%r23, %r22, %r4, %r18;
+	mad.lo.s32 	%r24, %r23, %r10, %r21;
+	mul.wide.u32 	%rd5, %r24, 4;
+	add.s64 	%rd6, %rd1, %rd5;
+	ld.global.nc.u32 	%r25, [%rd6];
+	mul.wide.u32 	%rd7, %r26, 4;
+	add.s64 	%rd8, %rd2, %rd7;
+	st.global.u32 	[%rd8], %r25;
+	add.s32 	%r26, %r26, %r5;
+	setp.lt.u32 	%p2, %r26, %r8;
+	@%p2 bra 	$L__BB0_2;
+
+$L__BB0_3:
+	ret;
+
+}

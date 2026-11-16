@@ -1594,16 +1594,38 @@ class RouteRunPeak:
 #: next 2-member groups met the same end.  One member alone on that card peaked 75,069 MiB.
 _CURVE_RECEIPT = "GFS 2023-03-31 12Z, MPAS convection_permitting, fast numerics, 1 h, the global door's own forecast argv, one member alone on an RTX PRO 6000 (97,887 MiB, 188 SM); whole-card nvidia-smi rows of the run's processes every 0.5 s; hex 0.4.14 release measurement, 2026-11-06"
 
+#: A rank's share of ONE member split over eight cards: a rank measurement, never a point on the one-card curve.  It
+#: prices a rank of a split member (:data:`MPAS_RANK_CURVE_PEAKS`, :func:`mpas_rank_card_bytes`).
+#: THE BREAKAGE ITS MOVE PREVENTS (uniform MPAS-physics globes on one 96 GB card, 2026-11-15): as a point on the
+#: one-member curve it set the slope past 655,362 cells at 0.436 MiB a cell (0.480 with the margin), about six times
+#: the slope one card was measured at, so the forecast door refused before the forecast a 28 km globe (751,272 cells)
+#: as a 110,515.9 MiB footprint, 25 km (942,432) as 202,288.9 MiB and 22 km (1,216,922) as 334,067.4 MiB, and
+#: admitted 29 km with 7 GiB to spare where the run left 33 GiB free; one card held 59,318 MiB at 654,432 cells and
+#: 62,778 MiB at 700,362 cells that day (:data:`MPAS_ONE_CARD_PEAKS_20261115`).
+MPAS_RANK_SHARE_PEAK = RouteRunPeak(
+    route="mpas", multiprocessors=188, levels=55, cells=737_281,
+    peak_mib=102_000_000_000 / MIB,
+    receipt=("10 km x1.5898242, 5,898,242 cells, 55 levels, eight 96 GB cards; "
+             "ranks held 99.5/100.0 GB and requested another 1.61 GB, 2026-11-01. "
+             "102 GB is a failed-allocation lower bound, not a completed-run peak. "
+             "737,281 is ceil(global cells/8), an owned-share estimate, not a measured halo extent. "
+             "Applying this conservative floor to local cells also charges for their halos. "
+             "Source: HEX-GLOBAL-10KM-RESULT.md, MPAS physics memory result"))
+
+_ONE_CARD_RECEIPT = ("uniform quasi-uniform globe from the mesh generator, GFS 2026-06-21 12Z, 6 h with hourly history, "
+                     "MPAS convection_permitting, fast numerics, one member alone on an RTX PRO 6000 Blackwell Server "
+                     "(97,887 MiB, 188 SM) through the hosted global door; the card's peak from 1 s samples of the "
+                     "forecast's process group; gpuwm-hex 0.4.14 on gpuwm 2.9.13, 2026-11-15")
+
+#: One-card whole runs of uniform globes, 2026-11-15.
+MPAS_ONE_CARD_PEAKS_20261115: tuple[RouteRunPeak, ...] = (
+    RouteRunPeak(route="mpas", multiprocessors=188, levels=55, cells=654_432, peak_mib=59_318.0,
+                 receipt="30 km, 654,432 cells; " + _ONE_CARD_RECEIPT),
+    RouteRunPeak(route="mpas", multiprocessors=188, levels=55, cells=700_362, peak_mib=62_778.0,
+                 receipt="29 km, 700,362 cells; " + _ONE_CARD_RECEIPT),
+)
+
 MPAS_ROUTE_RUN_PEAKS: tuple[RouteRunPeak, ...] = (
-    RouteRunPeak(
-        route="mpas", multiprocessors=188, levels=55, cells=737_281,
-        peak_mib=102_000_000_000 / MIB,
-        receipt=("10 km x1.5898242, 5,898,242 cells, 55 levels, eight 96 GB cards; "
-                 "ranks held 99.5/100.0 GB and requested another 1.61 GB, 2026-11-01. "
-                 "102 GB is a failed-allocation lower bound, not a completed-run peak. "
-                 "737,281 is ceil(global cells/8), an owned-share estimate, not a measured halo extent. "
-                 "Applying this conservative floor to local cells also charges for their halos. "
-                 "Source: HEX-GLOBAL-10KM-RESULT.md, MPAS physics memory result")),
     # Re-measured on the 0.4.14 tree (hex 0.4.14, 2026-11-06).  THE BREAKAGE IT PREVENTS: the 0.4.8 points
     # (12,664 MiB at 40,962 cells, 75,069 MiB at 655,362) priced a 120 km member at 17.97e9 bytes for a 9.2 GB peak,
     # so smaller cards were refused and every planner and site price derived from the curve was about 2x high.
@@ -1620,6 +1642,7 @@ MPAS_ROUTE_RUN_PEAKS: tuple[RouteRunPeak, ...] = (
         route="mpas", multiprocessors=188, levels=55, cells=655_362, peak_mib=61_522.0,
         receipt=("x1.655362 30 km global-30km row, the larger of a 1 h run (60,372 MiB) and a 6 h run (61,522 MiB, "
                  "its peak in the first hour); " + _CURVE_RECEIPT)),
+    *MPAS_ONE_CARD_PEAKS_20261115,
     # The RRFS hrrrv5 suite (59 levels; TEMPO, MYNN-EDMF, RUC land, GSL drag) holds more than the general curve.
     # THE BREAKAGE IT PREVENTS (hex 0.5.0, 2026-11-09): the forecast door priced a 30 km hrrrv5 member from the
     # convection_permitting curve scaled by 59/55 levels, 76,122,381,353 bytes (72,596 MiB), and the run peaked
@@ -1638,6 +1661,11 @@ MPAS_ROUTE_RUN_PEAKS: tuple[RouteRunPeak, ...] = (
                  "numerics, hex 0.5.0, one member alone on an RTX PRO 6000 (97,887 MiB, 188 SM); the card's "
                  "nvidia-smi row every 2 s; 2026-11-09")),
 )
+#: The curve a rank of a member split over several cards is priced on (:func:`mpas_rank_card_bytes`): the rank share
+#: and the one-card runs that price was set on.  The one-card runs of 2026-11-15 are not in it: no split run has been
+#: measured beside them, so a rank's price stays as it was until one is.
+MPAS_RANK_CURVE_PEAKS: tuple[RouteRunPeak, ...] = (
+    MPAS_RANK_SHARE_PEAK, *(peak for peak in MPAS_ROUTE_RUN_PEAKS if peak not in MPAS_ONE_CARD_PEAKS_20261115))
 #: The retired 0.4.8 points, kept as the record (never priced).
 RETIRED_MPAS_ROUTE_RUN_PEAKS_048: tuple[RouteRunPeak, ...] = (
     RouteRunPeak(
@@ -1785,7 +1813,7 @@ def mpas_rank_card_bytes(local_cells: int, levels: int, model: "ShapedFootprintM
     below the smallest measured rank size from the suite's one-member price raised by the measured ratio of a
     rank's peak to the suite's one-member curve at that size.  A suite's rows never lower a price."""
 
-    one_member = route_required_free_bytes(int(local_cells), model, margin_bytes, route="mpas")
+    one_member = route_required_free_bytes(int(local_cells), model, margin_bytes, route="mpas", ranks=True)
     rows = [row for row in MPAS_RANK_CARD_ROWS
             if row.suite is None and int(local_cells) <= row.cells and int(levels) <= row.levels]
     if rows:
@@ -1795,12 +1823,13 @@ def mpas_rank_card_bytes(local_cells: int, levels: int, model: "ShapedFootprintM
         general = max(one_member, priced)
     else:
         ratios = [row.rank_peak_mib / curve for row in MPAS_RANK_CARD_ROWS
-                  if row.suite is None and (curve := route_run_curve_mib(row.rank_cells, "mpas", row.levels))]
+                  if row.suite is None and (curve := route_run_curve_mib(row.rank_cells, "mpas", row.levels, ranks=True))]
         general = int(round(one_member * max([1.0, *ratios])))
     own = [row for row in MPAS_RANK_CARD_ROWS if suite is not None and row.suite == suite]
     if not own:
         return general
-    suite_member = route_required_free_bytes(int(local_cells), model, margin_bytes, route="mpas", suite=suite)
+    suite_member = route_required_free_bytes(int(local_cells), model, margin_bytes, route="mpas", suite=suite,
+                                             ranks=True)
     covering = [row for row in own if int(local_cells) <= row.cells]
     row = min(covering, key=lambda r: r.cells) if covering else max(own, key=lambda r: r.cells)
     measured = sorted({(row.rank_cells, row.rank_peak_mib), *row.more})
@@ -1809,33 +1838,35 @@ def mpas_rank_card_bytes(local_cells: int, levels: int, model: "ShapedFootprintM
         priced = int(round(priced * (1.0 + ROUTE_RUN_MARGIN) * MIB))
     else:
         # the ratio at the smallest measured rank size, so the price is continuous there
-        curve = route_run_curve_mib(measured[0][0], "mpas", row.levels, suite)
+        curve = route_run_curve_mib(measured[0][0], "mpas", row.levels, suite, ranks=True)
         priced = int(round(suite_member * max(1.0, measured[0][1] / curve if curve else 1.0)))
     return max(general, suite_member, priced)
 
 
-def route_peak_rows(route: str = "mpas", suite: str | None = None) -> tuple["RouteRunPeak", ...]:
+def route_peak_rows(route: str = "mpas", suite: str | None = None, *,
+                    ranks: bool = False) -> tuple["RouteRunPeak", ...]:
     """The measured whole runs that price one ``route`` member of ``suite``: the suite's own rows when it has any,
     otherwise the route's general rows (data, never a code path per suite name)."""
 
-    rows = MPAS_ROUTE_RUN_PEAKS if route == "mpas" else ()
+    rows = (MPAS_RANK_CURVE_PEAKS if ranks else MPAS_ROUTE_RUN_PEAKS) if route == "mpas" else ()
     own = tuple(peak for peak in rows if suite is not None and peak.suite == suite)
     return own or tuple(peak for peak in rows if peak.suite is None)
 
 
 def route_run_curve_mib(cells: int, route: str = "mpas", levels: int = MODEL_VERTICAL_LEVELS,
-                        suite: str | None = None) -> float | None:
+                        suite: str | None = None, *, ranks: bool = False) -> float | None:
     """Peak MiB of one ``route`` member on ``cells`` columns, from that route's measured whole runs, or None.
 
     ``suite``: a physics suite with measured runs of its own is read from those (:func:`route_peak_rows`).
 
     Straight between neighbouring measured runs (peaks made non-decreasing in cells), the end segments' slopes
-    past the smallest and largest; one run alone scales cell-linear.  The runs were measured on different cards;
+    past the smallest and the steepest chord into the largest past it; one run alone scales cell-linear.
+    ``ranks``: the curve a rank of a split member is priced on (:data:`MPAS_RANK_CURVE_PEAKS`).  The runs were measured on different cards;
     the per-card terms (CUDA local-memory store, radiation chunk) differ between them by a few hundred MiB, far
     inside :data:`ROUTE_RUN_MARGIN`.  Derived between and past the measured sizes, not measured there."""
 
     points: dict[int, float] = {}
-    for peak in route_peak_rows(route, suite):
+    for peak in route_peak_rows(route, suite, ranks=ranks):
         if peak.levels == int(levels):
             points[peak.cells] = max(points.get(peak.cells, 0.0), float(peak.peak_mib))
     if not points:
@@ -1847,6 +1878,15 @@ def route_run_curve_mib(cells: int, route: str = "mpas", levels: int = MODEL_VER
     x = float(cells)
     if len(xs) == 1:
         return ys[0] * x / xs[0]
+    if x > xs[-1]:
+        # Past the largest run: the steepest of the last segment and the chords into the largest run from the runs
+        # with at most three quarters of its cells.  THE BREAKAGE IT PREVENTS (2026-11-15): two runs a few per cent
+        # apart (654,432 and 700,362 cells, whose peaks differ by run-to-run spread as much as by size) make a last
+        # segment of 0.028 MiB a cell, a third of the 0.083 the route holds between 60 and 29 km, and would admit a
+        # 22 km globe on a 96 GB card it cannot fit.  Where the runs are spread out this is the last segment.
+        slope = max([(ys[-1] - ys[-2]) / (xs[-1] - xs[-2]),
+                     *((ys[-1] - y) / (xs[-1] - xi) for xi, y in zip(xs, ys) if xi <= 0.75 * xs[-1])])
+        return max(0.0, ys[-1] + slope * (x - xs[-1]))
     segment = next((i for i in range(1, len(xs)) if x <= xs[i]), len(xs) - 1)
     x0, x1, y0, y1 = xs[segment - 1], xs[segment], ys[segment - 1], ys[segment]
     return max(0.0, y0 + (y1 - y0) * (x - x0) / (x1 - x0))
@@ -1863,16 +1903,17 @@ def model_for_run(card: CardProfile, configuration: str = 'global', levels: int 
             or model_for_card(card, configuration, levels, rollback_armed=rollback_armed))
 
 
-def _curve_at_levels(cells: int, route: str, levels: int, suite: str | None) -> float | None:
+def _curve_at_levels(cells: int, route: str, levels: int, suite: str | None, *,
+                     ranks: bool = False) -> float | None:
     """:func:`route_run_curve_mib` on ``levels``; where no run was measured on that vertical grid, the curve of the
     measured grid (55 levels where there is one) with extra levels scaled up: a different vertical grid still pays
     for that route's physics."""
 
-    curve = route_run_curve_mib(cells, route, levels, suite)
+    curve = route_run_curve_mib(cells, route, levels, suite, ranks=ranks)
     if curve is None:
-        measured = sorted({peak.levels for peak in route_peak_rows(route, suite)})
+        measured = sorted({peak.levels for peak in route_peak_rows(route, suite, ranks=ranks)})
         reference = MODEL_VERTICAL_LEVELS if MODEL_VERTICAL_LEVELS in measured else (measured[0] if measured else None)
-        curve = None if reference is None else route_run_curve_mib(cells, route, reference, suite)
+        curve = None if reference is None else route_run_curve_mib(cells, route, reference, suite, ranks=ranks)
         if curve is not None:
             curve *= max(1.0, levels / reference)
     return curve
@@ -1880,7 +1921,7 @@ def _curve_at_levels(cells: int, route: str, levels: int, suite: str | None) -> 
 
 def route_required_free_bytes(cells: int, model: ShapedFootprintModel | None = None,
                               margin_bytes: int | None = None, *, route: str = "arwen",
-                              suite: str | None = None) -> int:
+                              suite: str | None = None, ranks: bool = False) -> int:
     """:func:`required_free_bytes` for one member on ``route``.
 
     The ArWen route is exactly :func:`required_free_bytes`.  The MPAS route is never below it, and never below
@@ -1898,10 +1939,10 @@ def route_required_free_bytes(cells: int, model: ShapedFootprintModel | None = N
         return base
     if route == "arwen":
         return base
-    curve = _curve_at_levels(int(cells), route, int(model.levels), None)
+    curve = _curve_at_levels(int(cells), route, int(model.levels), None, ranks=ranks)
     if curve is None:
         raise ValueError(f"no whole-run memory measurement for physics route {route}")
-    own = [peak for peak in (MPAS_ROUTE_RUN_PEAKS if route == "mpas" else ())
+    own = [peak for peak in ((MPAS_RANK_CURVE_PEAKS if ranks else MPAS_ROUTE_RUN_PEAKS) if route == "mpas" else ())
            if suite is not None and peak.suite == suite]
     if own:
         # The suite's own runs only ever raise the price, and only where they were measured: inside and above their
@@ -1909,7 +1950,7 @@ def route_required_free_bytes(cells: int, model: ShapedFootprintModel | None = N
         # raise every small mesh with no measurement behind it).
         smallest = min(own, key=lambda peak: peak.cells)
         if int(cells) >= smallest.cells:
-            measured = _curve_at_levels(int(cells), route, int(model.levels), suite)
+            measured = _curve_at_levels(int(cells), route, int(model.levels), suite, ranks=ranks)
         else:
             measured = (smallest.peak_mib * int(cells) / smallest.cells
                         * max(1.0, int(model.levels) / smallest.levels))

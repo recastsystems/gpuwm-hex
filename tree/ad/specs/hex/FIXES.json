@@ -1,0 +1,196 @@
+{
+ "schema": "ad.e2e.spec-fixes/v1",
+ "unit": "U3",
+ "shape": "hex strict dry x1.2562, pin 16251589",
+ "fixes": [
+  {
+   "spec": "dycore/moist_cell_coefficients_v841_f32.json",
+   "sha256": "1dede15409f5db4cd3ace14e74b76501d16224f89905f09aa6d307a063fc6804",
+   "from": {
+    "path": "<origin>/ad/ad1-g09-dycore-driver-c-reconcile/out/patch/hex-ad/specs/dycore/moist_cell_coefficients_v841_f32.json",
+    "sha256": "52ff2e61e9418f30740ae4fbb76ce050671ecb7021247372e0a1814372c26e9c"
+   },
+   "edits": [
+    {
+     "arg": "cqw",
+     "set": {
+      "role": "out",
+      "overwrite_mask": {
+       "axis": 0,
+       "index_range": {
+        "start": 1,
+        "stop": "nlev"
+       },
+       "basis": "cuda_driver.py:1534-1544 at 16251589: for (k = 1; k < nlev; ++k) cqw[C2(k,cell,ncells)] = ...; cqw is never read; row 0 untouched"
+      }
+     },
+     "was": {
+      "role": "inout",
+      "overwrite_mask": {
+       "axis": 0,
+       "indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58
+       ],
+       "basis": "cuda_driver.py:1537-1544 writes cqw for k=1..nlev-1 at every cell; nlev from the captures"
+      }
+     },
+     "why": "fixed indices 1..58 were nlev=59 values (out of range at nlev=55); inout let never-written row 0 scratch set seeds and output scale"
+    }
+   ]
+  },
+  {
+   "spec": "dycore/euler_w_moist_v841_f32.json",
+   "sha256": "ed4f11f691a4cd00dfa497f6a67eb73d2833ccfb49984f2826ac17868ddbdef3",
+   "from": {
+    "path": "<origin>/ad/ad1-g09-dycore-driver-c-reconcile/out/patch/hex-ad/specs/dycore/euler_w_moist_v841_f32.json",
+    "sha256": "c316dbf7c1551695a2bdb1c3f1379656b43b9c5e55183bbc2754ef09f0e85a81"
+   },
+   "edits": [
+    {
+     "staggers": [
+      {
+       "arg": "rdzu",
+       "was": "interface",
+       "set": "level"
+      },
+      {
+       "arg": "fzm",
+       "was": "interface",
+       "set": "level"
+      },
+      {
+       "arg": "fzp",
+       "was": "interface",
+       "set": "level"
+      }
+     ],
+     "why": "shape [nlev], indexed rdzu[k]/fzm[k]/fzp[k] at cuda_driver.py:1607-1612; capture stagger level"
+    }
+   ]
+  },
+  {
+   "spec": "dycore/mpas_rk_edges_v842_f32.json",
+   "sha256": "42714e0c69dcce9e0b811d17b3fbbe876cd61cf0afaec8aea70e6402263e51db",
+   "from": {
+    "path": "<origin>/ad/ad1-g28-dycore-physics-v841-b/out/patch/hex-ad/specs/dycore/mpas_rk_edges_v842_f32.json",
+    "sha256": "c7aabe71045ff9406633ea6b7910d3446d193be129353ad241a8d07001cd9f41"
+   },
+   "edits": [
+    {
+     "args": [
+      "out_u",
+      "tend_u_phys"
+     ],
+     "set": {
+      "out_u": {
+       "axis": 1,
+       "index_range": {
+        "start": 0,
+        "stop": "nsolve"
+       },
+       "basis": "cuda_physics_v841.py:1812-1816: if (i % nedges >= nsolve) return; ... out_u[i] = u"
+      },
+      "tend_u_phys": {
+       "overwrite": "conditional",
+       "condition": "first && (pbl || cu_momentum)",
+       "then": {
+        "overwrite": "full"
+       },
+       "else": {
+        "overwrite": "none"
+       }
+      }
+     },
+     "why": "partial without a machine mask (runner: 'partial overwrite out_u needs overwrite_mask.axis'); tend_u_phys is scalar-conditioned"
+    },
+    {
+     "branches": "reordered so each slot's first entry is at its slot index; inactive split copies follow",
+     "entries": 23,
+     "slots": 18,
+     "positions_changed": 21
+    }
+   ]
+  },
+  {
+   "spec": "dycore/mpas_rk_cells_v842_f32.json",
+   "sha256": "c57fbdc025ba349d8b2944178ea9b58c13cd6fafeddf1920704f6dbf13d3e983",
+   "from": {
+    "path": "<origin>/ad/ad1-g28-dycore-physics-v841-b/out/patch/hex-ad/specs/dycore/mpas_rk_cells_v842_f32.json",
+    "sha256": "c889bf5dee32bf8ecdf5fdff157b56ca9be564858c41d688d638f601ab096f17"
+   },
+   "edits": [
+    {
+     "args": [
+      "out_theta",
+      "out_rho",
+      "out_q"
+     ],
+     "why": "partial without a machine mask; out_q written only when pbl or cu is enabled (never on the dry route)"
+    },
+    {
+     "branches": "reordered so each slot's first entry is at its slot index; inactive split copies follow",
+     "entries": 45,
+     "slots": 30,
+     "positions_changed": 44
+    }
+   ]
+  }
+ ]
+}

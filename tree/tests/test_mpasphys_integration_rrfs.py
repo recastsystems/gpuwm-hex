@@ -487,7 +487,15 @@ def test_landed_door_mode_controls_keep_fork_exact_authority(tmp_path, suite):
         assert correct.options['config_tempo_version'] == 'v3.2.5'
     same = lambda o: {k: v for k, v in o.items() if k != 'config_tempo_version'}
     assert same(correct.options) == same(before.options) and correct.backends == before.backends
-    assert correct.selectors == before.selectors and not correct.corrections
+    assert correct.selectors == before.selectors
+    # Fork scheme defects (fork_corrections) are corrected on the hex-cuda slots that run their schemes.
+    from hexcore.mpasphys.rrfs.driver_rrfs import Backend as _Backend
+    from hexcore.mpasphys.rrfs.fork_corrections import active as _fork_active
+    # A fix the running scheme version already has in its own text (TEMPO v3.2.5: TP1 to TP3) is not applied twice.
+    held = {finding for finding, _ in correct.fork_carried()}
+    assert not correct.corrections & held
+    assert correct.corrections | held == _fork_active(correct.selectors, correct.backends, _Backend.HEX_CUDA,
+                                                      _Backend.OFF, frozenset())[0]
     gap = correct.receipt()['correct_mode']['gaps'][0]
     assert gap['finding'] == specification()['correct_mode_inventory']['finding']
     assert 'fork' in gap['reason'] and 'v8.3.1/GSL' in gap['breakage']

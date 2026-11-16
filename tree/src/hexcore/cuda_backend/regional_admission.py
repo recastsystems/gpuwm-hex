@@ -804,8 +804,39 @@ class RegionalContract:
 #: (41) 2026-11-11 (hex 0.5.0 re-seal): comment and docstring lines in cuda_driver.py, cuda_regional_forecast_v841.py
 #: and note (13) above reworded; no code, CUDA source string, compile request or arithmetic changed. Re-derived by
 #: tools/repin_source_tables.py; not a new mint.
+#: (42) 2026-11-16 (fwdmatch/remint-dist50, for dist50): the mixing's mesh-size scaling is computed with GNU powf,
+#: as native MPAS-A built by gfortran computes it (fwdmatch/mesh-scaling-gnu-powf cfeb3dd9d: meshScalingDel2/Del4 in
+#: cuda_horizontal.py and the regional scaling in regional_v841.py, with mixing.py's host scaling outside this set).
+#: dist49 merged it and reverted it (1a775d052) because it moved this digest. THIS IS AN ARITHMETIC CHANGE on every
+#: variable mesh with config_h_ScaleWithMesh: a scaling word moves wherever the device powf and GNU powf round
+#: differently. It moves the regional lane TOWARD native, measured, not assumed: against native MPAS-A 44c0849,
+#: strict and exact, the 3 km storm-box hour, the 12 km storm-cut hour and the recut lam7k hour are 0 words
+#: different in every history, diag and restart file with it; without it the storm box differs from native in
+#: 986,078 history words at its first step. The former source set was
+#: 3be7dc867d7fcd77a1ca28c79ac2d9df23ff9ff6e69fa9712d50bf9f0ae5addf. The value below is re-derived by
+#: tools/repin_source_tables.py. The six class rows are carried at it as in (4) to (41): their archived receipts keep
+#: their recorded scope and were not re-run on their own culls (those meshes are not on the machine this was done
+#: on). This digest's own runtime mint (hexcore.regional_mint, two strict dry processes) is in the branch's record.
+#: (43) 2026-11-16 (mint/forward-060, for hex 0.6.0): cuda_driver.py runs the regional negative-scalar clamp once a
+#: step. When a post-transport physics callback ran, the clamp has already run inside it, before microphysics, where
+#: native runs it (mpas_atm_time_integration.F:2818); the second clamp after the cloud scheme is skipped, as
+#: cuda_driver_rrfs.py already skipped it (model audit D8, audit-fix/d8-clamp-rel 22d96749d). THIS CAN CHANGE
+#: ARITHMETIC in a full-physics limited-area forecast on this driver, wherever the cloud scheme leaves a negative
+#: scalar the second clamp used to zero; a dry run has no callback and keeps its clamp, so the dry dycore the class
+#: mint runs is untouched. The only changed member of this set since (42). The former source set was
+#: fb31fe2294e4eb45b28c9761be6da6a8cac0eae3f45844046b1eaec46f323ca6. The value below is re-derived by
+#: tools/repin_source_tables.py. Every forward edit to a member of this set that 0.6.0 carries is in it, so this is
+#: the one value 0.6.0 mints at.
+#: MEASURED AT THIS VALUE (16 Nov 2026, RTX 5090, strict): the runtime mint (hexcore.regional_mint: two independent
+#: dry processes, 15 steps, six fields digested at every step) on a 12 km limited-area cut at dt 60 s and on a 3 km
+#: cut at dt 15 s and at dt 20 s, all 16 frames identical in each pair. Against native MPAS-A 44c0849, exact mode, one
+#: hour each, 0 words different in every history, diag and restart file: the 3 km cut (1,131,138,532 words), the 12 km
+#: cut through the plain hrrrv5 door (85,508,314 words), and the 12 km cut with New Tiedtke cumulus (86,751,014 words).
+#: NOT MEASURED AT THIS VALUE: the six class rows below. They are carried at it as in (4) to (42); their archived
+#: receipts keep their recorded scope and were not re-run on their own culls. A geometry outside those rows mints
+#: itself at the door on first use.
 MINTED_KERNEL_SET_SHA256 = (
-    "3be7dc867d7fcd77a1ca28c79ac2d9df23ff9ff6e69fa9712d50bf9f0ae5addf"
+    "ed66eddc159dc84fb96f918d6fa195722a65d307c2306260fae2c44f3e4acd48"
 )
 
 _DRY_MINT_CAVEAT = (

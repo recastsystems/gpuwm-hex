@@ -3986,6 +3986,16 @@ def require_forecast_inputs(arguments: argparse.Namespace, *, native: bool = Fal
     return tuple(files)
 
 
+def mesh_nominal_dx_m(arguments: argparse.Namespace) -> float | None:
+    """The run's nominal mesh spacing: the registered row's, else the spacing the mesh files record (as
+    :func:`bind_native_step` reads it).  ``None`` when neither names one."""
+    registry = load_registry(resolve_repo(getattr(arguments, "repo", None)))
+    row = registry.get(getattr(arguments, "mesh", None))
+    if row is not None:
+        return None if getattr(row, "nominal_dx_m", None) is None else float(row.nominal_dx_m)
+    return _mesh_file_spacing_m(arguments)
+
+
 def bind_native_step(arguments: argparse.Namespace, native_text: str) -> str:
     """The MPAS suite route's ``config_dt``: the namelist's, else the door's own step for the mesh.
 

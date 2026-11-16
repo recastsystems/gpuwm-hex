@@ -69,7 +69,13 @@ def region_request(args):
             raise MpasPortError("point must be LAT,LON") from error
         radius = getattr(args, "radius_km", None)
         if not (-90 <= lat <= 90 and -180 <= lon <= 180 and radius and math.isfinite(radius) and 0 < radius < 10000):
-            raise MpasPortError("point latitude/longitude or radius is outside the finite geographic range")
+            raise MpasPortError("point latitude/longitude or radius is outside the finite geographic range" + (
+                f"; --point takes LAT,LON, and read the other way round {lon:g},{lat:g} is a valid point"
+                if not -90 <= lat <= 90 and -90 <= lon <= 90 and -180 <= lat <= 180 else ""))
+        from .mesh_point import swapped_point_refusal
+        swapped = swapped_point_refusal(lat, lon)
+        if swapped is not None:
+            raise MpasPortError(swapped)
         geometry = {"kind": "cap", "center_deg": [lat, lon], "radius_km": radius}
         half = math.degrees(radius / 6371.229)
         south, north = max(-90, lat-half), min(90, lat+half)
@@ -190,8 +196,28 @@ def _producer_init_argv(args, value):
 
 
 def _measured_first_guess(met, declared):
+    """The first guess the init or the boundaries read: the row's, with the level counts measured on the files.
+
+    A boundary met directory's endpoints (lbc_producer's source-endpoints.json) each name their decode receipt, whose
+    effective_first_guess counts the levels the decode actually wrote; the boundaries read the largest, which every
+    file fits under (the regional door's table stage does the same). THE BREAKAGE THIS PREVENTS (2026-11-13, the
+    first hex region from ICON): ICON's 19 pressure levels plus the 8 its GFS upper-air donor adds above 30 hPa made
+    27-level boundary files, and rw_mpas_lbc, told the row's 19, refused them ("raise --nfglevels to at least 27").
+    """
     from .regional_door import _first_guess
-    return _first_guess({"source": {"first_guess": declared}, "paths": {"met": str(met)}})
+    guess = _first_guess({"source": {"first_guess": declared}, "paths": {"met": str(met)}})
+    endpoints = Path(met) / "source-endpoints.json"
+    if endpoints.is_file():
+        counts = []
+        for item in json.loads(endpoints.read_text(encoding="utf-8")).get("endpoints", []):
+            receipt = Path(item.get("receipt", ""))
+            effective = (json.loads(receipt.read_text(encoding="utf-8")).get("effective_first_guess") or {}
+                         if receipt.is_file() else {})
+            if effective.get("nfglevels"):
+                counts.append(int(effective["nfglevels"]))
+        if counts:
+            guess["nfglevels"] = max(int(guess["nfglevels"]), max(counts))
+    return guess
 
 
 def region_specification(row):
@@ -309,10 +335,34 @@ class _SourceBesideMesh:
                     pass
 
 
+def refuse_producer_geog_missing(args, value):
+    """A producer suite's start (hrrrv5, the rrfs_* suites) builds its own static from the geography: read that the
+    geography holds its datasets before any source hour is fetched.
+
+    THE BREAKAGE THIS PREVENTS (a front-door run of the sealed 0.6.0 candidate, 2026-11-15): on a machine whose
+    geography held the door's own datasets but not the fork static's (MODIS 15 s land use among them), ``country
+    --source icon --forecast-arg=--physics-suite=hrrrv5`` built the mesh and fetched and decoded seven ICON hours
+    (186 s, 5.1 GB) before the init, the last stage of the preparation, named the missing datasets. A region with
+    its own ``--static`` is left to the init, which reads whether that file already carries the fork's fields."""
+    command = value["commands"].get("producer_init")
+    if not command or getattr(args, "static", None):
+        return
+    from .mesh_point import resolve_geog
+    from .mpasphys.rrfs.cold_start_rrfs import producer_for_suite, refuse_missing_static_geog
+
+    def word(flag):
+        return command[command.index(flag) + 1] if flag in command else None
+    found = producer_for_suite(word("--physics-suite"), pin_set=word("--physics-pin-set"))
+    if found is None:
+        return
+    refuse_missing_static_geog(found[1], resolve_geog(args.geog).expanduser().absolute(),
+                               word("--deep-soil-temperature"))
+
+
 def _prepare_region(args, value, status):
     from .lbc_producer import produce_source_endpoints
-    if args.endpoint_workers < 1:
-        raise MpasPortError("endpoint workers must be positive")
+    refuse_producer_geog_missing(args, value)   # before the first source hour is fetched
+    args.endpoint_workers = country_endpoint_workers(getattr(args, "endpoint_workers", None))
     source = _SourceBesideMesh(value["boundary_endpoints"], args.work_dir.resolve() / "boundary-met",
                                args.endpoint_workers, produce_source_endpoints)
     try:
@@ -451,7 +501,30 @@ def _prepare_region_stages(args, value, status, source):
                    boundary_first_guess=guess)
     return measured("lbc", lambda: main(boundary))
 
+def country_endpoint_workers(requested=None, cpus=None) -> int:
+    """Source hours a region downloads and decodes at once: ``--endpoint-workers`` when given, else half the CPUs this
+    process may use (affinity and cgroup quota), at least 2 and at most 8: the regional door's rule for its leads
+    (regional_door._table_decode_workers), so both region doors read their source alike.
+
+    THE BREAKAGE THIS PREVENTS (WOOF hex regions, 2026-11-13): the country door read two source hours at a time on
+    every host, so an ICON region on a 16-vCPU box waited on two DWD downloads at a time (DWD serves each download
+    slowly) and an ERA5 region on two whole-globe downloads at a time, while the CPUs had room for more. Measured on
+    a test host held to 16 cores, 6 h regions, seconds from the start until the six boundary hours were ready: ICON
+    (2026-11-13 12Z, r 1200 km) 426 and 482 at 2 at once, 323 at 4, 233 at 8; ERA5 (2011-04-26 06Z, r 2650 km, on a
+    home line that tops out near 90 MB/s) 399 to 534 at 2, 444 at 4, 380 to 475 at 8, no clear gain on that line.
+    Peak anonymous memory at 8: 12.2 GiB (ICON), 17.2 GiB (ERA5). The boundary files are byte-identical at 2, 4 and 8."""
+    if requested is not None:
+        if requested < 1:
+            raise MpasPortError("endpoint workers must be positive")
+        return int(requested)
+    if cpus is None:
+        from .cpu_budget import available_cpus
+        cpus = available_cpus()
+    return max(2, min(8, int(cpus) // 2))
+
+
 def plan(args):
+    args.endpoint_workers = country_endpoint_workers(getattr(args, "endpoint_workers", None))
     try:
         issued = datetime.strptime(args.cycle, "%Y-%m-%dT%H")
     except ValueError as error:
@@ -470,6 +543,19 @@ def plan(args):
     _, source = resolve_regional_source(getattr(args, "source", None) or row["init_source"], source_table)
     row = copy.deepcopy(row)
     row["init_source"] = source["id"]
+    if "geometry" in row and source.get("blend"):
+        # THE BREAKAGE THIS PREVENTS: a blend row has no first guess and no boundary cadence of its own (its halves
+        # are two other rows), so a region asked for with one ended in "declares no forecast cadence for its
+        # boundaries", or with --boundary-source in a Python traceback (KeyError 'first_guess').
+        blend = source["blend"]
+        raise MpasPortError(
+            f"{source['id']} is a blended start ({blend['inside']} inside, {blend['outside']} outside), not a source a "
+            f"region is built from. Build the region from a global source first (--source gfs), then blend its start: "
+            f"gpuwm-hex init-source --source {source['id']} --cycle {args.cycle} --grid WORK/mesh.grid.nc "
+            "--static WORK/mesh.static.nc --outside-init WORK/mesh.init.nc --out-dir BLEND (on a producer suite such "
+            "as hrrrv5 the region's init is WORK/rrfs-init/init.nc; add the same --physics-suite), and run the "
+            "forecast from BLEND/init.nc with the region's own boundaries (docs/init-sources.md, Blended starts). "
+            "Nothing was built")
     if "geometry" not in row and source.get("coverage") == "limited_area":
         raise MpasPortError(f"{source['id']} covers a limited area; choose a country with regional geometry")
     if "geometry" not in row and (getattr(args, "boundary_source", None) or getattr(args, "boundary_cycle", None)):
@@ -507,6 +593,16 @@ def plan(args):
     # step rule below and the region's init completion see the suite the forecast runs.
     extra = ensure([str(item) for item in getattr(args, "forecast_arg", None) or ()], mesh.get("fine_dx_m"))
     named = forecast_arg_physics(extra)
+    # The cold init is built for the profile the forecast runs: a named profile's init row (hrrr-like and
+    # hrrr-like-aerosol take nc, nifa and nwfa from the monthly aerosol climatology) is forwarded to init-source, as
+    # the point and zoom-globe doors forward it (mesh_plan_door, physics_default.init_flags). THE BREAKAGE THIS
+    # PREVENTS (2026-11-15, a 12 km region from GFS with --forecast-arg=--physics-profile=hrrr-like): the region
+    # prepared for 84 s, its init had no aerosol fields, and the forecast refused at its start ("physics profile
+    # 'hrrr-like' needs prepared init fields ['nifa', 'nwfa']"), so no region could run either profile.
+    from .physics_default import init_flags
+    profile_flags = init_flags(extra)
+    if "--physics-profile" in profile_flags:
+        initialization += profile_flags
     from .physics_default import door_step
     step = door_step(named, mesh["dt_seconds"], mesh.get("fine_dx_m"))
     forecast = ["forecast", "--mesh", mesh["id"], *common, "--init", str(init),
@@ -872,7 +968,10 @@ def add_country_parser(commands):
     parser.add_argument("--source", help="init-source row override, used for init and every boundary endpoint")
     parser.add_argument("--source-table", type=Path)
     parser.add_argument("--member", type=int)
-    parser.add_argument("--endpoint-workers", type=int, default=2)
+    parser.add_argument("--endpoint-workers", type=int, default=None,
+                        help="source hours (the start and each boundary time) downloaded and decoded at once. "
+                             "Default: half the CPUs this process may use, at least 2 and at most 8 "
+                             "(country_endpoint_workers)")
     parser.add_argument("--table", type=Path, default=TABLE)
     parser.add_argument("--cycle", required=True, help="YYYY-MM-DDTHH, the init cycle")
     parser.add_argument("--lead-hours", type=int, default=0, metavar="H",

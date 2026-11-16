@@ -1,0 +1,282 @@
+{
+ "kernel": "acoustic_cofrz_v841",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_acoustic_v841.py",
+ "line": 35,
+ "route": "generated",
+ "mode": "exact",
+ "launch": {
+  "grid": "ceil_div(nlev, block.x)",
+  "block": "forward block.x, y=z=1",
+  "shared_bytes": 0,
+  "adjoint": "one 1D block, 1..1024 threads; grid (1,1,1)"
+ },
+ "args": [
+  {
+   "name": "nlev",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed discrete vertical extent",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "rdzw",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1
+  },
+  {
+   "name": "cofrz",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:39",
+   "predicate": "k < nlev",
+   "policy": "inactive-index",
+   "tie": "fixed integer extent; no continuous threshold",
+   "slot": 0,
+   "recording": "not required: fixed integer control"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:39",
+   "column": 11,
+   "operation": "predicate",
+   "expression": "if (k < nlev) cofrz[k] = rdzw[k];",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The predicate or loop exit depends only on captured integer launch bounds, schedule, or fixed mesh topology; no floating state selects the arm.",
+   "replay": "Replay the captured integer bounds and control."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:39",
+   "column": 30,
+   "operation": "lookup",
+   "expression": "rdzw[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "device_layout": "int32[1]",
+  "slots": 1,
+  "source_ids": {
+   "1": "nonfinite input or cotangent or invalid adjoint geometry"
+  },
+  "scheduler": "zero before launch; if nonzero discard the entire gradient and record the refusal"
+ },
+ "entry_points": {
+  "tl": {
+   "symbol": "acoustic_cofrz_v841__tl",
+   "arguments": [
+    "nlev",
+    "rdzw",
+    "cofrz",
+    "d_rdzw",
+    "d_cofrz",
+    "failures"
+   ]
+  },
+  "ad": {
+   "symbol": "acoustic_cofrz_v841__ad",
+   "arguments": [
+    "nlev",
+    "rdzw",
+    "cofrz",
+    "b_rdzw",
+    "b_cofrz",
+    "workspace",
+    "failures"
+   ]
+  },
+  "aug": {
+   "symbol": "acoustic_cofrz_v841__aug",
+   "arguments": [
+    "nlev",
+    "rdzw",
+    "cofrz",
+    "failures"
+   ]
+  }
+ },
+ "workspace": {
+  "ad": "4*nlev bytes, disjoint; output cotangent snapshot, lifetime through adjoint launch"
+ },
+ "alias": "all primal, tangent, cotangent, workspace and failure buffers disjoint",
+ "source_ids": {
+  "1": "nonfinite input or cotangent or invalid adjoint geometry"
+ },
+ "affine": true,
+ "affine_reason": "Copies active rdzw to cofrz, with a fixed integer extent.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "acoustic_cofrz_v841__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofrz"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "arg": "rdzw",
+        "field_id": 1,
+        "io": "in"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "cofrz",
+      "field_id": 2,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "nonfinite input or cotangent or invalid adjoint geometry"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "acoustic_cofrz_v841__ad",
+    "geometry": {
+     "grid": [
+      1,
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofrz",
+      "post": true
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "arg": "rdzw",
+        "field_id": 1,
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cofrz",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "workspace",
+      "name": "workspace",
+      "bytes": "4*nlev",
+      "init": "zero"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "nonfinite input or cotangent or invalid adjoint geometry"
+      ]
+     }
+    ]
+   },
+   "aug": {
+    "function": "acoustic_cofrz_v841__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofrz"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "nonfinite input or cotangent or invalid adjoint geometry"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "launch_abi_limitations": [],
+ "owner_task": "ad1-023-acoustic_cofrz_v841"
+}

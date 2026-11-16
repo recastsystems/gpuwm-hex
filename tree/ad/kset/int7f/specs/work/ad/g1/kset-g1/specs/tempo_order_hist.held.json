@@ -1,0 +1,51 @@
+{
+  "kernel": "tempo_order_hist",
+  "engine": "hex",
+  "file": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py",
+  "line": 4037,
+  "module": "pkg18 module 477158923b00908c",
+  "route": "hand",
+  "mode": "exact",
+  "owner_task": "ad/held-tempo_order_hist",
+  "policy": "inactive integer kernel (COMMON-AD 87.1; P8 rules.rs class inactive: outputs zero in both directions)",
+  "launch": {"grid": "capture", "block": "capture", "shared_bytes": 0},
+  "args": [
+    {"name": "cost", "role": "in", "dtype": "u32", "shape": "[n]", "stagger": "cell", "active": false,
+     "inactive_reason": "Per-column cycle counts / 16 from tempo_warp_steps clock64 (scheduling only); integer, no float dependence.",
+     "overwrite": "none", "alias_group": null, "weight": "none", "field_id": 1},
+    {"name": "n", "role": "scalar", "dtype": "i32", "shape": "[]", "stagger": "none", "active": false,
+     "inactive_reason": "Integer column count.", "overwrite": "none", "alias_group": null, "weight": "none"},
+    {"name": "hist", "role": "inout", "dtype": "u32", "shape": "[128]", "stagger": "none", "active": false,
+     "inactive_reason": "Integer bucket counts (atomicAdd); the plan clears it before every launch. Derivative words zero.",
+     "overwrite": "accumulate-integer", "alias_group": null, "weight": "none", "field_id": 2}
+  ],
+  "saved": [],
+  "branches": [
+    {"file_line": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py:4032", "operation": "predicate", "predicate": "c==0u",
+     "policy": "inactive-index", "tie": "not applicable", "slot": 0, "proof_config": "Integer bucket selection."},
+    {"file_line": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py:4034", "operation": "predicate", "predicate": "e>=2",
+     "policy": "inactive-index", "tie": "not applicable", "slot": 1, "proof_config": "Integer shift direction."},
+    {"file_line": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py:4035", "operation": "clamp", "predicate": "imin(key,127)",
+     "policy": "inactive-index", "tie": "not applicable", "slot": 2,
+     "proof_config": "Integer key clamp (no-op for 32-bit c: key <= 127). Index selection, nothing to freeze."},
+    {"file_line": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py:4038", "operation": "predicate", "predicate": "i<n",
+     "policy": "inactive-index", "tie": "not applicable", "slot": 3, "proof_config": "Thread guard."}
+  ],
+  "tables": [],
+  "refusal": {"nonfinite": false},
+  "launch_abi": {
+    "schema": "ad.entry/v1",
+    "entries": {
+      "tl": {"function": "tempo_order_hist__tl", "geometry": "forward", "args": [
+        {"bind": "scalar", "arg": "n"},
+        {"bind": "tangent", "arg": "cost", "field_id": 1, "io": "in"},
+        {"bind": "tangent", "arg": "hist", "field_id": 2, "io": "out"}]},
+      "ad": {"function": "tempo_order_hist__ad", "geometry": "forward", "args": [
+        {"bind": "scalar", "arg": "n"},
+        {"bind": "adjoint", "arg": "cost", "field_id": 1, "io": "accumulate"},
+        {"bind": "adjoint", "arg": "hist", "field_id": 2, "io": "inout"}]}
+    }
+  },
+  "piecewise_affine": true,
+  "piecewise_affine_arms": "Constant (zero) map on hist for every executed bucket selection."
+}

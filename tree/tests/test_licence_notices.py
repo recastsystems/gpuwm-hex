@@ -152,6 +152,20 @@ def test_the_helper_crate_notice_follows_the_bridge_pin() -> None:
         assert re.search(rf"^  {re.escape(crate)} ", text, re.M), f"{crate} is not in the notice"
 
 
+def test_the_notices_carry_no_conflict_marker_remains() -> None:
+    """No line of NOTICE or THIRD-PARTY-NOTICES.txt is a merge-conflict marker.
+
+    THE BREAKAGE THIS PREVENTS (0.6.0 candidate, found 2026-11-15): a merge left the middle line of a conflict
+    marker, seven equals signs, where the rule above section 18 of NOTICE belongs, in the file a user reads.
+    tests/test_no_conflict_markers.py reads only the opening and closing markers and only files with a text
+    suffix, and NOTICE has none, so nothing saw it.
+    """
+    for source in (NOTICE, THIRD_PARTY):
+        marks = [f"{source.name}:{number}" for number, line in enumerate(_text(source).splitlines(), 1)
+                 if line.rstrip() == "=" * 7 or line.startswith(("<" * 7 + " ", ">" * 7 + " "))]
+        assert marks == [], f"conflict-marker remains in a notice file: {marks}"
+
+
 def test_notice_reproduces_the_mpas_licence_byte_for_byte() -> None:
     copy = _text(LICENSES / "LICENSE-MPAS-BSD-3-Clause.txt")
     body = copy.split("------------------------------------------------------------------------\n\n", 1)[1]

@@ -1,0 +1,1084 @@
+{
+ "schema": "ad.phys.p9-schemes/v1",
+ "plan": "/work/ad/phys/run/pkg18/plan.json",
+ "plan_milestone": "hrrrv5 milestone 1 (COMMON-AD 56.1, 103.3): radiation and land held",
+ "plan_steps": 18,
+ "kernels": 149,
+ "launches": 11228,
+ "launches_by_status": {
+  "live-e2e": 7605,
+  "refuse": 512,
+  "inactive": 991,
+  "rule": 1049,
+  "live-glue": 654,
+  "held": 360,
+  "constant": 3,
+  "permutation": 54
+ },
+ "launches_by_scheme": {
+  "UNCLASSIFIED/refuse": 512,
+  "diagnostics/inactive": 126,
+  "dycore/constant": 1,
+  "dycore/inactive": 108,
+  "dycore/live-e2e": 7605,
+  "elementwise/inactive": 739,
+  "elementwise/live-glue": 270,
+  "elementwise/rule": 1049,
+  "glue/live-glue": 384,
+  "gsl_drag/held": 72,
+  "mynn_edmf/held": 18,
+  "mynn_sfc/constant": 1,
+  "mynn_sfc/held": 72,
+  "ruc_seaice/held": 90,
+  "tempo/constant": 1,
+  "tempo/held": 108,
+  "tempo/inactive": 18,
+  "tempo/permutation": 54
+ },
+ "held_semantics": "A held launch runs forward unchanged and leaves every tangent shadow untouched. For words it updates in place that is the zero-derivative contribution (the incoming tangent is carried); a word it overwrites from other storage keeps its old tangent, so only physics launches are held and every copy or glue launch (rule, live-glue) must run its rule or entry, else the dispatchers refuse it. The adjoint is the transpose: held launches pass cotangents through unchanged.",
+ "rows": {
+  "acoustic_coefficients_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "acoustic_cofrz_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "acoustic_column_solve_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 216
+  },
+  "acoustic_prepare_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 216
+  },
+  "acoustic_rs_ts_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 216
+  },
+  "acoustic_ru_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 216
+  },
+  "add_inplace_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 882
+  },
+  "add_lagged_diabatic_theta_v842_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "cell_diagnostics_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 164
+  },
+  "compute_diag_cols": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 2
+  },
+  "cupy_concatenate_same_size": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: integer concatenation (typedef long long T)",
+   "launches_6_steps": 12
+  },
+  "cupy_copy__bool_int32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: integer or bool source",
+   "launches_6_steps": 18
+  },
+  "cupy_copy__float32_float32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "rule",
+   "why": "P8: rule: view copy (linear, cast exact)",
+   "launches_6_steps": 587
+  },
+  "cupy_copy__float32_float64": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "rule",
+   "why": "P8: rule: view copy (linear, cast exact)",
+   "launches_6_steps": 159
+  },
+  "cupy_copy__float64_float64": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "rule",
+   "why": "P8: rule: view copy (linear, cast exact)",
+   "launches_6_steps": 213
+  },
+  "cupy_copy__int32_float64": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: integer or bool source",
+   "launches_6_steps": 39
+  },
+  "cupy_copy__int32_int32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: integer or bool source",
+   "launches_6_steps": 4
+  },
+  "cupy_copy__int32_int64": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: integer or bool source",
+   "launches_6_steps": 126
+  },
+  "cupy_copy__int64_int64": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: integer or bool source",
+   "launches_6_steps": 50
+  },
+  "cupy_copy__int_int32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: integer or bool source",
+   "launches_6_steps": 110
+  },
+  "cupy_copy__uint32_uint32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: integer or bool source",
+   "launches_6_steps": 7
+  },
+  "cupy_copy_where__float32_bool_float32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "rule",
+   "why": "P8: rule: where: executed arm of the forward mask",
+   "launches_6_steps": 18
+  },
+  "cupy_cub_any_pass1": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: bool or integer result",
+   "launches_6_steps": 158
+  },
+  "cupy_cub_any_pass2": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: bool or integer result",
+   "launches_6_steps": 158
+  },
+  "cupy_fill": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: constant fill",
+   "launches_6_steps": 21
+  },
+  "cupy_less__float32_float32_bool": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: bool or integer result",
+   "launches_6_steps": 18
+  },
+  "cupy_maximum__float_float32_float32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "rule",
+   "why": "P8: rule: max: executed arm (x wins only if x > c)",
+   "launches_6_steps": 72
+  },
+  "cupy_multiply__float32_float_float32": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 4
+  },
+  "cupy_not_equal__int32_int_bool": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "inactive",
+   "why": "P8: inactive: bool or integer result",
+   "launches_6_steps": 18
+  },
+  "density_tendency_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 90
+  },
+  "divergence_damping_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 216
+  },
+  "edge_fields_from_saved_u_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 180
+  },
+  "enforce_rw_endpoints_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "euler_w_moist_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "fct_edge_residual_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "fct_finish_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "fct_horizontal_low_order_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "fct_limit_horizontal": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "fct_limit_vertical": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "fct_minmax_source": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "fct_scale": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "fct_vertical_low_order_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "fixed_pressure_apply": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 164
+  },
+  "fixed_pressure_count": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 164
+  },
+  "fixed_pressure_scan": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 164
+  },
+  "fork_albedo": {
+   "scheme": "glue",
+   "role": "setup",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 1
+  },
+  "fork_interp": {
+   "scheme": "glue",
+   "role": "setup",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 2
+  },
+  "fork_minmax": {
+   "scheme": "glue",
+   "role": "setup",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 1
+  },
+  "hex_transport_species_levels": {
+   "scheme": "dycore",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 54
+  },
+  "hex_transport_species_words": {
+   "scheme": "dycore",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 54
+  },
+  "laplacian_divergence_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "laplacian_vorticity_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "layer_mean": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 2
+  },
+  "mass_flux_divergence_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 252
+  },
+  "mixing_scaling_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "modified_theta_dynamics_rate_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "moist_cell_coefficients_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 18
+  },
+  "moist_dpdz_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "moist_edge_coefficients_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 18
+  },
+  "momentum_filter_lap4_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "momentum_filter_seed_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "mpas_output_diagnostics_v842": {
+   "scheme": "diagnostics",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 36
+  },
+  "mpas_rk_cells_v842_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 18
+  },
+  "mpas_rk_edges_v842_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 18
+  },
+  "mpas_transport_handoff_v842_f32": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 18
+  },
+  "mpas_transport_source_baseline_v842_f32": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 18
+  },
+  "mynnsfc_columns": {
+   "scheme": "mynn_sfc",
+   "role": "core",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 36
+  },
+  "mynnsfc_from_mpas": {
+   "scheme": "mynn_sfc",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "mynnsfc_tables": {
+   "scheme": "mynn_sfc",
+   "role": "setup",
+   "p9": "constant",
+   "why": "step-1 table/geometry build; no derivative",
+   "launches_6_steps": 1
+  },
+  "mynnsfc_to_mpas": {
+   "scheme": "mynn_sfc",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "oracle_diags_sfcdiags_ruclsm": {
+   "scheme": "diagnostics",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 18
+  },
+  "oracle_drivers_correct_tsk_over_seaice": {
+   "scheme": "ruc_seaice",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "oracle_drivers_driver_forcing": {
+   "scheme": "ruc_seaice",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "oracle_drivers_seaice_finish": {
+   "scheme": "ruc_seaice",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "oracle_drivers_seaice_prepare": {
+   "scheme": "ruc_seaice",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "oracle_ice_ruc_ice": {
+   "scheme": "ruc_seaice",
+   "role": "core",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "prep_interfaces_v841_f32": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 18
+  },
+  "prep_mass_v841_f32": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 18
+  },
+  "prepare_interfaces": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 2
+  },
+  "prepare_mass": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 2
+  },
+  "prepare_vertices": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 2
+  },
+  "pressure_gradient_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "project_edges_v841_f32": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 18
+  },
+  "pv_apvm_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 164
+  },
+  "pv_cell_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 164
+  },
+  "pv_edge_base_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 164
+  },
+  "reconstruct_winds_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 36
+  },
+  "recover_cells_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "recover_edge_velocity_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "recover_edges_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "recover_interfaces_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "recover_terrain_w_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "reference_wind_edge_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 1
+  },
+  "reset_diag_pool": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 2
+  },
+  "rrfs_glue_copy_plan": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 236
+  },
+  "rrfs_mynnedmf_run_l16": {
+   "scheme": "mynn_edmf",
+   "role": "core",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "rrfs_pbl_radiation_sum": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 18
+  },
+  "rrfs_post_transport_copy": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 18
+  },
+  "rrfs_surface_spacing": {
+   "scheme": "glue",
+   "role": "glue",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 18
+  },
+  "slp_columns": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 2
+  },
+  "slp_finish": {
+   "scheme": "UNCLASSIFIED",
+   "role": "?",
+   "p9": "refuse",
+   "why": "not in any table",
+   "launches_6_steps": 2
+  },
+  "smagorinsky_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "smooth_helicity": {
+   "scheme": "diagnostics",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 18
+  },
+  "split_flux_add_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 72
+  },
+  "split_flux_finish_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 36
+  },
+  "split_flux_first_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 36
+  },
+  "split_helicity_pool": {
+   "scheme": "diagnostics",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 18
+  },
+  "tangential_velocity_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 56
+  },
+  "tempo_emissions": {
+   "scheme": "tempo",
+   "role": "core",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "tempo_from": {
+   "scheme": "tempo",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "tempo_order_hist": {
+   "scheme": "tempo",
+   "role": "order",
+   "p9": "permutation",
+   "why": "column schedule only (COMMON-AD 87.1); integer outputs",
+   "launches_6_steps": 18
+  },
+  "tempo_order_scan": {
+   "scheme": "tempo",
+   "role": "order",
+   "p9": "permutation",
+   "why": "column schedule only (COMMON-AD 87.1); integer outputs",
+   "launches_6_steps": 18
+  },
+  "tempo_order_scatter": {
+   "scheme": "tempo",
+   "role": "order",
+   "p9": "permutation",
+   "why": "column schedule only (COMMON-AD 87.1); integer outputs",
+   "launches_6_steps": 18
+  },
+  "tempo_precip": {
+   "scheme": "tempo",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 36
+  },
+  "tempo_radar": {
+   "scheme": "tempo",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 18
+  },
+  "tempo_to": {
+   "scheme": "tempo",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "tempo_warp_sizes": {
+   "scheme": "tempo",
+   "role": "setup",
+   "p9": "constant",
+   "why": "step-1 table/geometry build; no derivative",
+   "launches_6_steps": 1
+  },
+  "tempo_warp_steps": {
+   "scheme": "tempo",
+   "role": "core",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "tendency_w_to_omega": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "theta_edge_flux_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "theta_filter_lap2_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "theta_filter_lap4_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "theta_finish_corrected_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 108
+  },
+  "theta_finish_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "theta_vertical_flux_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "transport_edge_values": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 38
+  },
+  "transport_edge_values_mono_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 19
+  },
+  "transport_interpolate_target_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 36
+  },
+  "transport_standard_finish_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 38
+  },
+  "transport_target_density_v841": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 18
+  },
+  "transport_vertical_flux": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 57
+  },
+  "ugwp_oro_diff": {
+   "scheme": "gsl_drag",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 36
+  },
+  "ugwp_oro_dx": {
+   "scheme": "gsl_drag",
+   "role": "glue",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "ugwp_oro_run": {
+   "scheme": "gsl_drag",
+   "role": "core",
+   "p9": "held",
+   "why": "no whole-launch entry loaded; runs held (zero derivative of its contribution) until its P3-P8 entry or rule is bound",
+   "launches_6_steps": 18
+  },
+  "update_diag_pool": {
+   "scheme": "diagnostics",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 18
+  },
+  "validate_density_v841": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 54
+  },
+  "validate_finite_array_v841_f32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 54
+  },
+  "validate_recovered_v841_f32": {
+   "scheme": "elementwise",
+   "role": "rule",
+   "p9": "live-glue",
+   "why": "P8: entry: ad/e2e kernels.json (U1-U3); must run its entry (never held: it moves state)",
+   "launches_6_steps": 162
+  },
+  "vector_momentum_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "vertex_diagnostics_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 180
+  },
+  "vertex_helicity_gather_pool": {
+   "scheme": "diagnostics",
+   "role": "diag",
+   "p9": "inactive",
+   "why": "no prognostic feedback; certified by NaN poison as in dry U7",
+   "launches_6_steps": 18
+  },
+  "vertical_u_finish_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "vertical_u_flux_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "w_edge_flux_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "w_filter_geometry_v841_f32": {
+   "scheme": "dycore",
+   "role": "setup",
+   "p9": "constant",
+   "why": "step-1 table/geometry build; no derivative",
+   "launches_6_steps": 1
+  },
+  "w_filter_lap2_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "w_filter_lap4_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 54
+  },
+  "w_finish_v841_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  },
+  "w_vertical_flux_f32": {
+   "scheme": "dycore",
+   "role": "dycore",
+   "p9": "live-e2e",
+   "why": "ad/e2e TL/AD entry (U1-U6)",
+   "launches_6_steps": 162
+  }
+ }
+}

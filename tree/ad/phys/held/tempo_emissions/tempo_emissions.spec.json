@@ -1,0 +1,239 @@
+{
+ "kernel": "tempo_emissions",
+ "engine": "hex",
+ "pin": "ad/phys-window-fctfrozen 0f364252; forward source sha256 0f57db691e181e1c5783793b51c1c1759bd6d402f07a80bffaab02dffda6e41d",
+ "file": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py",
+ "line": 4417,
+ "route": "hand",
+ "mode": "exact",
+ "affine": true,
+ "affine_reason": "output is nwfa + surface*dt with dt a recorded configuration constant: linear in the active inputs, no state branch",
+ "supersedes": "11-02 ad2-tempo-aerosols pair (aerosols.tempo_emissions.ad.cu, verification_status unverified, no kernel-set row): dt made inactive (configuration constant, as in the dycore rows), the 1-block 256-thread reverse over every nwfa level replaced by the forward geometry over the level-zero words (upper levels are untouched words: identity), branch_record dropped (the only branch is the fixed column bound)",
+ "launch": {
+  "tl": "forward geometry, grid-stride",
+  "ad": "forward geometry, grid-stride",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nwfa",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "columns"
+   ],
+   "stagger": "cell (level zero of nwfa[levels, columns])",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial: level-zero words",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "allow_alias": false
+  },
+  {
+   "name": "surface",
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "columns"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "allow_alias": false
+  },
+  {
+   "name": "dt",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "dt_microp: recorded configuration constant of the plan (fixed_source recorded_constant_two_recordings)",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "allow_alias": false
+  },
+  {
+   "name": "columns",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed launch extent",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "allow_alias": false
+  }
+ ],
+ "cuda_entry_arguments": {
+  "tl": [
+   "const float *nwfa",
+   "const float *surface",
+   "float dt",
+   "int columns",
+   "const float *d_nwfa",
+   "const float *d_surface",
+   "float *d_out",
+   "int *failures"
+  ],
+  "ad": [
+   "const float *nwfa",
+   "const float *surface",
+   "float dt",
+   "int columns",
+   "float *b_out",
+   "float *b_surface",
+   "float *b_nwfa",
+   "int *failures"
+  ]
+ },
+ "saved": [
+  {
+   "name": "nwfa",
+   "from": "forward",
+   "reason": "pre-launch primal, validity check only"
+  },
+  {
+   "name": "surface",
+   "from": "forward",
+   "reason": "primal, validity check only"
+  }
+ ],
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py:4419",
+   "operation": "bound",
+   "predicate": "c<columns",
+   "policy": "inactive",
+   "active": false,
+   "inactive_reason": "fixed integer launch extent"
+  }
+ ],
+ "frozen": [],
+ "frozen_note": "no limiter-like clamp exists in this launch; nothing is frozen",
+ "tables": [],
+ "refusal": {
+  "buffer": "int32 slot, zero before launch; nonzero refuses the gradient",
+  "source_ids": {
+   "1": "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py:4417:evaluation"
+  }
+ },
+ "precision_policy": "float32 in, out and cotangents; the forward's own __fmul_rn/__fadd_rn order, built --fmad=false",
+ "derivative_aliases": {
+  "tl": "d_out may equal d_nwfa; the read precedes the single store",
+  "ad": "b_out may equal b_nwfa; then it stays as the pre-state cotangent, else b_out is consumed and zeroed"
+ },
+ "tape_bytes": 0,
+ "augmented_forward": null,
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "tempo_emissions__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "primal",
+      "arg": "surface"
+     },
+     {
+      "bind": "scalar",
+      "arg": "dt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "columns"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "in",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 2,
+      "io": "in",
+      "arg": "surface"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "out",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py:4417:evaluation"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "tempo_emissions__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "primal",
+      "arg": "surface"
+     },
+     {
+      "bind": "scalar",
+      "arg": "dt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "columns"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "in",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 2,
+      "io": "accumulate",
+      "arg": "surface"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "accumulate",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "tree/src/hexcore/mpasphys/rrfs/tempo_v303.py:4417:evaluation"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "branch_records": "none: the only branch is the fixed column bound",
+ "owner_task": "ad/held-tempo_emissions",
+ "generated": false
+}

@@ -1,0 +1,268 @@
+{
+ "kernel": "oracle_drivers_driver_forcing",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py",
+ "line": 5454,
+ "body": {
+  "file": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py",
+  "line": 5076,
+  "function": "drivers_driver_forcing",
+  "native": "RRFS-MPAS 1d6e370e mpas_atmphys_driver_seaice.F L610-L639"
+ },
+ "route": "hand-written",
+ "mode": "exact-linearisation",
+ "unit": "held/oracle_drivers_driver_forcing",
+ "launch": {
+  "grid": "forward",
+  "block": "forward",
+  "shared_bytes": 0,
+  "threads": "one thread per tile cell c < nc; element (i) of every table array is word c + (i-1)*nc"
+ },
+ "args": [
+  {
+   "name": "ptrs",
+   "role": "pointer_table",
+   "dtype": "u64",
+   "shape": "[11]",
+   "active": true,
+   "table": [
+    "ncells",
+    "micro_on",
+    "conv_on",
+    "sr",
+    "rainncv",
+    "raincv",
+    "gsw",
+    "sfc_albedo",
+    "sr_p",
+    "rainbl_p",
+    "swdown_p"
+   ],
+   "layout": "binder ruc_layout.rs FORCING (11 fields, no optional flags)",
+   "roles": {
+    "ncells": "int32 extent, inactive",
+    "micro_on": "int32 flag, inactive",
+    "conv_on": "int32 flag, inactive",
+    "sr": "in",
+    "rainncv": "in",
+    "raincv": "in",
+    "gsw": "in",
+    "sfc_albedo": "in",
+    "sr_p": "out, overwrite full",
+    "rainbl_p": "out, overwrite full",
+    "swdown_p": "out, overwrite full"
+   }
+  },
+  {
+   "name": "tables",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "RUC constant tables; drivers_driver_forcing reads none"
+  },
+  {
+   "name": "work",
+   "role": "scratch",
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "arena scratch; drivers_driver_forcing takes no arena rows (mark/restore only)"
+  },
+  {
+   "name": "error",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "integer error word"
+  },
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "tile cell count"
+  }
+ ],
+ "linearisation": {
+  "sr_p": "d = micro_on ? d_sr : 0",
+  "rainbl_p": "d = (micro_on ? d_rainncv : 0) + (conv_on ? d_raincv : 0)",
+  "swdown_p": "d = (d_gsw + swdown_p * d_sfc_albedo) / (1 - sfc_albedo)",
+  "adjoint": "b_gsw += b_sw/(1-a); b_sfc_albedo += swdown_p*b_sw/(1-a); b_raincv += conv_on*b_rb; b_rainncv += micro_on*b_rb; b_sr += micro_on*b_srp; b_sr_p = b_rainbl_p = b_swdown_p = 0"
+ },
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:5084",
+   "predicate": "micro_on",
+   "policy": "inactive",
+   "inactive_reason": "integer configuration flag"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:5088",
+   "predicate": "conv_on",
+   "policy": "inactive",
+   "inactive_reason": "integer configuration flag"
+  },
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:5081",
+   "predicate": "i <= ncells",
+   "policy": "inactive-index",
+   "inactive_reason": "integer extent"
+  }
+ ],
+ "limiters": [],
+ "frozen_coefficients": "none: the forward has no clamp, min/max or limiter",
+ "precision": "float32, __fadd_rn/__fsub_rn/__fmul_rn/__fdiv_rn only, --fmad=false --ftz=false",
+ "range_hazards": [
+  {
+   "file_line": "tree/src/hexcore/mpasphys/rrfs/ruc_lsm_8c9f1a8.py:5091",
+   "expression": "__fdiv_rn(gsw(i), __fsub_rn(1.f, sfc_albedo(i)))",
+   "hazard": "1 - sfc_albedo -> 0: swdown_p, d/dgsw = 1/(1-a) and d/dalbedo = swdown_p/(1-a) blow up; == 0 refused (slot 0)"
+  }
+ ],
+ "alias": "outputs disjoint from inputs (checked per launch, slot 1); primal reads through the live table are the pre-launch values because the forward never writes its inputs",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "oracle_drivers_driver_forcing__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc*64"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "ptrs",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "targets": [
+        "ncells",
+        "micro_on",
+        "conv_on",
+        "sr",
+        "rainncv",
+        "raincv",
+        "gsw",
+        "sfc_albedo",
+        "sr_p",
+        "rainbl_p",
+        "swdown_p"
+       ],
+       "active_slots": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "inactive_slots": {
+        "0": "ncells (int32 extent)",
+        "1": "micro_on (int32 flag)",
+        "2": "conv_on (int32 flag)"
+       }
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "nonfinite input or cotangent, or 1 - sfc_albedo == 0 (swdown_p undefined)",
+       "an output pointer equals an input pointer"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "oracle_drivers_driver_forcing__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "ptrs",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "primal_pre": true,
+       "target_bytes": "4*nc*64"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ptrs",
+      "field_id": 1,
+      "io": "inout",
+      "indirect": {
+       "arg": "ptrs",
+       "mirror": true,
+       "targets": [
+        "ncells",
+        "micro_on",
+        "conv_on",
+        "sr",
+        "rainncv",
+        "raincv",
+        "gsw",
+        "sfc_albedo",
+        "sr_p",
+        "rainbl_p",
+        "swdown_p"
+       ],
+       "active_slots": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "inactive_slots": {
+        "0": "ncells (int32 extent)",
+        "1": "micro_on (int32 flag)",
+        "2": "conv_on (int32 flag)"
+       }
+      }
+     },
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "nonfinite input or cotangent, or 1 - sfc_albedo == 0 (swdown_p undefined)",
+       "an output pointer equals an input pointer"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "launch_abi_limitations": [
+  "the mirrored pointer table needs the sweep (persistent) shadows: AD_DOT_PERSIST=1 in per-launch replays; the composed window always has them"
+ ],
+ "owner_task": "ad/held-oracle_drivers_driver_forcing"
+}

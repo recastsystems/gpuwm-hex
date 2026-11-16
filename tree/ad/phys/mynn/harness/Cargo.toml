@@ -1,0 +1,17 @@
+[package]
+name = "p3-mynn"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "P3: whole-launch tangent/adjoint proofs for hex MYNN-EDMF c6d08709 (rrfs_mynnedmf_run_l16) on captured hrrrv5 launches"
+
+[[bin]]
+name = "p3-mynn"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = "=1.0.149"
+sha2 = "=0.10.9"
+
+[profile.release]
+opt-level = 3

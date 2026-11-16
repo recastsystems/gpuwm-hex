@@ -64,6 +64,14 @@ CORRECTIONS_V842: Mapping[str, Mapping[str, Any]] = MappingProxyType({
                         "vapour tendency NaN in one column; the dycore then refused the step with ~4,100 whole "
                         "columns non-finite (x1.40962 120 km plain hex, 2021-07-01 start at day 19.2 and 2020-01-01 "
                         "start at day 77.2)"},
+    # RP8: the BouLac downward length takes the wrong sign where two adjacent levels have equal theta
+    # (bl_mynn_subroutines.F90:1327 and 1482; NCAR/MYNN-EDMF PR 94, bl_mynn_v842.MYNN_TEXT_CORRECTIONS).  Only
+    # config_mynn_mixlength = 1 reaches it.
+    "RP8": {"slots": {"pbl": ("bl_mynn",)},
+            "owners": {"pbl": "p12-bl-mynn"},
+            "breakage": "with config_mynn_mixlength = 1 (the hrrr-like profile) the BouLac downward mixing length is "
+                        "short by twice the distance a parcel travels into a layer of equal theta (NCAR/MYNN-EDMF "
+                        "issue 93)"},
     # RP4: refused at resolution, see resolve_namelist (native correct mode refuses it too).
     "RP4": {"slots": {}, "owners": {},
             "breakage": "config_mynn_tkeadvect resets TKE to the never-advected qke_adv every call"},
@@ -469,6 +477,8 @@ def _active_corrections(selectors: Mapping[str, str], options: Mapping[str, Any]
     if on("pbl") and selectors["pbl"] == "bl_mynn":
         active.add("RP1")
         active.add("RP7")
+        if int(options.get("config_mynn_mixlength", 2)) == 1:
+            active.add("RP8")
     if on("seaice") and on("land_surface") and options.get("config_frac_seaice", False):
         active.add("RP3")
     if on("pbl") and selectors["pbl"] == "bl_mynn" and options.get("config_mynn_tkeadvect", False):

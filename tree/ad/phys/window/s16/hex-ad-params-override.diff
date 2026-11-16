@@ -1,0 +1,128 @@
+diff --git a/src/hexcore/mpasphys/ad_params_override.py b/src/hexcore/mpasphys/ad_params_override.py
+new file mode 100644
+index 0000000..7ac9998
+--- /dev/null
++++ b/src/hexcore/mpasphys/ad_params_override.py
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: Apache-2.0
++"""Private autodiff lane s16: run the ordinary hex forward at tuned physics constants (default off).
++
++GPUWM_HEX_AD_PARAMS names a parameter file in the window runner's --params format
++({"params": [{"name", "family", "slot", "p0_bits"}, ..]}). When it is set, each named constant's literal in its
++scheme's CUDA source string is replaced by the float32 value p0_bits as a hexadecimal float literal, at the same
++occurrence the runner's parameter carrier reads (ad/rung3-params gen_params.py / gen_params_p3.py), so the forward
++does the same float operation on the same value the carrier forward does. Unset: nothing is touched and every
++source string, image and word is the shipped one.
++"""
++from __future__ import annotations
++
++import json
++import os
++import struct
++
++ENV = "GPUWM_HEX_AD_PARAMS"
++
++# name -> (family, the unique source pattern, the literal inside it)
++PATTERNS = {
++    "coare30_charnock": ("mynnsfc", "czc = __fadd_rn(0x1.6872b00000000p-7f,__fmul_rn(0x1.cac0840000000p-8f,", "0x1.6872b00000000p-7f"),
++    "tofd_beljaars_a1": ("ugwp", "a1=0.00026615161f*(var_temp*var_temp)", "0.00026615161f"),
++    "mesoscale_gwd_xlinv": ("ugwp", "xlinv=coefm*8.84e-6f;", "8.84e-6f"),
++    "flow_blocking_cd": ("ugwp", "taufb[1]=0.5f*1.92e-4f*rhobar", "1.92e-4f"),
++    "mynn_qke_dissipation_b1": ("mynnedmf", "b1l = r6_mul(r6_mul(b1, 0.25f), r6_add(el(((k) + (1))), el(k)));", "r6_mul(b1, 0.25f)"),
++}
++
++
++def _values() -> dict[str, float] | None:
++    path = os.environ.get(ENV)
++    if not path:
++        return None
++    with open(path, encoding="utf-8") as stream:
++        doc = json.load(stream)
++    out = {}
++    for row in doc["params"]:
++        bits = int(str(row["p0_bits"]), 16)
++        out[row["name"]] = struct.unpack("<f", struct.pack("<I", bits))[0]
++    unknown = sorted(set(out) - set(PATTERNS))
++    if unknown:
++        raise ValueError(f"{ENV}: unknown parameters {unknown}")
++    return out
++
++
++def _literal(value: float) -> str:
++    return float.hex(value) + "f"
++
++
++def patch_module(namespace: dict, family: str) -> None:
++    """Replace this family's parameter literals in the module's source strings (no-op when the variable is unset).
++
++    Each pattern must occur exactly once over the module's string constants, or the import fails: a source that no
++    longer carries the pattern would otherwise run silently at the shipped constant.
++    """
++    values = _values()
++    if values is None:
++        return
++    for name, value in values.items():
++        fam, pattern, literal = PATTERNS[name]
++        if fam != family:
++            continue
++        hits = [k for k, v in namespace.items() if isinstance(v, str) and k.isupper() and pattern in v]
++        count = sum(namespace[k].count(pattern) for k in hits)
++        if count != 1:
++            raise RuntimeError(f"{ENV}: {name}: pattern found {count} times in {family} sources, expected 1")
++        if name == "mynn_qke_dissipation_b1":
++            new = pattern.replace(literal, f"r6_mul({_literal(value)}, 0.25f)")
++        else:
++            new = pattern.replace(literal, _literal(value))
++        namespace[hits[0]] = namespace[hits[0]].replace(pattern, new)
+diff --git a/src/hexcore/mpasphys/rrfs/bl_mynnedmf_c6d08709.py b/src/hexcore/mpasphys/rrfs/bl_mynnedmf_c6d08709.py
+index 3c2cf8a..a07d708 100644
+--- a/src/hexcore/mpasphys/rrfs/bl_mynnedmf_c6d08709.py
++++ b/src/hexcore/mpasphys/rrfs/bl_mynnedmf_c6d08709.py
+@@ -11882,3 +11882,8 @@ def run_slot(call):
+             native.put_field(pool, name, value, level=1,
+                              nlevels=native._fields[pool, name][2])
+     return result
++
++
++# lane s16 (private autodiff): GPUWM_HEX_AD_PARAMS replaces the tuned constants in the sources above (default off).
++from .. import ad_params_override as _ad_params_override
++_ad_params_override.patch_module(globals(), "mynnedmf")
+diff --git a/src/hexcore/mpasphys/rrfs/bl_mynnedmf_c942418.py b/src/hexcore/mpasphys/rrfs/bl_mynnedmf_c942418.py
+index 9c4eaf6..92b3965 100644
+--- a/src/hexcore/mpasphys/rrfs/bl_mynnedmf_c942418.py
++++ b/src/hexcore/mpasphys/rrfs/bl_mynnedmf_c942418.py
+@@ -11624,3 +11624,8 @@ def run_slot(call):
+             native.put_field(pool, name, value, level=1,
+                              nlevels=native._fields[pool, name][2])
+     return result
++
++
++# lane s16 (private autodiff): GPUWM_HEX_AD_PARAMS replaces the tuned constants in the sources above (default off).
++from .. import ad_params_override as _ad_params_override
++_ad_params_override.patch_module(globals(), "mynnedmf")
+diff --git a/src/hexcore/mpasphys/rrfs/sf_mynnsfc_v600.py b/src/hexcore/mpasphys/rrfs/sf_mynnsfc_v600.py
+index f24581a..339af7f 100644
+--- a/src/hexcore/mpasphys/rrfs/sf_mynnsfc_v600.py
++++ b/src/hexcore/mpasphys/rrfs/sf_mynnsfc_v600.py
+@@ -3734,3 +3734,8 @@ def launch_slot(call):
+ def register_backend(registry):
+     """RRFS MPAS-Model-rrfs/src/core_atmosphere/physics/mpas_atmphys_driver_sfclayer.F:1390-1463 @1d6e370e."""
+     registry.register('surface_layer',SCHEME,BACKEND,launch_slot)
++
++
++# lane s16 (private autodiff): GPUWM_HEX_AD_PARAMS replaces the tuned constants in the sources above (default off).
++from .. import ad_params_override as _ad_params_override
++_ad_params_override.patch_module(globals(), "mynnsfc")
+diff --git a/src/hexcore/mpasphys/ugwp_oro_v842.py b/src/hexcore/mpasphys/ugwp_oro_v842.py
+index c9242da..7aae7fa 100644
+--- a/src/hexcore/mpasphys/ugwp_oro_v842.py
++++ b/src/hexcore/mpasphys/ugwp_oro_v842.py
+@@ -655,3 +655,8 @@ def run_slot(call):
+         value = outputs[name]
+         target[:value.shape[0]] = value
+     return outputs
++
++
++# lane s16 (private autodiff): GPUWM_HEX_AD_PARAMS replaces the tuned constants in the sources above (default off).
++from . import ad_params_override as _ad_params_override
++_ad_params_override.patch_module(globals(), "ugwp")

@@ -1,0 +1,161 @@
+{
+ "kernel": "ozone_latitude",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 9b6ced0f",
+ "file": "tree/src/hexcore/mpasphys/radshared_v842.py",
+ "line": 308,
+ "module": "9b6ced0f2dd9624292f9069b7bd167cce5409c9ceb453202c7bf3eeae7ed1cdc",
+ "image": "65e9c5c0a39e38ebb66b489c50ba9e17e1e319f9be9a777f98882937e8880ccb",
+ "route": "hand",
+ "mode": "constant",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "nl",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "lat",
+   "field_id": 2,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    2562
+   ],
+   "active": false,
+   "inactive_reason": "fixed mesh geometry"
+  },
+  {
+   "name": "lat_oz",
+   "field_id": 3,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    64
+   ],
+   "active": false,
+   "inactive_reason": "decoded ozone climatology latitudes"
+  },
+  {
+   "name": "table",
+   "field_id": 4,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    12,
+    64,
+    59
+   ],
+   "active": false,
+   "inactive_reason": "decoded ozone climatology"
+  },
+  {
+   "name": "monthly",
+   "field_id": 5,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nl",
+    12
+   ],
+   "active": true
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": []
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "ozone_latitude__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "tangent",
+      "arg": "monthly",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "radshared_v842.py:308:ozone_latitude: none (no refusal path)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "ozone_latitude__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "monthly",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "radshared_v842.py:308:ozone_latitude: none (no refusal path)"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "constant_rule": "every word the forward writes is state-independent: TL +0 over the written words, AD consumes their cotangents; inputs receive nothing"
+}

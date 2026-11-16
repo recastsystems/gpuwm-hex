@@ -267,6 +267,9 @@ The init-source Vtables this distribution carries under src/hexcore/data/
 follow the WPS ungrib Variable Table format. Vtable.GFS is NCAR's WPS table
 (github.com/wrf-model/WPS, ungrib/Variable_Tables/Vtable.GFS), and a
 modified copy of it ships beside it; the tables named *.rw are this project's own.
+Vtable.GFS-rrfs is the same WPS table in its later text (MSLET for PMSL, with
+the isobaric hydrometeor rows), byte for byte as the research kit that builds
+NOAA's conus3km deck carries it.
 The WPS repository states no licence of its own. These tables are reference
 data mapping GRIB codes to field names, and they ship beside the WRF notice
 above, as ArWen ships its Vtables.
@@ -804,3 +807,46 @@ No code, registry or documentation from NOAA's stochastic_physics package
 option names are read only as run configuration. The Philox4x32-10 counter
 generator follows Random123 (BSD-3-Clause, section 16 and
 licenses/LICENSE-Random123.txt).
+
+==========================================================================
+18. The differentiable engine (tree/ad/, rust/hexad/, src/hexcore/ad/) --
+    Apache-2.0, with the terms of the forward code it differentiates
+==========================================================================
+
+The window runner ad-binder and the libhexad-phys C ABI (ad/phys/binder/,
+ad/e2e/src/, ad/phys/p8/, and its packaged copy rust/hexad/), the recorder
+(src/hexcore/ad/), the derivative generators and their proof
+harnesses (ad/phys/tempo/, ad/phys/mynn/, ad/phys/p4/, ad/phys/p7/,
+ad/phys/typesub/, ad/phys/p6/), the scheme-bundle builder (ad/phys/bind/),
+the parameter carriers (ad/phys/window/rung3/) and the kernel-set builder
+(ad/kset/int7f/build_kset_int7f.py) are this project's own work under the
+Apache License 2.0.
+
+The derivative kernels (the .ad.cu, .l4.cu and generated sources under
+ad/kset/, ad/phys/held/, ad/phys/g3/, ad/phys/l4speed/, ad/phys/p6/cuda/ and
+the generator outputs) transcribe the forward kernels they differentiate,
+and each keeps the terms of its forward code:
+  - the dynamical core, transport and the physics driver glue:
+    MPAS-Atmosphere, BSD-3-Clause (section 1), including the RRFS fork's
+    dynamical core (section 9);
+  - the RRTMG longwave and shortwave pieces and gas optics: AER RRTMG,
+    BSD-3-Clause (section 5), with the MPAS and WRF adaptations (sections 1
+    and 3);
+  - TEMPO microphysics: NCAR TEMPO 9adf9ef, Apache-2.0 (section 9);
+  - MYNN-EDMF, the MYNN surface layer, the GSL drag (UGWP), RUC land and
+    RUC sea ice: NOAA GSL code, treated as works of the US Government
+    (sections 8 and 9);
+  - device maths reused from the forward (the elementary-function routines
+    section 7 lists, under the Arm, CORE-MATH and Sun notices given
+    there): section 7.
+None of them derives from the withheld Noah-MP v5.0 port (section 4).
+
+The runner links, when built, the Rust crates pinned in its Cargo.lock
+(serde, serde_json, sha2, flate2 and their dependencies, under MIT and/or
+Apache-2.0, and zlib-rs under the zlib licence); no crate source is
+vendored here. Its C++ bridges compile against NVIDIA CCCL (CUB and Thrust)
+headers from the user's CUDA toolkit, under Apache-2.0 with LLVM exception
+and BSD notices (licenses/LICENSE-CCCL.txt). The recorder uses NVIDIA CUPTI
+from the user's CUDA toolkit at run time; no NVIDIA library is
+redistributed. The kernel-set builder installs NVIDIA's CUDA compiler wheels
+from PyPI under NVIDIA's own terms; they are not redistributed either.

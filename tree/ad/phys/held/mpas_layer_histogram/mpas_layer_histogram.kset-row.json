@@ -1,0 +1,40 @@
+{
+ "function": "mpas_layer_histogram",
+ "class": "inactive-entry",
+ "gate_ready": true,
+ "capture": {
+  "plan": "not in pkg18 (radiation is a held upload there); captures hrrrv5_x1.2562 steps 1, 6, 12 (ad/held-mpas_layer_histogram recapture) and the shared steps 1, 3"
+ },
+ "arguments": [
+  {
+   "name": "nc",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "base",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nbins",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "counts",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "hist",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  }
+ ]
+}

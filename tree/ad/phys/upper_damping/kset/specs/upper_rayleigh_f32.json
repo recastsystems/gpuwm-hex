@@ -1,0 +1,262 @@
+{
+ "kernel": "upper_rayleigh_f32",
+ "engine": "hex",
+ "forward_source_sha256": "803b7ff5234a38237c5089fbb5eb31f3ebd0d593e969d2a12ccb4c2c9b4b23dc",
+ "file": "tree/src/hexcore/cuda_upper_damping_v841.py",
+ "line": 12,
+ "route": "hand",
+ "mode": "exact",
+ "why": "NOAA's hrrrv5 deck (config_rayleigh_damp_u true) runs this launch at every RK stage; no kernel set had a row",
+ "args": [
+  {
+   "name": "nl",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "fixed discrete dimension, launch extent or level count",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "ne",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "fixed discrete dimension, launch extent or level count",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "solved",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "fixed discrete dimension, launch extent or level count",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "levels",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "i32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "fixed discrete dimension, launch extent or level count",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "days",
+   "role": "const",
+   "field_id": 0,
+   "dtype": "f32",
+   "shape": "[]",
+   "active": false,
+   "inactive_reason": "namelist config_rayleigh_damp_u_timescale_days",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 0
+  },
+  {
+   "name": "tendency",
+   "role": "inout",
+   "field_id": 1,
+   "dtype": "f32",
+   "shape": "[nl,ne]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  },
+  {
+   "name": "rho",
+   "role": "in",
+   "field_id": 2,
+   "dtype": "f32",
+   "shape": "[nl,ne]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  },
+  {
+   "name": "velocity",
+   "role": "in",
+   "field_id": 3,
+   "dtype": "f32",
+   "shape": "[nl,ne]",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "pointer_depth": 1
+  }
+ ],
+ "branches": [],
+ "polynomial_degree": 2,
+ "polynomial_reason": "rho_edge times u, times a fixed per-level constant",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "upper_rayleigh_f32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ne"
+     },
+     {
+      "bind": "scalar",
+      "arg": "solved"
+     },
+     {
+      "bind": "scalar",
+      "arg": "levels"
+     },
+     {
+      "bind": "scalar",
+      "arg": "days"
+     },
+     {
+      "bind": "primal",
+      "arg": "tendency"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho"
+     },
+     {
+      "bind": "primal",
+      "arg": "velocity"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 2,
+      "io": "in",
+      "arg": "rho"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 3,
+      "io": "in",
+      "arg": "velocity"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "in",
+      "arg": "tendency"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "out",
+      "arg": "tendency"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "ad/phys/upper_damping/cuda/upper_rayleigh_f32.ad.cu:23:nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "upper_rayleigh_f32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ne"
+     },
+     {
+      "bind": "scalar",
+      "arg": "solved"
+     },
+     {
+      "bind": "scalar",
+      "arg": "levels"
+     },
+     {
+      "bind": "scalar",
+      "arg": "days"
+     },
+     {
+      "bind": "primal",
+      "arg": "tendency"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho"
+     },
+     {
+      "bind": "primal",
+      "arg": "velocity"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 2,
+      "io": "accumulate",
+      "arg": "rho"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 3,
+      "io": "accumulate",
+      "arg": "velocity"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "accumulate",
+      "arg": "tendency"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "in",
+      "arg": "tendency"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "ad/phys/upper_damping/cuda/upper_rayleigh_f32.ad.cu:39:nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

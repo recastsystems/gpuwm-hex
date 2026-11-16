@@ -1,0 +1,358 @@
+{
+ "kernel": "rlw_rtrn_prol_gpoints",
+ "engine": "hex",
+ "pin": "0f364252573fd9d51d630608e2216ec81c1e62f3",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 826,
+ "route": "hand",
+ "mode": "exact-local-linearisation",
+ "owner_task": "ad/held-rlw_rtrn_prol_gpoints",
+ "supersedes_for_binding": "the p7-launch harness entry of this lane (held/rlw_rtrn_prol_gpoints/cuda/rlw_rtrn_prol_gpoints.ad.cuh, bind/p7-rows.json), which is not an ad.entry/v1 row",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "source_lines": "9145-9182",
+  "config": "hrrrv5_x1.2562",
+  "steps": [
+   1,
+   3,
+   6,
+   12
+  ],
+  "launches_per_step": "13 (shared root, steps 1 and 3) or 2 (recapture, steps 1, 6 and 12)"
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0,
+  "note": "one block per (col, lay); __ad uses 1120 B static shared memory"
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the launch chunk."
+  },
+  {
+   "name": "nl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count of the launch chunk (64 or 65)."
+  },
+  {
+   "name": "cldfmc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nl, 140]",
+   "stagger": "column-layer-gpoint",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "word (col, lay, ig)",
+   "note": "McICA 0/1 mask; its tangent is formal (frozen branch): upstream mpas_lw_mcica_gpoint is a threshold"
+  },
+  {
+   "name": "taucmc",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nl, 140]",
+   "stagger": "column-layer-gpoint",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "word (col, lay, ig)"
+  },
+  {
+   "name": "secdiff",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, 16]",
+   "stagger": "column-band",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "word (col, ngb[ig]) for every cloudy (lay, ig): fan-in in the adjoint"
+  },
+  {
+   "name": "ngb",
+   "role": "in",
+   "dtype": "i32",
+   "shape": "[140]",
+   "stagger": "gpoint",
+   "active": false,
+   "inactive_reason": "Band of each g-point (RRTMG table), uploaded once, written by no launch."
+  },
+  {
+   "name": "odcld",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nl, 140]",
+   "stagger": "column-layer-gpoint",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "note": "0 on clear g-points (zero tangent); every word's adjoint seed is consumed"
+  },
+  {
+   "name": "efclfrac",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nl, 140]",
+   "stagger": "column-layer-gpoint",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "note": "as odcld"
+  },
+  {
+   "name": "icldlyr",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[ncol, nl]",
+   "stagger": "column-layer",
+   "active": false,
+   "inactive_reason": "Integer cloudy-layer flag (ballot + atomicOr); downstream LW solvers branch on it (frozen there). __aug writes it as the forward."
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture 683d7a07:9156",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Launch index against ncol*nl."
+  },
+  {
+   "file_line": "capture 683d7a07:9162",
+   "operation": "mask",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "rule": "cldfmc == 1.0f: the cloudy branch is differentiated (d od = tau ds + s dtau, d efclfrac = cf T d od + A dcf); the clear branch writes the constant 0 with zero tangent. cf is 0 or 1 in every capture."
+  },
+  {
+   "file_line": "capture 683d7a07:9176-9178",
+   "operation": "ballot/atomicOr",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Integer cloudy-layer flag."
+  }
+ ],
+ "tables": [
+  {
+   "name": "ngb",
+   "role": "inactive g-point to band map"
+  }
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "od and efclfrac finite on the cloudy branch; written tangent and adjoint words finite"
+ },
+ "precondition": "cldfmc, taucmc, secdiff, ngb, odcld, efclfrac and icldlyr do not alias; the launch geometry is the forward's (one block per (col, lay)), so the lay == 1 block of each column exists for __ad.",
+ "precision": "aug: the forward word for word in f32 (__f*_rn and the forward's glibc 2.39 expf transcription), built --fmad=false --ftz=false, bitwise to the forward image (odcld, efclfrac, icldlyr). tl/ad: local partials in double from the f32 primal words (T the f32 exp word), one rounding to f32 per written word; the adjoint sums each column's secdiff fan-in in fixed order in double (lay == 1 block owns the column), rounds once, adds.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "rlw_rtrn_prol_gpoints__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "taucmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "secdiff"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "odcld"
+     },
+     {
+      "bind": "primal",
+      "arg": "efclfrac"
+     },
+     {
+      "bind": "primal",
+      "arg": "icldlyr"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:826:rlw_rtrn_prol_gpoints:nonfinite"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "rlw_rtrn_prol_gpoints__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "taucmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "secdiff"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cldfmc",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "taucmc",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "secdiff",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "odcld",
+      "field_id": 4,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "efclfrac",
+      "field_id": 5,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:826:rlw_rtrn_prol_gpoints:nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rlw_rtrn_prol_gpoints__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "taucmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "secdiff"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cldfmc",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "taucmc",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "secdiff",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "odcld",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "efclfrac",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:826:rlw_rtrn_prol_gpoints:nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

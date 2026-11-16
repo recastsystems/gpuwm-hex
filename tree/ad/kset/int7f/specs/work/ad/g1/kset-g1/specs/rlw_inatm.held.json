@@ -1,0 +1,314 @@
+{
+ "kernel": "rlw_inatm",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 728,
+ "route": "hand",
+ "mode": "exact-local-linearisation",
+ "owner_task": "ad/held-rlw_inatm",
+ "replaces": "P7 generic taped row (bind/p7-rows.json, p7-launch harness, 32 KB per-thread stack): same maths, no tape",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "kernel_line_in_source": 1644,
+  "launches_per_radiation_step": 13
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the layer group, fixed by the wrapper."
+  },
+  {
+   "name": "nl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count of the layer group (64 or 65 on x1.2562), fixed by the wrapper."
+  },
+  {
+   "name": "plev",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nl+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "every word of the ncol rows"
+  },
+  {
+   "name": "grav",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Physical constant (rrtmg_lw_v842.py K['grav'], f32 9.80665)."
+  },
+  {
+   "name": "avogad",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Physical constant (rrtmg_lw_v842.py K['avogad'], f32 6.02214e23)."
+  },
+  {
+   "name": "wkl",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[ncol, 38, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "rows 1..7 (vmr in)",
+   "writes": "rows 1..7 (molec/cm2 out); rows 8..38 untouched (identity)"
+  },
+  {
+   "name": "wx",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[ncol, 4, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "rows 1..4 (vmr in)",
+   "writes": "rows 1..4 (scaled out)"
+  },
+  {
+   "name": "coldry",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4
+  },
+  {
+   "name": "wbrodl",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5
+  },
+  {
+   "name": "pwvcm_v",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 683d7a07:1655",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Launch index against the fixed column count."
+  }
+ ],
+ "limiters": "none: no clamp, min/max or state branch in the forward, so no frozen coefficient is needed",
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "plev, wkl rows 1..7, wx finite; den = 1e2*grav*amm*(1+w1) != 0; amttl != 0; every written derivative word finite"
+ },
+ "precondition": "plev, wkl, wx, coldry, wbrodl, pwvcm_v are distinct allocations (no aliasing); one thread per column owns that column's words, so the adjoint is deterministic with no atomics",
+ "precision": "the f32 primal words the derivative uses (cd, summol, amttl, wvttl) are formed as the forward forms them (__f*_rn, --fmad=false --ftz=false; the harness-only __check is bitwise to the forward image); local partials in double; one rounding to f32 per written derivative word (the glue-row rule)",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "rlw_inatm__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "plev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "grav"
+     },
+     {
+      "bind": "scalar",
+      "arg": "avogad"
+     },
+     {
+      "bind": "primal",
+      "arg": "wkl"
+     },
+     {
+      "bind": "primal",
+      "arg": "wx"
+     },
+     {
+      "bind": "tangent",
+      "arg": "plev",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "wkl",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "wx",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coldry",
+      "field_id": 4,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "wbrodl",
+      "field_id": 5,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pwvcm_v",
+      "field_id": 6,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:728:nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rlw_inatm__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "primal",
+      "arg": "plev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "grav"
+     },
+     {
+      "bind": "scalar",
+      "arg": "avogad"
+     },
+     {
+      "bind": "primal",
+      "arg": "wkl"
+     },
+     {
+      "bind": "primal",
+      "arg": "wx"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "plev",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "wkl",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "wx",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coldry",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "wbrodl",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pwvcm_v",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_lw_v842.py:728:nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

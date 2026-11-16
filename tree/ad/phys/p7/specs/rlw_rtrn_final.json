@@ -1,0 +1,27 @@
+{
+ "kernel": "rlw_rtrn_final",
+ "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+ "active_in": [
+  "pz"
+ ],
+ "active_out": [
+  "totuflux",
+  "totdflux",
+  "totuclfl",
+  "totdclfl",
+  "fnet",
+  "fnetc",
+  "htr",
+  "htrc"
+ ],
+ "inactive_float_inputs": [],
+ "columns_arg": "ncol",
+ "tape": 4096,
+ "writes": 2048,
+ "refused": [],
+ "threads": 2560,
+ "ncol": 2501,
+ "fd_fixed": [
+  "pz"
+ ]
+}

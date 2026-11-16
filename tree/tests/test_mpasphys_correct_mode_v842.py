@@ -356,10 +356,10 @@ def test_every_correction_names_its_breakage():
     # the findings that act on the ArWen route and the IAU and boundary doors ("hex_route", read by
     # hexcore.correct_mode).  WB5 is on both: the hex-cuda WSM6 slot and the engine's WSM6.
     assert {k for k, row in CORRECTIONS_V842.items() if row['slots'] or k == 'RP4'} == {
-        'RP1', 'RP3', 'RP4', 'RP6', 'RP7', 'WB3', 'WB5'}
+        'RP1', 'RP3', 'RP4', 'RP6', 'RP7', 'RP8', 'WB3', 'WB5'}
     assert {k for k, row in CORRECTIONS_V842.items() if 'hex_route' in row} == {
         'WB4', 'WB5', 'IN1', 'IN2', 'IN3', 'IN4', 'IN5'}
-    assert set(CORRECTIONS_V842) == {'RP1', 'RP3', 'RP4', 'RP6', 'RP7', 'WB3', 'WB4', 'WB5',
+    assert set(CORRECTIONS_V842) == {'RP1', 'RP3', 'RP4', 'RP6', 'RP7', 'RP8', 'WB3', 'WB4', 'WB5',
                                      'IN1', 'IN2', 'IN3', 'IN4', 'IN5'}
     assert all(row['breakage'] for row in CORRECTIONS_V842.values())
     assert Backend.NATIVE_CPU.value == 'native-cpu'

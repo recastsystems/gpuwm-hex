@@ -17,6 +17,8 @@ import tomllib
 
 import pytest
 
+import site_support
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT = ROOT / "pyproject.toml"
@@ -37,8 +39,8 @@ def declaration() -> dict:
 # ---------------------------------------------------------------------------
 def test_the_version_is_stated_in_exactly_one_place(declaration: dict) -> None:
     declared = declaration["project"]["version"]
-    assert declared == "0.5.0", (
-        "0.5.0 is the candidate paired with gpuwm 3.0.0; "
+    assert declared == "0.6.0", (
+        "0.6.0 is the candidate paired with gpuwm 3.0.0 (0.5.0 with the differentiable engine); "
         "moving it is a release decision, not an edit"
     )
 
@@ -132,7 +134,23 @@ def test_the_runtime_version_agrees_with_the_declaration(declaration: dict) -> N
             "PYTHONPATH=src checkout); the agreement is proven by the "
             "packaging tier, which installs the built wheel first"
         )
-    assert installed == declaration["project"]["version"]
+    declared = declaration["project"]["version"]
+    if installed != declared:
+        # A checkout imported over ANOTHER installed version (PYTHONPATH=src in a venv that still
+        # holds an older gpuwm-hex): the metadata read is that older install's, not this tree's.
+        # THE BREAKAGE THIS PREVENTS: on the release hosts the shared test venv held 0.5.1, so this
+        # test failed on every 0.6.0 candidate for a reason outside the package.  Where the import
+        # IS the installed distribution a disagreement is the defect, and it fails.
+        from importlib.metadata import distribution
+
+        shipped = distribution(hexcore.DISTRIBUTION_NAME).locate_file("hexcore/__init__.py")
+        if Path(str(shipped)).resolve() != Path(hexcore.__file__).resolve():
+            pytest.skip(
+                f"this interpreter has gpuwm-hex {installed} installed while hexcore is imported "
+                f"from a {declared} checkout ({Path(hexcore.__file__).resolve().parent}); the "
+                "agreement is proven by the packaging tier, which installs the built wheel first"
+            )
+    assert installed == declared
     assert hexcore.__version__ == installed
 
 
@@ -563,6 +581,7 @@ def test_kernel_packs_and_release_assets_are_outside_the_distributions(declarati
     assert "data/kernel-pack*.json" in excluded
     # Seed the file list as if a future broad graft or stale SOURCES.txt included
     # release assets. The manifest must actively remove them.
+    site_support.setuptools_or_skip("driving the sdist template engine over MANIFEST.in")
     from setuptools._distutils.filelist import FileList
     files = FileList()
     files.allfiles = ["release-assets/kernel-packs/kernel-pack-cuda13.json",

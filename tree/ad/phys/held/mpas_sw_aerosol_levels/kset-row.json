@@ -1,0 +1,190 @@
+{
+ "function": "mpas_sw_aerosol_levels",
+ "class": "glue",
+ "gate_ready": true,
+ "window_launches_pkg18": 0,
+ "window_note": "pkg18 holds radiation (held_upload_ranges 'held: radiation (milestone 1)'); the row binds when a plan carries the SW launches",
+ "arguments": [
+  {
+   "name": "nc",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nz",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "nl",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "has3d",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "angopt",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "ssaopt",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "asyopt",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "ssaval",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "asyval",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "diagnostic_mask",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "p",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "t",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "qv",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "dz",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "type",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": []
+  },
+  {
+   "name": "aod2",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "aod3",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "ssa2",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "asy2",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "spectral",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "zs",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "denom",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "tau",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "ssa",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "asy",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  },
+  {
+   "name": "slope",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": []
+  }
+ ],
+ "derivative": {
+  "row": "ad/held-mpas_sw_aerosol_levels",
+  "root": "tree/ad/phys/held/mpas_sw_aerosol_levels",
+  "spec": {
+   "path": "tree/ad/phys/held/mpas_sw_aerosol_levels/mpas_sw_aerosol_levels.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/held/mpas_sw_aerosol_levels/cuda/mpas_sw_aerosol_levels.ad.cu"
+  },
+  "fatbin_sha256": "94ca2ecc3d981931694f88027bc15fcc14c98491181e24db4a4f6529311bd7ba",
+  "nvcc": [
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-gencode",
+   "arch=compute_80,code=compute_80",
+   "-O3",
+   "--fmad=false",
+   "--ftz=false"
+  ]
+ },
+ "capture": {
+  "path": "<origin>/ad-phys/held/mpas_sw_aerosol_levels/caps/hrrrv5_x1.2562/mpas_sw_aerosol_levels/1/launch-000000/manifest.json"
+ }
+}

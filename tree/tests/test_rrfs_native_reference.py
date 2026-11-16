@@ -1002,7 +1002,7 @@ def test_relative_registry_includes_and_commented_include(tmp_path):
 
 
 def test_workflow_and_fork_decks_include_required_options(tmp_path):
-    source = Path(os.environ.get('RRFS_REFERENCE_SOURCE') or Path(os.environ.get('MPAS_LANES', '.')) / 'ref/rrfs/MPAS-Model-rrfs')
+    source = Path(os.environ.get('RRFS_REFERENCE_SOURCE') or Path(os.environ.get('HEX_REFERENCE_ROOT', '.')) / 'ref/rrfs/MPAS-Model-rrfs')
     workflow = source.parent / 'rrfs-workflow'
     if not (source / 'src/core_atmosphere/Registry.xml').exists():
         pytest.skip('pinned external native sources unavailable')
@@ -1114,7 +1114,7 @@ def test_native_writable_input_copy_preserves_sealed_source_and_ingress(tmp_path
 def test_workflow_overlay_authenticates_source_and_preserves_all_stream_lists(tmp_path):
     spec = importlib.util.spec_from_file_location('rrfs_workflow_overlay', ROOT / 'workflow_deck.py')
     module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
-    ref = Path(os.environ.get('MPAS_LANES', '.')) / 'ref/rrfs'
+    ref = Path(os.environ.get('HEX_REFERENCE_ROOT', '.')) / 'ref/rrfs'
     original = ref / 'decks/gsl-ci-source-v1/ufscommunity.hrrrv5.gfs.winter'
     if not original.exists():
         pytest.skip('external immutable GSL deck absent')

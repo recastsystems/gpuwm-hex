@@ -1,0 +1,15 @@
+#pragma once
+// NVRTC stand-in for the few <type_traits> names the block headers use.
+namespace std {
+template<bool B, class T = void> struct enable_if {};
+template<class T> struct enable_if<true, T> { typedef T type; };
+template<bool B, class T = void> using enable_if_t = typename enable_if<B, T>::type;
+template<class A, class B> struct is_same { static constexpr bool value = false; };
+template<class A> struct is_same<A, A> { static constexpr bool value = true; };
+template<class A, class B> inline constexpr bool is_same_v = is_same<A, B>::value;
+template<class T> T&& card_declval();
+template<class A, class B> struct common_type { typedef decltype(true ? card_declval<A>() : card_declval<B>()) raw;
+  template<class T> struct strip { typedef T type; }; template<class T> struct strip<T&&> { typedef T type; }; template<class T> struct strip<T&> { typedef T type; };
+  typedef typename strip<raw>::type type; };
+template<class A, class B> using common_type_t = typename common_type<A, B>::type;
+}

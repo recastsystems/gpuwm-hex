@@ -130,7 +130,7 @@ listed. Upstream paths are relative to src/core_atmosphere/physics/.
   cuda_gwdo_v841.py      physics_mmm/bl_gwdo.F90 (MMM); physics_wrf/module_bl_gwdo.F (WRF)
   mesh.py (grid_rotate convert_xl longitude formula)     MPAS-Tools, MPAS terms
   native_powf.py         Arm optimized-routines v21.02 powf (ARM)
-  data/profiles/Vtable.GFS, data/vtables/Vtable.GFS
+  data/profiles/Vtable.GFS, data/vtables/Vtable.GFS, data/vtables/Vtable.GFS-rrfs
                          WPS ungrib/Variable_Tables/Vtable.GFS (NOTICE section 3)
 
 3. Tests and tools that transcribe or patch upstream source
@@ -276,3 +276,19 @@ Full texts: licenses/rapidgzip-LICENSE-MIT.txt and licenses/rapidgzip-LICENSE-AP
 
 psutil supplies process identity checks for owned run directories.
 Licensed under BSD-3-Clause. Full text: licenses/psutil-LICENSE.txt.
+
+The differentiable engine (ad/, rust/hexad/, src/hexcore/ad/; NOTICE section 18)
+------------------------------------------------------------------------
+Project code (Apache-2.0): the runner and libhexad-phys (ad/phys/binder/,
+ad/e2e/, ad/phys/p8/), the generators and proof harnesses (ad/phys/tempo/,
+ad/phys/mynn/, ad/phys/p4/, ad/phys/p7/, ad/phys/typesub/, ad/phys/p6/),
+ad/phys/bind/, ad/phys/window/ and ad/kset/int7f/*.py.
+Derivative kernels keep the terms of the forward kernel they differentiate:
+  ad/kset/int7f/src/ad1-*, overlay-a/, overlay-b/, ad/kset/g8/hex-ad/,
+  ad/phys/l4speed/              dynamical core and transport   MPAS
+  ad/kset/int7f/src/ad2-hrrrv5-glue/, ad/kset/g8/physics-ad/,
+  ad/phys/g3/cuda/, ad/phys/held/mpas_*      physics driver glue   MPAS
+  ad/phys/held/rlw_*, rsw_*, ad/phys/p7/     RRTMG                 AER, MPAS, WRF
+  ad/phys/held/tempo_*, ad/phys/tempo/       TEMPO                 NCAR TEMPO Apache-2.0
+  ad/phys/mynn/, ad/phys/p4/, ad/phys/held/oracle_*, ad/phys/p6/
+                                  MYNN-EDMF, MYNN-SFC, GSL drag, RUC   USGOV

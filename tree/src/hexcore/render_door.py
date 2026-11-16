@@ -24,7 +24,7 @@ its dx from the mesh cells inside it, both derived by the converter.  Each
 PNG is filed as ``<view>/<product>/<valid-day>/<mesh>_<view>_<product>_<lead>.png``
 -- ``hex15km_global_500mb_height_winds_f006.png`` -- where ``<mesh>`` is the
 grid label the converter read off the mesh.  THE BREAKAGE THIS PREVENTS,
-MEASURED: the live global hex gallery drew a 15 km mesh on 20 km and 28 km
+MEASURED: the live global hex gallery rendered a 15 km mesh on 20 km and 28 km
 grids, headlined every map ``(d01 20 km)`` and named every file
 ``rustwx_wrf_20261010_0z_f000_d01-20km_<product>.png`` -- the renderer's
 generic WRF template, which says neither which model nor which mesh.
@@ -123,7 +123,7 @@ _GROUP_KEYWORDS = frozenset({"all", "direct", "derived", "heavy", "windowed",
 
 #: The door's window names and the converter window each one asks for.
 #: ``global`` is the whole sphere AT THE MESH'S OWN SPACING
-#: (``global-mesh``): the frozen 0.25 degree overview drew a 15 km mesh on a
+#: (``global-mesh``): the frozen 0.25 degree overview rendered a 15 km mesh on a
 #: 27.8 km grid, so it is no longer what a bare ``--window global`` means.
 #: It stays reachable, unchanged, as ``global-0.25`` -- its weights digests
 #: are recorded in evidence and its geometry does not move.
@@ -389,9 +389,9 @@ def drawn_grid_label(convert_exe: Path, label: str | None) -> str | None:
 
     THE BREAKAGE THIS PREVENTS (2026-10-30): every hex picture was
     headlined by the WHOLE mesh's range and the picture grid's spacing, so
-    the core picture of run_713c9e1913164e02 read ``(hex 133-6.9 km) ...
+    the core picture of one run read ``(hex 133-6.9 km) ...
     Δx 8.063 km`` under the site's ``Core zoom · 8 → 38 km``, and the view
-    around the core of run_c108e049fecb4bd0 ``Δx 6.08 km`` under ``Around the
+    around the core of another ``Δx 6.08 km`` under ``Around the
     core · 6 → 96 km``.  A converter built before ``--grid-label`` refuses
     the flag, so it is asked first; such a build keeps the mesh's headline,
     said once per converter rather than failing the view."""
@@ -572,7 +572,7 @@ def resolve_basemap_dir(renderer_exe: Path,
     THE BREAKAGE THIS PREVENTS, MEASURED (2026-10-11): the renderer finds
     its coastlines, borders and state lines beside its own build tree, and
     the door launched it bare.  A renderer binary copied to another folder
-    therefore found none, drew every field with no geography under it,
+    therefore found none, rendered every field with no geography under it,
     exited 0 and reported every product RENDERED: 59 delivered maps had no
     basemap.  The regional path never had this because it launches the
     same binary through ``gpuwm.rustwx``, which pins the root.  So the door
@@ -647,17 +647,42 @@ def credited_source_line(label: str | None, credit: str, width: int, height: int
     return credit
 
 
+#: The bars the host asks each map to draw, as JSON {product: band edges}: the renderer theme's colormaps.levels
+#: (the palette is kept and spread over the edges). WOOF sends its rain bands, so 1 h, 6 h and total rain each
+#: get a bar that fits the window. Unset or unreadable, no bar changes.
+THEME_LEVELS_ENV = "GPUWM_HEX_THEME_LEVELS"
+
+
+def theme_levels() -> dict:
+    """The host's bars ($GPUWM_HEX_THEME_LEVELS): {product: increasing edges}; {} when unset or not that shape."""
+
+    try:
+        levels = json.loads(os.environ.get(THEME_LEVELS_ENV) or "{}")
+    except ValueError:
+        return {}
+    if not isinstance(levels, dict):
+        return {}
+    return {str(k): [float(x) for x in v] for k, v in levels.items()
+            if isinstance(v, list) and len(v) >= 2 and all(isinstance(x, (int, float)) for x in v)
+            and all(a < b for a, b in zip(v, v[1:]))}
+
+
 def source_credit_theme(scratch: Path, label: str | None, width: int, height: int) -> str | None:
     """The render theme carrying this map's credited source line (credited_source_line), written in ``scratch``; None
     when the host names no credit (``$GPUWM_HEX_SOURCE_CREDIT``) or names a theme of its own (``$RUSTWX_THEME``). The
     theme names no ``extends``: the renderer keeps its plain look and only the source line changes."""
 
     credit = " ".join(os.environ.get(SOURCE_CREDIT_ENV, "").split())
-    if not credit or os.environ.get("RUSTWX_THEME"):
+    levels = theme_levels()
+    if not (credit or levels) or os.environ.get("RUSTWX_THEME"):
         return None
+    theme: dict = {}
+    if credit:
+        theme["text"] = {"source_label": credited_source_line(label, credit, width, height)}
+    if levels:
+        theme["colormaps"] = {"levels": levels}
     path = Path(scratch) / "source-credit-theme.json"
-    path.write_text(json.dumps({"text": {"source_label": credited_source_line(label, credit, width, height)}})
-                    + "\n", encoding="utf-8")
+    path.write_text(json.dumps(theme) + "\n", encoding="utf-8")
     return str(path)
 
 
@@ -796,8 +821,8 @@ PICTURE_GRID_MAX_COLUMNS = 2000
 _MPAS_EARTH_RADIUS_M = 6_371_229.0
 #: The lat-lon window's sphere (rw-mpas WRF_EARTH_RADIUS_M): global-mesh's columns are pi * this / spacing, times 2.
 #: Its own name, not the tile planner's _WRF_EARTH_RADIUS_M, so this block stands in a render door without tiles
-#: (gpuwm-hex 0.4.9 carries it as a hotfix row; its render door has no such name: NameError on canary
-#: run_35e9999842049ddb).
+#: (gpuwm-hex 0.4.9 carries it as a hotfix row; its render door has no such name: NameError on a
+#: canary run).
 _GLOBAL_WINDOW_RADIUS_M = 6_370_000.0
 
 
@@ -832,7 +857,7 @@ def global_picture_window(mesh: Path | None, width: int) -> tuple[str, str] | No
     whatever the mesh and however long the run. A mesh coarser than that (60 and 120 km globes) keeps its own spacing,
     and its picture is unchanged; its subtitle names the render grid either way.
 
-    THE BREAKAGE THIS PREVENTS, MEASURED (owner canary run_b8d705f1f8db9c92, 48 h 96 -> 3 km Arizona zoom globe on
+    THE BREAKAGE THIS PREVENTS, MEASURED (a canary run, 48 h 96 -> 3 km Arizona zoom globe on
     one RTX PRO 6000 box, 2026-10-30): ``global-mesh`` takes the mesh's MEDIAN cell spacing, three cells in four of that
     mesh are its 3 km core, so the global view was the whole sphere at 9.4 km, 4240 x 2121 = 9.0 M points, for a
     picture 1800 pixels across. The renderer's import holds about 10 KB per grid point per frame (RTX 5090 host, real hex

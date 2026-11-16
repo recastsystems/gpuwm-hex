@@ -2,7 +2,7 @@
 
 Until this door the only way a hex history became a regular latitude-longitude
 NetCDF file was inside ``render``: the converter wrote the frames into the
-render scratch, the renderer drew them, and the scratch was removed.  A user who
+render scratch, the renderer rendered them, and the scratch was removed.  A user who
 wanted the numbers -- to feed another model, to score with their own tool, to
 open in any NetCDF reader -- had no command for it (gpuwm-global has had
 ``export`` since 0.1).

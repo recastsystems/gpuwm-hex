@@ -39,7 +39,11 @@ from .cuda_courant_fullstep_lts import CudaColumnTransportMonitor
 # density, split fluxes and stage duration; rdzw and rk_step remain explicit keywords.
 # Re-audited 2026-11-11 (hex 0.5.0 re-seal): one comment line of cuda_driver.py reworded; its AST with docstrings
 # stripped is unchanged, so both transport calls are untouched.
-NATIVE_DRIVER_SHA256 = '98b0f786620a5e81f7e625da4c2f3727823f0d416338c64f09b7d69f3ad70a29'
+# Re-audited 2026-11-16 (hex 0.6.0, model audit D8, the once-a-step regional clamp): the change is ten lines after
+# both transport calls (the regional negative-scalar clamp runs only when no post-transport callback ran); the two
+# advance_scalar_transport_cuda_v841 calls are unchanged as text and as AST: source-old density at position 4, split
+# fluxes at 6 and 7, stage duration at 8.
+NATIVE_DRIVER_SHA256 = '5cf4bd473b2435476f0a56db17a2d1b15fbbc2e366f190fde95e007cf1a672de'
 
 
 class FullStepShadow:

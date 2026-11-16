@@ -130,6 +130,11 @@ def known_findings() -> frozenset[str]:
     driver's table and the imported engine's registry (one set of names)."""
 
     names = set(FINDINGS) | set(_port_registry())
+    try:
+        from .mpasphys.rrfs.fork_corrections import FORK_CORRECTIONS
+        names |= set(FORK_CORRECTIONS)
+    except ImportError:
+        pass
     engine = _engine_registry()
     if engine:
         names |= set(engine)

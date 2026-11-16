@@ -158,6 +158,7 @@ import hashlib
 import json
 import math
 import os
+from hexcore import card_queue
 import re
 from pathlib import Path
 import sys
@@ -3930,7 +3931,7 @@ def execute_forecast(
     snapshot_seconds = 0.0
     card_attrs = {"card": time_ledger.card_index(), "card_count": 1,
                   "visible_device": os.environ.get("CUDA_VISIBLE_DEVICES"),
-                  "mutex_cards": os.environ.get("GPU_MUTEX_CARDS")}
+                  "mutex_cards": card_queue.get(card_queue.CARDS, None)}
 
     def inspect_pending_health() -> None:
         nonlocal pending_health, health_seconds, late_health_error

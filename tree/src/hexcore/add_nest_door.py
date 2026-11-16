@@ -491,7 +491,15 @@ NEST_PRODUCTS = ",".join((
     "sbcape", "mlcape", "mucape", "sbcin", "mlcin", "mucin", "srh_0_1km", "srh_0_3km", "bulk_shear_0_1km",
     "bulk_shear_0_6km", "stp_fixed", "ehi_0_1km", "composite_reflectivity", "1km_reflectivity", "qpf_1h",
     "total_qpf", "precipitable_water", "isotherm_height_0c", "low_cloud_cover", "middle_cloud_cover",
-    "high_cloud_cover", "cloud_water_column_max"))
+    "high_cloud_cover", "cloud_water_column_max",
+    # The UH maps (WOOF uh-layers, 2026-11-02) and the UH tracks (2026-11-10). THE BREAKAGE THIS PREVENTS (WOOF
+    # run_de0c75975bb17140, 2026-11-10): this list was the met set from before the UH rows, so a 1 km nest under a hex
+    # parent showed no UH while the parent and every Regional run did. The WOOF worker now sends its own table's set
+    # (--render-products); this default keeps a plain add-nest the same.
+    "uh_0to1km", "uh_0to2km", "uh_0to3km", "uh_2to5km", "composite_reflectivity_uh0to1km",
+    "composite_reflectivity_uh0to2km", "composite_reflectivity_uh0to3km", "composite_reflectivity_uh",
+    "1km_reflectivity_uh0to1km", "1km_reflectivity_uh0to2km", "1km_reflectivity_uh0to3km", "1km_reflectivity_uh2to5km",
+    "uh_2to5km_1h_max", "uh_2to5km_3h_max", "uh_2to5km_run_max"))
 
 #: What the nest's maps call its grid in the headline: ``nest 3 km``, not the ``d01 3 km`` it is in its own
 #: one-domain run.  THE BREAKAGE THIS PREVENTS (WOOF Hex with Regional, 2026-10-28, canary run_9a0796b2e9c8e251):

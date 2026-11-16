@@ -1,0 +1,2398 @@
+{
+ "kernel": "reconstruct_winds_v841_f32",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_physics_prep_v841.py",
+ "line": 1799,
+ "route": "hand",
+ "mode": "exact",
+ "launch": {
+  "grid": "ceil(nlev*ncells/128)",
+  "block": "128",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nlev",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed discrete launch/topology control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": []
+  },
+  {
+   "name": "ncells",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed discrete launch/topology control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": []
+  },
+  {
+   "name": "nedges",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed discrete launch/topology control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": []
+  },
+  {
+   "name": "maxedges",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed discrete launch/topology control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": []
+  },
+  {
+   "name": "normal_velocity",
+   "field_id": 5,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nlev",
+    "nedges"
+   ],
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*nedges",
+    "4"
+   ]
+  },
+  {
+   "name": "edges_on_cell",
+   "field_id": 6,
+   "role": "const",
+   "dtype": "i32",
+   "shape": [
+    "ncells",
+    "maxedges"
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed discrete launch/topology control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*maxedges",
+    "4"
+   ]
+  },
+  {
+   "name": "n_edges_on_cell",
+   "field_id": 7,
+   "role": "const",
+   "dtype": "i32",
+   "shape": [
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed discrete launch/topology control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4"
+   ]
+  },
+  {
+   "name": "coeffs_reconstruct",
+   "field_id": 8,
+   "role": "const",
+   "dtype": "f32",
+   "shape": [
+    "ncells",
+    "maxedges",
+    3
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed geometry and bitwise sealed geometry; not a state or parameter control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*3*maxedges",
+    "4*3",
+    "4"
+   ]
+  },
+  {
+   "name": "lat_cell",
+   "field_id": 9,
+   "role": "const",
+   "dtype": "f32",
+   "shape": [
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed geometry and bitwise sealed geometry; not a state or parameter control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4"
+   ]
+  },
+  {
+   "name": "lon_cell",
+   "field_id": 10,
+   "role": "const",
+   "dtype": "f32",
+   "shape": [
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed geometry and bitwise sealed geometry; not a state or parameter control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4"
+   ]
+  },
+  {
+   "name": "sealed_edges_on_cell",
+   "field_id": 11,
+   "role": "const",
+   "dtype": "i32",
+   "shape": [
+    "ncells",
+    "maxedges"
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed discrete launch/topology control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*maxedges",
+    "4"
+   ]
+  },
+  {
+   "name": "sealed_n_edges_on_cell",
+   "field_id": 12,
+   "role": "const",
+   "dtype": "i32",
+   "shape": [
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed discrete launch/topology control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4"
+   ]
+  },
+  {
+   "name": "sealed_coeffs_reconstruct",
+   "field_id": 13,
+   "role": "const",
+   "dtype": "f32",
+   "shape": [
+    "ncells",
+    "maxedges",
+    3
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed geometry and bitwise sealed geometry; not a state or parameter control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*3*maxedges",
+    "4*3",
+    "4"
+   ]
+  },
+  {
+   "name": "sealed_lat_cell",
+   "field_id": 14,
+   "role": "const",
+   "dtype": "f32",
+   "shape": [
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed geometry and bitwise sealed geometry; not a state or parameter control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4"
+   ]
+  },
+  {
+   "name": "sealed_lon_cell",
+   "field_id": 15,
+   "role": "const",
+   "dtype": "f32",
+   "shape": [
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "fixed geometry and bitwise sealed geometry; not a state or parameter control",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4"
+   ]
+  },
+  {
+   "name": "x",
+   "field_id": 16,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nlev",
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*ncells",
+    "4"
+   ]
+  },
+  {
+   "name": "y",
+   "field_id": 17,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nlev",
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*ncells",
+    "4"
+   ]
+  },
+  {
+   "name": "z",
+   "field_id": 18,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nlev",
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*ncells",
+    "4"
+   ]
+  },
+  {
+   "name": "u_p",
+   "field_id": 19,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nlev",
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*ncells",
+    "4"
+   ]
+  },
+  {
+   "name": "v_p",
+   "field_id": 20,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nlev",
+    "ncells"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4*ncells",
+    "4"
+   ]
+  },
+  {
+   "name": "invalid",
+   "field_id": 21,
+   "role": "inout",
+   "dtype": "i32",
+   "shape": [
+    1
+   ],
+   "stagger": "unresolved",
+   "active": false,
+   "inactive_reason": "integer diagnostic flag",
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "strides_bytes": [
+    "4"
+   ]
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1811",
+   "predicate": "element >= nlev * ncells",
+   "policy": "executed-arm",
+   "tie": "integer equality returns",
+   "slot": 0,
+   "column": 35,
+   "operation": "iteration",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "element"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "executed-arm",
+   "inactive_reason": "Every variable it reads (element) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1814",
+   "predicate": "geometry differs bitwise from sealed geometry",
+   "policy": "refusal",
+   "tie": "any bit difference refuses",
+   "slot": 1
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1820",
+   "predicate": "slot < maxedges",
+   "policy": "inactive-index",
+   "tie": "fixed topology",
+   "slot": 2,
+   "column": 5,
+   "operation": "iteration",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_fill": "iteration",
+   "inactive_reason": "cuda_physics_prep_v841.py:1820 col 5: predicate `int slot = 0; slot < maxedges; ++slot` reads only the thread index and int32 launch scalars (['maxedges', 'slot']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1832",
+   "predicate": "geometry_changed",
+   "policy": "refusal",
+   "tie": "true refuses",
+   "slot": 3,
+   "column": 5,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (existing entry)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1843",
+   "predicate": "count outside [0,maxedges]",
+   "policy": "refusal",
+   "tie": "endpoints included",
+   "slot": 4,
+   "column": 5,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "count"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (count) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1847",
+   "predicate": "slot < count",
+   "policy": "iteration",
+   "tie": "count held as fixed topology",
+   "slot": 5,
+   "column": 5,
+   "operation": "iteration",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "count"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "iteration",
+   "inactive_reason": "Every variable it reads (count) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1849",
+   "predicate": "edge outside [0,nedges)",
+   "policy": "refusal",
+   "tie": "lower endpoint included, upper excluded",
+   "slot": 6,
+   "column": 9,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "edge"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (edge) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1857",
+   "predicate": "nonfinite geometry coefficients",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 7,
+   "column": 9,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "cx",
+    "cy",
+    "cz"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (cx, cy, cz) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1862",
+   "predicate": "nonfinite normal velocity",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 8,
+   "column": 18,
+   "operation": "refusal",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "value"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1872",
+   "predicate": "nonfinite trigonometry",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 9,
+   "column": 5,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "clat",
+    "clon",
+    "slat",
+    "slon"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (clat, clon, slat, slon) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:42",
+   "predicate": "subnormal f32 decode",
+   "policy": "rounding-helper",
+   "tie": "nonzero magnitude with exponent zero enters decode; both routes implement the same real arithmetic operation",
+   "slot": 10,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "exact value of the float32 input as a double: ldexp(mantissa,-149) with sign for a subnormal, (double)value otherwise",
+   "arms_source": "cuda_fp32.py:36-49",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:57",
+   "predicate": "f64-to-f32 packing of subnormal result",
+   "policy": "rounding-helper",
+   "tie": "strictly positive magnitude below the smallest normal enters packing; both routes implement the same real arithmetic operation",
+   "slot": 11,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "round-to-nearest-even float32 of the double: packed subnormal mantissa rint(|v|*2^149), __double2float_rn otherwise",
+   "arms_source": "cuda_fp32.py:51-67",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:78",
+   "predicate": "add normal-result fast path",
+   "policy": "rounding-helper",
+   "tie": "exponent > 24 returns ordinary; both routes implement the same real arithmetic operation",
+   "slot": 12,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left+right rounded to float32 (ordinary sum, or the double sum rounded once)",
+   "arms_source": "cuda_fp32.py:69-100",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:83",
+   "predicate": "add subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "either nonzero operand exponent equals zero enters fallback; both routes implement the same real arithmetic operation",
+   "slot": 13,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left+right rounded to float32",
+   "arms_source": "cuda_fp32.py:69-100",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:93",
+   "predicate": "add cancellation fallback",
+   "policy": "rounding-helper",
+   "tie": "all stated inequalities must hold; both routes implement the same real arithmetic operation",
+   "slot": 14,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left+right rounded to float32",
+   "arms_source": "cuda_fp32.py:69-100",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:111",
+   "predicate": "sub normal-result fast path",
+   "policy": "rounding-helper",
+   "tie": "exponent > 24 returns ordinary; both routes implement the same real arithmetic operation",
+   "slot": 15,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left-right rounded to float32",
+   "arms_source": "cuda_fp32.py:102-130",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:116",
+   "predicate": "sub subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "either nonzero operand exponent equals zero enters fallback; both routes implement the same real arithmetic operation",
+   "slot": 16,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left-right rounded to float32",
+   "arms_source": "cuda_fp32.py:102-130",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:123",
+   "predicate": "sub cancellation fallback",
+   "policy": "rounding-helper",
+   "tie": "all stated inequalities must hold; both routes implement the same real arithmetic operation",
+   "slot": 17,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left-right rounded to float32",
+   "arms_source": "cuda_fp32.py:102-130",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:142",
+   "predicate": "multiply zero/subnormal-result envelope",
+   "policy": "rounding-helper",
+   "tie": "zero exponent enters operand checks; both routes implement the same real arithmetic operation",
+   "slot": 18,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left*right rounded to float32 (ordinary product, or the double product rounded once)",
+   "arms_source": "cuda_fp32.py:132-151",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:145",
+   "predicate": "multiply nonzero operands",
+   "policy": "rounding-helper",
+   "tie": "both nonzero magnitudes enter fallback; both routes implement the same real arithmetic operation",
+   "slot": 19,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left*right rounded to float32",
+   "arms_source": "cuda_fp32.py:132-151",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:162",
+   "predicate": "divide subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "either nonzero operand exponent equals zero enters fallback; both routes implement the same real arithmetic operation",
+   "slot": 20,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left/right rounded to float32",
+   "arms_source": "cuda_fp32.py:153-178",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:170",
+   "predicate": "divide subnormal result envelope",
+   "policy": "rounding-helper",
+   "tie": "all stated inequalities must hold; both routes implement the same real arithmetic operation",
+   "slot": 21,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "left/right rounded to float32",
+   "arms_source": "cuda_fp32.py:153-178",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:45",
+   "predicate": "subnormal decode sign bit is set",
+   "policy": "rounding-helper",
+   "tie": "negative sign selects negative decoded magnitude",
+   "slot": 22,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "sign selection of the same decoded magnitude",
+   "arms_source": "cuda_fp32.py:43-46",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:62",
+   "predicate": "subnormal packed result is negative",
+   "policy": "rounding-helper",
+   "tie": "negative sign bit selects negative result",
+   "slot": 23,
+   "rounding_helper_registry": "configs/ledger/rounding_helpers.json",
+   "both_arms": "sign bit of the same packed result",
+   "arms_source": "cuda_fp32.py:60-64",
+   "compile_guard": "MPAS_FTZ_FALLBACK_ENABLED != 0; otherwise the predicate is compiled out and both counters remain zero."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1820",
+   "predicate": "slot < maxedges",
+   "policy": "inactive-config",
+   "tie": "fixed topology",
+   "slot": 2,
+   "column": 29,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-config",
+   "policy_before_fill": "iteration",
+   "inactive_reason": "cuda_physics_prep_v841.py:1820 col 29: predicate `< maxedges` reads only int32 launch scalars (['maxedges']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1843",
+   "predicate": "count outside [0,maxedges]",
+   "policy": "refusal",
+   "tie": "endpoints included",
+   "slot": 4,
+   "column": 15,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "count"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (count) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1843",
+   "predicate": "count outside [0,maxedges]",
+   "policy": "refusal",
+   "tie": "endpoints included",
+   "slot": 4,
+   "column": 28,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "count"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (count) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1847",
+   "predicate": "slot < count",
+   "policy": "iteration",
+   "tie": "count held as fixed topology",
+   "slot": 5,
+   "column": 29,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "count"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "iteration",
+   "inactive_reason": "Every variable it reads (count) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1849",
+   "predicate": "edge outside [0,nedges)",
+   "policy": "refusal",
+   "tie": "lower endpoint included, upper excluded",
+   "slot": 6,
+   "column": 18,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "edge"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (edge) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1849",
+   "predicate": "edge outside [0,nedges)",
+   "policy": "refusal",
+   "tie": "lower endpoint included, upper excluded",
+   "slot": 6,
+   "column": 30,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "edge"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (edge) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1857",
+   "predicate": "nonfinite geometry coefficients",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 7,
+   "column": 14,
+   "operation": "refusal",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "cx",
+    "cy",
+    "cz"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (cx, cy, cz) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1857",
+   "predicate": "nonfinite geometry coefficients",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 7,
+   "column": 31,
+   "operation": "refusal",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "cx",
+    "cy",
+    "cz"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (cx, cy, cz) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1857",
+   "predicate": "nonfinite geometry coefficients",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 7,
+   "column": 48,
+   "operation": "refusal",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "cx",
+    "cy",
+    "cz"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (cx, cy, cz) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1862",
+   "predicate": "nonfinite normal velocity",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 8,
+   "column": 13,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "value"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "false-candidate",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Same decision as tree/src/hexcore/cuda_physics_prep_v841.py:1862:18:refusal, which records branch slot 8; this site is its wrapper, not a separate branch.",
+   "resolved_by": "U3 ledger_rw.py (shared slot)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1872",
+   "predicate": "nonfinite trigonometry",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 9,
+   "column": 10,
+   "operation": "refusal",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "clat",
+    "clon",
+    "slat",
+    "slon"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (clat, clon, slat, slon) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1872",
+   "predicate": "nonfinite trigonometry",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 9,
+   "column": 29,
+   "operation": "refusal",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "clat",
+    "clon",
+    "slat",
+    "slon"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (clat, clon, slat, slon) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1872",
+   "predicate": "nonfinite trigonometry",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 9,
+   "column": 48,
+   "operation": "refusal",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "clat",
+    "clon",
+    "slat",
+    "slon"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (clat, clon, slat, slon) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1872",
+   "predicate": "nonfinite trigonometry",
+   "policy": "refusal",
+   "tie": "nonfinite refuses",
+   "slot": 9,
+   "column": 67,
+   "operation": "refusal",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active_variables": [
+    "clat",
+    "clon",
+    "slat",
+    "slon"
+   ],
+   "replay": "recompute the predicate from the saved primal inputs at this site",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_u3": "refusal",
+   "inactive_reason": "Every variable it reads (clat, clon, slat, slon) is a fixed-topology integer, fixed geometry or a launch scalar; no active value reaches it.",
+   "resolved_by": "U3 ledger_rw.py (fill marked active)"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1811",
+   "column": 17,
+   "operation": "predicate",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1811:17:predicate",
+   "predicate": "if (element >= nlev * ncells) return;",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1815",
+   "column": 9,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1815:9:lookup",
+   "predicate": "n_edges_on_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "n_edges_on_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1815",
+   "column": 31,
+   "operation": "predicate",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1815:31:predicate",
+   "predicate": "n_edges_on_cell[cell] != sealed_n_edges_on_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1815",
+   "column": 34,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1815:34:lookup",
+   "predicate": "sealed_n_edges_on_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "sealed_n_edges_on_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1816",
+   "column": 28,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1816:28:lookup",
+   "predicate": "lat_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "lat_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1817",
+   "column": 13,
+   "operation": "predicate",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1817:13:predicate",
+   "predicate": "!= __float_as_uint(sealed_lat_cell[cell])",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1817",
+   "column": 32,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1817:32:lookup",
+   "predicate": "sealed_lat_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "sealed_lat_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1818",
+   "column": 28,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1818:28:lookup",
+   "predicate": "lon_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "lon_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1819",
+   "column": 13,
+   "operation": "predicate",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1819:13:predicate",
+   "predicate": "!= __float_as_uint(sealed_lon_cell[cell]);",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1819",
+   "column": 32,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1819:32:lookup",
+   "predicate": "sealed_lon_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "sealed_lon_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1824",
+   "column": 16,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1824:16:lookup",
+   "predicate": "edges_on_cell[edge_index]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "edges_on_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1824",
+   "column": 42,
+   "operation": "predicate",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1824:42:predicate",
+   "predicate": "|| edges_on_cell[edge_index] != sealed_edges_on_cell[edge_index]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1824",
+   "column": 45,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1824:45:lookup",
+   "predicate": "sealed_edges_on_cell[edge_index]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "sealed_edges_on_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1825",
+   "column": 32,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1825:32:lookup",
+   "predicate": "coeffs_reconstruct[coeff_index]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1826",
+   "column": 17,
+   "operation": "predicate",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1826:17:predicate",
+   "predicate": "!= __float_as_uint(sealed_coeffs_reconstruct[coeff_index])",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1826",
+   "column": 36,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1826:36:lookup",
+   "predicate": "sealed_coeffs_reconstruct[coeff_index]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "sealed_coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1827",
+   "column": 32,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1827:32:lookup",
+   "predicate": "coeffs_reconstruct[coeff_index + 1]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1828",
+   "column": 17,
+   "operation": "predicate",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1828:17:predicate",
+   "predicate": "!= __float_as_uint(sealed_coeffs_reconstruct[coeff_index + 1])",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1828",
+   "column": 36,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1828:36:lookup",
+   "predicate": "sealed_coeffs_reconstruct[coeff_index + 1]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "sealed_coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1829",
+   "column": 32,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1829:32:lookup",
+   "predicate": "coeffs_reconstruct[coeff_index + 2]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1830",
+   "column": 17,
+   "operation": "predicate",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1830:17:predicate",
+   "predicate": "!= __float_as_uint(sealed_coeffs_reconstruct[coeff_index + 2]);",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "inactive_reason": "The decision reads only fixed geometry, the bitwise geometry seal, topology, launch scalars and integer indices; no active value reaches it."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1830",
+   "column": 36,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1830:36:lookup",
+   "predicate": "sealed_coeffs_reconstruct[coeff_index + 2]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "sealed_coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1834",
+   "column": 9,
+   "operation": "iteration",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1834:9:iteration",
+   "predicate": "return",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "false-candidate",
+   "inactive_reason": "Return or continue is the exit of a fixed-control arm, not a loop iteration; its selecting predicate is recorded separately."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1842",
+   "column": 23,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1842:23:lookup",
+   "predicate": "n_edges_on_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "n_edges_on_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1845",
+   "column": 9,
+   "operation": "iteration",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1845:9:iteration",
+   "predicate": "return",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "false-candidate",
+   "inactive_reason": "Return or continue is the exit of a fixed-control arm, not a loop iteration; its selecting predicate is recorded separately."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1848",
+   "column": 26,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1848:26:lookup",
+   "predicate": "edges_on_cell[cell * maxedges + slot]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "edges_on_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1851",
+   "column": 13,
+   "operation": "iteration",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1851:13:iteration",
+   "predicate": "continue",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "false-candidate",
+   "inactive_reason": "Return or continue is the exit of a fixed-control arm, not a loop iteration; its selecting predicate is recorded separately."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1854",
+   "column": 26,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1854:26:lookup",
+   "predicate": "coeffs_reconstruct[ci]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1855",
+   "column": 26,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1855:26:lookup",
+   "predicate": "coeffs_reconstruct[ci + 1]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1856",
+   "column": 26,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1856:26:lookup",
+   "predicate": "coeffs_reconstruct[ci + 2]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "coeffs_reconstruct",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1861",
+   "column": 33,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1861:33:lookup",
+   "predicate": "normal_velocity[k * nedges + edge]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "normal_velocity",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1863",
+   "column": 29,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1863:29:lookup",
+   "predicate": "x[i]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "x",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1864",
+   "column": 29,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1864:29:lookup",
+   "predicate": "y[i]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "y",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1865",
+   "column": 29,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1865:29:lookup",
+   "predicate": "z[i]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "z",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1868",
+   "column": 29,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1868:29:lookup",
+   "predicate": "lat_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "lat_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1869",
+   "column": 29,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1869:29:lookup",
+   "predicate": "lat_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "lat_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1870",
+   "column": 29,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1870:29:lookup",
+   "predicate": "lon_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "lon_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1871",
+   "column": 29,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1871:29:lookup",
+   "predicate": "lon_cell[cell]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "lon_cell",
+   "selected_value_active": false,
+   "inactive_reason": "The lookup address and the loaded value are fixed mesh geometry or topology, inactive for derivatives."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1877",
+   "column": 37,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1877:37:lookup",
+   "predicate": "x[i]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "x",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1877",
+   "column": 60,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1877:60:lookup",
+   "predicate": "y[i]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "y",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1879",
+   "column": 22,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1879:22:lookup",
+   "predicate": "x[i]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "x",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1879",
+   "column": 44,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1879:44:lookup",
+   "predicate": "y[i]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "y",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_prep_v841.py:1881",
+   "column": 66,
+   "operation": "lookup",
+   "source_id": "tree/src/hexcore/cuda_physics_prep_v841.py:1881:66:lookup",
+   "predicate": "z[i]",
+   "policy": "inactive",
+   "active": false,
+   "tie": "not applicable to fixed control",
+   "replay": "fixed capture geometry and topology",
+   "ledger_owner": "ad1-185-reconstruct_winds_v841_f32",
+   "resolved_by": "U3 ledger_rw.py",
+   "class": "inactive-index",
+   "selected_value": "z",
+   "selected_value_active": true,
+   "inactive_reason": "The lookup address uses fixed mesh topology, integer indices and launch dimensions; the loaded floating value remains active."
+  }
+ ],
+ "tables": [],
+ "entry_points": {
+  "tl": {
+   "symbol": "reconstruct_winds_v841_f32__tl",
+   "args": [
+    "nlev",
+    "ncells",
+    "nedges",
+    "maxedges",
+    "normal_velocity",
+    "edges_on_cell",
+    "n_edges_on_cell",
+    "coeffs_reconstruct",
+    "lat_cell",
+    "lon_cell",
+    "sealed_edges_on_cell",
+    "sealed_n_edges_on_cell",
+    "sealed_coeffs_reconstruct",
+    "sealed_lat_cell",
+    "sealed_lon_cell",
+    "x",
+    "y",
+    "z",
+    "u_p",
+    "v_p",
+    "invalid",
+    "d_normal_velocity",
+    "d_x",
+    "d_y",
+    "d_z",
+    "d_u_p",
+    "d_v_p",
+    "branch_record"
+   ]
+  },
+  "ad": {
+   "symbol": "reconstruct_winds_v841_f32__ad",
+   "args": [
+    "nlev",
+    "ncells",
+    "nedges",
+    "maxedges",
+    "normal_velocity",
+    "edges_on_cell",
+    "n_edges_on_cell",
+    "coeffs_reconstruct",
+    "lat_cell",
+    "lon_cell",
+    "sealed_edges_on_cell",
+    "sealed_n_edges_on_cell",
+    "sealed_coeffs_reconstruct",
+    "sealed_lat_cell",
+    "sealed_lon_cell",
+    "x",
+    "y",
+    "z",
+    "u_p",
+    "v_p",
+    "invalid",
+    "b_normal_velocity",
+    "b_x",
+    "b_y",
+    "b_z",
+    "b_u_p",
+    "b_v_p",
+    "inverse_offsets",
+    "inverse_cells",
+    "inverse_slots",
+    "phase"
+   ]
+  },
+  "aug": null,
+  "ad_clear": {
+   "symbol": "reconstruct_winds_v841_f32__ad",
+   "args": [
+    "nlev",
+    "ncells",
+    "nedges",
+    "maxedges",
+    "normal_velocity",
+    "edges_on_cell",
+    "n_edges_on_cell",
+    "coeffs_reconstruct",
+    "lat_cell",
+    "lon_cell",
+    "sealed_edges_on_cell",
+    "sealed_n_edges_on_cell",
+    "sealed_coeffs_reconstruct",
+    "sealed_lat_cell",
+    "sealed_lon_cell",
+    "x",
+    "y",
+    "z",
+    "u_p",
+    "v_p",
+    "invalid",
+    "b_normal_velocity",
+    "b_x",
+    "b_y",
+    "b_z",
+    "b_u_p",
+    "b_v_p",
+    "inverse_offsets",
+    "inverse_cells",
+    "inverse_slots",
+    "phase"
+   ],
+   "phase": 1,
+   "geometry": "forward"
+  }
+ },
+ "tape_bytes": 0,
+ "refusal": {
+  "slot_ownership": "original preparation/validation retains its invalid flag; scheduler refuses all derivative results when it is nonzero",
+  "field_id": 21,
+  "source_ids": {
+   "1": "tree/src/hexcore/cuda_physics_prep_v841.py:2852"
+  },
+  "failure_text": "MPAS_to_physics CUDA preparation failed numeric/geometry validation: ",
+  "diagnostic": "tree/src/hexcore/cuda_physics_prep_v841.py:2389-2431",
+  "requirement": "run original validation; copy and inspect flag and full ABI refusal buffer before publishing gradient"
+ },
+ "admission": "nlev >= 2; input arrays have the named extents and original captured layouts; original forward validation succeeds; no unsupported overlapping active fields",
+ "alias_contract": "All simultaneously active fields and seed/output buffers are disjoint except for explicitly recorded capture aliases; seed binder must canonicalize any admitted alias.",
+ "affine": true,
+ "affine_reason": "With sealed fixed geometry and topology all wind outputs are fixed-coefficient linear maps of normal velocity.",
+ "branch_record_implemented": true,
+ "branch_record_reason": "The tangent entry records original fixed-topology, refusal, finite-state, trigonometric, and guarded-f32 helper predicates, using a separate primal recomputation; numerical validation against the captured source and image of record is still required.",
+ "primal_preservation": {
+  "inputs": [
+   "normal_velocity",
+   "edges_on_cell",
+   "n_edges_on_cell",
+   "coeffs_reconstruct",
+   "lat_cell",
+   "lon_cell",
+   "sealed_edges_on_cell",
+   "sealed_n_edges_on_cell",
+   "sealed_coeffs_reconstruct",
+   "sealed_lat_cell",
+   "sealed_lon_cell"
+  ],
+  "lifetime": "retain or replay the captured pre-forward values through the last tangent and reverse use",
+  "forward_outputs": [],
+  "separate_tape_bytes": 0
+ },
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "reconstruct_winds_v841_f32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "maxedges"
+     },
+     {
+      "bind": "primal",
+      "arg": "normal_velocity"
+     },
+     {
+      "bind": "primal",
+      "arg": "edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "coeffs_reconstruct"
+     },
+     {
+      "bind": "primal",
+      "arg": "lat_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "lon_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_coeffs_reconstruct"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_lat_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_lon_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "x",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "y",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "z",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "u_p",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "v_p",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "invalid"
+     },
+     {
+      "bind": "tangent",
+      "arg": "normal_velocity",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "x",
+      "field_id": 16,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "y",
+      "field_id": 17,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "z",
+      "field_id": 18,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "u_p",
+      "field_id": 19,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "v_p",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "branch_record",
+      "slots": 24
+     }
+    ]
+   },
+   "ad": {
+    "function": "reconstruct_winds_v841_f32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "maxedges"
+     },
+     {
+      "bind": "primal",
+      "arg": "normal_velocity"
+     },
+     {
+      "bind": "primal",
+      "arg": "edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "coeffs_reconstruct"
+     },
+     {
+      "bind": "primal",
+      "arg": "lat_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "lon_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_coeffs_reconstruct"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_lat_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_lon_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "x",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "y",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "z",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "u_p",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "v_p",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "invalid"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "normal_velocity",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "x",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "y",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "z",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "u_p",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "v_p",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "derived",
+      "name": "inverse_offsets",
+      "from": [
+       "edges_on_cell",
+       "n_edges_on_cell",
+       "ncells",
+       "nedges",
+       "maxedges"
+      ],
+      "recipe": "hex-ad/tools/dycore/wind_inverse_csr.rs",
+      "sha256": "8f94553fc42d6d8d8d4fb38368cb54b9fa950c2f7c9d7b177e436616485cd15c",
+      "sha256_capture": "convection_permitting_x1.2562/reconstruct_winds_v841_f32/0/launch-000000/manifest.json"
+     },
+     {
+      "bind": "derived",
+      "name": "inverse_cells",
+      "from": [
+       "edges_on_cell",
+       "n_edges_on_cell",
+       "ncells",
+       "nedges",
+       "maxedges"
+      ],
+      "recipe": "hex-ad/tools/dycore/wind_inverse_csr.rs",
+      "sha256": "7c4b6c781f6001e70a03186e2b58639bf2e4455bd19184e39c0aa63db3f6df72",
+      "sha256_capture": "convection_permitting_x1.2562/reconstruct_winds_v841_f32/0/launch-000000/manifest.json"
+     },
+     {
+      "bind": "derived",
+      "name": "inverse_slots",
+      "from": [
+       "edges_on_cell",
+       "n_edges_on_cell",
+       "ncells",
+       "nedges",
+       "maxedges"
+      ],
+      "recipe": "hex-ad/tools/dycore/wind_inverse_csr.rs",
+      "sha256": "2ec4eed43c614d06dbddced074839bcfc4d7809d5d0b4b3423f488c5710bdd98",
+      "sha256_capture": "convection_permitting_x1.2562/reconstruct_winds_v841_f32/0/launch-000000/manifest.json"
+     },
+     {
+      "bind": "scalar",
+      "dtype": "<i4",
+      "value": 0
+     }
+    ],
+    "geometry_note": "Grid-stride gather covers every level-edge pair using the captured forward launch geometry. The gather includes a cell only when its flattened index lies in the forward launch thread prefix."
+   },
+   "ad_clear": {
+    "function": "reconstruct_winds_v841_f32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "maxedges"
+     },
+     {
+      "bind": "primal",
+      "arg": "normal_velocity"
+     },
+     {
+      "bind": "primal",
+      "arg": "edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "coeffs_reconstruct"
+     },
+     {
+      "bind": "primal",
+      "arg": "lat_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "lon_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_n_edges_on_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_coeffs_reconstruct"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_lat_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "sealed_lon_cell"
+     },
+     {
+      "bind": "primal",
+      "arg": "x",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "y",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "z",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "u_p",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "v_p",
+      "post": true
+     },
+     {
+      "bind": "primal",
+      "arg": "invalid"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "normal_velocity",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "x",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "y",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "z",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "u_p",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "v_p",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "derived",
+      "name": "inverse_offsets",
+      "from": [
+       "edges_on_cell",
+       "n_edges_on_cell",
+       "ncells",
+       "nedges",
+       "maxedges"
+      ],
+      "recipe": "hex-ad/tools/dycore/wind_inverse_csr.rs",
+      "sha256": "8f94553fc42d6d8d8d4fb38368cb54b9fa950c2f7c9d7b177e436616485cd15c",
+      "sha256_capture": "convection_permitting_x1.2562/reconstruct_winds_v841_f32/0/launch-000000/manifest.json"
+     },
+     {
+      "bind": "derived",
+      "name": "inverse_cells",
+      "from": [
+       "edges_on_cell",
+       "n_edges_on_cell",
+       "ncells",
+       "nedges",
+       "maxedges"
+      ],
+      "recipe": "hex-ad/tools/dycore/wind_inverse_csr.rs",
+      "sha256": "7c4b6c781f6001e70a03186e2b58639bf2e4455bd19184e39c0aa63db3f6df72",
+      "sha256_capture": "convection_permitting_x1.2562/reconstruct_winds_v841_f32/0/launch-000000/manifest.json"
+     },
+     {
+      "bind": "derived",
+      "name": "inverse_slots",
+      "from": [
+       "edges_on_cell",
+       "n_edges_on_cell",
+       "ncells",
+       "nedges",
+       "maxedges"
+      ],
+      "recipe": "hex-ad/tools/dycore/wind_inverse_csr.rs",
+      "sha256": "2ec4eed43c614d06dbddced074839bcfc4d7809d5d0b4b3423f488c5710bdd98",
+      "sha256_capture": "convection_permitting_x1.2562/reconstruct_winds_v841_f32/0/launch-000000/manifest.json"
+     },
+     {
+      "bind": "scalar",
+      "dtype": "<i4",
+      "value": 1
+     }
+    ],
+    "geometry_note": "Grid-stride gather covers every level-edge pair using the captured forward launch geometry. The gather includes a cell only when its flattened index lies in the forward launch thread prefix."
+   }
+  },
+  "adjoint_launch_order": [
+   "ad",
+   "ad_clear"
+  ],
+  "launch_order": {
+   "ad": [
+    "ad",
+    "ad_clear"
+   ]
+  }
+ },
+ "derived_topology": {
+  "recipe": "hex-ad/tools/dycore/wind_inverse_csr.rs",
+  "recipe_sha256": "e86e2b214da7b4bf25a4d42729c7c42a8a41f8dd5a1126004bdbbadd18a11308",
+  "ordering": "ascending edge, then ascending cell, then original slot",
+  "validation": "Independently checked every captured forward (cell, slot, edge) triple against the derived CSR: 15,360 forward slots, 15,360 inverse entries, zero missing, duplicate, mis-mapped, or out-of-order entries. See out/evidence/validate-wind-inverse.log and validate-wind-inverse.py. Reconcile must validate the derivative coefficients and branch records against the available captured source and image of record."
+ },
+ "duplicate_cotangents": "Repeated contributions are accumulated in a fixed order in f64 and rounded once on writing the f32 input cotangent.",
+ "denormal_compile_contract": {
+  "integration": "Compile each tangent and adjoint module with the actual forward route denormal mode: --ftz=true for the fast flush-to-zero route and --ftz=false for the strict preserving route (COMMON-AD section 70.2).",
+  "interim_proof_derivative_flags": [
+   "--ftz=false",
+   "--fmad=false"
+  ],
+  "capture_forward_effective_ftz": "not recorded by the selected capture manifests; never infer from requested base options",
+  "captured_state_check": "173 active input and captured post-output field slices across the five active rows contain no binary32 subnormal words; see out/evidence/subnormals-v70.json. Replica outputs themselves were not audited.",
+  "fallback_compile_guard": "The binder must set MPAS_FTZ_FALLBACK_ENABLED to the forward route value. The recorder only executes and counts helper predicates when this macro is nonzero."
+ },
+ "reverse_overwrite": "Launch ad with phase 0, then ad_clear with phase 1 on the same stream. Phase 0 gathers each edge contribution; only the second launch clears the overwritten output slots. The written set is the forward grid prefix of nlev*ncells; all other seed slots remain unchanged. The phase-0 gather ignores output seeds beyond that prefix.",
+ "seed_lifetime_contract": "COMMON-AD section 74: overwritten output cotangents are inout and consumed; outgoing input cotangents use separate buffers.",
+ "captured_source_record": {
+  "source_path": "<origin>/ad/_captures/hex/objects/d3928fc49bb5acd12aa0d737e6dbeee493ba84aff7990f222bbf98de861fbb98.cu",
+  "source_sha256": "d3928fc49bb5acd12aa0d737e6dbeee493ba84aff7990f222bbf98de861fbb98",
+  "image_path": "<origin>/ad/_captures/hex/objects/911f144f28879806271b7911d9ed2972cd8b78606ca7e3a0b93921332664ea88.cubin",
+  "image_sha256": "911f144f28879806271b7911d9ed2972cd8b78606ca7e3a0b93921332664ea88",
+  "interim_forward": "replica-unvalidated",
+  "status": "archived-source adaptation and proof of record required",
+  "reconcile": "ad1-g26-dycore-physics-prep-v841-reconcile",
+  "detail": "The captured source uses glibc_sinf/glibc_cosf at source lines 1481-1484; the interim pair and its branch recomputation use sinf/cosf. Reconcile must adapt or establish exact executed coefficients and reprove against the captured image."
+ }
+}

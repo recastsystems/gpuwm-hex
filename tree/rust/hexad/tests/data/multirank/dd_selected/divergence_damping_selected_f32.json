@@ -1,0 +1,887 @@
+{
+ "schema": "ad.kernel-spec/v1",
+ "kernel": "divergence_damping_selected_f32",
+ "engine": "hex",
+ "file": "tree/src/hexcore/partition_overlap_v841.py",
+ "line": 16,
+ "route": "hand",
+ "mode": "exact",
+ "affine": false,
+ "route_reason": "divergence_damping_f32 (row ad1-134, hand route) with the forward's integer edge-selection predicate; same arithmetic and failure slots, the predicate added to every written-edge test.",
+ "launch": {
+  "block": [
+   256,
+   1,
+   1
+  ],
+  "tl_grid": "ceil(nedges/256)",
+  "ad_grid": "ceil(max(ncells,nedges)/256)",
+  "ad_block_requirement": 256,
+  "dynamic_shared_bytes": 0,
+  "why_different": "adjoint gathers each input owner deterministically; scalar reduction requires exactly 256 threads",
+  "grid": "ceil(nedges/256)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "interior_edge",
+   "field_id": 110,
+   "role": "index",
+   "dtype": "u8",
+   "shape": "[nedges]",
+   "byte_strides": [
+    "1"
+   ],
+   "stagger": "edge",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "fixed partition topology (partition_overlap_v841.interior_edges: integer connectivity and owned extents)",
+   "activity_kind": "topology",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "select_interior",
+   "field_id": 111,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "byte_strides": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "discrete launch control (0 boundary pass, 1 interior pass)",
+   "activity_kind": "control",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "theta_m",
+   "field_id": 1,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev, ncells]",
+   "byte_strides": [
+    "4*ncells",
+    "4"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "activity_kind": "state",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "rtheta_pp",
+   "field_id": 2,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev, ncells]",
+   "byte_strides": [
+    "4*ncells",
+    "4"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "activity_kind": "state",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "rtheta_pp_old",
+   "field_id": 3,
+   "role": "in",
+   "dtype": "f32",
+   "reference_scale": 0.05,
+   "reference_scale_reason": "The old perturbation is zero in both moist step-1 captures; 0.05 is the approximate RMS of the companion current perturbation in the hrrrv5 step-1 capture, in the same units.",
+   "shape": "[nlev, ncells]",
+   "byte_strides": [
+    "4*ncells",
+    "4"
+   ],
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "activity_kind": "state",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "cells_on_edge",
+   "field_id": 103,
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[nedges, 2]",
+   "byte_strides": [
+    "4*2",
+    "4"
+   ],
+   "stagger": "edge",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "fixed topology or discrete launch control by program contract",
+   "activity_kind": "topology",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "spec_zone_mask_edge",
+   "field_id": 4,
+   "role": "in",
+   "dtype": "f32",
+   "reference_scale": 1.0,
+   "reference_scale_reason": "The mask is dimensionless and has unit range; all captured masks for these tests are zero.",
+   "shape": "[nedges]",
+   "byte_strides": [
+    "4"
+   ],
+   "stagger": "edge",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "activity_kind": "parameter",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "coefficient",
+   "field_id": 5,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "byte_strides": [],
+   "stagger": "none",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "activity_kind": "parameter",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "n_cells_solve",
+   "field_id": 106,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "byte_strides": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "fixed topology or discrete launch control by program contract",
+   "activity_kind": "control",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "nlev",
+   "field_id": 107,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "byte_strides": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "fixed topology or discrete launch control by program contract",
+   "activity_kind": "control",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "ncells",
+   "field_id": 108,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "byte_strides": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "fixed topology or discrete launch control by program contract",
+   "activity_kind": "control",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "nedges",
+   "field_id": 109,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "byte_strides": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "fixed topology or discrete launch control by program contract",
+   "activity_kind": "control",
+   "overwrite_detail": "none"
+  },
+  {
+   "name": "rho_u_perturbation",
+   "field_id": 6,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[nlev, nedges]",
+   "byte_strides": [
+    "4*nedges",
+    "4"
+   ],
+   "stagger": "edge",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "cotangent_seed_field_id": 101,
+   "activity_kind": "inout",
+   "overwrite_detail": "partial (edges incident to n_cells_solve)"
+  }
+ ],
+ "extra_fixed_inputs": [
+  "edges_on_cell",
+  "n_edges_on_cell",
+  "max_edges"
+ ],
+ "saved": [],
+ "workspace": {
+  "bytes": 0,
+  "note": "Incoming output seeds are copied by the scheduler to disjoint temporary snapshots before reverse; the entry consumes the live incoming slots. Snapshots are not checkpoint tape. Scalar reductions use shared memory."
+ },
+ "refusal": {
+  "record": "int32 slots, one per exact validity predicate; zero before each entry; any nonzero refuses; host constructs AdFailureRecord",
+  "slots": 31,
+  "slot_ownership": [
+   {
+    "slot": 0,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:26:12:isfinite(t0)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:26",
+    "predicate": "isfinite(t0)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 1,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:26:49:isfinite(t1)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:26",
+    "predicate": "isfinite(t1)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 2,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:26:86:isfinite(p0)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:26",
+    "predicate": "isfinite(p0)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 3,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:26:123:isfinite(p1)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:26",
+    "predicate": "isfinite(p1)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 4,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:26:160:isfinite(o0)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:26",
+    "predicate": "isfinite(o0)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 5,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:26:197:isfinite(o1)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:26",
+    "predicate": "isfinite(o1)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 6,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:27:12:isfinite(m)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:27",
+    "predicate": "isfinite(m)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 7,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:27:48:isfinite(c)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:27",
+    "predicate": "isfinite(c)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 8,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:27:84:isfinite(z.delta)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:27",
+    "predicate": "isfinite(z.delta)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 9,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:27:126:isfinite(z.den)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:27",
+    "predicate": "isfinite(z.den)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 10,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:27:166:ad_f32_nonzero(z.den)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:27",
+    "predicate": "ad_f32_nonzero(z.den)",
+    "reason": "zero denominator"
+   },
+   {
+    "slot": 11,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:28:12:isfinite(z.a)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:28",
+    "predicate": "isfinite(z.a)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 12,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:28:51:isfinite(z.b)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:28",
+    "predicate": "isfinite(z.b)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 13,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:28:90:isfinite(z.ab)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:28",
+    "predicate": "isfinite(z.ab)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 14,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:28:130:isfinite(z.q)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:28",
+    "predicate": "isfinite(z.q)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 15,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:44:14:isfinite(d)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:44",
+    "predicate": "isfinite(d)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 16,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:48:21:isfinite(dtheta[a])",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:48",
+    "predicate": "isfinite(dtheta[a])",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 17,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:48:69:isfinite(dtheta[b])",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:48",
+    "predicate": "isfinite(dtheta[b])",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 18,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:48:117:isfinite(dpp[a])",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:48",
+    "predicate": "isfinite(dpp[a])",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 19,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:48:162:isfinite(dpp[b])",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:48",
+    "predicate": "isfinite(dpp[b])",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 20,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:49:21:isfinite(dold[a])",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:49",
+    "predicate": "isfinite(dold[a])",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 21,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:49:67:isfinite(dold[b])",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:49",
+    "predicate": "isfinite(dold[b])",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 22,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:49:113:isfinite(dmask[edge])",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:49",
+    "predicate": "isfinite(dmask[edge])",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 23,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:49:163:isfinite(*dcoefficient)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:49",
+    "predicate": "isfinite(*dcoefficient)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 24,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:58:17:isfinite(d)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:58",
+    "predicate": "isfinite(d)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 25,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:86:17:isfinite(w)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:86",
+    "predicate": "isfinite(w)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 26,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:96:13:isfinite(v)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:96",
+    "predicate": "isfinite(v)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 27,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:116:17:isfinite(x)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:116",
+    "predicate": "isfinite(x)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 28,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:116:55:isfinite(y)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:116",
+    "predicate": "isfinite(y)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 29,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:116:93:isfinite(q)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:116",
+    "predicate": "isfinite(q)",
+    "reason": "nonfinite value"
+   },
+   {
+    "slot": 30,
+    "source_id": "hex-ad/cuda/dycore/divergence_damping_f32.ad.cu:141:17:isfinite(x)",
+    "check_in_artifact": "divergence_damping_f32.ad.cu:141",
+    "predicate": "isfinite(x)",
+    "reason": "nonfinite value"
+   }
+  ],
+  "codes": {
+   "1": "validity predicate is false; see the slot source_id"
+  },
+  "source_id": 874,
+  "source_id_location": "tree/src/hexcore/cuda_horizontal.py:874",
+  "preconditions": [
+   "All dimensions positive, nlev >= 2 for w lap4, products fit signed int32.",
+   "Primal buffers are disjoint from all derivative, failure, and workspace buffers. Distinct incoming and outgoing cotangent buffers are disjoint; tangent in-place aliasing is allowed only where launch_abi explicitly says inout.",
+   "Mesh indices in range; cell/vertex inverse incidence is exactly consistent with cells_on_edge/vertices_on_edge; no duplicate incidence; n_edges_on_cell <= max_edges.",
+   "Damping has 0 <= n_cells_solve <= ncells. Geometry distances and areas must be finite and nonzero; all live differentiable values and intermediates must be finite.",
+   "A failed slot refuses the entire gradient; do not publish partial writes."
+  ]
+ },
+ "accumulation": "One deterministic owner gathers each cell, edge, and vertex cotangent in incidence order; contributions use f64 registers and round once to f32 at the output. Scalar parameters use a fixed 256-lane f64 tree. No floating-point atomics.",
+ "math": "MPAS FP32 helper arithmetic; fmad=false, ftz=true; Euclidean cotangents.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "divergence_damping_selected_f32__tl",
+    "geometry": {
+     "grid": [
+      "ceil(nedges/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "interior_edge",
+      "cuda_name": "interior_edge"
+     },
+     {
+      "bind": "scalar",
+      "arg": "select_interior",
+      "cuda_name": "select_interior"
+     },
+     {
+      "bind": "primal",
+      "arg": "theta_m",
+      "cuda_name": "theta"
+     },
+     {
+      "bind": "primal",
+      "arg": "rtheta_pp",
+      "cuda_name": "pp"
+     },
+     {
+      "bind": "primal",
+      "arg": "rtheta_pp_old",
+      "cuda_name": "old"
+     },
+     {
+      "bind": "primal",
+      "arg": "cells_on_edge",
+      "cuda_name": "cells_on_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "spec_zone_mask_edge",
+      "cuda_name": "mask"
+     },
+     {
+      "bind": "scalar",
+      "arg": "coefficient",
+      "cuda_name": "coefficient"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n_cells_solve",
+      "cuda_name": "nsolve"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev",
+      "cuda_name": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells",
+      "cuda_name": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges",
+      "cuda_name": "nedges"
+     },
+     {
+      "bind": "tangent",
+      "arg": "theta_m",
+      "field_id": 1,
+      "io": "in",
+      "cuda_name": "dtheta"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rtheta_pp",
+      "field_id": 2,
+      "io": "in",
+      "cuda_name": "dpp"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rtheta_pp_old",
+      "field_id": 3,
+      "io": "in",
+      "cuda_name": "dold"
+     },
+     {
+      "bind": "tangent",
+      "arg": "spec_zone_mask_edge",
+      "field_id": 4,
+      "io": "in",
+      "cuda_name": "dmask"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 5,
+      "io": "in",
+      "cuda_name": "dcoefficient",
+      "scalar_arg": "coefficient"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rho_u_perturbation",
+      "field_id": 6,
+      "io": "in",
+      "cuda_name": "dru_in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rho_u_perturbation",
+      "field_id": 6,
+      "io": "out",
+      "cuda_name": "dru_out"
+     },
+     {
+      "bind": "failure",
+      "slots": 31,
+      "source_ids": [
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:12:isfinite(t0)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:49:isfinite(t1)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:86:isfinite(p0)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:123:isfinite(p1)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:160:isfinite(o0)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:197:isfinite(o1)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:12:isfinite(m)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:48:isfinite(c)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:84:isfinite(z.delta)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:126:isfinite(z.den)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:166:ad_f32_nonzero(z.den)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:34:12:isfinite(z.a)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:34:51:isfinite(z.b)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:34:90:isfinite(z.ab)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:34:130:isfinite(z.q)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:55:14:isfinite(d)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:59:21:isfinite(dtheta[a])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:59:69:isfinite(dtheta[b])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:59:117:isfinite(dpp[a])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:59:162:isfinite(dpp[b])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:60:21:isfinite(dold[a])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:60:67:isfinite(dold[b])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:60:113:isfinite(dmask[edge])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:60:163:isfinite(*dcoefficient)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:69:17:isfinite(d)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:99:17:isfinite(w)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:109:13:isfinite(v)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:129:17:isfinite(x)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:129:55:isfinite(y)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:129:93:isfinite(q)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:154:17:isfinite(x)"
+      ],
+      "record_layout": "int32[slots], one slot per check source_id",
+      "cuda_name": "failure"
+     }
+    ]
+   },
+   "ad": {
+    "function": "divergence_damping_selected_f32__ad",
+    "geometry": {
+     "grid": [
+      "ceil(max(ncells,nedges)/256)",
+      1,
+      1
+     ],
+     "block": [
+      256,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "interior_edge",
+      "cuda_name": "interior_edge"
+     },
+     {
+      "bind": "scalar",
+      "arg": "select_interior",
+      "cuda_name": "select_interior"
+     },
+     {
+      "bind": "primal",
+      "arg": "theta_m",
+      "cuda_name": "theta"
+     },
+     {
+      "bind": "primal",
+      "arg": "rtheta_pp",
+      "cuda_name": "pp"
+     },
+     {
+      "bind": "primal",
+      "arg": "rtheta_pp_old",
+      "cuda_name": "old"
+     },
+     {
+      "bind": "primal",
+      "arg": "cells_on_edge",
+      "cuda_name": "cells_on_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "spec_zone_mask_edge",
+      "cuda_name": "mask"
+     },
+     {
+      "bind": "scalar",
+      "arg": "coefficient",
+      "cuda_name": "coefficient"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n_cells_solve",
+      "cuda_name": "nsolve"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlev",
+      "cuda_name": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells",
+      "cuda_name": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges",
+      "cuda_name": "nedges"
+     },
+     {
+      "bind": "saved",
+      "name": "rho_u_perturbation_seed_snapshot",
+      "arg": "rho_u_perturbation",
+      "dtype": "f32",
+      "elems": {
+       "shape_like_forward_arg": "rho_u_perturbation"
+      },
+      "producer": "adjoint_seed_copy",
+      "cuda_name": "bru"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rho_u_perturbation",
+      "field_id": 6,
+      "io": "out",
+      "cuda_name": "bru_in",
+      "note": "separate from the incoming seed; entry writes identity including untouched levels/regions"
+     },
+     {
+      "bind": "derived",
+      "cuda_name": "edges_on_cell",
+      "name": "edges_on_cell",
+      "recipe": "local_edge_incidence",
+      "from": [
+       "cells_on_edge",
+       "ncells"
+      ],
+      "passing": "device-pointer"
+     },
+     {
+      "bind": "derived",
+      "cuda_name": "n_edges_on_cell",
+      "name": "n_edges_on_cell",
+      "recipe": "local_edge_incidence",
+      "from": [
+       "cells_on_edge",
+       "ncells"
+      ],
+      "passing": "device-pointer"
+     },
+     {
+      "bind": "derived",
+      "cuda_name": "max_edges",
+      "name": "max_edges",
+      "recipe": "local_edge_incidence",
+      "from": [
+       "cells_on_edge",
+       "ncells"
+      ],
+      "passing": "scalar-value"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "theta_m",
+      "field_id": 1,
+      "io": "accumulate",
+      "cuda_name": "btheta"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rtheta_pp",
+      "field_id": 2,
+      "io": "accumulate",
+      "cuda_name": "bpp"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rtheta_pp_old",
+      "field_id": 3,
+      "io": "accumulate",
+      "cuda_name": "bold"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "spec_zone_mask_edge",
+      "field_id": 4,
+      "io": "accumulate",
+      "cuda_name": "bmask"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 5,
+      "io": "accumulate",
+      "cuda_name": "bcoefficient",
+      "scalar_arg": "coefficient"
+     },
+     {
+      "bind": "failure",
+      "slots": 31,
+      "source_ids": [
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:12:isfinite(t0)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:49:isfinite(t1)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:86:isfinite(p0)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:123:isfinite(p1)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:160:isfinite(o0)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:32:197:isfinite(o1)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:12:isfinite(m)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:48:isfinite(c)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:84:isfinite(z.delta)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:126:isfinite(z.den)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:33:166:ad_f32_nonzero(z.den)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:34:12:isfinite(z.a)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:34:51:isfinite(z.b)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:34:90:isfinite(z.ab)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:34:130:isfinite(z.q)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:55:14:isfinite(d)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:59:21:isfinite(dtheta[a])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:59:69:isfinite(dtheta[b])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:59:117:isfinite(dpp[a])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:59:162:isfinite(dpp[b])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:60:21:isfinite(dold[a])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:60:67:isfinite(dold[b])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:60:113:isfinite(dmask[edge])",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:60:163:isfinite(*dcoefficient)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:69:17:isfinite(d)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:99:17:isfinite(w)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:109:13:isfinite(v)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:129:17:isfinite(x)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:129:55:isfinite(y)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:129:93:isfinite(q)",
+       "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu:154:17:isfinite(x)"
+      ],
+      "record_layout": "int32[slots], one slot per check source_id",
+      "cuda_name": "failure"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rho_u_perturbation",
+      "io": "inout",
+      "cuda_name": "live_seed",
+      "field_id": 6
+     }
+    ]
+   }
+  }
+ },
+ "why": "F057 (SWARM-20261107): the 2-rank forward replaces every divergence_damping_f32 launch with this kernel (once interior during the halo DMA, once boundary after the receive fence); with no row it fell to wrules.rs 'no derivative row and no rule' (Refused: identity both ways), so every 2-rank window composed the dycore with d(u_new)/d(u)=I and no damping derivative.",
+ "base": {
+  "spec_sha256": "6c7eab658a59b252220836c5cd00fe93ebf047e44e5ef3f9f21fbea3cc09282f",
+  "row": "ad1-134-divergence_damping_f32"
+ }
+}

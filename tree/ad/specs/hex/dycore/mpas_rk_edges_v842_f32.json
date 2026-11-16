@@ -1,0 +1,1212 @@
+{
+ "kernel": "mpas_rk_edges_v842_f32",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_physics_v841.py",
+ "line": 1798,
+ "route": "hand",
+ "mode": "exact",
+ "launch": {
+  "grid": "ceil(original launch count/128)",
+  "block": "[128,1,1]",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "field_id": 1,
+   "name": "nlev",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer control, index, pointer table or diagnostic failure flag",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const int nlev",
+   "byte_strides": "by-value"
+  },
+  {
+   "field_id": 2,
+   "name": "nedges",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer control, index, pointer table or diagnostic failure flag",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const int nedges",
+   "byte_strides": "by-value"
+  },
+  {
+   "field_id": 3,
+   "name": "nsolve",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer control, index, pointer table or diagnostic failure flag",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const int nsolve",
+   "byte_strides": "by-value"
+  },
+  {
+   "field_id": 4,
+   "name": "pbl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer control, index, pointer table or diagnostic failure flag",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const int pbl",
+   "byte_strides": "by-value"
+  },
+  {
+   "field_id": 5,
+   "name": "cu_momentum",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer control, index, pointer table or diagnostic failure flag",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const int cu_momentum",
+   "byte_strides": "by-value"
+  },
+  {
+   "field_id": 6,
+   "name": "first",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed integer control, index, pointer table or diagnostic failure flag",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const int first",
+   "byte_strides": "by-value"
+  },
+  {
+   "field_id": 7,
+   "name": "mass_edge",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,nedges]",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const float *mass_edge",
+   "byte_strides": "contiguous row-major in each pointed-to field",
+   "reference_scale": 1e-12,
+   "reference_scale_reason": "Nonzero state-scaled Taylor direction floor; captured magnitudes set the direction wherever larger. Exact clamp ties use a projected direction and are covered by separate crossing cases."
+  },
+  {
+   "field_id": 8,
+   "name": "pbl_edge",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,nedges]",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const float *pbl_edge",
+   "byte_strides": "contiguous row-major in each pointed-to field",
+   "shadow_dtype": "f64",
+   "shadow_reason": "COMMON-AD 49.2: 5.4720e-6 (step 1) and 1.840134876037e-5 (step 2); original f32 step 2, seed 3, out_u: relative 4.4767e-5 and norm-scaled 3.29e-11; all-f64 diagnostic max relative 7.06e-14",
+   "shadow_extra_bytes": "4*nlev*nedges per live tangent or adjoint buffer. Exact input-alias groups containing pbl_edge use one shared f64 derivative allocation.",
+   "reference_scale": 1e-12,
+   "reference_scale_reason": "Nonzero state-scaled Taylor direction floor; captured magnitudes set the direction wherever larger. Exact clamp ties use a projected direction and are covered by separate crossing cases."
+  },
+  {
+   "field_id": 9,
+   "name": "cu_edge",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,nedges]",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "const float *cu_edge",
+   "byte_strides": "contiguous row-major in each pointed-to field",
+   "reference_scale": 1e-12,
+   "reference_scale_reason": "Nonzero state-scaled Taylor direction floor; captured magnitudes set the direction wherever larger. Exact clamp ties use a projected direction and are covered by separate crossing cases."
+  },
+  {
+   "field_id": 10,
+   "name": "out_u",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,nedges]",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "float *out_u",
+   "byte_strides": "contiguous row-major in each pointed-to field",
+   "reference_scale": 1e-12,
+   "reference_scale_reason": "Nonzero state-scaled Taylor direction floor; captured magnitudes set the direction wherever larger. Exact clamp ties use a projected direction and are covered by separate crossing cases.",
+   "overwrite_mask": {
+    "axis": 1,
+    "index_range": {
+     "start": 0,
+     "stop": "nsolve"
+    },
+    "basis": "cuda_physics_v841.py:1812-1816: if (i % nedges >= nsolve) return; ... out_u[i] = u"
+   }
+  },
+  {
+   "field_id": 11,
+   "name": "tend_u_phys",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[nlev,nedges]",
+   "stagger": "edge",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "conditional",
+   "alias_group": null,
+   "weight": "none",
+   "cuda_declaration": "float *tend_u_phys",
+   "byte_strides": "contiguous row-major in each pointed-to field",
+   "reference_scale": 1e-12,
+   "reference_scale_reason": "Nonzero state-scaled Taylor direction floor; captured magnitudes set the direction wherever larger. Exact clamp ties use a projected direction and are covered by separate crossing cases.",
+   "condition": "first && (pbl || cu_momentum)",
+   "then": {
+    "overwrite": "full"
+   },
+   "else": {
+    "overwrite": "none"
+   },
+   "overwrite_basis": "cuda_physics_v841.py:1808-1811: if (first) { if (pbl) tend_u_phys[i] = ...; if (cu_momentum) tend_u_phys[i] = ... }"
+  }
+ ],
+ "saved": [
+  {
+   "name": "tend_u_phys_before",
+   "from": "forward",
+   "bytes_per_column": "4*nlev",
+   "reason": "used by the first/cu branch and exceptional-state admission"
+  }
+ ],
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1805",
+   "predicate": "outside plane",
+   "policy": "inactive-index",
+   "tie": "equal skips",
+   "slot": 0,
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1805,
+     "column": 11,
+     "operation": "predicate",
+     "expression": "if (i >= nlev * nedges) return;"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1805,
+     "column": 29,
+     "operation": "iteration",
+     "expression": "return"
+    }
+   ],
+   "column": 11,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1805 col 11: predicate `i >= nlev * nedges` reads only the thread index and int32 launch scalars (['i', 'nedges', 'nlev']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1806",
+   "predicate": "first",
+   "policy": "inactive-config",
+   "tie": "fixed integer",
+   "slot": 1,
+   "column": 5,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-config",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1806 col 5: predicate `first` reads only int32 launch scalars (['first']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1807",
+   "predicate": "pbl",
+   "policy": "inactive-config",
+   "tie": "fixed integer",
+   "slot": 2,
+   "column": 9,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-config",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1807 col 9: predicate `pbl` reads only int32 launch scalars (['pbl']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1808",
+   "predicate": "cu_momentum",
+   "policy": "inactive-config",
+   "tie": "fixed integer",
+   "slot": 3,
+   "column": 9,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-config",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1808 col 9: predicate `cu_momentum` reads only int32 launch scalars (['cu_momentum']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1810",
+   "predicate": "edge outside solve",
+   "policy": "inactive-index",
+   "tie": "equal skips",
+   "slot": 4,
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1810,
+     "column": 20,
+     "operation": "predicate",
+     "expression": "if (i % nedges >= nsolve) return;"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1810,
+     "column": 31,
+     "operation": "iteration",
+     "expression": "return"
+    }
+   ],
+   "column": 20,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1810 col 20: predicate `i % nedges >= nsolve` reads only the thread index and int32 launch scalars (['i', 'nedges', 'nsolve']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1812",
+   "predicate": "pbl",
+   "policy": "inactive-config",
+   "tie": "fixed integer",
+   "slot": 5,
+   "column": 5,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-config",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1812 col 5: predicate `pbl` reads only int32 launch scalars (['pbl']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1813",
+   "predicate": "cu_momentum",
+   "policy": "inactive-config",
+   "tie": "fixed integer",
+   "slot": 6,
+   "column": 5,
+   "operation": "predicate",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-config",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1813 col 5: predicate `cu_momentum` reads only int32 launch scalars (['cu_momentum']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:78",
+   "predicate": "mpas_add: result exponent > 24",
+   "policy": "rounding-helper",
+   "tie": "strict > returns ordinary",
+   "slot": 7,
+   "ledger_addendum": {
+    "path": "configs/ledger/rounding_helpers.json",
+    "registry_sha256": "a5fe77aa58651b6e5eefc21bb7889cef32a04f5a90f6751dece448af235c9533",
+    "cite": "cuda_fp32.py:69-100",
+    "both_arms": "left+right rounded to float32 (ordinary sum, or the double sum rounded once)"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:83",
+   "predicate": "mpas_add: either operand subnormal",
+   "policy": "rounding-helper",
+   "tie": "zero is not subnormal",
+   "slot": 8,
+   "ledger_addendum": {
+    "path": "configs/ledger/rounding_helpers.json",
+    "registry_sha256": "a5fe77aa58651b6e5eefc21bb7889cef32a04f5a90f6751dece448af235c9533",
+    "cite": "cuda_fp32.py:69-100",
+    "both_arms": "left+right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:93",
+   "predicate": "mpas_add: normal operands cancel to subnormal",
+   "policy": "rounding-helper",
+   "tie": "all listed comparisons strict/bit exact",
+   "slot": 9,
+   "ledger_addendum": {
+    "path": "configs/ledger/rounding_helpers.json",
+    "registry_sha256": "a5fe77aa58651b6e5eefc21bb7889cef32a04f5a90f6751dece448af235c9533",
+    "cite": "cuda_fp32.py:69-100",
+    "both_arms": "left+right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:142",
+   "predicate": "mpas_mul: ordinary result has exponent zero",
+   "policy": "rounding-helper",
+   "tie": "zero and subnormal both enter",
+   "slot": 10,
+   "ledger_addendum": {
+    "path": "configs/ledger/rounding_helpers.json",
+    "registry_sha256": "a5fe77aa58651b6e5eefc21bb7889cef32a04f5a90f6751dece448af235c9533",
+    "cite": "cuda_fp32.py:132-151",
+    "both_arms": "left*right rounded to float32 (ordinary product, or the double product rounded once)"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:145",
+   "predicate": "mpas_mul: both operands have nonzero magnitude",
+   "policy": "rounding-helper",
+   "tie": "signed zeros take ordinary arm",
+   "slot": 11,
+   "ledger_addendum": {
+    "path": "configs/ledger/rounding_helpers.json",
+    "registry_sha256": "a5fe77aa58651b6e5eefc21bb7889cef32a04f5a90f6751dece448af235c9533",
+    "cite": "cuda_fp32.py:132-151",
+    "both_arms": "left*right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:42",
+   "predicate": "decode nonzero subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "zero uses ordinary cast",
+   "slot": 12,
+   "ledger_addendum": {
+    "path": "configs/ledger/rounding_helpers.json",
+    "registry_sha256": "a5fe77aa58651b6e5eefc21bb7889cef32a04f5a90f6751dece448af235c9533",
+    "cite": "cuda_fp32.py:36-49",
+    "both_arms": "exact value of the float32 input as a double: ldexp(mantissa,-149) with sign for a subnormal, (double)value otherwise"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:57",
+   "predicate": "pack nonzero subnormal result",
+   "policy": "rounding-helper",
+   "tie": "zero and minimum normal use ordinary cast",
+   "slot": 13,
+   "ledger_addendum": {
+    "path": "configs/ledger/rounding_helpers.json",
+    "registry_sha256": "a5fe77aa58651b6e5eefc21bb7889cef32a04f5a90f6751dece448af235c9533",
+    "cite": "cuda_fp32.py:51-67",
+    "both_arms": "round-to-nearest-even float32 of the double: packed subnormal mantissa rint(|v|*2^149), __double2float_rn otherwise"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1807",
+   "predicate": "fixed-index selection: pbl_edge[i]",
+   "policy": "inactive-index",
+   "tie": "integer index and captured alias mapping held fixed",
+   "reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive.",
+   "recording": "none: index selection is not a state-dependent predicate",
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1807,
+     "column": 35,
+     "operation": "lookup",
+     "expression": "pbl_edge[i]"
+    }
+   ],
+   "slot": 14,
+   "column": 35,
+   "operation": "lookup",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "inactive_reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1808",
+   "predicate": "fixed-index selection: tend_u_phys[i], cu_edge[i]",
+   "policy": "inactive-index",
+   "tie": "integer index and captured alias mapping held fixed",
+   "reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive.",
+   "recording": "none: index selection is not a state-dependent predicate",
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1808,
+     "column": 52,
+     "operation": "lookup",
+     "expression": "tend_u_phys[i]"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1808,
+     "column": 68,
+     "operation": "lookup",
+     "expression": "cu_edge[i]"
+    }
+   ],
+   "slot": 15,
+   "column": 52,
+   "operation": "lookup",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "inactive_reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1812",
+   "predicate": "fixed-index selection: pbl_edge[i], mass_edge[i]",
+   "policy": "inactive-index",
+   "tie": "integer index and captured alias mapping held fixed",
+   "reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive.",
+   "recording": "none: index selection is not a state-dependent predicate",
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1812,
+     "column": 39,
+     "operation": "lookup",
+     "expression": "pbl_edge[i]"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1812,
+     "column": 52,
+     "operation": "lookup",
+     "expression": "mass_edge[i]"
+    }
+   ],
+   "slot": 16,
+   "column": 39,
+   "operation": "lookup",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "inactive_reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1813",
+   "predicate": "fixed-index selection: cu_edge[i], mass_edge[i]",
+   "policy": "inactive-index",
+   "tie": "integer index and captured alias mapping held fixed",
+   "reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive.",
+   "recording": "none: index selection is not a state-dependent predicate",
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1813,
+     "column": 47,
+     "operation": "lookup",
+     "expression": "cu_edge[i]"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1813,
+     "column": 59,
+     "operation": "lookup",
+     "expression": "mass_edge[i]"
+    }
+   ],
+   "slot": 17,
+   "column": 47,
+   "operation": "lookup",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "inactive_reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1805",
+   "predicate": "outside plane",
+   "policy": "inactive-index",
+   "tie": "equal skips",
+   "slot": 0,
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1805,
+     "column": 11,
+     "operation": "predicate",
+     "expression": "if (i >= nlev * nedges) return;"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1805,
+     "column": 29,
+     "operation": "iteration",
+     "expression": "return"
+    }
+   ],
+   "column": 29,
+   "operation": "iteration",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1805 col 29: predicate `i >= nlev * nedges` reads only the thread index and int32 launch scalars (['i', 'nedges', 'nlev']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1810",
+   "predicate": "edge outside solve",
+   "policy": "inactive-index",
+   "tie": "equal skips",
+   "slot": 4,
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1810,
+     "column": 20,
+     "operation": "predicate",
+     "expression": "if (i % nedges >= nsolve) return;"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1810,
+     "column": 31,
+     "operation": "iteration",
+     "expression": "return"
+    }
+   ],
+   "column": 31,
+   "operation": "iteration",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "active": false,
+   "class": "inactive-index",
+   "policy_before_fill": "executed-arm",
+   "inactive_reason": "cuda_physics_v841.py:1810 col 31: predicate `i % nedges >= nsolve` reads only the thread index and int32 launch scalars (['i', 'nedges', 'nsolve']); no active value reaches it"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1808",
+   "predicate": "fixed-index selection: tend_u_phys[i], cu_edge[i]",
+   "policy": "inactive-index",
+   "tie": "integer index and captured alias mapping held fixed",
+   "reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive.",
+   "recording": "none: index selection is not a state-dependent predicate",
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1808,
+     "column": 52,
+     "operation": "lookup",
+     "expression": "tend_u_phys[i]"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1808,
+     "column": 68,
+     "operation": "lookup",
+     "expression": "cu_edge[i]"
+    }
+   ],
+   "slot": 15,
+   "column": 68,
+   "operation": "lookup",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "inactive_reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1812",
+   "predicate": "fixed-index selection: pbl_edge[i], mass_edge[i]",
+   "policy": "inactive-index",
+   "tie": "integer index and captured alias mapping held fixed",
+   "reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive.",
+   "recording": "none: index selection is not a state-dependent predicate",
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1812,
+     "column": 39,
+     "operation": "lookup",
+     "expression": "pbl_edge[i]"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1812,
+     "column": 52,
+     "operation": "lookup",
+     "expression": "mass_edge[i]"
+    }
+   ],
+   "slot": 16,
+   "column": 52,
+   "operation": "lookup",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "inactive_reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_physics_v841.py:1813",
+   "predicate": "fixed-index selection: cu_edge[i], mass_edge[i]",
+   "policy": "inactive-index",
+   "tie": "integer index and captured alias mapping held fixed",
+   "reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive.",
+   "recording": "none: index selection is not a state-dependent predicate",
+   "ledger_sites": [
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1813,
+     "column": 47,
+     "operation": "lookup",
+     "expression": "cu_edge[i]"
+    },
+    {
+     "file": "tree/src/hexcore/cuda_physics_v841.py",
+     "line": 1813,
+     "column": 59,
+     "operation": "lookup",
+     "expression": "mass_edge[i]"
+    }
+   ],
+   "slot": 17,
+   "column": 59,
+   "operation": "lookup",
+   "column_operation_source": "ledger row named by this branch's prose (c04eng_colop.py)",
+   "inactive_reason": "Addresses are selected by inactive thread, loop, species and geometry indices. Every selected floating state or parameter declared active in args remains active; integer indices and count values remain inactive."
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "code": 10,
+  "layout": "one int32 failure flag per distinct source/field cause plus a separate zeroed uint64 index workspace",
+  "slots": 5,
+  "source_id": "pinned source line number; nonzero only on refusal",
+  "slot_bytes": 4,
+  "slot_map": [
+   {
+    "slot": 0,
+    "field_id": 8,
+    "source_id": 118423560,
+    "file_line": "tree/src/hexcore/cuda_physics_v841.py:1807",
+    "source_line": 1807,
+    "source_name": "tree/src/hexcore/cuda_physics_v841.py:1807:field-8"
+   },
+   {
+    "slot": 1,
+    "field_id": 9,
+    "source_id": 118489097,
+    "file_line": "tree/src/hexcore/cuda_physics_v841.py:1808",
+    "source_line": 1808,
+    "source_name": "tree/src/hexcore/cuda_physics_v841.py:1808:field-9"
+   },
+   {
+    "slot": 2,
+    "field_id": 11,
+    "source_id": 118489099,
+    "file_line": "tree/src/hexcore/cuda_physics_v841.py:1808",
+    "source_line": 1808,
+    "source_name": "tree/src/hexcore/cuda_physics_v841.py:1808:field-11"
+   },
+   {
+    "slot": 3,
+    "field_id": 7,
+    "source_id": 118751239,
+    "file_line": "tree/src/hexcore/cuda_physics_v841.py:1812",
+    "source_line": 1812,
+    "source_name": "tree/src/hexcore/cuda_physics_v841.py:1812:field-7"
+   },
+   {
+    "slot": 4,
+    "field_id": 10,
+    "source_id": 118882314,
+    "file_line": "tree/src/hexcore/cuda_physics_v841.py:1814",
+    "source_line": 1814,
+    "source_name": "tree/src/hexcore/cuda_physics_v841.py:1814:field-10"
+   }
+  ],
+  "record_conversion": "After synchronization, for each nonzero int32 flag, combine the mapped source_id and field_id with failure_detail[slot]-1 to form the host AdFailureRecord.",
+  "ordering": "integer atomicOr for flags and integer atomicMax for element details; deterministic under concurrent refusals",
+  "detail_bytes": 40
+ },
+ "entry_points": {
+  "tl": {
+   "symbol": "mpas_rk_edges_v842_f32__tl",
+   "arguments": [
+    {
+     "name": "nlev",
+     "declaration": "int nlev"
+    },
+    {
+     "name": "nedges",
+     "declaration": "int nedges"
+    },
+    {
+     "name": "nsolve",
+     "declaration": "int nsolve"
+    },
+    {
+     "name": "pbl",
+     "declaration": "int pbl"
+    },
+    {
+     "name": "cu_momentum",
+     "declaration": "int cu_momentum"
+    },
+    {
+     "name": "first",
+     "declaration": "int first"
+    },
+    {
+     "name": "mass_edge",
+     "declaration": "const float *mass_edge"
+    },
+    {
+     "name": "pbl_edge",
+     "declaration": "const float *pbl_edge"
+    },
+    {
+     "name": "cu_edge",
+     "declaration": "const float *cu_edge"
+    },
+    {
+     "name": "out_u",
+     "declaration": "const float *out_u"
+    },
+    {
+     "name": "tend_u_phys",
+     "declaration": "const float *tend_u_phys"
+    },
+    {
+     "name": "d_mass_edge",
+     "declaration": "const float *d_mass_edge"
+    },
+    {
+     "name": "d_pbl_edge",
+     "declaration": "const double *d_pbl_edge"
+    },
+    {
+     "name": "d_cu_edge",
+     "declaration": "const float *d_cu_edge"
+    },
+    {
+     "name": "d_out_u",
+     "declaration": "float *d_out_u"
+    },
+    {
+     "name": "d_tend_u_phys",
+     "declaration": "float *d_tend_u_phys"
+    },
+    {
+     "name": "failure",
+     "declaration": "int *failure"
+    },
+    {
+     "name": "failure_detail",
+     "declaration": "unsigned long long *failure_detail"
+    },
+    {
+     "name": "branch_record",
+     "declaration": "unsigned *branch_record"
+    }
+   ],
+   "geometry": "forward grid and block"
+  },
+  "ad": {
+   "symbol": "mpas_rk_edges_v842_f32__ad",
+   "arguments": [
+    {
+     "name": "nlev",
+     "declaration": "int nlev"
+    },
+    {
+     "name": "nedges",
+     "declaration": "int nedges"
+    },
+    {
+     "name": "nsolve",
+     "declaration": "int nsolve"
+    },
+    {
+     "name": "pbl",
+     "declaration": "int pbl"
+    },
+    {
+     "name": "cu_momentum",
+     "declaration": "int cu_momentum"
+    },
+    {
+     "name": "first",
+     "declaration": "int first"
+    },
+    {
+     "name": "mass_edge",
+     "declaration": "const float *mass_edge"
+    },
+    {
+     "name": "pbl_edge",
+     "declaration": "const float *pbl_edge"
+    },
+    {
+     "name": "cu_edge",
+     "declaration": "const float *cu_edge"
+    },
+    {
+     "name": "out_u",
+     "declaration": "const float *out_u"
+    },
+    {
+     "name": "tend_u_phys",
+     "declaration": "const float *tend_u_phys"
+    },
+    {
+     "name": "b_mass_edge",
+     "declaration": "float *b_mass_edge"
+    },
+    {
+     "name": "b_pbl_edge",
+     "declaration": "double *b_pbl_edge"
+    },
+    {
+     "name": "b_cu_edge",
+     "declaration": "float *b_cu_edge"
+    },
+    {
+     "name": "seed_out_u",
+     "declaration": "float *seed_out_u"
+    },
+    {
+     "name": "seed_tend_u_phys",
+     "declaration": "float *seed_tend_u_phys"
+    },
+    {
+     "name": "b_out_u",
+     "declaration": "float *b_out_u"
+    },
+    {
+     "name": "b_tend_u_phys",
+     "declaration": "float *b_tend_u_phys"
+    },
+    {
+     "name": "failure",
+     "declaration": "int *failure"
+    },
+    {
+     "name": "failure_detail",
+     "declaration": "unsigned long long *failure_detail"
+    },
+    {
+     "name": "branch_record",
+     "declaration": "unsigned *branch_record"
+    }
+   ],
+   "geometry": "forward grid and block"
+  },
+  "aug": null
+ },
+ "source_ids": {
+  "1805": "tree/src/hexcore/cuda_physics_v841.py:1805",
+  "1806": "tree/src/hexcore/cuda_physics_v841.py:1806",
+  "1807": "tree/src/hexcore/cuda_physics_v841.py:1807",
+  "1808": "tree/src/hexcore/cuda_physics_v841.py:1808",
+  "1810": "tree/src/hexcore/cuda_physics_v841.py:1810",
+  "1812": "tree/src/hexcore/cuda_physics_v841.py:1812",
+  "1813": "tree/src/hexcore/cuda_physics_v841.py:1813",
+  "1814": "tree/src/hexcore/cuda_physics_v841.py:1814",
+  "118423560": "tree/src/hexcore/cuda_physics_v841.py:1807:field-8",
+  "118489097": "tree/src/hexcore/cuda_physics_v841.py:1808:field-9",
+  "118489099": "tree/src/hexcore/cuda_physics_v841.py:1808:field-11",
+  "118751239": "tree/src/hexcore/cuda_physics_v841.py:1812:field-7",
+  "118882314": "tree/src/hexcore/cuda_physics_v841.py:1814:field-10"
+ },
+ "reduction": null,
+ "alias_contract": "Exact aliases among mass_edge, pbl_edge and cu_edge share a derivative allocation; if the group contains pbl_edge that allocation is f64. Mutable outputs and their pre-state, derivative workspaces, and other fields follow the disjoint default; output seeds and input bars are separate.",
+ "bounds_contract": "Host validates nlev, nedges, 0 <= nsolve <= nedges, signed-index products and all input, output and saved-state capacities.",
+ "floating_policy": "Tested strict route: compile derivative with --fmad=false --ftz=false --prec-div=true; the recorded strict forward uses --ftz=false. Arithmetic is differentiated mathematically and nonfinite values and zero denominators refuse the gradient. At integration the derivative denormal mode must match the forward image; fast mode uses --ftz=true. Fast-route derivative and compiled-out helper branch recording have not been verified by this task.",
+ "verification_status": "Corrected int32 refusal ABI; two convection_permitting captured-step v5 dot tests and bitwise reverse checks passed. Taylor and proof-of-record status are recorded in the task receipt.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "mpas_rk_edges_v842_f32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nsolve"
+     },
+     {
+      "bind": "scalar",
+      "arg": "pbl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cu_momentum"
+     },
+     {
+      "bind": "scalar",
+      "arg": "first"
+     },
+     {
+      "bind": "primal",
+      "arg": "mass_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbl_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "cu_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "out_u"
+     },
+     {
+      "bind": "primal",
+      "arg": "tend_u_phys"
+     },
+     {
+      "bind": "tangent",
+      "arg": "mass_edge",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pbl_edge",
+      "field_id": 8,
+      "io": "in",
+      "shadow_dtype": "f64"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cu_edge",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "out_u",
+      "field_id": 10,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tend_u_phys",
+      "field_id": 11,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 5,
+      "source_ids": [
+       "tree/src/hexcore/cuda_physics_v841.py:1807:field-8",
+       "tree/src/hexcore/cuda_physics_v841.py:1808:field-9",
+       "tree/src/hexcore/cuda_physics_v841.py:1808:field-11",
+       "tree/src/hexcore/cuda_physics_v841.py:1812:field-7",
+       "tree/src/hexcore/cuda_physics_v841.py:1814:field-10"
+      ]
+     },
+     {
+      "bind": "workspace",
+      "name": "failure_detail",
+      "bytes": 40,
+      "init": "zero",
+      "alignment": 8,
+      "purpose": "deterministic maximum one-plus logical element index for each refusal slot"
+     },
+     {
+      "bind": "branch_record",
+      "slots": 18,
+      "dtype": "<u4",
+      "shape": [
+       18,
+       2
+      ],
+      "init": "zero",
+      "inactive_index_slots": "unrecorded: integer indices and literal loop bounds are fixed for derivatives"
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_rk_edges_v842_f32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nedges"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nsolve"
+     },
+     {
+      "bind": "scalar",
+      "arg": "pbl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cu_momentum"
+     },
+     {
+      "bind": "scalar",
+      "arg": "first"
+     },
+     {
+      "bind": "primal",
+      "arg": "mass_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "pbl_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "cu_edge"
+     },
+     {
+      "bind": "primal",
+      "arg": "out_u"
+     },
+     {
+      "bind": "primal",
+      "arg": "tend_u_phys"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "mass_edge",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pbl_edge",
+      "field_id": 8,
+      "io": "accumulate",
+      "shadow_dtype": "f64"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cu_edge",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "out_u",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tend_u_phys",
+      "field_id": 11,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "out_u",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tend_u_phys",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "failure",
+      "slots": 5,
+      "source_ids": [
+       "tree/src/hexcore/cuda_physics_v841.py:1807:field-8",
+       "tree/src/hexcore/cuda_physics_v841.py:1808:field-9",
+       "tree/src/hexcore/cuda_physics_v841.py:1808:field-11",
+       "tree/src/hexcore/cuda_physics_v841.py:1812:field-7",
+       "tree/src/hexcore/cuda_physics_v841.py:1814:field-10"
+      ]
+     },
+     {
+      "bind": "workspace",
+      "name": "failure_detail",
+      "bytes": 40,
+      "init": "zero",
+      "alignment": 8,
+      "purpose": "deterministic maximum one-plus logical element index for each refusal slot"
+     },
+     {
+      "bind": "branch_record",
+      "slots": 18,
+      "dtype": "<u4",
+      "shape": [
+       18,
+       2
+      ],
+      "init": "zero",
+      "inactive_index_slots": "unrecorded: integer indices and literal loop bounds are fixed for derivatives"
+     }
+    ]
+   }
+  },
+  "conformance_notes": [
+   "Branch census code is present but must be verified at base and perturbed captured states before accepting a Taylor proof.",
+   "Requires shadow_dtype binding under COMMON-AD 49.2. The primal remains f32. 4*nlev*nedges per live tangent or adjoint buffer. Exact input-alias groups containing pbl_edge use one shared f64 derivative allocation.",
+   "All members of an exact pointer alias group containing pbl_edge share f64 tangent and adjoint storage; the declared float pointer arguments for other members address that same storage, selected by pointer equality."
+  ]
+ },
+ "polynomial_degree": 2,
+ "polynomial_degree_evidence": "tree/src/hexcore/cuda_physics_v841.py:1812-1813; both factors are active, fixed controls and indices",
+ "affine": false,
+ "affine_reason": "The active edge forcing is multiplied by the active edge mass (source lines 1812-1813).",
+ "numerics_mode": {
+  "tested": "strict",
+  "forward_ftz": false,
+  "derivative_ftz": false,
+  "fast_route": "not verified; binder must match forward image and reconcile helper branch instrumentation"
+ },
+ "seed_lifetime": {
+  "contract": "Incoming output adjoints are separate from accumulating input adjoints; consumed overwritten slots are exact +0.0, untouched slots remain bitwise unchanged (COMMON-AD section 74).",
+  "overwrite_mask": "out_u: i % nedges < nsolve; tend_u_phys: first and (pbl or cu_momentum). All other seed slots retain their incoming bits.",
+  "refusal": "No gradient is published after a failure; partially updated scratch and seeds must be discarded."
+ },
+ "ledger_resolution": {
+  "scope": "Owned judgement identities listed in branches[].ledger_sites; fixed integer lookups retain active selected floating values.",
+  "recorded_branch_prefix_slots": 14,
+  "additional_inactive_index_slots": "No active mask is required for fixed integer selection or literal loop bounds.",
+  "numerical_evidence": "Existing GPU runs used the original recorded prefix; added lookup and literal-loop entries have no active branch mask.",
+  "ledger": "ad0-l00-ledger/out/patch/contracts/branches.csv"
+ },
+ "polynomial_degree_reason": "tree/src/hexcore/cuda_physics_v841.py:1812-1813; both factors are active, fixed controls and indices"
+}

@@ -1,0 +1,370 @@
+{
+ "kernel": "mpas_sw_outputs",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 3c499c7b",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 3414,
+ "module": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+ "image": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+ "route": "hand",
+ "mode": "exact-branch",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "nz",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "cosine",
+   "field_id": 2,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc"
+   ],
+   "active": true
+  },
+  {
+   "name": "exner",
+   "field_id": 3,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz"
+   ],
+   "active": true
+  },
+  {
+   "name": "up",
+   "field_id": 4,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+2"
+   ],
+   "active": true
+  },
+  {
+   "name": "down",
+   "field_id": 5,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+2"
+   ],
+   "active": true
+  },
+  {
+   "name": "upc",
+   "field_id": 6,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+2"
+   ],
+   "active": true
+  },
+  {
+   "name": "downc",
+   "field_id": 7,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+2"
+   ],
+   "active": true
+  },
+  {
+   "name": "direct",
+   "field_id": 8,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+2"
+   ],
+   "active": true
+  },
+  {
+   "name": "heat",
+   "field_id": 9,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "scalars",
+   "field_id": 10,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    14,
+    "nc"
+   ],
+   "active": true
+  },
+  {
+   "name": "tendency",
+   "field_id": 11,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz"
+   ],
+   "active": true
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": "rrtmg_sw_v842.py:3419 cosine <= 0",
+   "kind": "gate",
+   "treatment": "frozen: night columns write S0 only (S1..S13 and the tendency untouched)"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "mpas_sw_outputs: an output aliases an input"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "mpas_sw_outputs__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "primal",
+      "arg": "cosine"
+     },
+     {
+      "bind": "primal",
+      "arg": "exner"
+     },
+     {
+      "bind": "primal",
+      "arg": "direct"
+     },
+     {
+      "bind": "primal",
+      "arg": "heat"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cosine",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "exner",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "up",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "down",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "upc",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "downc",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "direct",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "heat",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "scalars",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tendency",
+      "field_id": 11,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "mpas_sw_outputs: an output aliases an input"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_sw_outputs__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "primal",
+      "arg": "cosine"
+     },
+     {
+      "bind": "primal",
+      "arg": "exner"
+     },
+     {
+      "bind": "primal",
+      "arg": "direct"
+     },
+     {
+      "bind": "primal",
+      "arg": "heat"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cosine",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "exner",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "up",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "down",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "upc",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "downc",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "direct",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "heat",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "scalars",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tendency",
+      "field_id": 11,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "mpas_sw_outputs: an output aliases an input"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

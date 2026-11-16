@@ -1,0 +1,34 @@
+{"kernel": "mpas_sw_radconst", "engine": "hex", "pin": "0f364252573fd9d51d630608e2216ec81c1e62f3",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py", "line": 3434, "route": "hand", "mode": "exact (inactive scalar inputs)",
+ "owner_task": "ad/held-mpas_sw_radconst",
+ "policy": "inactive-input kernel (COMMON-AD 87.1): reads no device memory; out (declination, solar constant) depends only on by-value host calendar scalars; out derivative words zero both ways",
+ "forward_capture": {"source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+                     "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+                     "source_lines": "3753-3763", "config": "hrrrv5_x1.2562", "steps": [1, 3, 6, 12]},
+ "launch": {"grid": "capture", "block": "capture", "shared_bytes": 0},
+ "args": [
+  {"name": "julian", "role": "scalar", "dtype": "f32", "shape": [], "stagger": "none", "active": false, "inactive_reason": "By-value host calendar scalar (curr_julday, fractional day of year); not window state."},
+  {"name": "degrad", "role": "scalar", "dtype": "f32", "shape": [], "stagger": "none", "active": false, "inactive_reason": "By-value constant pi/180."},
+  {"name": "dpd", "role": "scalar", "dtype": "f32", "shape": [], "stagger": "none", "active": false, "inactive_reason": "By-value constant 360/365 (degrees per day)."},
+  {"name": "out", "role": "out", "dtype": "f32", "shape": [2], "stagger": "none", "active": false, "overwrite": "full",
+   "inactive_reason": "Declination and solar constant: functions of the inactive scalars only, read back to the host (driver_controls words.get()). Overwritten, so the derivative words are zeroed (not identity).",
+   "field_id": 1}],
+ "saved": [],
+ "branches": [
+  {"file_line": "capture 3c499c7b:3755", "operation": "select", "predicate": "julian>=80", "active": false, "policy": "inactive-index",
+   "inactive_reason": "Day-of-year origin on an inactive scalar (spring equinox); the two arms meet at julian=80 up to f32 rounding of 365*dpd*degrad vs 2*pi."}],
+ "tables": [],
+ "refusal": {"nonfinite": true, "domain": "julian, degrad, dpd and the forward's f32 sinf/cosf arguments (23.5*degrad, sx, rjul, 2*rjul) finite; then both outputs are finite"},
+ "precondition": "out and its derivative mirror are the forward's view (2 words); no other memory is read or written.",
+ "precision": "no float derivative arithmetic; the refusal check recomputes the forward's f32 sinf/cosf arguments with its own __fmul_rn/__fadd_rn/__fsub_rn/__fdiv_rn order. Built -O3 --fmad=false --ftz=false (live-scheme flags) for uniformity.",
+ "launch_abi": {"schema": "ad.entry/v1", "entries": {
+  "tl": {"function": "mpas_sw_radconst__tl", "geometry": "forward", "args": [
+     {"bind": "scalar", "arg": "julian"}, {"bind": "scalar", "arg": "degrad"}, {"bind": "scalar", "arg": "dpd"},
+     {"bind": "tangent", "arg": "out", "field_id": 1, "io": "out"},
+     {"bind": "failure", "slots": 1, "source_ids": ["rrtmg_sw_v842.py:3434:mpas_sw_radconst:refusal"]}]},
+  "ad": {"function": "mpas_sw_radconst__ad", "geometry": "forward", "args": [
+     {"bind": "scalar", "arg": "julian"}, {"bind": "scalar", "arg": "degrad"}, {"bind": "scalar", "arg": "dpd"},
+     {"bind": "adjoint", "arg": "out", "field_id": 1, "io": "inout"},
+     {"bind": "failure", "slots": 1, "source_ids": ["rrtmg_sw_v842.py:3434:mpas_sw_radconst:refusal"]}]}}},
+ "piecewise_affine": true,
+ "piecewise_affine_arms": "Constant (zero) map on out for every executed branch: the kernel has no active input."}

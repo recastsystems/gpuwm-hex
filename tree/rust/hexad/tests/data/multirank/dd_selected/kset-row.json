@@ -1,0 +1,186 @@
+{
+ "function": "divergence_damping_selected_f32",
+ "class": "rowed",
+ "gate_ready": true,
+ "derivative": {
+  "row": "ad/swarm-fix-F057",
+  "root": "tree/ad/phys/multirank/dd_selected",
+  "spec": {
+   "path": "tree/ad/phys/multirank/dd_selected/divergence_damping_selected_f32.json"
+  },
+  "cuda": {
+   "path": "tree/ad/phys/multirank/dd_selected/cuda/divergence_damping_selected_f32.ad.cu"
+  },
+  "nvcc": [
+   "-gencode",
+   "arch=compute_89,code=sm_89",
+   "-gencode",
+   "arch=compute_120,code=sm_120",
+   "-gencode",
+   "arch=compute_80,code=compute_80",
+   "-O3",
+   "--fmad=false",
+   "--ftz=true",
+   "-Ihex-ad/cuda/dycore"
+  ],
+  "clean_binding": true
+ },
+ "capture": null,
+ "arguments": [
+  {
+   "name": "interior_edge",
+   "kind": "device",
+   "dtype": "|u1",
+   "shape": [
+    7680
+   ],
+   "strides_bytes": [
+    1
+   ],
+   "pointer_depth": 1,
+   "value_hex": null
+  },
+  {
+   "name": "select_interior",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "strides_bytes": null,
+   "pointer_depth": 0,
+   "value_hex": null
+  },
+  {
+   "name": "theta_m",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    55,
+    2562
+   ],
+   "strides_bytes": [
+    10248,
+    4
+   ],
+   "pointer_depth": 1,
+   "value_hex": null
+  },
+  {
+   "name": "rtheta_pp",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    55,
+    2562
+   ],
+   "strides_bytes": [
+    10248,
+    4
+   ],
+   "pointer_depth": 1,
+   "value_hex": null
+  },
+  {
+   "name": "rtheta_pp_old",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    55,
+    2562
+   ],
+   "strides_bytes": [
+    10248,
+    4
+   ],
+   "pointer_depth": 1,
+   "value_hex": null
+  },
+  {
+   "name": "cells_on_edge",
+   "kind": "device",
+   "dtype": "<i4",
+   "shape": [
+    7680,
+    2
+   ],
+   "strides_bytes": [
+    8,
+    4
+   ],
+   "pointer_depth": 1,
+   "value_hex": null
+  },
+  {
+   "name": "spec_zone_mask_edge",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    7680
+   ],
+   "strides_bytes": [
+    4
+   ],
+   "pointer_depth": 1,
+   "value_hex": null
+  },
+  {
+   "name": "coefficient",
+   "kind": "scalar",
+   "dtype": "<f4",
+   "shape": [],
+   "strides_bytes": null,
+   "pointer_depth": 0,
+   "value_hex": "00007044"
+  },
+  {
+   "name": "n_cells_solve",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "strides_bytes": null,
+   "pointer_depth": 0,
+   "value_hex": "020a0000"
+  },
+  {
+   "name": "nlev",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "strides_bytes": null,
+   "pointer_depth": 0,
+   "value_hex": "37000000"
+  },
+  {
+   "name": "ncells",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "strides_bytes": null,
+   "pointer_depth": 0,
+   "value_hex": "020a0000"
+  },
+  {
+   "name": "nedges",
+   "kind": "scalar",
+   "dtype": "<i4",
+   "shape": [],
+   "strides_bytes": null,
+   "pointer_depth": 0,
+   "value_hex": "001e0000"
+  },
+  {
+   "name": "rho_u_perturbation",
+   "kind": "device",
+   "dtype": "<f4",
+   "shape": [
+    55,
+    7680
+   ],
+   "strides_bytes": [
+    30720,
+    4
+   ],
+   "pointer_depth": 1,
+   "value_hex": null
+  }
+ ]
+}

@@ -51,6 +51,13 @@ env:
   # The toolchain the helpers are built with, pinned so a release does not
   # move with whatever `stable` is that day.
   RUST_TOOLCHAIN: "1.99.0"
+  # One date for every member of the wheel's zip, so two builds of one commit
+  # are one file with one sha256.  Without it the repair step stamps each
+  # member with the build's clock: two builds of one commit agreed on every
+  # RECORD entry and still differed in the wheel file's own hash.  Any fixed
+  # date serves; it is not the release date and does not move with a release
+  # (2026-01-01T00:00:00Z).
+  WHEEL_DATE_EPOCH: "1767225600"
 
 jobs:
   build:
@@ -133,7 +140,7 @@ jobs:
           pins = json.loads(pathlib.Path("src/hexcore/data/engine-bridges.json").read_text(encoding="utf-8"))
           assets, out = pins["release_assets"], pathlib.Path(sys.argv[1])
           for name, row in sorted(pins["bridges"].items()):
-              url = f"https://github.com/{assets['repository']}/releases/download/{assets['tag']}/{name}"
+              url = f"https://github.com/{assets['repository']}/releases/download/{row.get('release_tag', assets['tag'])}/{name}"
               data = urllib.request.urlopen(url, timeout=300).read()
               if hashlib.sha256(data).hexdigest() != row["sha256"]:
                   sys.exit(f"{url} is not the pinned sha256 {row['sha256']}")
@@ -141,10 +148,13 @@ jobs:
               (out / name).chmod(0o755)
           # The renderer and the surface-series producer: the public floor tag cannot build them
           # (engine-bridges.json source_prebuilts.breakage), so they ride the same release, by SHA-256,
-          # with the provenance setup.py checks against this source tree.
+          # with the provenance setup.py checks against this source tree. A row whose bytes changed after its
+          # release was public names its own release (release_tag): the public file stays the one the older
+          # release pins (rw_mpas_convert: 0.5.0 pins c38b6f95 at engine-bridges-v0.4.12, 0.6.0 pins 092b26d4 at
+          # engine-bridges-v0.6.0).
           provenance = {"bridges": {}}
           for name, row in sorted(pins.get("source_prebuilts", {}).get("files", {}).items()):
-              url = f"https://github.com/{assets['repository']}/releases/download/{assets['tag']}/{name}"
+              url = f"https://github.com/{assets['repository']}/releases/download/{row.get('release_tag', assets['tag'])}/{name}"
               data = urllib.request.urlopen(url, timeout=300).read()
               if hashlib.sha256(data).hexdigest() != row["sha256"] or len(data) != row["bytes"]:
                   sys.exit(f"{url} is not the pinned sha256 {row['sha256']}")
@@ -186,6 +196,16 @@ jobs:
           path.write_text(json.dumps(record) + "\n")
           EOF
 
+      - name: nvcc for the AD runner's rule fatbins
+        # THE BREAKAGE THIS PREVENTS (hex 0.5.0): rust/hexad embeds five strict-numerics fatbins; built without
+        # nvcc they are empty and `ad-binder window` and libhexad_phys refuse at module load. The NVIDIA nvcc
+        # wheels give the manylinux image a pinned nvcc (the AD program's 13.5.37), used only at build time.
+        run: |
+          "$PY" -m pip install --target /opt/hexad-nvcc nvidia-cuda-nvcc==13.5.37 nvidia-cuda-crt==13.5.37 nvidia-cuda-runtime==13.5.37 nvidia-nvvm==13.5.37
+          /opt/hexad-nvcc/nvidia/cu13/bin/nvcc --version
+          echo "NVCC=/opt/hexad-nvcc/nvidia/cu13/bin/nvcc" >> "$GITHUB_ENV"
+          echo "GPUWM_HEX_REQUIRE_AD_FATBINS=1" >> "$GITHUB_ENV"
+
       - name: build the sdist, then the wheel FROM the sdist
         # `python -m build` with no selector builds the sdist and then the
         # wheel from the unpacked sdist, so a file the sdist leaves out breaks
@@ -201,10 +221,14 @@ jobs:
           ls -l "$GITHUB_WORKSPACE/raw"
 
       - name: auditwheel repair against the policy
+        # The repair writes the wheel's zip again; it stamps every member with
+        # SOURCE_DATE_EPOCH when that is set, and with the clock when it is not.
         run: |
           mkdir -p dist
           auditwheel show raw/*.whl
-          auditwheel repair --plat "${MANYLINUX_POLICY}" --wheel-dir dist raw/*.whl
+          SOURCE_DATE_EPOCH="${WHEEL_DATE_EPOCH}" auditwheel repair --plat "${MANYLINUX_POLICY}" --wheel-dir dist raw/*.whl
+          # The source archive stores some members with the build's clock: one date, so two builds are one sdist.
+          "$PY" hex/tree/tools/sdist_one_date.py --epoch "${WHEEL_DATE_EPOCH}" raw/*.tar.gz
           cp raw/*.tar.gz dist/
           ls -l dist
 
@@ -230,6 +254,8 @@ jobs:
             --require-libexec rw_mpas_lbc \
             --require-libexec rw_igra2 \
             --require-libexec hex_gpmetis \
+            --require-libexec ad-binder \
+            --require-libexec libhexad_phys.so \
             --json dist-check.json
 
       - name: refuse private material in both release artifacts

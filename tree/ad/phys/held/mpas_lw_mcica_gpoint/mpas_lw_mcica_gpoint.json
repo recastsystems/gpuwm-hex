@@ -1,0 +1,367 @@
+{
+ "kernel": "mpas_lw_mcica_gpoint",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 532,
+ "launch_site": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py:1115 (_lw_mcica_wrapper)",
+ "route": "hand",
+ "mode": "frozen-mask-linearisation",
+ "owner_task": "ad/held-mpas_lw_mcica_gpoint",
+ "forward_capture": {
+  "source_sha256": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+  "image_sha256": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+  "kernel_line_in_source": 9577,
+  "launches_per_radiation_step": "2 (ample memory) to 13 (512 MiB lease)"
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the layer group, fixed by the wrapper."
+  },
+  {
+   "name": "nl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count of the layer group (64 or 65 on x1.2562), fixed by the wrapper."
+  },
+  {
+   "name": "overlap",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer cloud-overlap selector (cldovrlp; 2 = maximum-random on hrrrv5)."
+  },
+  {
+   "name": "draws",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer KISS draws per g-point (mcica_draws_per_gpoint: nl for overlap 1-2)."
+  },
+  {
+   "name": "abase",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, 12, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "row 5 (cloud fraction, mask only: zero derivative under the frozen mask), rows 6..8 (liquid, ice, snow: masked copy)",
+   "derivative_rows": "6, 7, 8 (rows 0..5 and 9..11 have zero derivative; the AD leaves them untouched)"
+  },
+  {
+   "name": "seeds",
+   "role": "in",
+   "dtype": "u32",
+   "shape": "[nc, 4]",
+   "stagger": "column",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Integer KISS state per column from mpas_lw_mcica_seeds; enters only the cloudy decision (frozen mask). These are the saved McICA samples."
+  },
+  {
+   "name": "weights",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nl] or [1]",
+   "stagger": "layer",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Exponential-overlap weights (overlap >= 4 only; a 1-word dummy otherwise); enter only the comparison cdf2 < alpha (frozen mask)."
+  },
+  {
+   "name": "xorshift",
+   "role": "in",
+   "dtype": "u32",
+   "shape": "[140, 32]",
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Host GF(2) jump table (xorshift_jump_table(draws, 140)); integer, fixed per (draws)."
+  },
+  {
+   "name": "cloud",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, nl, 140]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "note": "0/1 mask: derivative identically 0 under the frozen mask"
+  },
+  {
+   "name": "liquid",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, nl, 140]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3
+  },
+  {
+   "name": "ice",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, nl, 140]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4
+  },
+  {
+   "name": "snow",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, nl, 140]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5
+  }
+ ],
+ "saved": [],
+ "saved_note": "No tape and no stored mask. The McICA samples are reproduced bitwise from the pre-launch seeds, weights and xorshift words, which the window binds as primal pre-launch copies (harness __check: bitwise to the forward image on every captured launch).",
+ "branches": [
+  {
+   "file_line": "capture source 683d7a07:9580",
+   "operation": "bound",
+   "predicate": "t < nc*140",
+   "policy": "inactive",
+   "active": false,
+   "inactive_reason": "fixed integer launch extent"
+  },
+  {
+   "file_line": "capture source 683d7a07:9593",
+   "operation": "clamp",
+   "predicate": "cf < 1e-20 -> 0",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "rule": "cf has zero derivative everywhere in this kernel (it only feeds the mask), so the flush needs no tangent rule"
+  },
+  {
+   "file_line": "capture source 683d7a07:9597-9599",
+   "operation": "select",
+   "predicate": "overlap chain: cdf2 < alpha / prev > 1 - prevcf",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "rule": "chain choice frozen at the trajectory; cdf only feeds the mask"
+  },
+  {
+   "file_line": "capture source 683d7a07:9600-9601",
+   "operation": "select",
+   "predicate": "cloudy = cdf >= 1 - cf",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "tie": "cdf == 1 - cf is cloudy (forward >=); the derivative there is a Dirac in cf, dropped",
+   "rule": "mask frozen at the trajectory: d liquid/ice/snow = mask * d abase rows 6/7/8, d cloud = 0"
+  }
+ ],
+ "limiters": "frozen-coefficient: the 0/1 McICA mask (cdf >= 1 - cf) and the overlap chain choices are frozen at the trajectory; the linearisation is the exact derivative of the real map off the threshold set and drops the cloud-fraction sensitivity (a step) entirely",
+ "tables": [
+  {
+   "arg": "xorshift",
+   "kind": "host table",
+   "active": false
+  }
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "cf finite; every written derivative word finite; 1 <= nl <= 140; 1 <= overlap <= 5"
+ },
+ "precondition": "abase, seeds, weights, xorshift, cloud, liquid, ice, snow are distinct allocations (no aliasing). TL: one thread per (c, ig) writes that g-point's words. AD: one thread per (c, k) reads and zeroes all 140 g-point cotangents of layer k and owns b_abase(6..8, k): deterministic, no atomics on data words",
+ "precision": "TL is a masked copy (bitwise, no arithmetic). AD sums the 140 g-point cotangents per (c, row, k) in double in ascending ig, adds the incoming accumulate word in double, one rounding to f32 (the glue-row rule). The mask comes from the forward's own stream helpers copied verbatim (--fmad=false --ftz=false)",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "mpas_lw_mcica_gpoint__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "overlap"
+     },
+     {
+      "bind": "scalar",
+      "arg": "draws"
+     },
+     {
+      "bind": "primal",
+      "arg": "abase"
+     },
+     {
+      "bind": "primal",
+      "arg": "seeds"
+     },
+     {
+      "bind": "primal",
+      "arg": "weights"
+     },
+     {
+      "bind": "primal",
+      "arg": "xorshift"
+     },
+     {
+      "bind": "tangent",
+      "arg": "abase",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cloud",
+      "field_id": 2,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "liquid",
+      "field_id": 3,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ice",
+      "field_id": 4,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "snow",
+      "field_id": 5,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "683d7a07.cu:9593,9601 nonfinite cf or nonfinite written derivative word",
+       "rrtmg_lw_v842.py:1115 nl outside 1..140 or overlap outside 1..5 (AD (c,k) mapping needs nl <= 140)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_lw_mcica_gpoint__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "overlap"
+     },
+     {
+      "bind": "scalar",
+      "arg": "draws"
+     },
+     {
+      "bind": "primal",
+      "arg": "abase"
+     },
+     {
+      "bind": "primal",
+      "arg": "seeds"
+     },
+     {
+      "bind": "primal",
+      "arg": "weights"
+     },
+     {
+      "bind": "primal",
+      "arg": "xorshift"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "abase",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cloud",
+      "field_id": 2,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "liquid",
+      "field_id": 3,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ice",
+      "field_id": 4,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "snow",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "683d7a07.cu:9593,9601 nonfinite cf or nonfinite written derivative word",
+       "rrtmg_lw_v842.py:1115 nl outside 1..140 or overlap outside 1..5 (AD (c,k) mapping needs nl <= 140)"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

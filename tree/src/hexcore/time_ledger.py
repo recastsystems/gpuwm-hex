@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+from hexcore import card_queue
 from pathlib import Path
 import sys
 import threading
@@ -108,7 +109,7 @@ def configure(root):
 
 def card_index():
     # CUDA's visible ordinal zero is not necessarily the rental's card zero.
-    value = (os.environ.get("GPUWM_CARD") or os.environ.get("GPU_MUTEX_CARDS", "").split(",")[0]
+    value = (os.environ.get("GPUWM_CARD") or card_queue.get(card_queue.CARDS).split(",")[0]
              or os.environ.get("CUDA_VISIBLE_DEVICES", "").split(",")[0])
     return int(value) if value.isdecimal() else None
 

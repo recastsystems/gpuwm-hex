@@ -718,3 +718,8 @@ def run_slot(call):
         value = outputs[name]
         target[:value.shape[0]] = value
     return outputs
+
+
+# GPUWM_HEX_AD_PARAMS (default unset: nothing changes) runs the forward at chosen values of the carried constants.
+from . import ad_params_override as _ad_params_override
+_ad_params_override.patch_module(globals(), "ugwp")

@@ -1,0 +1,572 @@
+{
+ "kernel": "mpas_sw_prep",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 3c499c7b",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 3174,
+ "module": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+ "image": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+ "route": "hand",
+ "mode": "exact-branch",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "nz",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "icloud",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "o3input",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "reqc",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "reqi",
+   "field_id": 5,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "reqs",
+   "field_id": 6,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "nozn",
+   "field_id": 7,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "xtime",
+   "field_id": 8,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "gmt",
+   "field_id": 9,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "radt",
+   "field_id": 10,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "degrad",
+   "field_id": 11,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "declin",
+   "field_id": 12,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "fields",
+   "field_id": 13,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    12,
+    "nc",
+    "nz"
+   ],
+   "active": true
+  },
+  {
+   "name": "surf",
+   "field_id": 14,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    7,
+    "nc"
+   ],
+   "active": true
+  },
+  {
+   "name": "pw",
+   "field_id": 15,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "tw",
+   "field_id": 16,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "pin",
+   "field_id": 17,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nozn"
+   ],
+   "active": false,
+   "inactive_reason": "ozone climatology pressure levels (constant)"
+  },
+  {
+   "name": "oz",
+   "field_id": 18,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nozn"
+   ],
+   "active": true
+  },
+  {
+   "name": "layers",
+   "field_id": 19,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    15,
+    "nc",
+    "nz+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "interfaces",
+   "field_id": 20,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    2,
+    "nc",
+    "nz+2"
+   ],
+   "active": true
+  },
+  {
+   "name": "hgt",
+   "field_id": 21,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nc",
+    "nz+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "coszr",
+   "field_id": 22,
+   "role": "out",
+   "dtype": "f32",
+   "shape": [
+    "nc"
+   ],
+   "active": true
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": "rrtmg_sw_v842.py:3205-3238 fmaxf clamps, radius defaults, snow factor, denom",
+   "kind": "limiter clamp",
+   "treatment": "executed branch, slope of the arm taken (header of mpas_sw_prep.ad.cu)"
+  },
+  {
+   "where": "rrtmg_sw_v842.py:3487-3491 mpas_ozone_interp",
+   "kind": "table index",
+   "treatment": "the forward's upper index frozen; outside pin: the edge formulas"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "mpas_sw_prep: a non-hrrrv5 branch (reqc/reqi/reqs == 0 or o3input != 2: diagnosed radii or diagnosed ozone)",
+   "mpas_sw_prep: an output aliases an input"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "mpas_sw_prep__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "icloud"
+     },
+     {
+      "bind": "scalar",
+      "arg": "o3input"
+     },
+     {
+      "bind": "scalar",
+      "arg": "reqc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "reqi"
+     },
+     {
+      "bind": "scalar",
+      "arg": "reqs"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nozn"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xtime"
+     },
+     {
+      "bind": "scalar",
+      "arg": "gmt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "radt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "degrad"
+     },
+     {
+      "bind": "scalar",
+      "arg": "declin"
+     },
+     {
+      "bind": "primal",
+      "arg": "fields"
+     },
+     {
+      "bind": "primal",
+      "arg": "surf"
+     },
+     {
+      "bind": "primal",
+      "arg": "pw"
+     },
+     {
+      "bind": "primal",
+      "arg": "tw"
+     },
+     {
+      "bind": "primal",
+      "arg": "pin"
+     },
+     {
+      "bind": "primal",
+      "arg": "oz"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fields",
+      "field_id": 13,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "surf",
+      "field_id": 14,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pw",
+      "field_id": 15,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tw",
+      "field_id": 16,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "oz",
+      "field_id": 18,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "layers",
+      "field_id": 19,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "interfaces",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "hgt",
+      "field_id": 21,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coszr",
+      "field_id": 22,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "mpas_sw_prep: a non-hrrrv5 branch (reqc/reqi/reqs == 0 or o3input != 2: diagnosed radii or diagnosed ozone)",
+       "mpas_sw_prep: an output aliases an input"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_sw_prep__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "icloud"
+     },
+     {
+      "bind": "scalar",
+      "arg": "o3input"
+     },
+     {
+      "bind": "scalar",
+      "arg": "reqc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "reqi"
+     },
+     {
+      "bind": "scalar",
+      "arg": "reqs"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nozn"
+     },
+     {
+      "bind": "scalar",
+      "arg": "xtime"
+     },
+     {
+      "bind": "scalar",
+      "arg": "gmt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "radt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "degrad"
+     },
+     {
+      "bind": "scalar",
+      "arg": "declin"
+     },
+     {
+      "bind": "primal",
+      "arg": "fields"
+     },
+     {
+      "bind": "primal",
+      "arg": "surf"
+     },
+     {
+      "bind": "primal",
+      "arg": "pw"
+     },
+     {
+      "bind": "primal",
+      "arg": "tw"
+     },
+     {
+      "bind": "primal",
+      "arg": "pin"
+     },
+     {
+      "bind": "primal",
+      "arg": "oz"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fields",
+      "field_id": 13,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "surf",
+      "field_id": 14,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pw",
+      "field_id": 15,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tw",
+      "field_id": 16,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "oz",
+      "field_id": 18,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "layers",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "interfaces",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "hgt",
+      "field_id": 21,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coszr",
+      "field_id": 22,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "mpas_sw_prep: a non-hrrrv5 branch (reqc/reqi/reqs == 0 or o3input != 2: diagnosed radii or diagnosed ozone)",
+       "mpas_sw_prep: an output aliases an input"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

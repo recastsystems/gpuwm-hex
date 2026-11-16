@@ -1,0 +1,463 @@
+{
+ "kernel": "cupy_scatter_update",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source ",
+ "file": "tree/src/hexcore/mpasphys/cupy-generated",
+ "line": 0,
+ "module": "ac691df5c8affce5583af432d2bbd01103b8d9a0dcbdee9c468714617d494b71",
+ "image": "a505d0d85f2c47cd358741d079ff8f608b62cd35aee76fe5490625770cec9045",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "_raw_v",
+   "field_id": 0,
+   "role": "in",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_raw_indices",
+   "field_id": 1,
+   "role": "in",
+   "dtype": "i64",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": false,
+   "inactive_reason": "integer indices (frozen)"
+  },
+  {
+   "name": "cdim_",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "rdim_",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "adim_",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch scalar (host constant)"
+  },
+  {
+   "name": "a",
+   "field_id": 5,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_ind",
+   "field_id": 6,
+   "role": "scalar",
+   "dtype": "bytes40",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "CuPy CIndexer"
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "cupy_scatter_update: a repeated index (order-dependent forward) or v aliasing a",
+   "cupy_scatter_update: an index that cannot be read safely or outside the claims workspace (a with more than one leading row)"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl_zero",
+    "tl_count",
+    "tl"
+   ],
+   "ad": [
+    "ad_zero",
+    "ad_count",
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl_zero": {
+    "function": "cupy_scatter_update__zero",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_v",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "adim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "adim_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(adim_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_scatter_update: a repeated index (order-dependent forward) or v aliasing a",
+       "cupy_scatter_update: an index that cannot be read safely or outside the claims workspace (a with more than one leading row)"
+      ]
+     }
+    ]
+   },
+   "tl_count": {
+    "function": "cupy_scatter_update__count",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_v",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "adim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "adim_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(adim_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_scatter_update: a repeated index (order-dependent forward) or v aliasing a",
+       "cupy_scatter_update: an index that cannot be read safely or outside the claims workspace (a with more than one leading row)"
+      ]
+     }
+    ]
+   },
+   "ad_zero": {
+    "function": "cupy_scatter_update__zero",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_v",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "adim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "adim_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(adim_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_scatter_update: a repeated index (order-dependent forward) or v aliasing a",
+       "cupy_scatter_update: an index that cannot be read safely or outside the claims workspace (a with more than one leading row)"
+      ]
+     }
+    ]
+   },
+   "ad_count": {
+    "function": "cupy_scatter_update__count",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_v",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "adim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "adim_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(adim_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_scatter_update: a repeated index (order-dependent forward) or v aliasing a",
+       "cupy_scatter_update: an index that cannot be read safely or outside the claims workspace (a with more than one leading row)"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "cupy_scatter_update__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_v",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "adim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "adim_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(adim_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "tangent",
+      "arg": "_raw_v",
+      "field_id": 0,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "a",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_scatter_update: a repeated index (order-dependent forward) or v aliasing a",
+       "cupy_scatter_update: an index that cannot be read safely or outside the claims workspace (a with more than one leading row)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "cupy_scatter_update__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_v",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "_raw_indices",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "arg": "cdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rdim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "adim_"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a",
+      "carray": true
+     },
+     {
+      "bind": "scalar",
+      "derived_from": "adim_*rdim_",
+      "dtype": "<i8"
+     },
+     {
+      "bind": "workspace",
+      "name": "claims",
+      "bytes": "4*(adim_*rdim_)"
+     },
+     {
+      "bind": "primal",
+      "arg": "_raw_indices"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "_raw_v",
+      "field_id": 0,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "a",
+      "field_id": 5,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 2,
+      "source_ids": [
+       "cupy_scatter_update: a repeated index (order-dependent forward) or v aliasing a",
+       "cupy_scatter_update: an index that cannot be read safely or outside the claims workspace (a with more than one leading row)"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

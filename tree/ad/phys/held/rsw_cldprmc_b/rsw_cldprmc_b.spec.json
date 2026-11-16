@@ -1,0 +1,600 @@
+{
+ "kernel": "rsw_cldprmc_b",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 3c499c7b",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 2188,
+ "module": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+ "image": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+ "route": "hand",
+ "mode": "exact-branch",
+ "owner_task": "ad/held-rsw_cldprmc_b",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch column count"
+  },
+  {
+   "name": "nlayers",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch layer count"
+  },
+  {
+   "name": "inflag",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer switch (5: McICA optics from water paths and radii)"
+  },
+  {
+   "name": "iceflag",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer switch (5: Fu ice + snow tables)"
+  },
+  {
+   "name": "liqflag",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer switch (1: Hu-Stamnes liquid table)"
+  },
+  {
+   "name": "tab",
+   "field_id": 5,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    104303
+   ],
+   "active": false,
+   "inactive_reason": "RRTMG SW constant tables (cloud optics at RSW_T_CLD_*)"
+  },
+  {
+   "name": "ngb",
+   "field_id": 6,
+   "role": "in",
+   "dtype": "i32",
+   "shape": [
+    112
+   ],
+   "active": false,
+   "inactive_reason": "g-point -> band map (integer)"
+  },
+  {
+   "name": "cldfmc",
+   "field_id": 7,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": false,
+   "inactive_reason": "McICA subcolumn cloud fraction (0/1): gate operand only, a step function"
+  },
+  {
+   "name": "ciwpmc",
+   "field_id": 8,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": true
+  },
+  {
+   "name": "clwpmc",
+   "field_id": 9,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": true
+  },
+  {
+   "name": "cswpmc",
+   "field_id": 10,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": true
+  },
+  {
+   "name": "reicmc",
+   "field_id": 11,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers"
+   ],
+   "active": true
+  },
+  {
+   "name": "relqmc",
+   "field_id": 12,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers"
+   ],
+   "active": true
+  },
+  {
+   "name": "resnmc",
+   "field_id": 13,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers"
+   ],
+   "active": true
+  },
+  {
+   "name": "taormc",
+   "field_id": 14,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": true
+  },
+  {
+   "name": "taucmc",
+   "field_id": 15,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": true
+  },
+  {
+   "name": "ssacmc",
+   "field_id": 16,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": true
+  },
+  {
+   "name": "asmcmc",
+   "field_id": 17,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": true
+  },
+  {
+   "name": "fsfcmc",
+   "field_id": 18,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nlayers",
+    112
+   ],
+   "active": false,
+   "inactive_reason": "read only on the inflag 0 path, which this entry refuses (slot 4)"
+  },
+  {
+   "name": "err_flag",
+   "field_id": 19,
+   "role": "out",
+   "dtype": "i32",
+   "shape": [
+    1
+   ],
+   "active": false,
+   "inactive_reason": "fatal-path flag (host raises): mirrored by the refusal slots"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": ":2286 cldfmc >= cldmin && (cwp >= cldmin || taucmc >= cldmin)",
+   "kind": "gate",
+   "treatment": "trajectory value: not cloudy -> taormc = taucmc_in copy, the rest identity; cloudy -> the four outputs overwritten (d/d taucmc_in, ssacmc_in, asmcmc_in = 0)"
+  },
+  {
+   "where": ":2317 ciwp + cswp == 0 / :2372 cswp > 0 / :2395 clwp == 0",
+   "kind": "zero-path shortcut",
+   "treatment": "frozen executed branch: the species' coefficients are 0 where the forward takes the shortcut (one-sided)"
+  },
+  {
+   "where": ":2338-2341 :2353-2356 :2375-2378 :2400-2403 (int)factor and index clamps",
+   "kind": "table index / clamp",
+   "treatment": "frozen index; slope = SU(T[i], T[i-1]) * d fint/d radius (1/3 ice and snow, 1 liquid)"
+  },
+  {
+   "where": ":2331 gice >= 1 -> 1-1e-6; :2367/:2389 forw > g -> forw = g; :2409 fint < 0 && ssa > 1 -> node value",
+   "kind": "limiter clamp",
+   "treatment": "frozen on the executed side: constant -> 0, forw = g -> d forw = d g"
+  },
+  {
+   "where": ":2451-2453 taucmc / scatice / scatsno == 0 -> cldmin",
+   "kind": "floor",
+   "treatment": "frozen constant: derivative 0 on that term"
+  },
+  {
+   "where": "inflag / iceflag / liqflag / ngb",
+   "kind": "integer switch",
+   "treatment": "launch value"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "inflag == 1 on a cloudy subcolumn (err_flag 1, host raises)",
+   "ice effective radius or ice optics out of range (err_flag 2)",
+   "snow effective radius outside [5, 140] um or snow optics out of range (err_flag 4)",
+   "liquid effective radius outside [1.5, 60] um or liquid optics out of range (err_flag 8)",
+   "no derivative written (not hrrrv5; the latter two read uninitialised coefficients in the forward)"
+  ]
+ },
+ "affine": false,
+ "affine_reason": "delta-scaled optics: products and quotients of the water paths with piecewise-linear table interpolations in the effective radii",
+ "tape_bytes": 0,
+ "precision": "primal recomputed in float32 in the forward's order (strict, --fmad=false --ftz=false); derivative coefficients and products float64; one rounding per stored derivative word",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "rsw_cldprmc_b__tl",
+    "geometry": {
+     "grid": [
+      "ceil(ncol*nlayers/128)",
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "inflag"
+     },
+     {
+      "bind": "scalar",
+      "arg": "iceflag"
+     },
+     {
+      "bind": "scalar",
+      "arg": "liqflag"
+     },
+     {
+      "bind": "primal",
+      "arg": "tab"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ciwpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "clwpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "cswpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "reicmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "relqmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "resnmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "taucmc"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ciwpmc",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "clwpmc",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cswpmc",
+      "field_id": 10,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "reicmc",
+      "field_id": 11,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "relqmc",
+      "field_id": 12,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "resnmc",
+      "field_id": 13,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "taormc",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "taucmc",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ssacmc",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "asmcmc",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 5,
+      "source_ids": [
+       "rrtmg_sw cldprmc (captured .cu 3c499c7b:2305-2309) inflag == 1 on a cloudy subcolumn (err_flag 1, host raises)",
+       "rrtmg_sw cldprmc (:2333/:2337/:2349/:2352/:2365/:2368) ice effective radius or ice optics out of range (err_flag 2)",
+       "rrtmg_sw cldprmc (:2374/:2387/:2390) snow effective radius outside [5, 140] um or snow optics out of range (err_flag 4)",
+       "rrtmg_sw cldprmc (:2399/:2412) liquid effective radius outside [1.5, 60] um or liquid optics out of range (err_flag 8)",
+       "rrtmg_sw cldprmc (:2289 inflag 0, iceflag 0 with ice, liqflag != 1 with liquid) no derivative written (not hrrrv5; the latter two read uninitialised coefficients in the forward)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rsw_cldprmc_b__ad",
+    "geometry": {
+     "grid": [
+      "ceil(ncol*nlayers/128)",
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "inflag"
+     },
+     {
+      "bind": "scalar",
+      "arg": "iceflag"
+     },
+     {
+      "bind": "scalar",
+      "arg": "liqflag"
+     },
+     {
+      "bind": "primal",
+      "arg": "tab"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ciwpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "clwpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "cswpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "reicmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "relqmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "resnmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "taucmc"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ciwpmc",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "clwpmc",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cswpmc",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "reicmc",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "relqmc",
+      "field_id": 12,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "resnmc",
+      "field_id": 13,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "taormc",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "taucmc",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ssacmc",
+      "field_id": 16,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "asmcmc",
+      "field_id": 17,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 5,
+      "source_ids": [
+       "rrtmg_sw cldprmc (captured .cu 3c499c7b:2305-2309) inflag == 1 on a cloudy subcolumn (err_flag 1, host raises)",
+       "rrtmg_sw cldprmc (:2333/:2337/:2349/:2352/:2365/:2368) ice effective radius or ice optics out of range (err_flag 2)",
+       "rrtmg_sw cldprmc (:2374/:2387/:2390) snow effective radius outside [5, 140] um or snow optics out of range (err_flag 4)",
+       "rrtmg_sw cldprmc (:2399/:2412) liquid effective radius outside [1.5, 60] um or liquid optics out of range (err_flag 8)",
+       "rrtmg_sw cldprmc (:2289 inflag 0, iceflag 0 with ice, liqflag != 1 with liquid) no derivative written (not hrrrv5; the latter two read uninitialised coefficients in the forward)"
+      ]
+     }
+    ]
+   }
+  },
+  "note": "Own geometry, one thread per (col, lay): the radius cotangents sum the 112 g-points in a fixed order in one thread (deterministic, no atomics)."
+ }
+}

@@ -1,0 +1,3836 @@
+{
+ "kernel": "rrfs_radiation_unpack",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source 66409514",
+ "file": "tree/src/hexcore/mpasphys/rrfs/resident_radiation_rrfs.py",
+ "line": 28,
+ "module": "664095143357d9ac4d993ca06509d0b9c7500502c0bd51b8898bf2b7f659bd16",
+ "image": "abcf70cb8c775e3b07e04f800f26e1eab03aff8461bf805e84e3bb0b6af08288",
+ "route": "hand",
+ "mode": "exact",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "d0",
+   "field_id": 0,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n0/max(w0,1))-1)*a0+(max(w0,1)-1)*b0+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s0",
+   "field_id": 1,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n0/max(w0,1))-1)*c0+(max(w0,1)-1)*f0+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a0",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b0",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c0",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f0",
+   "field_id": 5,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n0",
+   "field_id": 6,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w0",
+   "field_id": 7,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v0",
+   "field_id": 8,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d1",
+   "field_id": 9,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n1/max(w1,1))-1)*a1+(max(w1,1)-1)*b1+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s1",
+   "field_id": 10,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n1/max(w1,1))-1)*c1+(max(w1,1)-1)*f1+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a1",
+   "field_id": 11,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b1",
+   "field_id": 12,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c1",
+   "field_id": 13,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f1",
+   "field_id": 14,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n1",
+   "field_id": 15,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w1",
+   "field_id": 16,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v1",
+   "field_id": 17,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d2",
+   "field_id": 18,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n2/max(w2,1))-1)*a2+(max(w2,1)-1)*b2+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s2",
+   "field_id": 19,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n2/max(w2,1))-1)*c2+(max(w2,1)-1)*f2+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a2",
+   "field_id": 20,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b2",
+   "field_id": 21,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c2",
+   "field_id": 22,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f2",
+   "field_id": 23,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n2",
+   "field_id": 24,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w2",
+   "field_id": 25,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v2",
+   "field_id": 26,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d3",
+   "field_id": 27,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n3/max(w3,1))-1)*a3+(max(w3,1)-1)*b3+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s3",
+   "field_id": 28,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n3/max(w3,1))-1)*c3+(max(w3,1)-1)*f3+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a3",
+   "field_id": 29,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b3",
+   "field_id": 30,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c3",
+   "field_id": 31,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f3",
+   "field_id": 32,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n3",
+   "field_id": 33,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w3",
+   "field_id": 34,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v3",
+   "field_id": 35,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d4",
+   "field_id": 36,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n4/max(w4,1))-1)*a4+(max(w4,1)-1)*b4+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s4",
+   "field_id": 37,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n4/max(w4,1))-1)*c4+(max(w4,1)-1)*f4+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a4",
+   "field_id": 38,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b4",
+   "field_id": 39,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c4",
+   "field_id": 40,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f4",
+   "field_id": 41,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n4",
+   "field_id": 42,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w4",
+   "field_id": 43,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v4",
+   "field_id": 44,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d5",
+   "field_id": 45,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n5/max(w5,1))-1)*a5+(max(w5,1)-1)*b5+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s5",
+   "field_id": 46,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n5/max(w5,1))-1)*c5+(max(w5,1)-1)*f5+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a5",
+   "field_id": 47,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b5",
+   "field_id": 48,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c5",
+   "field_id": 49,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f5",
+   "field_id": 50,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n5",
+   "field_id": 51,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w5",
+   "field_id": 52,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v5",
+   "field_id": 53,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d6",
+   "field_id": 54,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n6/max(w6,1))-1)*a6+(max(w6,1)-1)*b6+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s6",
+   "field_id": 55,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n6/max(w6,1))-1)*c6+(max(w6,1)-1)*f6+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a6",
+   "field_id": 56,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b6",
+   "field_id": 57,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c6",
+   "field_id": 58,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f6",
+   "field_id": 59,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n6",
+   "field_id": 60,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w6",
+   "field_id": 61,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v6",
+   "field_id": 62,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d7",
+   "field_id": 63,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n7/max(w7,1))-1)*a7+(max(w7,1)-1)*b7+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s7",
+   "field_id": 64,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n7/max(w7,1))-1)*c7+(max(w7,1)-1)*f7+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a7",
+   "field_id": 65,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b7",
+   "field_id": 66,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c7",
+   "field_id": 67,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f7",
+   "field_id": 68,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n7",
+   "field_id": 69,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w7",
+   "field_id": 70,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v7",
+   "field_id": 71,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d8",
+   "field_id": 72,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n8/max(w8,1))-1)*a8+(max(w8,1)-1)*b8+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s8",
+   "field_id": 73,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n8/max(w8,1))-1)*c8+(max(w8,1)-1)*f8+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a8",
+   "field_id": 74,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b8",
+   "field_id": 75,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c8",
+   "field_id": 76,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f8",
+   "field_id": 77,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n8",
+   "field_id": 78,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w8",
+   "field_id": 79,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v8",
+   "field_id": 80,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d9",
+   "field_id": 81,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n9/max(w9,1))-1)*a9+(max(w9,1)-1)*b9+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s9",
+   "field_id": 82,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n9/max(w9,1))-1)*c9+(max(w9,1)-1)*f9+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a9",
+   "field_id": 83,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b9",
+   "field_id": 84,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c9",
+   "field_id": 85,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f9",
+   "field_id": 86,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n9",
+   "field_id": 87,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w9",
+   "field_id": 88,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v9",
+   "field_id": 89,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d10",
+   "field_id": 90,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n10/max(w10,1))-1)*a10+(max(w10,1)-1)*b10+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s10",
+   "field_id": 91,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n10/max(w10,1))-1)*c10+(max(w10,1)-1)*f10+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a10",
+   "field_id": 92,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b10",
+   "field_id": 93,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c10",
+   "field_id": 94,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f10",
+   "field_id": 95,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n10",
+   "field_id": 96,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w10",
+   "field_id": 97,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v10",
+   "field_id": 98,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d11",
+   "field_id": 99,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n11/max(w11,1))-1)*a11+(max(w11,1)-1)*b11+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s11",
+   "field_id": 100,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n11/max(w11,1))-1)*c11+(max(w11,1)-1)*f11+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a11",
+   "field_id": 101,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b11",
+   "field_id": 102,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c11",
+   "field_id": 103,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f11",
+   "field_id": 104,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n11",
+   "field_id": 105,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w11",
+   "field_id": 106,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v11",
+   "field_id": 107,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d12",
+   "field_id": 108,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n12/max(w12,1))-1)*a12+(max(w12,1)-1)*b12+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s12",
+   "field_id": 109,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n12/max(w12,1))-1)*c12+(max(w12,1)-1)*f12+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a12",
+   "field_id": 110,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b12",
+   "field_id": 111,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c12",
+   "field_id": 112,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f12",
+   "field_id": 113,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n12",
+   "field_id": 114,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w12",
+   "field_id": 115,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v12",
+   "field_id": 116,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d13",
+   "field_id": 117,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n13/max(w13,1))-1)*a13+(max(w13,1)-1)*b13+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s13",
+   "field_id": 118,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n13/max(w13,1))-1)*c13+(max(w13,1)-1)*f13+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a13",
+   "field_id": 119,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b13",
+   "field_id": 120,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c13",
+   "field_id": 121,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f13",
+   "field_id": 122,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n13",
+   "field_id": 123,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w13",
+   "field_id": 124,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v13",
+   "field_id": 125,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d14",
+   "field_id": 126,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n14/max(w14,1))-1)*a14+(max(w14,1)-1)*b14+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s14",
+   "field_id": 127,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n14/max(w14,1))-1)*c14+(max(w14,1)-1)*f14+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a14",
+   "field_id": 128,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b14",
+   "field_id": 129,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c14",
+   "field_id": 130,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f14",
+   "field_id": 131,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n14",
+   "field_id": 132,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w14",
+   "field_id": 133,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v14",
+   "field_id": 134,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d15",
+   "field_id": 135,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n15/max(w15,1))-1)*a15+(max(w15,1)-1)*b15+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s15",
+   "field_id": 136,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n15/max(w15,1))-1)*c15+(max(w15,1)-1)*f15+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a15",
+   "field_id": 137,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b15",
+   "field_id": 138,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c15",
+   "field_id": 139,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f15",
+   "field_id": 140,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n15",
+   "field_id": 141,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w15",
+   "field_id": 142,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v15",
+   "field_id": 143,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d16",
+   "field_id": 144,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n16/max(w16,1))-1)*a16+(max(w16,1)-1)*b16+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s16",
+   "field_id": 145,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n16/max(w16,1))-1)*c16+(max(w16,1)-1)*f16+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a16",
+   "field_id": 146,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b16",
+   "field_id": 147,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c16",
+   "field_id": 148,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f16",
+   "field_id": 149,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n16",
+   "field_id": 150,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w16",
+   "field_id": 151,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v16",
+   "field_id": 152,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d17",
+   "field_id": 153,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n17/max(w17,1))-1)*a17+(max(w17,1)-1)*b17+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s17",
+   "field_id": 154,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n17/max(w17,1))-1)*c17+(max(w17,1)-1)*f17+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a17",
+   "field_id": 155,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b17",
+   "field_id": 156,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c17",
+   "field_id": 157,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f17",
+   "field_id": 158,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n17",
+   "field_id": 159,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w17",
+   "field_id": 160,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v17",
+   "field_id": 161,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d18",
+   "field_id": 162,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n18/max(w18,1))-1)*a18+(max(w18,1)-1)*b18+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s18",
+   "field_id": 163,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n18/max(w18,1))-1)*c18+(max(w18,1)-1)*f18+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a18",
+   "field_id": 164,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b18",
+   "field_id": 165,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c18",
+   "field_id": 166,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f18",
+   "field_id": 167,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n18",
+   "field_id": 168,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w18",
+   "field_id": 169,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v18",
+   "field_id": 170,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d19",
+   "field_id": 171,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n19/max(w19,1))-1)*a19+(max(w19,1)-1)*b19+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s19",
+   "field_id": 172,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n19/max(w19,1))-1)*c19+(max(w19,1)-1)*f19+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a19",
+   "field_id": 173,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b19",
+   "field_id": 174,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c19",
+   "field_id": 175,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f19",
+   "field_id": 176,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n19",
+   "field_id": 177,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w19",
+   "field_id": 178,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v19",
+   "field_id": 179,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d20",
+   "field_id": 180,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n20/max(w20,1))-1)*a20+(max(w20,1)-1)*b20+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s20",
+   "field_id": 181,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n20/max(w20,1))-1)*c20+(max(w20,1)-1)*f20+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a20",
+   "field_id": 182,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b20",
+   "field_id": 183,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c20",
+   "field_id": 184,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f20",
+   "field_id": 185,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n20",
+   "field_id": 186,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w20",
+   "field_id": 187,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v20",
+   "field_id": 188,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d21",
+   "field_id": 189,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n21/max(w21,1))-1)*a21+(max(w21,1)-1)*b21+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s21",
+   "field_id": 190,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n21/max(w21,1))-1)*c21+(max(w21,1)-1)*f21+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a21",
+   "field_id": 191,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b21",
+   "field_id": 192,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c21",
+   "field_id": 193,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f21",
+   "field_id": 194,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n21",
+   "field_id": 195,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w21",
+   "field_id": 196,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v21",
+   "field_id": 197,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  },
+  {
+   "name": "d22",
+   "field_id": 198,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n22/max(w22,1))-1)*a22+(max(w22,1)-1)*b22+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "s22",
+   "field_id": 199,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "(ceil(n22/max(w22,1))-1)*c22+(max(w22,1)-1)*f22+1"
+   ],
+   "active": true
+  },
+  {
+   "name": "a22",
+   "field_id": 200,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "b22",
+   "field_id": 201,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "c22",
+   "field_id": 202,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "f22",
+   "field_id": 203,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "n22",
+   "field_id": 204,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "w22",
+   "field_id": 205,
+   "role": "scalar",
+   "dtype": "i64",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer address arithmetic"
+  },
+  {
+   "name": "v22",
+   "field_id": 206,
+   "role": "scalar",
+   "dtype": "u32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "fill word (constant)"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": "resident_radiation_rrfs.py:31 s ? src : v",
+   "kind": "fill",
+   "treatment": "NULL source (pre-launch primal argument): constant fill, zero tangent, cotangent consumed"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "rrfs_radiation_unpack: an op's index map is not injective, or two ops' destination/source spans overlap (AD fan-in or an order-dependent forward)"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "rrfs_radiation_unpack__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "s0"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d0",
+      "field_id": 0,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s0",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w0"
+     },
+     {
+      "bind": "primal",
+      "arg": "s1"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d1",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s1",
+      "field_id": 10,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w1"
+     },
+     {
+      "bind": "primal",
+      "arg": "s2"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d2",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s2",
+      "field_id": 19,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w2"
+     },
+     {
+      "bind": "primal",
+      "arg": "s3"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d3",
+      "field_id": 27,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s3",
+      "field_id": 28,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w3"
+     },
+     {
+      "bind": "primal",
+      "arg": "s4"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d4",
+      "field_id": 36,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s4",
+      "field_id": 37,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w4"
+     },
+     {
+      "bind": "primal",
+      "arg": "s5"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d5",
+      "field_id": 45,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s5",
+      "field_id": 46,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w5"
+     },
+     {
+      "bind": "primal",
+      "arg": "s6"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d6",
+      "field_id": 54,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s6",
+      "field_id": 55,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w6"
+     },
+     {
+      "bind": "primal",
+      "arg": "s7"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d7",
+      "field_id": 63,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s7",
+      "field_id": 64,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w7"
+     },
+     {
+      "bind": "primal",
+      "arg": "s8"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d8",
+      "field_id": 72,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s8",
+      "field_id": 73,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w8"
+     },
+     {
+      "bind": "primal",
+      "arg": "s9"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d9",
+      "field_id": 81,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s9",
+      "field_id": 82,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w9"
+     },
+     {
+      "bind": "primal",
+      "arg": "s10"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d10",
+      "field_id": 90,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s10",
+      "field_id": 91,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w10"
+     },
+     {
+      "bind": "primal",
+      "arg": "s11"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d11",
+      "field_id": 99,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s11",
+      "field_id": 100,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w11"
+     },
+     {
+      "bind": "primal",
+      "arg": "s12"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d12",
+      "field_id": 108,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s12",
+      "field_id": 109,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w12"
+     },
+     {
+      "bind": "primal",
+      "arg": "s13"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d13",
+      "field_id": 117,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s13",
+      "field_id": 118,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w13"
+     },
+     {
+      "bind": "primal",
+      "arg": "s14"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d14",
+      "field_id": 126,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s14",
+      "field_id": 127,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w14"
+     },
+     {
+      "bind": "primal",
+      "arg": "s15"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d15",
+      "field_id": 135,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s15",
+      "field_id": 136,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w15"
+     },
+     {
+      "bind": "primal",
+      "arg": "s16"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d16",
+      "field_id": 144,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s16",
+      "field_id": 145,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w16"
+     },
+     {
+      "bind": "primal",
+      "arg": "s17"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d17",
+      "field_id": 153,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s17",
+      "field_id": 154,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w17"
+     },
+     {
+      "bind": "primal",
+      "arg": "s18"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d18",
+      "field_id": 162,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s18",
+      "field_id": 163,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w18"
+     },
+     {
+      "bind": "primal",
+      "arg": "s19"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d19",
+      "field_id": 171,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s19",
+      "field_id": 172,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w19"
+     },
+     {
+      "bind": "primal",
+      "arg": "s20"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d20",
+      "field_id": 180,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s20",
+      "field_id": 181,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w20"
+     },
+     {
+      "bind": "primal",
+      "arg": "s21"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d21",
+      "field_id": 189,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s21",
+      "field_id": 190,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w21"
+     },
+     {
+      "bind": "primal",
+      "arg": "s22"
+     },
+     {
+      "bind": "tangent",
+      "arg": "d22",
+      "field_id": 198,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "s22",
+      "field_id": 199,
+      "io": "in"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w22"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrfs_radiation_unpack: an op's index map is not injective, or two ops' destination/source spans overlap (AD fan-in or an order-dependent forward)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rrfs_radiation_unpack__ad",
+    "geometry": {
+     "grid": [
+      "grid[0]",
+      1,
+      1
+     ],
+     "block": [
+      "block[0]",
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "primal",
+      "arg": "s0"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d0",
+      "field_id": 0,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s0",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n0"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w0"
+     },
+     {
+      "bind": "primal",
+      "arg": "s1"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d1",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s1",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w1"
+     },
+     {
+      "bind": "primal",
+      "arg": "s2"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d2",
+      "field_id": 18,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s2",
+      "field_id": 19,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n2"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w2"
+     },
+     {
+      "bind": "primal",
+      "arg": "s3"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d3",
+      "field_id": 27,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s3",
+      "field_id": 28,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n3"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w3"
+     },
+     {
+      "bind": "primal",
+      "arg": "s4"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d4",
+      "field_id": 36,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s4",
+      "field_id": 37,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n4"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w4"
+     },
+     {
+      "bind": "primal",
+      "arg": "s5"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d5",
+      "field_id": 45,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s5",
+      "field_id": 46,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n5"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w5"
+     },
+     {
+      "bind": "primal",
+      "arg": "s6"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d6",
+      "field_id": 54,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s6",
+      "field_id": 55,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n6"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w6"
+     },
+     {
+      "bind": "primal",
+      "arg": "s7"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d7",
+      "field_id": 63,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s7",
+      "field_id": 64,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n7"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w7"
+     },
+     {
+      "bind": "primal",
+      "arg": "s8"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d8",
+      "field_id": 72,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s8",
+      "field_id": 73,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n8"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w8"
+     },
+     {
+      "bind": "primal",
+      "arg": "s9"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d9",
+      "field_id": 81,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s9",
+      "field_id": 82,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n9"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w9"
+     },
+     {
+      "bind": "primal",
+      "arg": "s10"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d10",
+      "field_id": 90,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s10",
+      "field_id": 91,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n10"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w10"
+     },
+     {
+      "bind": "primal",
+      "arg": "s11"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d11",
+      "field_id": 99,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s11",
+      "field_id": 100,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n11"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w11"
+     },
+     {
+      "bind": "primal",
+      "arg": "s12"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d12",
+      "field_id": 108,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s12",
+      "field_id": 109,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n12"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w12"
+     },
+     {
+      "bind": "primal",
+      "arg": "s13"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d13",
+      "field_id": 117,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s13",
+      "field_id": 118,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n13"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w13"
+     },
+     {
+      "bind": "primal",
+      "arg": "s14"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d14",
+      "field_id": 126,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s14",
+      "field_id": 127,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n14"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w14"
+     },
+     {
+      "bind": "primal",
+      "arg": "s15"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d15",
+      "field_id": 135,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s15",
+      "field_id": 136,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n15"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w15"
+     },
+     {
+      "bind": "primal",
+      "arg": "s16"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d16",
+      "field_id": 144,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s16",
+      "field_id": 145,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n16"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w16"
+     },
+     {
+      "bind": "primal",
+      "arg": "s17"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d17",
+      "field_id": 153,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s17",
+      "field_id": 154,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n17"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w17"
+     },
+     {
+      "bind": "primal",
+      "arg": "s18"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d18",
+      "field_id": 162,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s18",
+      "field_id": 163,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n18"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w18"
+     },
+     {
+      "bind": "primal",
+      "arg": "s19"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d19",
+      "field_id": 171,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s19",
+      "field_id": 172,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n19"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w19"
+     },
+     {
+      "bind": "primal",
+      "arg": "s20"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d20",
+      "field_id": 180,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s20",
+      "field_id": 181,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n20"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w20"
+     },
+     {
+      "bind": "primal",
+      "arg": "s21"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d21",
+      "field_id": 189,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s21",
+      "field_id": 190,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n21"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w21"
+     },
+     {
+      "bind": "primal",
+      "arg": "s22"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "d22",
+      "field_id": 198,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "s22",
+      "field_id": 199,
+      "io": "accumulate"
+     },
+     {
+      "bind": "scalar",
+      "arg": "a22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "b22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "c22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "f22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "n22"
+     },
+     {
+      "bind": "scalar",
+      "arg": "w22"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrfs_radiation_unpack: an op's index map is not injective, or two ops' destination/source spans overlap (AD fan-in or an order-dependent forward)"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

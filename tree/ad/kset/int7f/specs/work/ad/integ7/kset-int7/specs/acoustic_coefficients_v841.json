@@ -1,0 +1,2636 @@
+{
+ "kernel": "acoustic_coefficients_v841",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/cuda_acoustic_v841.py",
+ "line": 42,
+ "route": "hand",
+ "mode": "exact",
+ "validation_status": "compiled; capture proofs are recorded in the task receipt and may still be incomplete",
+ "launch": {
+  "grid": "ceil_div(ncells,block.x)",
+  "block": "1D CUDA thread block",
+  "shared_bytes": 0,
+  "adjoint": "one block of exactly 128 threads; disjoint columns, then ascending-column gather"
+ },
+ "args": [
+  {
+   "name": "nlev",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed discrete dimensions",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "ncells",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "fixed discrete dimensions",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  },
+  {
+   "name": "dts",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1
+  },
+  {
+   "name": "gravity",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2
+  },
+  {
+   "name": "rgas",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3
+  },
+  {
+   "name": "cp",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "[]",
+   "stagger": "none",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4
+  },
+  {
+   "name": "zz",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5
+  },
+  {
+   "name": "cqw",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6
+  },
+  {
+   "name": "exner",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7
+  },
+  {
+   "name": "theta",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8
+  },
+  {
+   "name": "rho_base",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9
+  },
+  {
+   "name": "rtheta_base",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10
+  },
+  {
+   "name": "exner_base",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 11
+  },
+  {
+   "name": "rtheta_p",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 12
+  },
+  {
+   "name": "qtot",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 13,
+   "reference_scale": 0.005123087499088531,
+   "reference_scale_basis": "RMS of the same field in the moist step-2 coefficients input"
+  },
+  {
+   "name": "rdzw",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": false,
+   "inactive_reason": "Fixed mesh constant (GAPS G6): no tangent, no cotangent.",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 14
+  },
+  {
+   "name": "fzm",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 15
+  },
+  {
+   "name": "fzp",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 16
+  },
+  {
+   "name": "rdzu",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 17
+  },
+  {
+   "name": "etp",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 18
+  },
+  {
+   "name": "ewp",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev+1]",
+   "stagger": "interface",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 19
+  },
+  {
+   "name": "cofwr",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 20
+  },
+  {
+   "name": "cofwz",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 21
+  },
+  {
+   "name": "coftz",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev+1,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 22
+  },
+  {
+   "name": "cofwt",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 23
+  },
+  {
+   "name": "cofrz",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nlev]",
+   "stagger": "level",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 24
+  },
+  {
+   "name": "a_tri",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 25
+  },
+  {
+   "name": "b_tri",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 26
+  },
+  {
+   "name": "c_tri",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 27
+  },
+  {
+   "name": "alpha_tri",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 28
+  },
+  {
+   "name": "gamma_tri",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nlev,ncells]",
+   "stagger": "cell",
+   "active": true,
+   "inactive_reason": null,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 29
+  },
+  {
+   "name": "singular",
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[1]",
+   "stagger": "unresolved",
+   "active": false,
+   "inactive_reason": "integer singular indicator; invalid factorization refuses the derivative",
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none"
+  }
+ ],
+ "saved": [
+  {
+   "name": "dts",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "gravity",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "rgas",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "cp",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "zz",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "cqw",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "exner",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "theta",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "rho_base",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "rtheta_base",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "exner_base",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "rtheta_p",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "qtot",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "rdzw",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "fzm",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "fzp",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "rdzu",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "etp",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "ewp",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  },
+  {
+   "name": "cofrz",
+   "from": "forward",
+   "bytes_per_column": "4 times the number of values read for this column; shared arrays are saved once",
+   "reason": "input value needed to replay the local derivative"
+  }
+ ],
+ "branches": [
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:63",
+   "predicate": "cofwt and coefficient initialization for fixed nlev",
+   "policy": "inactive-index",
+   "tie": "integer loop count fixed",
+   "slot": 0,
+   "recording": "not required: fixed integer loop or boundary"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:84",
+   "predicate": "nlev > 0 and b_tri boundary overwrite",
+   "policy": "inactive-index",
+   "tie": "integer extent held fixed",
+   "slot": 1,
+   "recording": "not required: fixed integer loop or boundary"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:86",
+   "predicate": "interior coefficient loops at lines 86 and 102; factorization loop at line 143 has the same fixed bounds",
+   "policy": "inactive-index",
+   "tie": "integer extent held fixed",
+   "slot": 2,
+   "recording": "not required: fixed integer loop or boundary"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:141",
+   "predicate": "c_tri[nlev-1] overwritten by zero",
+   "policy": "inactive-index",
+   "tie": "integer extent held fixed",
+   "slot": 3,
+   "recording": "not required: fixed integer loop or boundary"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:148",
+   "predicate": "if (!(isfinite(denominator) && denominator != 0.0f))",
+   "policy": "refusal",
+   "tie": "invalid or zero denominator refuses the entire gradient",
+   "slot": 4,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; invalid arm refuses",
+   "column": 9,
+   "operation": "predicate",
+   "expression": "if (!(isfinite(denominator) && denominator != 0.0f))",
+   "active_variables": [
+    "denominator"
+   ],
+   "replay": "Replay the denominator and its finite/nonzero refusal at each fixed recurrence iteration."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:42",
+   "predicate": "decode a binary32 subnormal",
+   "policy": "rounding-helper",
+   "tie": "magnitude != 0 and exponent field == 0; signed zeros and minimum normal take the other arm",
+   "slot": 5,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:36-49",
+    "both_arms": "exact value of the float32 input as a double: ldexp(mantissa,-149) with sign for a subnormal, (double)value otherwise"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:57",
+   "predicate": "pack a binary32 subnormal result",
+   "policy": "rounding-helper",
+   "tie": "0 < abs(result) < 2^-126; equality at zero or minimum normal takes the other arm",
+   "slot": 6,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:51-67",
+    "both_arms": "round-to-nearest-even float32 of the double: packed subnormal mantissa rint(|v|*2^149), __double2float_rn otherwise"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:78",
+   "predicate": "add fast return",
+   "policy": "rounding-helper",
+   "tie": "ordinary result exponent field > 24; equality at 24 falls through",
+   "slot": 7,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:69-100",
+    "both_arms": "left+right rounded to float32 (ordinary sum, or the double sum rounded once)"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:83",
+   "predicate": "add subnormal operand fallback",
+   "policy": "rounding-helper",
+   "tie": "either operand has exponent field 0 and nonzero magnitude; signed zeros do not qualify",
+   "slot": 8,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:69-100",
+    "both_arms": "left+right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:93",
+   "predicate": "add cancellation fallback",
+   "policy": "rounding-helper",
+   "tie": "both exponent fields <= 23, result exponent field == 0, nonzero unequal operand magnitudes; equality at 23 is included",
+   "slot": 9,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:69-100",
+    "both_arms": "left+right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:111",
+   "predicate": "subtract fast return",
+   "policy": "rounding-helper",
+   "tie": "ordinary result exponent field > 24; equality at 24 falls through",
+   "slot": 10,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:102-130",
+    "both_arms": "left-right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:116",
+   "predicate": "subtract subnormal operand fallback",
+   "policy": "rounding-helper",
+   "tie": "either operand has exponent field 0 and nonzero magnitude; signed zeros do not qualify",
+   "slot": 11,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:102-130",
+    "both_arms": "left-right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:123",
+   "predicate": "subtract cancellation fallback",
+   "policy": "rounding-helper",
+   "tie": "both exponent fields <= 23, result exponent field == 0, nonzero unequal operand magnitudes; equality at 23 is included",
+   "slot": 12,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:102-130",
+    "both_arms": "left-right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:142",
+   "predicate": "multiply zero/subnormal result check",
+   "policy": "rounding-helper",
+   "tie": "ordinary result exponent field == 0, including signed zero",
+   "slot": 13,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:132-151",
+    "both_arms": "left*right rounded to float32 (ordinary product, or the double product rounded once)"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:145",
+   "predicate": "multiply fallback nonzero operands",
+   "policy": "rounding-helper",
+   "tie": "both operand magnitude bit patterns are nonzero; either signed zero takes the other arm",
+   "slot": 14,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:132-151",
+    "both_arms": "left*right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:162",
+   "predicate": "divide subnormal operand fallback",
+   "policy": "rounding-helper",
+   "tie": "either operand has exponent field 0 and nonzero magnitude; signed zeros do not qualify",
+   "slot": 15,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:153-178",
+    "both_arms": "left/right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:170",
+   "predicate": "divide underflow result fallback",
+   "policy": "rounding-helper",
+   "tie": "both magnitudes nonzero, left exponent + 126 <= right exponent, ordinary result exponent field 0; exponent equality is included",
+   "slot": 16,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:153-178",
+    "both_arms": "left/right rounded to float32"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:45",
+   "predicate": "sign of a decoded f32 subnormal operand",
+   "policy": "rounding-helper",
+   "tie": "sign bit 1 is negative; sign bit 0 is positive",
+   "slot": 17,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:43-46",
+    "both_arms": "sign selection of the same decoded magnitude"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_fp32.py:62",
+   "predicate": "sign of a packed f32 subnormal result",
+   "policy": "rounding-helper",
+   "tie": "sign bit 1 is negative; sign bit 0 is positive",
+   "slot": 18,
+   "recording": "uint32[slot][arm] executed predicate count in __tl; section 33",
+   "ledger_addendum": {
+    "file": "ad0-l08-runner-ext/tmp/rounding_helpers.json",
+    "source": "cuda_fp32.py:60-64",
+    "both_arms": "sign bit of the same packed result"
+   }
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:56",
+   "column": 14,
+   "operation": "predicate",
+   "expression": "if (cell >= ncells) return;",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The predicate or loop exit depends only on captured integer launch bounds, schedule, or fixed mesh topology; no floating state selects the arm.",
+   "replay": "Replay the captured integer bounds and control."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:56",
+   "column": 25,
+   "operation": "iteration",
+   "expression": "return",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The predicate or loop exit depends only on captured integer launch bounds, schedule, or fixed mesh topology; no floating state selects the arm.",
+   "replay": "Replay the captured integer bounds and control."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:69",
+   "column": 33,
+   "operation": "lookup",
+   "expression": "zz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "zz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:71",
+   "column": 33,
+   "operation": "lookup",
+   "expression": "rho_base[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rho_base"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:72",
+   "column": 47,
+   "operation": "lookup",
+   "expression": "qtot[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "qtot"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:73",
+   "column": 33,
+   "operation": "lookup",
+   "expression": "exner[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "exner"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:75",
+   "column": 22,
+   "operation": "lookup",
+   "expression": "rtheta_base[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rtheta_base"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:75",
+   "column": 38,
+   "operation": "lookup",
+   "expression": "rtheta_p[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rtheta_p"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:75",
+   "column": 52,
+   "operation": "lookup",
+   "expression": "exner_base[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "exner_base"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:84",
+   "column": 14,
+   "operation": "predicate",
+   "expression": "if (nlev > 0) b_tri[C2(0, cell, ncells)] = one;",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The predicate or loop exit depends only on captured integer launch bounds, schedule, or fixed mesh topology; no floating state selects the arm.",
+   "replay": "Replay the captured integer bounds and control."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:89",
+   "column": 51,
+   "operation": "lookup",
+   "expression": "fzm[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "fzm"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:89",
+   "column": 59,
+   "operation": "lookup",
+   "expression": "zz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "zz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:90",
+   "column": 22,
+   "operation": "lookup",
+   "expression": "fzp[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "fzp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:90",
+   "column": 30,
+   "operation": "lookup",
+   "expression": "zz[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "zz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:93",
+   "column": 33,
+   "operation": "lookup",
+   "expression": "rdzu[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzu"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:94",
+   "column": 33,
+   "operation": "lookup",
+   "expression": "cqw[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cqw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:95",
+   "column": 51,
+   "operation": "lookup",
+   "expression": "fzm[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "fzm"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:95",
+   "column": 59,
+   "operation": "lookup",
+   "expression": "exner[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "exner"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:96",
+   "column": 22,
+   "operation": "lookup",
+   "expression": "fzp[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "fzp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:96",
+   "column": 30,
+   "operation": "lookup",
+   "expression": "exner[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "exner"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:98",
+   "column": 38,
+   "operation": "lookup",
+   "expression": "fzm[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "fzm"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:98",
+   "column": 46,
+   "operation": "lookup",
+   "expression": "theta[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "theta"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:99",
+   "column": 22,
+   "operation": "lookup",
+   "expression": "fzp[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "fzp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:99",
+   "column": 30,
+   "operation": "lookup",
+   "expression": "theta[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "theta"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:108",
+   "column": 13,
+   "operation": "lookup",
+   "expression": "cofwz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:108",
+   "column": 23,
+   "operation": "lookup",
+   "expression": "coftz[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "coftz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:108",
+   "column": 35,
+   "operation": "lookup",
+   "expression": "rdzw[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:108",
+   "column": 49,
+   "operation": "lookup",
+   "expression": "zz[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "zz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:109",
+   "column": 44,
+   "operation": "lookup",
+   "expression": "cofwr[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwr"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:109",
+   "column": 54,
+   "operation": "lookup",
+   "expression": "cofrz[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofrz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:111",
+   "column": 13,
+   "operation": "lookup",
+   "expression": "cofwt[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwt"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:111",
+   "column": 24,
+   "operation": "lookup",
+   "expression": "coftz[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "coftz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:111",
+   "column": 36,
+   "operation": "lookup",
+   "expression": "rdzw[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:112",
+   "column": 35,
+   "operation": "lookup",
+   "expression": "etp[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "etp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:113",
+   "column": 37,
+   "operation": "lookup",
+   "expression": "ewp[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "ewp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:116",
+   "column": 13,
+   "operation": "lookup",
+   "expression": "etp[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "etp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:116",
+   "column": 21,
+   "operation": "lookup",
+   "expression": "rdzw[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:116",
+   "column": 31,
+   "operation": "lookup",
+   "expression": "zz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "zz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:118",
+   "column": 13,
+   "operation": "lookup",
+   "expression": "etp[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "etp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:118",
+   "column": 25,
+   "operation": "lookup",
+   "expression": "rdzw[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:118",
+   "column": 39,
+   "operation": "lookup",
+   "expression": "zz[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "zz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:119",
+   "column": 42,
+   "operation": "lookup",
+   "expression": "cofwz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:119",
+   "column": 52,
+   "operation": "lookup",
+   "expression": "coftz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "coftz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:122",
+   "column": 13,
+   "operation": "lookup",
+   "expression": "etp[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "etp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:122",
+   "column": 21,
+   "operation": "lookup",
+   "expression": "cofwt[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwt"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:122",
+   "column": 32,
+   "operation": "lookup",
+   "expression": "rdzw[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:124",
+   "column": 13,
+   "operation": "lookup",
+   "expression": "etp[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "etp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:124",
+   "column": 25,
+   "operation": "lookup",
+   "expression": "cofwt[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwt"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:124",
+   "column": 37,
+   "operation": "lookup",
+   "expression": "rdzw[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:125",
+   "column": 44,
+   "operation": "lookup",
+   "expression": "coftz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "coftz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:127",
+   "column": 43,
+   "operation": "lookup",
+   "expression": "etp[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "etp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:127",
+   "column": 51,
+   "operation": "lookup",
+   "expression": "cofrz[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofrz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:128",
+   "column": 43,
+   "operation": "lookup",
+   "expression": "etp[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "etp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:128",
+   "column": 55,
+   "operation": "lookup",
+   "expression": "cofrz[k - 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofrz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:129",
+   "column": 44,
+   "operation": "lookup",
+   "expression": "cofwr[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwr"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:131",
+   "column": 37,
+   "operation": "lookup",
+   "expression": "ewp[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "ewp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:134",
+   "column": 13,
+   "operation": "lookup",
+   "expression": "cofwz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:134",
+   "column": 23,
+   "operation": "lookup",
+   "expression": "coftz[ip]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "coftz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:134",
+   "column": 35,
+   "operation": "lookup",
+   "expression": "rdzw[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:134",
+   "column": 45,
+   "operation": "lookup",
+   "expression": "zz[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "zz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:135",
+   "column": 44,
+   "operation": "lookup",
+   "expression": "cofwr[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwr"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:135",
+   "column": 54,
+   "operation": "lookup",
+   "expression": "cofrz[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofrz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:137",
+   "column": 13,
+   "operation": "lookup",
+   "expression": "cofwt[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "cofwt"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:137",
+   "column": 23,
+   "operation": "lookup",
+   "expression": "coftz[ip]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "coftz"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:137",
+   "column": 35,
+   "operation": "lookup",
+   "expression": "rdzw[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "rdzw"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:138",
+   "column": 35,
+   "operation": "lookup",
+   "expression": "etp[k]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "etp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:139",
+   "column": 37,
+   "operation": "lookup",
+   "expression": "ewp[k + 1]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "ewp"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:141",
+   "column": 14,
+   "operation": "predicate",
+   "expression": "if (nlev > 0) c_tri[C2(nlev - 1, cell, ncells)] = 0.0f;",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The predicate or loop exit depends only on captured integer launch bounds, schedule, or fixed mesh topology; no floating state selects the arm.",
+   "replay": "Replay the captured integer bounds and control."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:147",
+   "column": 22,
+   "operation": "lookup",
+   "expression": "b_tri[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "b_tri"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:147",
+   "column": 41,
+   "operation": "lookup",
+   "expression": "a_tri[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "a_tri"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:147",
+   "column": 51,
+   "operation": "lookup",
+   "expression": "gamma_tri[im]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "gamma_tri"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:148",
+   "column": 15,
+   "operation": "refusal",
+   "expression": "isfinite(denominator)",
+   "predicate": "isfinite(denominator)",
+   "policy": "refusal",
+   "active_variables": [
+    "denominator"
+   ],
+   "tie": "zero and nonfinite denominators refuse the entire gradient",
+   "replay": "Replay the finite/nonzero test on the unperturbed recurrence.",
+   "slot": 19,
+   "recording": "uint32[slot][arm] executed predicate counts in __tl; invalid result refuses"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:148",
+   "column": 52,
+   "operation": "predicate",
+   "expression": "if (!(isfinite(denominator) && denominator != 0.0f))",
+   "predicate": "if (!(isfinite(denominator) && denominator != 0.0f))",
+   "policy": "refusal",
+   "active_variables": [
+    "denominator"
+   ],
+   "tie": "zero and nonfinite denominators refuse the entire gradient",
+   "replay": "Replay the finite/nonzero test on the unperturbed recurrence.",
+   "slot": 20,
+   "recording": "uint32[slot][arm] executed predicate counts in __tl; invalid result refuses"
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:151",
+   "column": 48,
+   "operation": "lookup",
+   "expression": "c_tri[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "c_tri"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  },
+  {
+   "file_line": "tree/src/hexcore/cuda_acoustic_v841.py:151",
+   "column": 59,
+   "operation": "lookup",
+   "expression": "alpha_tri[i]",
+   "active": false,
+   "policy": "inactive",
+   "inactive_reason": "The lookup index is fixed by the captured integer loop or mesh topology; the selected floating value remains active and its tangent and adjoint are propagated.",
+   "active_variables": [
+    "alpha_tri"
+   ],
+   "replay": "Replay the captured integer index and topology; differentiate the selected value."
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "device_layout": "uint32 slots, one slot per source_id",
+  "slots": 7,
+  "source_ids": {
+   "1": "nonfinite input or cotangent",
+   "2": "zero divisor",
+   "3": "nonfinite intermediate or result",
+   "4": "tape capacity exceeded",
+   "5": "invalid dimensions",
+   "6": "invalid adjoint launch geometry",
+   "7": "factorization denominator invalid"
+  },
+  "scheduler": "zero all slots before launch; if any is nonzero, discard the entire gradient and create the host failure record for that source_id"
+ },
+ "entry_points": {
+  "tl": {
+   "symbol": "acoustic_coefficients_v841__tl",
+   "arguments": [
+    "nlev",
+    "ncells",
+    "dts",
+    "gravity",
+    "rgas",
+    "cp",
+    "zz",
+    "cqw",
+    "exner",
+    "theta",
+    "rho_base",
+    "rtheta_base",
+    "exner_base",
+    "rtheta_p",
+    "qtot",
+    "rdzw",
+    "fzm",
+    "fzp",
+    "rdzu",
+    "etp",
+    "ewp",
+    "cofwr",
+    "cofwz",
+    "coftz",
+    "cofwt",
+    "cofrz",
+    "a_tri",
+    "b_tri",
+    "c_tri",
+    "alpha_tri",
+    "gamma_tri",
+    "singular",
+    "d_dts",
+    "d_g",
+    "d_rg",
+    "d_cp",
+    "d_zz",
+    "d_cqw",
+    "d_exner",
+    "d_theta",
+    "d_rho",
+    "d_rbase",
+    "d_ebase",
+    "d_rp",
+    "d_q",
+    "d_rdzw",
+    "d_fzm",
+    "d_fzp",
+    "d_rdzu",
+    "d_etp",
+    "d_ewp",
+    "d_wr",
+    "d_wz",
+    "d_tz",
+    "d_wt",
+    "d_rz",
+    "d_a",
+    "d_b",
+    "d_c",
+    "d_alpha",
+    "d_gamma",
+    "work",
+    "failures",
+    "branch_record"
+   ]
+  },
+  "ad": {
+   "symbol": "acoustic_coefficients_v841__ad",
+   "arguments": [
+    "nlev",
+    "ncells",
+    "dts",
+    "gravity",
+    "rgas",
+    "cp",
+    "zz",
+    "cqw",
+    "exner",
+    "theta",
+    "rho_base",
+    "rtheta_base",
+    "exner_base",
+    "rtheta_p",
+    "qtot",
+    "rdzw",
+    "fzm",
+    "fzp",
+    "rdzu",
+    "etp",
+    "ewp",
+    "cofwr",
+    "cofwz",
+    "coftz",
+    "cofwt",
+    "cofrz",
+    "a_tri",
+    "b_tri",
+    "c_tri",
+    "alpha_tri",
+    "gamma_tri",
+    "singular",
+    "b_dts",
+    "b_g",
+    "b_rg",
+    "b_cp",
+    "d_zz",
+    "d_cqw",
+    "d_exner",
+    "d_theta",
+    "d_rho",
+    "d_rbase",
+    "d_ebase",
+    "d_rp",
+    "d_q",
+    "d_rdzw",
+    "d_fzm",
+    "d_fzp",
+    "d_rdzu",
+    "d_etp",
+    "d_ewp",
+    "d_wr",
+    "d_wz",
+    "d_tz",
+    "d_wt",
+    "d_rz",
+    "d_a",
+    "d_b",
+    "d_c",
+    "d_alpha",
+    "d_gamma",
+    "work",
+    "scratch",
+    "contrib",
+    "failures"
+   ]
+  },
+  "aug": null
+ },
+ "workspace": {
+  "tangent": "144*(nlev+1)*ncells bytes; 16-byte AcousticDual records with float64 tangent arithmetic",
+  "adjoint_values": "9216*(nlev+1) bytes; 128 independent thread workspaces",
+  "adjoint_tape": "6144*(512*(nlev+1)+256) bytes; 128 independent 48-byte node tapes",
+  "adjoint_contributions": "8*(7*(nlev+1)+4)*ncells bytes, one private segment per column",
+  "capacity": "512*(nlev+1)+256 nodes per thread",
+  "lifetime": "one derivative launch; no persistent tape"
+ },
+ "alias": "All active arrays, workspace and refusal records are disjoint.",
+ "helper": "hex-ad/cuda/acoustic/acoustic_mpas_fp32.cuh is the exact pinned CUDA_FTZ_HELPERS source",
+ "source_ids": {
+  "1": "nonfinite input or cotangent",
+  "2": "zero divisor",
+  "3": "nonfinite intermediate or result",
+  "4": "tape capacity exceeded",
+  "5": "invalid dimensions",
+  "6": "invalid adjoint launch geometry",
+  "7": "factorization denominator invalid"
+ },
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "acoustic_coefficients_v841__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "dts"
+     },
+     {
+      "bind": "scalar",
+      "arg": "gravity"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rgas"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cp"
+     },
+     {
+      "bind": "primal",
+      "arg": "zz"
+     },
+     {
+      "bind": "primal",
+      "arg": "cqw"
+     },
+     {
+      "bind": "primal",
+      "arg": "exner"
+     },
+     {
+      "bind": "primal",
+      "arg": "theta"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho_base"
+     },
+     {
+      "bind": "primal",
+      "arg": "rtheta_base"
+     },
+     {
+      "bind": "primal",
+      "arg": "exner_base"
+     },
+     {
+      "bind": "primal",
+      "arg": "rtheta_p"
+     },
+     {
+      "bind": "primal",
+      "arg": "qtot"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "fzm"
+     },
+     {
+      "bind": "primal",
+      "arg": "fzp"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzu"
+     },
+     {
+      "bind": "primal",
+      "arg": "etp"
+     },
+     {
+      "bind": "primal",
+      "arg": "ewp"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofwr"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofwz"
+     },
+     {
+      "bind": "primal",
+      "arg": "coftz"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofwt"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofrz"
+     },
+     {
+      "bind": "primal",
+      "arg": "a_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "b_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "c_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "alpha_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "gamma_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "singular"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 1,
+      "io": "in",
+      "scalar_arg": "dts"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 2,
+      "io": "in",
+      "scalar_arg": "gravity"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 3,
+      "io": "in",
+      "scalar_arg": "rgas"
+     },
+     {
+      "bind": "tangent",
+      "field_id": 4,
+      "io": "in",
+      "scalar_arg": "cp"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zz",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cqw",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "exner",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "theta",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rho_base",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rtheta_base",
+      "field_id": 10,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "exner_base",
+      "field_id": 11,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rtheta_p",
+      "field_id": 12,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "qtot",
+      "field_id": 13,
+      "io": "in"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_zero_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "tangent",
+        "arg": "rdzw",
+        "field_id": 14,
+        "io": "in"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "tangent",
+      "arg": "fzm",
+      "field_id": 15,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "fzp",
+      "field_id": 16,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "rdzu",
+      "field_id": 17,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "etp",
+      "field_id": 18,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ewp",
+      "field_id": 19,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cofwr",
+      "field_id": 20,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cofwz",
+      "field_id": 21,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coftz",
+      "field_id": 22,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cofwt",
+      "field_id": 23,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cofrz",
+      "field_id": 24,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "a_tri",
+      "field_id": 25,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "b_tri",
+      "field_id": 26,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "c_tri",
+      "field_id": 27,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "alpha_tri",
+      "field_id": 28,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "gamma_tri",
+      "field_id": 29,
+      "io": "out"
+     },
+     {
+      "bind": "workspace",
+      "name": "work",
+      "bytes": "144*(nlev+1)*ncells",
+      "init": "zero"
+     },
+     {
+      "bind": "failure",
+      "slots": 7,
+      "source_ids": [
+       "nonfinite input or cotangent",
+       "zero divisor",
+       "nonfinite intermediate or result",
+       "tape capacity exceeded",
+       "invalid dimensions",
+       "invalid adjoint launch geometry",
+       "factorization denominator invalid"
+      ]
+     },
+     {
+      "bind": "branch_record",
+      "slots": 21
+     }
+    ]
+   },
+   "ad": {
+    "function": "acoustic_coefficients_v841__ad",
+    "geometry": {
+     "grid": [
+      1,
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nlev"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ncells"
+     },
+     {
+      "bind": "scalar",
+      "arg": "dts"
+     },
+     {
+      "bind": "scalar",
+      "arg": "gravity"
+     },
+     {
+      "bind": "scalar",
+      "arg": "rgas"
+     },
+     {
+      "bind": "scalar",
+      "arg": "cp"
+     },
+     {
+      "bind": "primal",
+      "arg": "zz"
+     },
+     {
+      "bind": "primal",
+      "arg": "cqw"
+     },
+     {
+      "bind": "primal",
+      "arg": "exner"
+     },
+     {
+      "bind": "primal",
+      "arg": "theta"
+     },
+     {
+      "bind": "primal",
+      "arg": "rho_base"
+     },
+     {
+      "bind": "primal",
+      "arg": "rtheta_base"
+     },
+     {
+      "bind": "primal",
+      "arg": "exner_base"
+     },
+     {
+      "bind": "primal",
+      "arg": "rtheta_p"
+     },
+     {
+      "bind": "primal",
+      "arg": "qtot"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzw"
+     },
+     {
+      "bind": "primal",
+      "arg": "fzm"
+     },
+     {
+      "bind": "primal",
+      "arg": "fzp"
+     },
+     {
+      "bind": "primal",
+      "arg": "rdzu"
+     },
+     {
+      "bind": "primal",
+      "arg": "etp"
+     },
+     {
+      "bind": "primal",
+      "arg": "ewp"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofwr"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofwz"
+     },
+     {
+      "bind": "primal",
+      "arg": "coftz"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofwt"
+     },
+     {
+      "bind": "primal",
+      "arg": "cofrz"
+     },
+     {
+      "bind": "primal",
+      "arg": "a_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "b_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "c_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "alpha_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "gamma_tri"
+     },
+     {
+      "bind": "primal",
+      "arg": "singular"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 1,
+      "io": "accumulate",
+      "scalar_arg": "dts"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 2,
+      "io": "accumulate",
+      "scalar_arg": "gravity"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 3,
+      "io": "accumulate",
+      "scalar_arg": "rgas"
+     },
+     {
+      "bind": "adjoint",
+      "field_id": 4,
+      "io": "accumulate",
+      "scalar_arg": "cp"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zz",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cqw",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "exner",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "theta",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rho_base",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rtheta_base",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "exner_base",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rtheta_p",
+      "field_id": 12,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "qtot",
+      "field_id": 13,
+      "io": "accumulate"
+     },
+     {
+      "bind": "workspace",
+      "name": "g6_inactive_sink_rdzw",
+      "bytes": "8*(nlev)",
+      "g6_inactive": {
+       "was": {
+        "bind": "adjoint",
+        "arg": "rdzw",
+        "field_id": 14,
+        "io": "accumulate"
+       },
+       "why": "fixed mesh constant: inactive (zero tangent in, cotangent discarded), GAPS G6"
+      }
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fzm",
+      "field_id": 15,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "fzp",
+      "field_id": 16,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "rdzu",
+      "field_id": 17,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "etp",
+      "field_id": 18,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ewp",
+      "field_id": 19,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cofwr",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cofwz",
+      "field_id": 21,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coftz",
+      "field_id": 22,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cofwt",
+      "field_id": 23,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cofrz",
+      "field_id": 24,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "a_tri",
+      "field_id": 25,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "b_tri",
+      "field_id": 26,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "c_tri",
+      "field_id": 27,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "alpha_tri",
+      "field_id": 28,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "gamma_tri",
+      "field_id": 29,
+      "io": "inout"
+     },
+     {
+      "bind": "workspace",
+      "name": "work",
+      "bytes": "9216*(nlev+1)",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "scratch",
+      "bytes": "6144*(512*(nlev+1)+256)",
+      "init": "zero"
+     },
+     {
+      "bind": "workspace",
+      "name": "contrib",
+      "bytes": "8*(7*(nlev+1)+4)*ncells",
+      "init": "zero"
+     },
+     {
+      "bind": "failure",
+      "slots": 7,
+      "source_ids": [
+       "nonfinite input or cotangent",
+       "zero divisor",
+       "nonfinite intermediate or result",
+       "tape capacity exceeded",
+       "invalid dimensions",
+       "invalid adjoint launch geometry",
+       "factorization denominator invalid"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "launch_abi_limitations": [],
+ "cotangent_reduction": "Repeated reads and shared inputs accumulate in fixed order in float64; each float32 cotangent is rounded once on its final write (COMMON-AD section 40).",
+ "derivative_precision": "Primal replay uses pinned float32 operations; tangent arithmetic and adjoint weights/cotangent accumulation use float64, rounded once per float32 shadow output.",
+ "owner_task": "ad1-024-acoustic_coefficients_v841"
+}

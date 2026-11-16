@@ -89,3 +89,88 @@ def test_the_repository_front_page_states_this_version():
 @pytest.mark.parametrize("page", ["README.md", "docs/global-door.md", "docs/manual/10-whats-new-0.4.md"])
 def test_no_page_offers_the_retired_spectral_package(page):
     assert "gpuwm-global" not in (ROOT / page).read_text(encoding="utf-8")
+
+
+def _figures(text):
+    """``3.0e-06`` and ``3.0e-6`` alike, as numbers, in the order written."""
+    return [float(token) for token in re.findall(r"\d(?:\.\d+)?e-\d+", text)]
+
+
+def test_the_fast_against_exact_figures_are_the_ones_the_command_prints():
+    """The README states no fast-against-exact figure for the 3 km example's default route, and the command prints none.
+
+    THE BREAKAGE (the candidate's card job, 2026-11-14): the README and the command both said moisture 1.1e-06 and
+    stored pressure 9.6e-05 where the card read 1.315e-06 and 9.778e-05. From dist48 the default route runs another
+    linear model (the closure-live form), which differs from the exact route by design; the figures were measured with
+    the form before it, and a page that kept them would state a difference no run of the shipped route measured."""
+    from types import SimpleNamespace
+
+    from hexcore import ad_doors
+
+    text = README.read_text(encoding="utf-8")
+    row_name = re.search(r"gpuwm-hex sensitivity --row (\S+) --steps (\d+) ", text)
+    assert row_name, "the README's 3 km example command"
+    row = ad_doors.load_table()["rows"][row_name.group(1)]
+    route = row["gradient_line"]["boundary_layer"]["routes"]["tape-free"]
+    context = SimpleNamespace(plan_how=f"the row's example plan ({row['example_plan']})", steps=int(row_name.group(2)))
+    words, measured = ad_doors.route_error_words(context, route)
+    assert not measured and words == route["error"]
+    start = text.index("**The default route is fast")
+    stated = _figures(text[start:text.index("\n\n", start)])
+    before = _figures(" ".join(f"{v:.1e}" for v in (3.0e-06, 1.4e-06, 6.5e-06, 9.8e-05)))
+    assert not set(stated) & set(before), stated
+
+
+def test_the_pages_name_every_test_direction_adjoint_test_runs():
+    """The README and the differentiable notes name every test direction `adjoint-test` runs, the word that picks
+    them, and the word it prints for a direction that does not count.
+
+    THE BREAKAGE (2026-11-14): `adjoint-test` went from one test direction to several, with a verdict over them,
+    while both pages still described one bump and "PASS or FAIL against fixed bars": a user who read FAIL along a
+    direction, or UNRESOLVED, found no word for it on either page."""
+    from hexcore import ad_doors
+
+    directions = (ad_doors.load_table()["doors"]["adjoint-test"].get("directions") or {}).get("order")
+    if not directions:
+        pytest.skip("the table of this tree names no test directions: its adjoint-test runs the bump alone")
+    for page in (README, ROOT / "docs" / "differentiable" / "README.md"):
+        text = page.read_text(encoding="utf-8")
+        missing = [name for name in directions if f"`{name}`" not in text]
+        assert not missing, (page.name, missing)
+        assert "`--directions`" in text and "UNRESOLVED" in text, page.name
+        assert "PASS or FAIL against fixed bars" not in text, page.name
+
+
+def test_every_text_that_names_this_release_names_the_declared_version():
+    """THE BREAKAGE THIS PREVENTS (a sealed candidate, 2026-11-14): a candidate was stamped with the patch number
+    after its release's own, and the package, the engine crate, the pin tag, the changelog heading and forty README
+    lines all had to move back.  One number is declared in pyproject.toml; every text that names this release names
+    that one, and the changelog has one entry for it."""
+    readme = README.read_text(encoding="utf-8")
+    assert f'pip install "gpuwm-hex[ad]=={VERSION}"' in readme
+    assert f"**New in {VERSION}:**" in readme
+    assert set(re.findall(r"/gpuwm-hex/blob/v(\d+\.\d+\.\d+)/", readme)) == {VERSION}
+    assert f'pip install "gpuwm-hex[ad]=={VERSION}"' in (ROOT / "docs/differentiable/README.md").read_text(encoding="utf-8")
+    changelog = ROOT / "CHANGELOG.md"
+    if changelog.is_file():  # the repository carries it; the source package does not
+        headings = re.findall(r"^## (\d+\.\d+\.\d+)$", changelog.read_text(encoding="utf-8"), re.M)
+        assert headings[0] == VERSION and len(set(headings)) == len(headings), headings[:3]
+        numbers = [tuple(map(int, h.split("."))) for h in headings]
+        assert numbers == sorted(numbers, reverse=True), "newest entry first, one entry a release"
+    pins = (ROOT / "src/hexcore/data/ad-assets.json").read_text(encoding="utf-8")
+    assert f'"tag": "ad-assets-v{VERSION}"' in pins
+    crate = ROOT / "rust/hexad/Cargo.toml"
+    if crate.is_file():
+        assert tomllib.loads(crate.read_text(encoding="utf-8"))["package"]["version"] == VERSION
+        lock = (ROOT / "rust/hexad/Cargo.lock").read_text(encoding="utf-8")
+        assert f'name = "hexad-phys"\nversion = "{VERSION}"' in lock
+    helpers = ROOT / "licenses/THIRD-PARTY-LICENSES-helper-binaries.txt"
+    assert f"  hexad-phys {VERSION}\n" in helpers.read_text(encoding="utf-8")
+
+
+def test_the_source_package_carries_the_changelog_this_file_reads():
+    """THE BREAKAGE (the 0.6.0 candidate's source package, 2026-11-15): the test above reads CHANGELOG.md, and from
+    an unpacked source package it failed with FileNotFoundError: MANIFEST.in did not include the file."""
+    manifest = (ROOT / "MANIFEST.in").read_text(encoding="utf-8").splitlines()
+    assert "include CHANGELOG.md" in manifest
+    assert (ROOT / "CHANGELOG.md").is_file()

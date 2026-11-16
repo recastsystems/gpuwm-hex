@@ -1,0 +1,705 @@
+{
+ "kernel": "mpas_sw_aerosol_columns",
+ "engine": "hex",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 3531,
+ "source_file_sha256_installed": "44588ef0b14aaff5d4d84d9672e1ccb311552e178fd358a4c17b699d4a4374cb",
+ "launch_site": "rrtmg_sw_v842.py:440-442",
+ "route": "hand",
+ "mode": "exact-with-frozen-limiters",
+ "owner_task": "ad/held-mpas_sw_aerosol_columns",
+ "affine": false,
+ "affine_reason": "linear in dz and ht (zs) and in aod2 (spectral); exp in ht and htoa (denom); Lagrange polynomial in a clamped exponential rh of p, t, qv; power law in the clamped exponent",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "source_lines": "3850-3877",
+  "steps": [
+   1,
+   6,
+   12
+  ],
+  "launches_per_radiation_step": "1 (one per SW call)"
+ },
+ "launch": {
+  "grid": "forward ((nc+63)/64)",
+  "block": "forward (64)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Column count of the SW call (fixed by the mesh partition)."
+  },
+  {
+   "name": "nz",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "MPAS layer count (59 on x1.2562 hrrrv5), fixed by the mesh."
+  },
+  {
+   "name": "has3d",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "1 when a 3-D AOD (Thompson/TEMPO aerosols) is supplied (hrrrv5), else 0; selects the path, never a state value."
+  },
+  {
+   "name": "aodopt",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Namelist aod option (2 on hrrrv5: the 2-D AOD is an input)."
+  },
+  {
+   "name": "angopt",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Namelist Angstrom option (3 on hrrrv5: the tabulated spectral path)."
+  },
+  {
+   "name": "aodval",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Namelist constant AOD (used when aodopt == 1); a parameter, not state."
+  },
+  {
+   "name": "angval",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Namelist constant Angstrom exponent (used when angopt == 1); a parameter, not state."
+  },
+  {
+   "name": "p",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "level 0 only, and only when has3d == 0 and angopt == 3 (surface rh)"
+  },
+  {
+   "name": "t",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "level 0 only, and only when has3d == 0 and angopt == 3 (surface rh)"
+  },
+  {
+   "name": "qv",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "level 0 only, and only when has3d == 0 and angopt == 3 (surface rh; through rv = max(0, qv))"
+  },
+  {
+   "name": "dz",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "reads": "every level, only when has3d == 0 (layer heights and the profile denominator)"
+  },
+  {
+   "name": "ht",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "reads": "only when has3d == 0 (zs[0] and the denominator)"
+  },
+  {
+   "name": "type",
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "aerosol type class (1..3) from the land mask; a table row index"
+  },
+  {
+   "name": "aod2",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "conditional: full (the constant aodval) when aodopt == 1, else none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6,
+   "reads": "only when has3d == 0 (spectral AOD), after the aodopt == 1 write"
+  },
+  {
+   "name": "ang2",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "reads": "only when angopt != 1 (the exponent clamp). On hrrrv5 this is cp.empty storage (angexp2d not supplied)"
+  },
+  {
+   "name": "exponent_out",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8,
+   "note": "clamped Angstrom exponent; read downstream only by mpas_sw_aerosol_finish when angopt == 1"
+  },
+  {
+   "name": "spectral",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[has3d + (1 - has3d)*nc*14]",
+   "stagger": "column",
+   "active": true,
+   "overwrite": "conditional: full when has3d == 0, untouched otherwise",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9,
+   "note": "14-band spectral 2-D AOD"
+  },
+  {
+   "name": "zs",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[has3d + (1 - has3d)*nc*nz]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "conditional: full when has3d == 0, untouched otherwise",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10,
+   "note": "layer mid heights, serial running-sum order"
+  },
+  {
+   "name": "denom",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[has3d + (1 - has3d)*nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "conditional: full when has3d == 0, untouched otherwise",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 11,
+   "note": "2500 (exp(-ht/2500) - exp(-htoa/2500))"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:3853",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Thread index against the fixed column count."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3854,3855,3858,3863",
+   "operation": "select",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Namelist option selects (aodopt, angopt, has3d) are launch scalars."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3855",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "frozen": "F1 exponent = fminf(2.5, fmaxf(-0.3, a)): d e/d a = 1 strictly inside (-0.3, 2.5) on the trajectory, else 0",
+   "reason": "min/max limiter"
+  },
+  {
+   "file_line": "capture source 3c499c7b:3860 -> 3767,3770 (mpas_sw_rh)",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "frozen": "F2 rh = fminf(99, fmaxf(0, r)): d rh/d r = 1 strictly inside (0, 99); F3 rv = fmaxf(0, qv): d rv/d qv = 1 for qv > 0",
+   "reason": "min/max limiters"
+  },
+  {
+   "file_line": "capture source 3c499c7b:3774-3775 (mpas_sw_spectral)",
+   "operation": "index",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "frozen": "F4 the Lagrange window ii, imin, imax chosen from rh on the trajectory; the polynomial is differentiated in rh",
+   "reason": "table window select: piecewise polynomial, continuous at the knots, derivative jumps there"
+  },
+  {
+   "file_line": "capture source 3c499c7b:3866",
+   "operation": "select",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "frozen": "F5 (e < .999 || e > 1.001) on the trajectory; the near-1 branch is the constant e -> 1 limit (d rate/d e = 0)",
+   "reason": "removable singularity of the band integral at e = 1"
+  }
+ ],
+ "limiters": "four frozen (F1 exponent clamp, F2 rh clamp, F3 rv floor, F5 rate band) and one frozen table window (F4), documented in the entry header and RESULT.md hazards",
+ "tables": [
+  "MPAS_RAOD[3][8][14]",
+  "MPAS_RHS[8]",
+  "MPAS_LOWER[14]",
+  "MPAS_UPPER[14]"
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "every written derivative word finite"
+ },
+ "precondition": "the 12 array arguments are distinct allocations or disjoint views; each column owns its rows of every argument; has3d is 0 or 1 (the wrapper passes i32(bool)); type in 1..3 when has3d == 0 and angopt == 3",
+ "precision": "aug: the forward word for word in f32 (__f*_rn and the forward's own gfk_exp/gfk_pow/gfk_log, verbatim prelude from the captured source), built --fmad=false --ftz=false, bitwise to the forward image. tl/ad: the f32 primal words recomputed as the forward (tc, e_s, e_v, r, rh, e, rate, htoa), local partials in double, one rounding to f32 per written word; the AD sums each input word's contributions in double before its one rounding.",
+ "binder_roles": "deriv.rs roles(): p, t, qv, dz, ht, ang2 TL in, AD accumulate (never snapshotted); aod2 TL inout, AD inout (in place: zeroed when aodopt == 1, pass-through plus contributions otherwise); exponent_out, spectral, zs, denom TL out, AD inout (seed read and consumed in place on the words the forward writes; untouched words keep theirs).",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "mpas_sw_aerosol_columns__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "aodopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "aodval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angval"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "ht"
+     },
+     {
+      "bind": "primal",
+      "arg": "type"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod2"
+     },
+     {
+      "bind": "primal",
+      "arg": "ang2"
+     },
+     {
+      "bind": "primal",
+      "arg": "exponent_out"
+     },
+     {
+      "bind": "primal",
+      "arg": "spectral"
+     },
+     {
+      "bind": "primal",
+      "arg": "zs"
+     },
+     {
+      "bind": "primal",
+      "arg": "denom"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3531:mpas_sw_aerosol_columns:nonfinite-partial"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "mpas_sw_aerosol_columns__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "aodopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "aodval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angval"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "ht"
+     },
+     {
+      "bind": "primal",
+      "arg": "type"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod2"
+     },
+     {
+      "bind": "primal",
+      "arg": "ang2"
+     },
+     {
+      "bind": "tangent",
+      "arg": "p",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "t",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "qv",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dz",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ht",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "aod2",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ang2",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "exponent_out",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "spectral",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zs",
+      "field_id": 10,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "denom",
+      "field_id": 11,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3531:mpas_sw_aerosol_columns:nonfinite-partial"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_sw_aerosol_columns__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "aodopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "aodval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angval"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "ht"
+     },
+     {
+      "bind": "primal",
+      "arg": "type"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod2"
+     },
+     {
+      "bind": "primal",
+      "arg": "ang2"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "p",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "t",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "qv",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dz",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ht",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "aod2",
+      "field_id": 6,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ang2",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "exponent_out",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "spectral",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zs",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "denom",
+      "field_id": 11,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3531:mpas_sw_aerosol_columns:nonfinite-partial"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

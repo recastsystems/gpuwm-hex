@@ -1,0 +1,618 @@
+{
+ "kernel": "rlw_cldprmc_coalesced",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_lw_v842.py",
+ "line": 736,
+ "module": "683d7a070b22b0586a646f9e1542ce73c396a801767cd92046f4749183efd606",
+ "image": "34da9e095e7167979e3ab69320f851dd1fdb84aae4d7a980d492a6fad3c8c396",
+ "route": "hand",
+ "mode": "exact-branch",
+ "owner_task": "ad/held-rlw_cldprmc_coalesced",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch column count"
+  },
+  {
+   "name": "nl",
+   "field_id": 1,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "launch layer count"
+  },
+  {
+   "name": "inflag",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer switch (5: McICA optics from water paths)"
+  },
+  {
+   "name": "iceflag",
+   "field_id": 3,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer switch (5: Fu ice + snow tables)"
+  },
+  {
+   "name": "liqflag",
+   "field_id": 4,
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "integer switch (1: Hu-Stamnes liquid table)"
+  },
+  {
+   "name": "cldfmc",
+   "field_id": 5,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": false,
+   "inactive_reason": "McICA subcolumn cloud fraction (0/1): gate operand only, a step function"
+  },
+  {
+   "name": "ciwpmc",
+   "field_id": 6,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "clwpmc",
+   "field_id": 7,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "cswpmc",
+   "field_id": 8,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "reicmc",
+   "field_id": 9,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl"
+   ],
+   "active": true
+  },
+  {
+   "name": "relqmc",
+   "field_id": 10,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl"
+   ],
+   "active": true
+  },
+  {
+   "name": "resnmc",
+   "field_id": 11,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl"
+   ],
+   "active": true
+  },
+  {
+   "name": "absice1",
+   "field_id": 12,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    10
+   ],
+   "active": false,
+   "inactive_reason": "optics table constant"
+  },
+  {
+   "name": "absice2",
+   "field_id": 13,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    688
+   ],
+   "active": false,
+   "inactive_reason": "optics table constant"
+  },
+  {
+   "name": "absice3",
+   "field_id": 14,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    736
+   ],
+   "active": false,
+   "inactive_reason": "optics table constant"
+  },
+  {
+   "name": "absice0",
+   "field_id": 15,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    2
+   ],
+   "active": false,
+   "inactive_reason": "optics table constant"
+  },
+  {
+   "name": "absliq1",
+   "field_id": 16,
+   "role": "in",
+   "dtype": "f32",
+   "shape": [
+    928
+   ],
+   "active": false,
+   "inactive_reason": "optics table constant"
+  },
+  {
+   "name": "absliq0",
+   "field_id": 17,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "optics constant"
+  },
+  {
+   "name": "ngb",
+   "field_id": 18,
+   "role": "in",
+   "dtype": "i32",
+   "shape": [
+    140
+   ],
+   "active": false,
+   "inactive_reason": "g-point -> band map (integer)"
+  },
+  {
+   "name": "taucmc",
+   "field_id": 19,
+   "role": "inout",
+   "dtype": "f32",
+   "shape": [
+    "ncol",
+    "nl",
+    140
+   ],
+   "active": true
+  },
+  {
+   "name": "ncb_flag",
+   "field_id": 20,
+   "role": "inout",
+   "dtype": "i32",
+   "shape": [
+    "ncol"
+   ],
+   "active": false,
+   "inactive_reason": "integer result (ncbands branch fired): written words take a zero derivative"
+  },
+  {
+   "name": "err_flag",
+   "field_id": 21,
+   "role": "out",
+   "dtype": "i32",
+   "shape": [
+    1
+   ],
+   "active": false,
+   "inactive_reason": "fatal-path flag (host raises): mirrored by the refusal slots"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "where": ":2355-2357 cldfmc >= cldmin && (cwp >= cldmin || taucmc >= cldmin)",
+   "kind": "gate",
+   "treatment": "trajectory value: not cloudy -> identity; cloudy -> taucmc overwritten (d/d taucmc_in = 0)"
+  },
+  {
+   "where": ":2364 ice_plus_snow == 0 / :2410 cswp > 0 / :2427 clwp == 0",
+   "kind": "zero-path shortcut",
+   "treatment": "frozen executed branch: coefficient 0 where the forward takes the shortcut (one-sided)"
+  },
+  {
+   "where": ":2386-2388 :2400-2402 :2417-2419 :2436-2439 (int)factor and index clamps",
+   "kind": "table index / clamp",
+   "treatment": "frozen index; slope = RLW_SU(T[i+1], T[i]) * d fint/d radius (1/3 ice and snow, 1 liquid)"
+  },
+  {
+   "where": "inflag / iceflag / liqflag / ngb / icb",
+   "kind": "integer switch",
+   "treatment": "launch value"
+  }
+ ],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "inflag == 1 on a cloudy subcolumn (err_flag 1, host raises)",
+   "ice effective radius outside the iceflag table range (err_flag 2-5)",
+   "snow effective radius outside [5, 140] um (err_flag 6)",
+   "liquid effective radius outside [2.5, 60] um (err_flag 7)"
+  ]
+ },
+ "affine": false,
+ "affine_reason": "taucmc is bilinear: water path times a piecewise-linear table interpolation in the effective radius",
+ "tape_bytes": 0,
+ "precision": "primal recomputed in float32 in the forward's order (strict, --fmad=false --ftz=false); derivative coefficients and products float64; one rounding per stored derivative word",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "rlw_cldprmc_coalesced__tl",
+    "geometry": {
+     "grid": [
+      "ceil(ncol*nl/128)",
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "inflag"
+     },
+     {
+      "bind": "scalar",
+      "arg": "iceflag"
+     },
+     {
+      "bind": "scalar",
+      "arg": "liqflag"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ciwpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "clwpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "cswpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "reicmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "relqmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "resnmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "absice1"
+     },
+     {
+      "bind": "primal",
+      "arg": "absice2"
+     },
+     {
+      "bind": "primal",
+      "arg": "absice3"
+     },
+     {
+      "bind": "primal",
+      "arg": "absice0"
+     },
+     {
+      "bind": "primal",
+      "arg": "absliq1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "absliq0"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "taucmc"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ciwpmc",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "clwpmc",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "cswpmc",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "reicmc",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "relqmc",
+      "field_id": 10,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "resnmc",
+      "field_id": 11,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "taucmc",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ncb_flag",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 4,
+      "source_ids": [
+       "rrtmg_lw cldprmc (captured .cu 683d7a07:2359) inflag == 1 on a cloudy subcolumn (err_flag 1, host raises)",
+       "rrtmg_lw cldprmc (:2368/:2372/:2381/:2395) ice effective radius outside the iceflag table range (err_flag 2-5)",
+       "rrtmg_lw cldprmc (:2412) snow effective radius outside [5, 140] um (err_flag 6)",
+       "rrtmg_lw cldprmc (:2433) liquid effective radius outside [2.5, 60] um (err_flag 7)"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rlw_cldprmc_coalesced__ad",
+    "geometry": {
+     "grid": [
+      "ceil(ncol*nl/128)",
+      1,
+      1
+     ],
+     "block": [
+      128,
+      1,
+      1
+     ],
+     "shared_bytes": 0
+    },
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "inflag"
+     },
+     {
+      "bind": "scalar",
+      "arg": "iceflag"
+     },
+     {
+      "bind": "scalar",
+      "arg": "liqflag"
+     },
+     {
+      "bind": "primal",
+      "arg": "cldfmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "ciwpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "clwpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "cswpmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "reicmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "relqmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "resnmc"
+     },
+     {
+      "bind": "primal",
+      "arg": "absice1"
+     },
+     {
+      "bind": "primal",
+      "arg": "absice2"
+     },
+     {
+      "bind": "primal",
+      "arg": "absice3"
+     },
+     {
+      "bind": "primal",
+      "arg": "absice0"
+     },
+     {
+      "bind": "primal",
+      "arg": "absliq1"
+     },
+     {
+      "bind": "scalar",
+      "arg": "absliq0"
+     },
+     {
+      "bind": "primal",
+      "arg": "ngb"
+     },
+     {
+      "bind": "primal",
+      "arg": "taucmc"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ciwpmc",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "clwpmc",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "cswpmc",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "reicmc",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "relqmc",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "resnmc",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "taucmc",
+      "field_id": 19,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ncb_flag",
+      "field_id": 20,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 4,
+      "source_ids": [
+       "rrtmg_lw cldprmc (captured .cu 683d7a07:2359) inflag == 1 on a cloudy subcolumn (err_flag 1, host raises)",
+       "rrtmg_lw cldprmc (:2368/:2372/:2381/:2395) ice effective radius outside the iceflag table range (err_flag 2-5)",
+       "rrtmg_lw cldprmc (:2412) snow effective radius outside [5, 140] um (err_flag 6)",
+       "rrtmg_lw cldprmc (:2433) liquid effective radius outside [2.5, 60] um (err_flag 7)"
+      ]
+     }
+    ]
+   }
+  },
+  "note": "Own geometry, one thread per (col, lay): the radius cotangents sum the 140 g-points in a fixed order in one thread (deterministic, no atomics)."
+ }
+}

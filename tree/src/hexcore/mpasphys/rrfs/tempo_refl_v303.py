@@ -257,36 +257,52 @@ def parameter_blob(pin_set: str, hailaware: bool, melting: bool) -> np.ndarray:
     return blob
 
 
+#: The fork corrections (fork_corrections) whose routine this module compiles and calls: snow_moments (TP5).
+#: The other TEMPO ids change process code the state reflectivity never runs; they are not applied here, so the
+#: module's text without TP5 is the pinned one whatever else a run applies.  THE BREAKAGE THIS PREVENTS: with
+#: TP5 in the forecast only, the f000 frame's snow reflectivity was built on the flipped moments and every later
+#: frame on the corrected ones.
+REFL_CORRECTIONS: tuple[str, ...] = ("TP5",)
+
+
+def _refl_corrections(corrections) -> tuple[str, ...]:
+    """The ids of ``corrections`` this module takes, in table order (none: the pinned text)."""
+    chosen = set(corrections or ())
+    return tuple(c for c in REFL_CORRECTIONS if c in chosen)
+
+
 _MODULES: dict[tuple, Any] = {}
 _MODULE_LOCK = threading.Lock()
 
 
-def _module(device: int, nz: int, version: str | None = None):
+def _module(device: int, nz: int, version: str | None = None, corrections=()):
     """tempo_v303's strict column source plus the state-reflectivity kernel, compiled once per card and depth.
     A second caller (the f000 thread behind the writer's early warm-up) waits for the first compile, never repeats it."""
-    key = (int(device), int(nz), _version(version))
+    key = (int(device), int(nz), _version(version), _refl_corrections(corrections))
     with _MODULE_LOCK:
         if key not in _MODULES:
             _MODULES[key] = _build_module(*key)
         return _MODULES[key]
 
 
-def module_source(nz: int, version: str | None = "v3.0.3") -> str:
+def module_source(nz: int, version: str | None = "v3.0.3", corrections=()) -> str:
     """The module's text: tempo_v303's strict column routines (both numerics: the reflectivity reads the f64
     parameter blob) at ``nz`` levels, its MPAS slice kernels, then the state-reflectivity kernel.  Not the
     column driver (tempo_columns, the whole microphysics step): with it the module took 97.9 s of NVRTC on one
     core (an RTX 5090 host, lam7k, 2026-10-29) and step 1 waited 53 s for it.  The AOT inventory declares the same text
     (cuda_backend.aot_build.physics_inventory, family tempo_rrfs_refl; the slice kernels pair it with the
-    fast TEMPO unit)."""
+    fast TEMPO unit).  ``corrections``: the run's applied fork corrections; REFL_CORRECTIONS of them (TP5) are
+    applied to the column text, none gives the pinned text."""
     from hexcore.mpasphys.resources_build import _vendored_maths, tempo_maths
     from hexcore.mpasphys.rrfs import tempo_v303 as tempo
     maths = tempo_maths(_vendored_maths())
+    fixed = _refl_corrections(corrections)
     if _version(version) == "v3.2.5":
         from hexcore.mpasphys.rrfs import tempo_v325
         return (f"#define TEMPO_NZ_MAX {max(int(nz), 1)}\n" + tempo._shared_pow_define(maths) + maths
-                + tempo_v325._column_source('strict') + tempo._mpas_source('strict') + REFL_SOURCE_V325)
+                + tempo_v325._column_source('strict', fixed) + tempo._mpas_source('strict') + REFL_SOURCE_V325)
     return (f"#define TEMPO_NZ_MAX {max(int(nz), 1)}\n" + tempo._shared_pow_define(maths) + maths
-            + tempo._column_source('strict') + tempo._mpas_source('strict') + REFL_SOURCE)
+            + tempo._column_source('strict', fixed) + tempo._mpas_source('strict') + REFL_SOURCE)
 
 
 def module_options() -> tuple[str, ...]:
@@ -300,11 +316,11 @@ def module_options() -> tuple[str, ...]:
 MODULE_SECONDS: dict[tuple, float] = {}
 
 
-def _build_module(device: int, nz: int, version: str = "v3.0.3"):
+def _build_module(device: int, nz: int, version: str = "v3.0.3", corrections=()):
     import cupy as cp
     from cupy.cuda import compiler, function
     started = time.time()
-    source = module_source(nz, version)
+    source = module_source(nz, version, corrections)
     with cp.cuda.Device(device):
         # Through the engine's direct-NVRTC bridge: served from the AOT pack when it holds this text.
         image, _ = compiler.compile_using_nvrtc(source, options=module_options(), cache_in_memory=True)
@@ -318,13 +334,15 @@ def _build_module(device: int, nz: int, version: str = "v3.0.3"):
 
 
 def refl10cm(fields: Mapping[str, Any], *, pin_set: str = 'rrfs-44c0849', hailaware: bool = True,
-             melting: bool = False, cp: Any = None, version: str | None = None, hailhyperaware: bool = True):
+             melting: bool = False, cp: Any = None, version: str | None = None, hailhyperaware: bool = True,
+             corrections=()):
     """TEMPO 10 cm reflectivity (dBZ, ``(nz, ncells)`` float32 on the device) of one state.
 
     ``fields`` (each ``(nz, ncells)``): ``t`` (K) and ``p`` (Pa), or ``theta`` with ``p`` (``exner`` optional:
     else (p / p0) ** (rgas / cp)); ``qv``, ``qr``, ``nr``, ``qs``, ``qg`` (kg/kg, /kg); ``ng`` and ``volg``
     (hail-aware graupel number and volume) when the state carries them; ``qc`` (kg/kg: TEMPO v3.2.5's hail
     fraction reads it, zero when absent).  ``version``: the run's TEMPO (None: the slot default, v3.2.5).
+    ``corrections``: the run's applied fork corrections (the module takes REFL_CORRECTIONS of them).
     """
     if cp is None:
         import cupy as cp
@@ -340,7 +358,7 @@ def refl10cm(fields: Mapping[str, Any], *, pin_set: str = 'rrfs-44c0849', hailaw
             raise ValueError(f'TEMPO reflectivity input {name} is {f[name].shape}, not {(nz, ncells)}')
     device = f['qv'].device.id
     version = _version(version)
-    module, (work_bytes, blob_bytes) = _module(device, nz, version)
+    module, (work_bytes, blob_bytes) = _module(device, nz, version, corrections)
     blob = cp.asarray(parameter_blob(pin_set, bool(hailaware), bool(melting)))
     if blob.nbytes != blob_bytes:
         raise ValueError(f'TEMPO parameter blob is {blob.nbytes} bytes, the module reads {blob_bytes}')
@@ -386,7 +404,7 @@ def column_radar(refl, zgrid, *, cp: Any = None):
 def refl10cm_staged(state: Mapping[str, np.ndarray], zgrid: np.ndarray | None, *, pin_set: str = 'rrfs-44c0849',
                     hailaware: bool = True, melting: bool = False, cp: Any = None, stream: Any = None,
                     columns: int = STAGE_COLUMNS, version: str | None = None,
-                    hailhyperaware: bool = True) -> dict[str, np.ndarray]:
+                    hailhyperaware: bool = True, corrections=()) -> dict[str, np.ndarray]:
     """``refl10cm`` (``(nz, ncells)``), ``refl10cm_max`` and, with ``zgrid``, ``refl10cm_1km`` of a HOST state, formed
     one slab of ``columns`` columns at a time; host float32 results, the same words as :func:`refl10cm` and
     :func:`column_radar` on the whole state (every column is formed from its own words only).
@@ -410,7 +428,7 @@ def refl10cm_staged(state: Mapping[str, np.ndarray], zgrid: np.ndarray | None, *
         cols = slice(first, min(ncells, first + step))
         slab = {k: np.ascontiguousarray(v[:, cols]) for k, v in state.items() if v is not None}
         z = refl10cm(slab, pin_set=pin_set, hailaware=hailaware, melting=melting, cp=cp, version=version,
-                     hailhyperaware=hailhyperaware)
+                     hailhyperaware=hailhyperaware, corrections=corrections)
         if zgrid is not None:
             peak, at_1km = column_radar(z, np.ascontiguousarray(zgrid[:, cols]), cp=cp)
             out['refl10cm_1km'][cols] = cp.asnumpy(at_1km, stream=stream)
@@ -604,14 +622,17 @@ class StartFrameReflectivity:
     """
 
     def __init__(self, snapshot: Mapping[str, Any], *, hailaware: bool, melting: bool, pin_set: str,
-                 device: int, version: str | None = None, hailhyperaware: bool = True) -> None:
+                 device: int, version: str | None = None, hailhyperaware: bool = True,
+                 corrections=()) -> None:
         import threading
         self.version = _version(version)
         self.hailhyperaware = bool(hailhyperaware)
+        self.corrections = _refl_corrections(corrections)
         self.targets = [n for n in START_TARGETS if n in snapshot and _placeholder(snapshot[n])]
         self.record: dict[str, Any] = dict(operator='TEMPO reflectivity_10cm of the start state '
                                            '(hexcore tempo_refl_v303)', hailaware=bool(hailaware),
-                                           melting=bool(melting), tempo_version=self.version, fields={})
+                                           melting=bool(melting), tempo_version=self.version,
+                                           fork_corrections=list(self.corrections), fields={})
         self.result: dict[str, np.ndarray] | None = None
         self.error: BaseException | None = None
         self.thread = None
@@ -652,7 +673,7 @@ class StartFrameReflectivity:
                 # step 1 (refl10cm_staged names the breakage).
                 host = refl10cm_staged(state, zgrid, pin_set=pin_set, hailaware=hail, melting=melt, cp=cp,
                                        stream=stream, version=self.version,
-                                       hailhyperaware=self.hailhyperaware)
+                                       hailhyperaware=self.hailhyperaware, corrections=self.corrections)
             self.result = host
             self.record['seconds'] = round(time.time() - started, 2)
             self.record['card_slab_columns'] = STAGE_COLUMNS
@@ -683,7 +704,8 @@ class StartFrameReflectivity:
         return self.record
 
 
-def warm_start_reflectivity(configs: Mapping[str, Any], nz: int, *, device: int) -> threading.Thread | None:
+def warm_start_reflectivity(configs: Mapping[str, Any], nz: int, *, device: int,
+                            corrections=()) -> threading.Thread | None:
     """Compile the f000 reflectivity module and build the parameter words on a side thread, from the moment the
     writer knows it will hold the start frame (None: not a TEMPO run).  Breakage it prevents: compiled at the
     f000 write instead, the strict TEMPO column source (one NVRTC call on one core, ~25 s; tempo_v303
@@ -699,7 +721,7 @@ def warm_start_reflectivity(configs: Mapping[str, Any], nz: int, *, device: int)
         try:
             import cupy as cp
             with cp.cuda.Device(device):
-                _module(device, int(nz), version)
+                _module(device, int(nz), version, corrections)
             parameter_blob('rrfs-44c0849', hail, melt)
         except BaseException:   # the f000 thread repeats the work and names any failure in the receipt
             pass
@@ -710,7 +732,7 @@ def warm_start_reflectivity(configs: Mapping[str, Any], nz: int, *, device: int)
 
 
 def start_frame_reflectivity(configs: Mapping[str, Any], snapshot: Mapping[str, Any], *,
-                             device: int) -> StartFrameReflectivity | None:
+                             device: int, corrections=()) -> StartFrameReflectivity | None:
     """The f000 reflectivity completion for this run's microphysics (None: not a TEMPO run)."""
     if str(configs.get('config_microp_scheme', '')).strip() != 'mp_tempo':
         return None
@@ -720,7 +742,8 @@ def start_frame_reflectivity(configs: Mapping[str, Any], snapshot: Mapping[str, 
     return StartFrameReflectivity(snapshot, hailaware=bool(configs.get('config_tempo_hailaware', True)),
                                   melting=bool(configs.get('config_tempo_refl10cm_from_melting', False)),
                                   pin_set='rrfs-44c0849', device=device, version=tempo_version(configs),
-                                  hailhyperaware=bool(configs.get('config_tempo_hailhyperaware', True)))
+                                  hailhyperaware=bool(configs.get('config_tempo_hailhyperaware', True)),
+                                  corrections=corrections)
 
 
 def main(argv=None) -> int:

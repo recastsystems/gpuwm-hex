@@ -1,0 +1,518 @@
+{
+ "kernel": "mpas_sw_gt_aod",
+ "engine": "hex",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 3598,
+ "launch_site": "rrtmg_sw_v842.py:461-462 (thompson_aerosols)",
+ "route": "hand",
+ "mode": "exact-with-frozen-limiters",
+ "owner_task": "ad/held-mpas_sw_gt_aod",
+ "affine": false,
+ "affine_reason": "linear in dz, nwfa and nifa inside their clamps; nonlinear in p, t, qv (rhoa, RSLF, rh interpolation in r/(100-r))",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "source_lines": "kernel 3917-3922, aer3_gt_aod 3406-3454, aer3_rslf 3379-3398, aer3_nint 3400-3403, tables 3358-3377",
+  "steps": [
+   1,
+   6,
+   12
+  ],
+  "launches_per_sw_step": 1
+ },
+ "launch": {
+  "grid": "forward ((nc+63)/64)",
+  "block": "forward (64)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Column count (all 2562 columns of x1.2562 in one launch), fixed by the mesh."
+  },
+  {
+   "name": "nz",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "MPAS layer count (59 on x1.2562 hrrrv5), fixed by the mesh."
+  },
+  {
+   "name": "p",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "pressure (Pa): rhoa = p/(287 t), RSLF, and the 0.15 p cap on esl"
+  },
+  {
+   "name": "t",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "temperature (K): rhoa, RSLF polynomial (frozen x clamp), frozen t_idx table column"
+  },
+  {
+   "name": "qv",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "water vapour mixing ratio: rh = 100 qv/qvsat (frozen [10.1, 98] clamp)"
+  },
+  {
+   "name": "dz",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "reads": "layer thickness dz8w (m), linear factor"
+  },
+  {
+   "name": "nwfa",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "reads": "water-friendly aerosol number (frozen [1, 99999e6] clamp), linear factor"
+  },
+  {
+   "name": "nifa",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6,
+   "reads": "ice-friendly aerosol number (frozen [0.01, 9999e6] clamp), linear factor"
+  },
+  {
+   "name": "xland",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": false,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "inactive_reason": "Land/water flag (1 or 2); selects the integer aerosol type only, never a float output."
+  },
+  {
+   "name": "aod3",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "cell-layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "note": "taod5503d: per-layer 550 nm aerosol optical depth (Thompson gt_aod)"
+  },
+  {
+   "name": "aod2",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8,
+   "note": "taod5502d: column sum of aod3 (f32, k ascending)"
+  },
+  {
+   "name": "type",
+   "role": "out",
+   "dtype": "i32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": false,
+   "overwrite": "partial",
+   "inactive_reason": "Integer aerosol type (1 land, 3 water) from xland; written only where xland is 1 or 2 (every column on x1.2562). __aug writes it as the forward."
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:3919",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Thread index against the fixed column count."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3920",
+   "operation": "select",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "xland == 1 / == 2 selects the integer type only."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3921",
+   "operation": "loop",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Layer loop over the fixed MPAS layer count."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3411",
+   "operation": "index",
+   "active": true,
+   "policy": "frozen-index",
+   "reason": "F1 t_idx = clamp(NINT(10.999 - 0.0333 t), 1, 4) keeps its trajectory value: the lookup column is piecewise constant in t and jumps at t ~ 225.2/255.2/285.3 K."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3386",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "reason": "F2 x = max(-80, t - 273.16): slope 1 where t - 273.16 >= -80 on the trajectory, else 0."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3395",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "reason": "F3 esl = min(poly(x), 0.15 p): the polynomial branch (d esl = poly'(x) dx) where poly <= 0.15 p, else d esl = 0.15 dp."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3413",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "reason": "F4 rh = clamp(100 qv/qvsat, 10.1, 98): slope 1 inside the closed interval, 0 where the clamp fires (dry stratosphere, saturated cloud)."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3415-3436",
+   "operation": "index",
+   "active": true,
+   "policy": "frozen-index",
+   "reason": "F5 rh_arr bracket (i1, i2 = i1 + 1) keeps its trajectory value; the interpolant is continuous across brackets (kinks at the nodes)."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3440-3442",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "reason": "F6 rh_f = clamp(., 0, 1): slope 1 on [0, 1] (true on every measured word by construction of the bracket)."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3449",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "reason": "F7 nwfa clamp [1, 99999e6]: slope 1 inside, 0 where it fires (never on the measured steps)."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3451",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "reason": "F8 nifa clamp [0.01, 9999e6]: slope 1 inside, 0 where it fires (never on the measured steps)."
+  }
+ ],
+ "limiters": "eight frozen selects F1-F8 (entry header, RESULT.md hazards); the clamp convention is the executed identity on the closed interval",
+ "tables": [
+  "AER3_GT_RH_ARR",
+  "AER3_GT_LOOKUP (copied verbatim into the entry as GA_RH_ARR, GA_LOOKUP)"
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "t > 0, p - esl > 0, qvsat > 0 where F4 is active; every primal and written derivative word finite"
+ },
+ "precondition": "the 12 arguments are distinct allocations at offset 0; each column owns its rows of every argument, so threads never share a written word",
+ "precision": "aug: the forward word for word in f32 (__f*_rn), built --fmad=false --ftz=false, bitwise to the forward image. tl/ad: the f32 primal words recomputed as the forward (one ga_eval body), the six local partials in double from those words (one shared function), one rounding to f32 per written word; the aod2 tangent is the double column sum of the point tangents; the AD adds the aod2 seed to each aod3 seed in double. The RSLF derivative is the analytic poly'(x) in double (not the derivative of the rounded Horner chain).",
+ "binder_roles": "deriv.rs roles(): p, t, qv, dz, nwfa, nifa TL in, AD accumulate (never snapshotted); aod3, aod2 TL out, AD inout (seed read and consumed in place). Primal inputs are pre-launch words; the kernel writes none. xland and type are inactive and bound only in aug.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "mpas_sw_gt_aod__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "primal",
+      "arg": "nifa"
+     },
+     {
+      "bind": "primal",
+      "arg": "xland"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod3"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod2"
+     },
+     {
+      "bind": "primal",
+      "arg": "type"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3598:mpas_sw_gt_aod:nonfinite-or-domain"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "mpas_sw_gt_aod__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "primal",
+      "arg": "nifa"
+     },
+     {
+      "bind": "tangent",
+      "arg": "p",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "t",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "qv",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dz",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "nwfa",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "nifa",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "aod3",
+      "field_id": 7,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "aod2",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3598:mpas_sw_gt_aod:nonfinite-or-domain"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_sw_gt_aod__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "nwfa"
+     },
+     {
+      "bind": "primal",
+      "arg": "nifa"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "p",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "t",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "qv",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dz",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "nwfa",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "nifa",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "aod3",
+      "field_id": 7,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "aod2",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3598:mpas_sw_gt_aod:nonfinite-or-domain"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

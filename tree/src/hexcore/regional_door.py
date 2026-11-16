@@ -142,22 +142,64 @@ def _cycle(text: str) -> datetime:
             "init's valid time and every boundary time are counted from") from error
 
 
-def _boundary_step(cadence: Mapping[str, Any], cycle_hour: int, lead: int, hours: int,
+def _ladder_cycle(issued: datetime) -> "datetime | int":
+    """The cycle the posting ladders are read for: the cycle itself, so a dated ladder (a publisher's past range: IFS
+    00/12 UTC runs stopped at f240 before 2024-11-12 06Z) decides; its UTC hour alone on an init_sources that has no
+    dated ladders (no ``ladder_for``), whose ladder lookups take an hour only.
+
+    THE BREAKAGE THIS PREVENTS (2026-11-13 walk): the regional door read the ladders by hour, so a 2024 IFS region
+    past f240 passed its plan and was refused at its first table hour, after the mesh."""
+    from . import init_sources
+
+    return issued if hasattr(init_sources, "ladder_for") else issued.hour
+
+
+def _boundary_step(cadence: Mapping[str, Any], cycle: "datetime | int", lead: int, hours: int,
                    requested: int | None = None) -> int:
     """The boundary step of a region driven by a table source: the finest spacing at which every boundary time is a
     lead the source posts (its ``ladders``, :func:`hexcore.init_sources.boundary_step`), or ``--boundary-interval-hours``
-    when every boundary time on it is posted; 0 when none is.
+    when every boundary time on it is posted; 0 when none is. The boundary times run on that step from the start
+    through the first one at or past the run's end (:func:`hexcore.init_sources.boundary_leads`, as the country door's
+    endpoints do), so a run that ends between two posted hours reads the next posted hour past its end and the
+    forecast's boundary pool interpolates to its end in time, as it does between any two boundary times.
 
     THE BREAKAGES THIS PREVENTS: (1) the plan read only ``interval_hours`` (GFS: 6), so ``--lead-hours 3`` on GFS was
     refused although GFS posts every hour to 120 h and its row's ladder says so (2026-10-28: ``gpuwm-hex regional
     --cycle 2026-10-27T18 --source gfs --lead-hours 3 --hours 12`` refused). (2) The step was ``interval_hours`` or
     its largest posted divisor, so a 6 h region from GFS, IFS, IFS 0.1 or GEFS got only its start and end boundaries
     though GFS posts hourly and IFS 3-hourly (HRDPS hex sheets, 2026-10-29: "hex from GFS 0.25 deg (6-hourly
-    boundaries)" beside "HRDPS (hourly boundaries)").
+    boundaries)" beside "HRDPS (hourly boundaries)"). (3) The step had to divide the run's length, so a region whose
+    length is not a whole number of its source's posting steps was refused at plan on both doors after the site had
+    quoted it (2026-11-13 walk: ICON 100 h from 00Z, 118 h from 18Z or 10 h from f090; IFS, AIFS and GEFS 25 h; GFS
+    125 h): "... writes no lead at every boundary time from 0 h to 118 h ...".
     """
     from .init_sources import boundary_step
 
-    return boundary_step(dict(cadence), int(cycle_hour), int(lead), int(hours), requested=requested, whole=True)
+    when = cycle if isinstance(cycle, datetime) else int(cycle)
+    return boundary_step(dict(cadence), when, int(lead), int(hours), requested=requested)
+
+
+def _boundary_reach(cadence: Mapping[str, Any], cycle: "datetime | int", lead: int,
+                    requested: int | None = None) -> tuple[int, int]:
+    """``(last, most)``: the cycle's last posted hour, and the longest whole-hour run from ``lead`` that has a boundary
+    step (0 when none), named in the plan's refusal so the caller can pick a length that runs."""
+    from .init_sources import _lead_posted
+
+    forecast = dict(cadence)
+    top = int(forecast.get("max_hours") or 0)
+    last = next((k for k in range(top, -1, -1) if _lead_posted(forecast, cycle, k)), 0)
+    most = next((h for h in range(last - int(lead), 0, -1)
+                 if _boundary_step(forecast, cycle, lead, h, requested)), 0)
+    return last, most
+
+
+def boundary_span(hours: int, step: "int | None") -> int:
+    """Hours from the start to a region's last boundary time: the run's length rounded up to its boundary step (the
+    first boundary time at or past the end); the length itself when there is no step (an intermediate door's hourly
+    series, or a region cut from a kept run)."""
+    import math
+
+    return int(math.ceil(int(hours) / int(step)) * int(step)) if step else int(hours)
 
 
 def _stamp(moment: datetime) -> str:
@@ -186,16 +228,41 @@ def boundary_plan(source, cycle, lead, hours, *, name=None, boundary_cycle=None,
         raise RegionalRefusal(f"{boundary['id']} boundary cycle {text} is later than the run's start "
                               f"{start:%Y-%m-%dT%H}; choose an earlier boundary cycle")
     cadence = boundary.get("forecast") or {}
+    from .lbc_producer import analysis_every_hours
+    analyses = None if cadence else analysis_every_hours(boundary)
     step = None
     if cadence:
-        step = _boundary_step(cadence, issued.hour, offset, hours, requested)
+        posting = _ladder_cycle(issued)
+        step = _boundary_step(cadence, posting, offset, hours, requested)
         if not step:
+            last, most = _boundary_reach(cadence, posting, offset, requested)
             raise RegionalRefusal(
                 (f"--boundary-interval-hours {requested}: " if requested is not None else "")
                 + f"{boundary['id']} boundary cycle {text} writes no lead at every boundary time from "
                 f"{offset} h to {offset + hours} h through the run's end "
-                f"{start + timedelta(hours=hours):%Y-%m-%dT%H}; choose a newer boundary cycle, "
-                "a shorter run or a boundary source that reaches it")
+                f"{start + timedelta(hours=hours):%Y-%m-%dT%H}: its last posted hour is f{last:03d}, and "
+                + (f"the longest run from f{offset:03d} with a posted boundary hour at or past its end is {most} h"
+                   if most else f"no run from f{offset:03d} has a posted boundary step")
+                + "; choose a newer boundary cycle, a shorter run or a boundary source that reaches it")
+    elif analyses:
+        # An analysis series (ERA5: its row's boundaries.analysis_every_hours): every boundary time is the source's
+        # own analysis at that valid time, at the source's time step unless --boundary-interval-hours asks a
+        # multiple of it (lbc_producer.source_endpoint_commands reads the same series for the country door).
+        # THE BREAKAGE THIS PREVENTS (2026-11-13, every hex region from ERA5 on either door): both region
+        # doors refused every ERA5 region at plan ("era5 declares no forecast cadence for its boundaries"), so the
+        # site took and quoted the order and the box stopped before its mesh.
+        if offset:
+            raise RegionalRefusal(
+                f"{boundary['id']} is a reanalysis with an analysis every {analyses} h and no forecast hours: its "
+                f"boundaries are its analyses at each boundary time, so the run starts at one of its analysis "
+                f"times (no --lead-hours, and a boundary cycle equal to the start {start:%Y-%m-%dT%H})")
+        # A step that does not divide the run reads the analysis at the first boundary time past its end, as a
+        # forecast row does (boundary_span).
+        step = int(requested) if requested is not None else analyses
+        if step < analyses or step % analyses:
+            raise RegionalRefusal(
+                f"--boundary-interval-hours {requested}: {boundary['id']} has an analysis every {analyses} h, so a "
+                f"region's boundary step is a whole multiple of {analyses} h")
     elif not (boundary.get("intermediate") or {}).get("row"):
         raise RegionalRefusal(f"{boundary['id']} declares no forecast cadence for its boundaries")
     elif requested is not None:
@@ -205,6 +272,32 @@ def boundary_plan(source, cycle, lead, hours, *, name=None, boundary_cycle=None,
         raise RegionalRefusal(f"{boundary['id']} reaches the region through its own intermediate door, "
                               "which reads one cycle's lead hours from 0; its boundary cycle must match the start")
     return boundary, issued, offset, step
+
+
+def member_rows(source, cycle, boundary, issued, member):
+    """The rows of a region's series that read ``--member`` (the start row and the boundary row, when they declare
+    members), checked before the mesh: a missing member, one outside the row's members, or a member given to rows
+    that declare none, is refused in the init door's own words.
+
+    THE BREAKAGE THIS PREVENTS (2026-11-13, every GEFS region on the regional door): the door took no --member, so
+    after the mesh was built each table hour's init-source refused "source 'gefs' is an ensemble; pass --member".
+    """
+    from .init_sources import Cycle, InitSourceRefusal, template_context
+
+    rows = []
+    for row, when in ((source, cycle), (boundary, issued)):
+        if row.get("members") is None or row["id"] in rows:
+            continue
+        try:
+            template_context(Cycle.parse(when.strftime("%Y-%m-%dT%H")), row, member)
+        except InitSourceRefusal as error:
+            raise RegionalRefusal(str(error)) from None
+        rows.append(row["id"])
+    if member is not None and not rows:
+        raise RegionalRefusal(f"--member {member}: {source['id']}"
+                              + (f" and {boundary['id']}" if boundary["id"] != source["id"] else "")
+                              + " declare no members, so the member would be ignored")
+    return rows
 
 
 def admit_boundary_cycle(source, issued):
@@ -343,6 +436,7 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
             "would have no boundary file for its last stretch")
     hours = int(hours)
     requested = getattr(args, "boundary_interval_hours", None)
+    member = getattr(args, "member", None)
     if parent is None:
         if lead < 0:
             raise RegionalRefusal(f"--lead-hours {lead} is negative; choose a posted start lead")
@@ -350,12 +444,17 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
             source, cycle, lead, hours, name=getattr(args, "boundary_source", None),
             boundary_cycle=getattr(args, "boundary_cycle", None), requested=requested)
         split = source["id"] != boundary["id"] or cycle != issued
+        members = member_rows(source, cycle, boundary, issued, member)
         if (source.get("intermediate") or {}).get("row") and lead:
             raise RegionalRefusal(f"--lead-hours needs a source that writes forecast leads through its table row; "
                                   f"{source['id']!r} reaches the region through its own intermediate door")
     else:
         if getattr(args, "boundary_source", None) or getattr(args, "boundary_cycle", None) or requested is not None:
             raise RegionalRefusal("a region cut from a kept hex run takes its boundaries from every parent frame")
+        if member is not None:
+            raise RegionalRefusal(f"--member {member} names a member of an ensemble source; a region cut from a "
+                                  "kept hex run starts from that run")
+        members = []
         boundary, issued, boundary_lead, interval, split = source, cycle, lead, None, False
     # Before mesh generation or prefetch: case 7 cannot extrapolate beyond a finite source map.
     if parent is None:
@@ -387,10 +486,19 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
     switches = table["run_switches"]
     from .global_door import forecast_arg_physics
     physics_flags = _physics_default_flags(args, source=source["id"], cold=parent is None)
+    producer = _producer_suite({"forecast_args": physics_flags})
+    if args.vertical_spec and producer:
+        # THE BREAKAGE THIS PREVENTS (LEFT-BEHIND 13 Nov, k50-forward-defect): a producer suite builds its start with
+        # its producer's own vertical grid (L60 for hrrrv5) and never reads the file, so a region asked for other
+        # levels ran on L60 and said nothing.
+        raise RegionalRefusal(
+            f"--vertical-spec {args.vertical_spec} cannot apply to the {producer} suite: its start is built by "
+            f"{producer}'s own producer on that producer's vertical grid (L60 for hrrrv5), which would ignore the "
+            "file. Leave --vertical-spec out to run on that grid, or choose a suite that builds its start from the "
+            "row's vertical grid.")
     if parent is None:
         from .mpasphys.rrfs.cold_start_rrfs import require_boundary_producer
-        require_boundary_producer(getattr(args, "boundary_recipe", None),
-                                  _producer_suite({"forecast_args": physics_flags}))
+        require_boundary_producer(getattr(args, "boundary_recipe", None), producer)
     return {
         "schema": "gpuwm-hex.regional-plan/v1",
         "row": row,
@@ -398,6 +506,9 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
                    "intermediate_row": (source.get("intermediate") or {}).get("row"),
                    "first_guess": first_guess},
         "lead_hours": lead,
+        # The ensemble member every series of a row in member_rows reads (init-source --member), else None.
+        "member": member if members else None,
+        "member_rows": members,
         "boundary_source": _source_summary(boundary),
         "boundary_cycle": issued.strftime("%Y-%m-%dT%H"),
         "boundary_lead_hours": boundary_lead,
@@ -427,6 +538,10 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
                                      else row["history_every_minutes"]),
         "start_time": _stamp(start),
         "stop_time": _stamp(stop),
+        # The last boundary time: the first one on the step at or past the run's end (boundary_span). The boundary
+        # stages read and write the series through it; the forecast stops at stop_time, between its last two.
+        "boundary_hours": boundary_span(hours, interval),
+        "boundary_stop_time": _stamp(start + timedelta(hours=boundary_span(hours, interval))),
         "run_switches": {key: value for key, value in switches.items() if key != "about"},
         "paths": {
             "work": str(root),
@@ -519,7 +634,8 @@ def _start_one_prefetch(args, value, status) -> None:
         if row is None:
             _start_table_decode(args, value, status)
         return
-    hours = [str(hour) for hour in range(0, int(value["lead_hours"]) + int(value["hours"]) + 1)]
+    span = boundary_span(int(value["hours"]), value.get("boundary_interval_hours"))
+    hours = [str(hour) for hour in range(0, int(value["lead_hours"]) + span + 1)]
     argv = [sys.executable, "-m", "hexcore.regional_door", "--prefetch-source", row, value["paths"]["grib"],
             value["cycle"], str(met), str(max(PREFETCH_STREAMS, int(getattr(args, "workers", 4) or 4))), *hours]
     _PREFETCHES[str(met)] = card_fit.start_stage(argv, name="source-prefetch",
@@ -556,7 +672,8 @@ def _table_decode_workers(args, value) -> int:
     lead of a short run goes at once."""
     from .cpu_budget import available_cpus
 
-    leads = 1 + int(value["hours"]) // max(1, int(value["boundary_interval_hours"]))
+    step = max(1, int(value["boundary_interval_hours"]))
+    leads = 1 + boundary_span(int(value["hours"]), step) // step
     return max(1, min(leads, max(int(getattr(args, "workers", 4) or 4), min(8, available_cpus() // 2))))
 
 
@@ -674,7 +791,9 @@ def _stage_one_intermediate(args, value, status) -> dict[str, Any]:
     Path(value["paths"]["grib"]).mkdir(parents=True, exist_ok=True)
     argv = ["intermediate", "--source", value["source"]["intermediate_row"],
             "--from-plan", generated["_path"], "--grib-dir", value["paths"]["grib"],
-            "--cycle", value["cycle"], "--hours", f"0-{int(value['lead_hours']) + int(value['hours'])}", "--out-dir", str(met),
+            "--cycle", value["cycle"], "--hours",
+            f"0-{int(value['lead_hours']) + boundary_span(int(value['hours']), value.get('boundary_interval_hours'))}",
+            "--out-dir", str(met),
             "--workers", str(args.workers)]
     if getattr(args, "source_parameters", None):
         argv += ["--source-parameters", args.source_parameters]
@@ -705,14 +824,24 @@ def _stage_intermediate_from_table(args, value, status) -> dict[str, Any]:
     met.mkdir(parents=True, exist_ok=True)
     first = int(value["lead_hours"])
     step = int(value["boundary_interval_hours"])
-    leads = list(range(first, first + int(value["hours"]) + 1, step))
+    # Through the first boundary time at or past the run's end (boundary_span): a run ending between two posted hours
+    # reads the next one, and the forecast interpolates to its end.
+    leads = list(range(first, first + boundary_span(int(value["hours"]), step) + 1, step))
+    # Each boundary time's (cycle, lead), as lbc_producer.endpoint_clock gives the country door's endpoints: a lead of
+    # the one cycle for a forecast row, the analysis at that valid time (lead 0) for an analysis series (ERA5).
+    from .lbc_producer import endpoint_clock
+    _, row = resolve_regional_source(value["source"]["id"])
+    cycle = datetime.strptime(value["cycle"], "%Y-%m-%dT%H")
 
     def one(lead: int) -> dict[str, Any]:
         out = met / "leads" / f"f{lead:03d}"
         out.mkdir(parents=True, exist_ok=True)
+        when, read = endpoint_clock(row, cycle, lead)
         argv = [sys.executable, "-m", "hexcore.cli", "init-source", "--source", value["source"]["id"],
-                "--cycle", value["cycle"], "--lead-hours", str(lead), "--out-dir", str(out),
+                "--cycle", when.strftime("%Y-%m-%dT%H"), "--lead-hours", str(read), "--out-dir", str(out),
                 "--stop-after", "decode"]
+        if value["source"]["id"] in (value.get("member_rows") or ()):
+            argv += ["--member", str(value["member"])]
         # Only the initial hour needs a cold land donor. Boundary hours are meteorology,
         # not new cold starts; the analysis-only donor cannot be attached to those leads.
         if lead != first:
@@ -727,6 +856,13 @@ def _stage_intermediate_from_table(args, value, status) -> dict[str, Any]:
         if target.exists() or target.is_symlink():
             target.unlink()
         target.symlink_to(made[0])
+        if lead != first:
+            # A boundary hour is read only through its intermediate and receipt; its download and composed frames go
+            # (lbc_producer.produce_source_endpoints does the same): ERA5 kept 4 GB of them an hour beside a 1 GB file.
+            import shutil
+            for spent in ("products", "mapped"):
+                if (out / spent).is_dir() and not (out / spent).is_symlink():
+                    shutil.rmtree(out / spent)
         return {"lead_hours": lead, "path": str(target), "source_dir": str(out)}
 
     status.note(f"{value['source']['id']} {value['cycle']} leads {leads[0]}-{leads[-1]} h every {step} h")
@@ -1034,7 +1170,8 @@ def _stage_lbc(args, value, status) -> dict[str, Any]:
     switches = value["run_switches"]
     argv = ["lbc", "--grid", value["paths"]["init"], "--met-dir", value["paths"].get("lbc_met", value["paths"]["met"]),
             "--out-dir", str(lbc_dir), "--start-time", value["start_time"],
-            "--stop-time", value["stop_time"], "--nfglevels", str(guess["nfglevels"]),
+            # The series' last boundary time, at or past the run's end (plan boundary_stop_time).
+            "--stop-time", value.get("boundary_stop_time", value["stop_time"]), "--nfglevels", str(guess["nfglevels"]),
             "--extrap-airtemp", switches["extrap_airtemp"], "--use-spechumd", guess["use_spechumd"],
             "--theta-adv-order", str(switches["theta_adv_order"]),
             "--coef-3rd-order", repr(float(switches["coef_3rd_order"])),
@@ -1443,6 +1580,9 @@ def add_regional_parser(commands: argparse._SubParsersAction) -> None:
                         help="start from the source cycle's forecast at lead L: its fields at cycle + L are the "
                              "start state, valid at cycle + L, and its later leads drive the boundary (table "
                              "sources; default 0, the analysis)")
+    parser.add_argument("--member", type=int, default=None, metavar="N",
+                        help="the member of an ensemble source (gefs: 0 is the control, 1-30 perturbed); the "
+                             "start and every boundary hour read it. Required for an ensemble row")
     parser.add_argument("--boundary-source", help="source for lateral boundaries (the start row's default)")
     parser.add_argument("--boundary-cycle", metavar="YYYY-MM-DDTHH",
                         help="boundary source cycle, possibly earlier than the start cycle")

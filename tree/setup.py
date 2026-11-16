@@ -77,6 +77,10 @@ ENGINE_BRIDGES = ("rw_mpas_geometry" + _EXE, "rw_mpas_stream" + _EXE, "rw_mpas_s
                   "rw_mpas_mesh" + _EXE)
 # Built from crate rw-obs in a cargo call of their own, so the rw-mpas programs keep their bytes.
 OBS_BRIDGES = ("rw_igra2" + _EXE,)
+# The differentiable engine (rust/hexad; hexcore.hexad binds these names): the replay / tangent / adjoint
+# runner and the same runner behind the libhexad-phys C ABI. Linux only (the runner dlopens libcuda.so.1).
+AD_BINDER = "ad-binder"
+HEXAD_LIBRARY = "libhexad_phys.so"
 RRFS_BRIDGES = ("rw_mpas_rrfs_connectivity", "rw_mpas_rrfs_damping", "rw_mpas_rrfs_deformation")
 # What marks a gpuwm source whose rw_mpas_static reads a binary64 grid at
 # binary64 (gpuwm 46c8a71513e, Mesh::read_as); older sources build the static
@@ -149,6 +153,17 @@ class BuildPy(build_py):
         return env
     def run(self):
         super().run()
+        if getattr(self, "editable_mode", False):
+            # THE BREAKAGE THIS PREVENTS: `pip install -e .` (setuptools >= 64) runs build_py with
+            # editable_mode set and a fresh temporary build_lib into which super().run() copies no package,
+            # so build_lib/hexcore does not exist and the kernel-set.json write below raised
+            # FileNotFoundError.  setuptools caught it and printed a "customization incompatible with
+            # editable install" traceback, and every step after it was skipped anyway.  An editable
+            # install imports src/hexcore in place; the sidecar and the libexec helpers below are what a
+            # wheel ships, and kernel_set_sha256() computes the digest from the sources at run time.
+            print("gpuwm-hex: editable install: the wheel-only build steps (kernel-set.json, libexec "
+                  "helpers) are skipped; build a wheel to get them", file=sys.stderr)
+            return
         root = Path(__file__).parent
         module = ast.parse((root / "src/hexcore/cuda_backend/regional_admission.py").read_text())
         assignment = next(node for node in module.body if
@@ -323,6 +338,72 @@ class BuildPy(build_py):
         partitioner = self.build_gpmetis(root)
         if partitioner is not None:
             copy_helper(partitioner, destination.parent / partitioner.name)
+        # THE BREAKAGE THIS PREVENTS (hex 0.5.0, the differentiable engine made public): without these two
+        # products in the wheel no install can replay, linearise or run the adjoint of a forecast; the AD
+        # doors refuse by name (hexcore.hexad) and the release's platform check (--require-libexec) refuses
+        # the wheel.
+        for product in self.build_hexad(root):
+            copy_helper(product, destination.parent / product.name)
+        # libhexad_phys.so's C header, for a host program that links the library (hexcore.hexad.header()).
+        header = root / "rust/hexad/include/hexad_phys.h"
+        if header.is_file():
+            (Path(self.build_lib) / "hexcore/include").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(header, Path(self.build_lib) / "hexcore/include" / header.name)
+
+    @staticmethod
+    def hexad_nvcc() -> str | None:
+        """$NVCC, then nvcc on PATH, then the NVIDIA nvcc wheel (nvidia-cuda-nvcc) importable here."""
+        import os
+        if os.environ.get("NVCC"):
+            return os.environ["NVCC"]
+        found = shutil.which("nvcc")
+        if found:
+            return found
+        for entry in sys.path:
+            for layout in ("nvidia/cu13/bin/nvcc", "nvidia/cuda_nvcc/bin/nvcc"):
+                candidate = Path(entry or ".") / layout
+                if candidate.is_file():
+                    return str(candidate)
+        return None
+
+    @staticmethod
+    def build_hexad(root: Path) -> list[Path]:
+        """ad-binder (no C-ABI exports) and libhexad_phys.so (feature capi-exports), as the AD program builds them.
+
+        The rule/support fatbins are compiled by nvcc (hexad_nvcc) or embedded from $HEXAD_FATBIN_DIR. With
+        neither, both products build with empty images (the strict replay works; `window` and the C ABI refuse
+        at module load), unless GPUWM_HEX_REQUIRE_AD_FATBINS=1, which a release build sets.
+        """
+        import os
+        if not sys.platform.startswith("linux"):
+            print("gpuwm-hex: ad-binder / libhexad_phys NOT BUILT: Linux only", file=sys.stderr)
+            return []
+        crate = root / "rust/hexad"
+        env = os.environ.copy()
+        required = env.get("GPUWM_HEX_REQUIRE_AD_FATBINS") == "1"
+        nvcc = BuildPy.hexad_nvcc()
+        if nvcc is not None:
+            env["NVCC"] = nvcc
+        elif not env.get("HEXAD_FATBIN_DIR"):
+            if required:
+                raise SystemExit("gpuwm-hex: GPUWM_HEX_REQUIRE_AD_FATBINS=1 but no nvcc ($NVCC, PATH or the "
+                                 "nvidia-cuda-nvcc wheel) and no $HEXAD_FATBIN_DIR")
+            print("gpuwm-hex: hexad rule fatbins NOT BUILT (no nvcc): ad-binder replays, but `window` and "
+                  "libhexad_phys refuse at module load; set NVCC or install nvidia-cuda-nvcc", file=sys.stderr)
+        products = []
+        for args, target, name in ((("--bin", AD_BINDER), "target", AD_BINDER),
+                                   (("--lib", "--features", "capi-exports"), "target-capi", HEXAD_LIBRARY)):
+            built = subprocess.run(["cargo", "build", "--release", "--locked", "--manifest-path",
+                                    str(crate / "Cargo.toml"), "--target-dir", str(crate / target), *args], env=env)
+            product = crate / target / "release" / name
+            if built.returncode != 0 or not product.is_file():
+                if required:
+                    raise SystemExit(f"gpuwm-hex: {name} did not build (rust/hexad)")
+                print(f"gpuwm-hex: {name} NOT BUILT: cargo could not build rust/hexad; the AD doors refuse "
+                      "by name (hexcore.hexad)", file=sys.stderr)
+                continue
+            products.append(product)
+        return products
 
     @staticmethod
     def build_gpmetis(root: Path) -> Path | None:
@@ -614,7 +695,10 @@ def engine_bridges(root: Path) -> list[Path]:
     2. Otherwise a gpuwm source checkout (``engine_source``) that carries all
        three sources at the versions this release needs builds them with
        cargo (the stream bridge links libnetcdf).
-    3. Otherwise nothing is bundled and the build says so; the doors then
+    3. Otherwise, on the pinned platform, the same files are fetched from the
+       release ``engine-bridges.json`` names (``release_assets``), by the same
+       URLs and SHA-256 pins publish.yml uses (``fetch_pinned_bridges``).
+    4. Otherwise nothing is bundled and the build says so; the doors then
        resolve down the ladder and refuse by name, and the release's platform
        check (--require-libexec) refuses the wheel.
     """
@@ -674,6 +758,9 @@ def engine_bridges(root: Path) -> list[Path]:
                     if marker.encode("ascii") not in path.read_bytes():
                         raise SystemExit(f"{path}: missing required bridge capability {marker}")
             return paths
+    fetched = fetch_pinned_bridges(root, pins)
+    if fetched is not None:
+        return fetched
     print("gpuwm-hex: rw_mpas_geometry, rw_mpas_stream, rw_mpas_static, the three RRFS programs, rw_mpas_lbc "
           "and rw_igra2 NOT BUNDLED: set "
           "GPUWM_HEX_ENGINE_BRIDGES to the pinned prebuilt bridges (src/hexcore/data/engine-bridges.json), "
@@ -758,12 +845,67 @@ def gpmetis_build_dir(root: Path) -> Path:
     return root / "third_party/metis-5.1.0/build"
 
 
+FETCHED_BRIDGES = "rust/engine-bridges-fetched"
+
+
+def fetch_pinned_bridges(root: Path, pins: dict) -> list[Path] | None:
+    """The pinned bridges from the release ``engine-bridges.json`` names, each checked against its SHA-256.
+
+    THE BREAKAGE THIS PREVENTS (hex 0.6.0 candidate, 2026-11-11): a wheel built
+    from source with neither GPUWM_HEX_ENGINE_BRIDGES nor a gpuwm checkout
+    (``pip install "<source>[ad]"`` on a GPU box) bundled none of the nine
+    bridges, so a door ``--init`` run could not make its forecast from that wheel
+    alone.  publish.yml fetches these files from these URLs by these pins; this
+    rung lets every source build on the pinned platform do the same.  A file
+    whose bytes are not the pinned ones stops the build.  None means nothing
+    was fetched (another platform, no release named, or no network), and the
+    caller says NOT BUNDLED.
+    """
+
+    import urllib.error
+    import urllib.request
+
+    assets = pins.get("release_assets")
+    if not assets:
+        return None
+    if not (sys.platform.startswith("linux") and platform.machine() == "x86_64"):
+        print(f"gpuwm-hex: the pinned engine bridges are {pins.get('platform', 'Linux x86_64')} builds; "
+              f"not fetched on {sys.platform} {platform.machine()}", file=sys.stderr)
+        return None
+    directory = root / FETCHED_BRIDGES
+    directory.mkdir(parents=True, exist_ok=True)
+    found = []
+    for name, row in sorted(pins["bridges"].items()):
+        path = directory / name
+        if not (path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest() == row["sha256"]):
+            url = f"https://github.com/{assets['repository']}/releases/download/{row.get('release_tag', assets['tag'])}/{name}"
+            try:
+                data = urllib.request.urlopen(url, timeout=300).read()
+            except (urllib.error.URLError, OSError) as error:
+                print(f"gpuwm-hex: could not fetch the pinned bridge {url}: {error}", file=sys.stderr)
+                return None
+            actual = hashlib.sha256(data).hexdigest()
+            if actual != row["sha256"]:
+                raise SystemExit(f"{url}: sha256 {actual} is not the pinned {row['sha256']} "
+                                 "(src/hexcore/data/engine-bridges.json)")
+            path.write_bytes(data)
+            path.chmod(0o755)
+        for marker in row.get("required_markers", ()):
+            if marker.encode("ascii") not in path.read_bytes():
+                raise SystemExit(f"{path}: missing required bridge capability {marker}")
+        found.append(path)
+    print(f"gpuwm-hex: bundled the {len(found)} pinned engine bridges from {assets['repository']} release "
+          f"{assets['tag']} (each SHA-256 checked against src/hexcore/data/engine-bridges.json)", file=sys.stderr)
+    return found
+
+
 def bundled_engine_bridges(root: Path) -> tuple[Path, ...]:
-    """The engine bridges as get_tag sees them (the pinned prebuilt directory, when named)."""
+    """The engine bridges as get_tag sees them (the pinned prebuilt directory when named, else the fetched ones)."""
     import os
 
     prebuilt = os.environ.get("GPUWM_HEX_ENGINE_BRIDGES")
-    return tuple(Path(prebuilt) / name for name in ENGINE_BRIDGES) if prebuilt else ()
+    directory = Path(prebuilt) if prebuilt else root / FETCHED_BRIDGES
+    return tuple(directory / name for name in ENGINE_BRIDGES)
 
 
 def bundled_helpers(root: Path) -> tuple[Path, ...]:
@@ -794,7 +936,9 @@ def bundled_helpers(root: Path) -> tuple[Path, ...]:
             (Path(os.environ["GPUWM_HEX_ENGINE_BRIDGES"]) / SURFACE_READER
              if os.environ.get("GPUWM_HEX_ENGINE_BRIDGES") else
              root / "rust/surface-reader-build/target/release" / SURFACE_READER),
-            gpmetis_build_dir(root) / ("hex_gpmetis" + _EXE))
+            gpmetis_build_dir(root) / ("hex_gpmetis" + _EXE),
+            root / "rust/hexad/target/release" / AD_BINDER,
+            root / "rust/hexad/target-capi/release" / HEXAD_LIBRARY)
 
 
 setup(cmdclass={"build_py": BuildHex, "bdist_wheel": HexWheel},

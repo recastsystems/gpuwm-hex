@@ -1,0 +1,116 @@
+{
+ "kernel": "cupy_copy__float_float32",
+ "engine": "hex",
+ "pin": "hex 0.4.12 venv (eng-test-hex), source ",
+ "file": "tree/src/hexcore/mpasphys/cupy-generated",
+ "line": 0,
+ "module": "b83706db0550b875fcb6a39ae6d55ae75bdd6f2d2ec3b342f50294df99683f44",
+ "image": "96572393681f9e4843d2a3473583b1576a5149545dcea56031a3ae20b2d2477b",
+ "route": "hand",
+ "mode": "constant",
+ "owner_task": "ad/g3-radland",
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "in0",
+   "field_id": 0,
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "host scalar (float64 or float32 by launch): constant"
+  },
+  {
+   "name": "_raw_out0",
+   "field_id": 1,
+   "role": "out",
+   "dtype": "f32",
+   "shape": "view: a CuPy CArray by value; the entry reads size/strides from it (the backing allocation is shadowed whole)",
+   "active": true
+  },
+  {
+   "name": "_ind",
+   "field_id": 2,
+   "role": "scalar",
+   "dtype": "bytes24",
+   "shape": "scalar",
+   "active": false,
+   "inactive_reason": "CuPy CIndexer"
+  }
+ ],
+ "saved": [],
+ "branches": [],
+ "tables": [],
+ "refusal": {
+  "nonfinite": false,
+  "named": [
+   "cupy_copy__float_float32: a view that is not 1-D contiguous float32"
+  ]
+ },
+ "tape_bytes": 0,
+ "precision": "derivative coefficients and sums float64 from the float32 primal words (recomputed in the forward's order where used); one rounding per stored derivative word, +0.0 added",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "launch_order": {
+   "tl": [
+    "tl"
+   ],
+   "ad": [
+    "ad"
+   ]
+  },
+  "entries": {
+   "tl": {
+    "function": "cupy_copy__float_float32__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_out0"
+     },
+     {
+      "bind": "tangent",
+      "arg": "_raw_out0",
+      "field_id": 1,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "cupy_copy__float_float32: a view that is not 1-D contiguous float32"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "cupy_copy__float_float32__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "_raw_out0"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "_raw_out0",
+      "field_id": 1,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "cupy_copy__float_float32: a view that is not 1-D contiguous float32"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "constant_rule": "every word the forward writes is state-independent: TL +0 over the written words, AD consumes their cotangents; inputs receive nothing"
+}

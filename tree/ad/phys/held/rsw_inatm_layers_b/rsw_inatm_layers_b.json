@@ -1,0 +1,461 @@
+{
+ "kernel": "rsw_inatm_layers_b",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 2909,
+ "route": "hand",
+ "mode": "exact-local-linearisation",
+ "owner_task": "ad/held-rsw_inatm_layers_b",
+ "replaces": "nothing: status was missing (no generated or taped derivative existed for any RRTMG SW kernel)",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "kernel_line_in_source": 3230,
+  "body_line_in_source": 3181,
+  "launches_per_radiation_step": "1 with ample memory, 7 under the 512 MiB capture lease (1281 + 5 x 256 + 1 columns)"
+ },
+ "launch": {
+  "grid": "capture",
+  "block": "capture",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "ncol",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer column count of the daylit batch (or chunk), fixed by the wrapper."
+  },
+  {
+   "name": "nlayers",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Integer layer count (60 on x1.2562: nlay = nVertLevels + 1 extra radiation layer), fixed by the wrapper."
+  },
+  {
+   "name": "grav",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Physical constant (rrtmg_sw_v842.py, f32 9.80665)."
+  },
+  {
+   "name": "avogad",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Physical constant (rrtmg_sw_v842.py, f32 6.02214e23)."
+  },
+  {
+   "name": "plev",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers+1]",
+   "stagger": "level-interface",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "every word of the ncol rows"
+  },
+  {
+   "name": "h2ovmr",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_layer_inputs",
+   "weight": "none",
+   "field_id": 2,
+   "reads": "every word",
+   "note": "one of six disjoint views of one backing allocation (the wrapper's layer-input slab)"
+  },
+  {
+   "name": "co2vmr",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_layer_inputs",
+   "weight": "none",
+   "field_id": 3,
+   "reads": "every word",
+   "note": "one of six disjoint views of one backing allocation (the wrapper's layer-input slab)"
+  },
+  {
+   "name": "o3vmr",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_layer_inputs",
+   "weight": "none",
+   "field_id": 4,
+   "reads": "every word",
+   "note": "one of six disjoint views of one backing allocation (the wrapper's layer-input slab)"
+  },
+  {
+   "name": "n2ovmr",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_layer_inputs",
+   "weight": "none",
+   "field_id": 5,
+   "reads": "every word",
+   "note": "one of six disjoint views of one backing allocation (the wrapper's layer-input slab)"
+  },
+  {
+   "name": "ch4vmr",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_layer_inputs",
+   "weight": "none",
+   "field_id": 6,
+   "reads": "every word",
+   "note": "one of six disjoint views of one backing allocation (the wrapper's layer-input slab)"
+  },
+  {
+   "name": "o2vmr",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": "sw_layer_inputs",
+   "weight": "none",
+   "field_id": 7,
+   "reads": "every word",
+   "note": "one of six disjoint views of one backing allocation (the wrapper's layer-input slab)"
+  },
+  {
+   "name": "pdp",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8
+  },
+  {
+   "name": "coldry",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9
+  },
+  {
+   "name": "wkl",
+   "role": "inout",
+   "dtype": "f32",
+   "shape": "[ncol, nlayers, 38]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "partial",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10,
+   "reads": "row 5 (index 4, CO amount, pre-launch: not set by this kernel)",
+   "writes": "rows 1..7 (index 0..6: cd * vmr, and cd * pre-launch CO); rows 8..38 untouched (identity)"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:3243",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Launch index against ncol*nlayers."
+  }
+ ],
+ "limiters": "none: no clamp, min/max or state branch in the forward, so no frozen coefficient is needed",
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "plev, the six vmr, wkl row 5 finite; den = 1e2*grav*amm*(1+w1) != 0; every partial and written derivative word finite"
+ },
+ "precondition": "plev, pdp, coldry, wkl are distinct allocations; the six vmr are disjoint views of one allocation (read-only in the forward and TL, accumulated word-disjoint in the AD). TL: one thread per (col, layer) owns that layer's words. AD: one thread per column marches the layers in order (first ncol threads of the forward geometry), so interface cotangents are summed in a fixed order with no atomics: deterministic.",
+ "precision": "the f32 primal word cd is formed as the forward forms it (__f*_rn, --fmad=false --ftz=false; the harness-only __check is bitwise to the forward image); local partials in double; one rounding to f32 per written derivative word (the glue-row rule)",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "tl": {
+    "function": "rsw_inatm_layers_b__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "grav"
+     },
+     {
+      "bind": "scalar",
+      "arg": "avogad"
+     },
+     {
+      "bind": "primal",
+      "arg": "plev"
+     },
+     {
+      "bind": "primal",
+      "arg": "h2ovmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "co2vmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "o3vmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "n2ovmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "ch4vmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "o2vmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "wkl"
+     },
+     {
+      "bind": "tangent",
+      "arg": "plev",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "h2ovmr",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "co2vmr",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "o3vmr",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "n2ovmr",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ch4vmr",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "o2vmr",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "pdp",
+      "field_id": 8,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "coldry",
+      "field_id": 9,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "wkl",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:2909:nonfinite"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "rsw_inatm_layers_b__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "ncol"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nlayers"
+     },
+     {
+      "bind": "scalar",
+      "arg": "grav"
+     },
+     {
+      "bind": "scalar",
+      "arg": "avogad"
+     },
+     {
+      "bind": "primal",
+      "arg": "plev"
+     },
+     {
+      "bind": "primal",
+      "arg": "h2ovmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "co2vmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "o3vmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "n2ovmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "ch4vmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "o2vmr"
+     },
+     {
+      "bind": "primal",
+      "arg": "wkl"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "plev",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "h2ovmr",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "co2vmr",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "o3vmr",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "n2ovmr",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ch4vmr",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "o2vmr",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "pdp",
+      "field_id": 8,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "coldry",
+      "field_id": 9,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "wkl",
+      "field_id": 10,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:2909:nonfinite"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

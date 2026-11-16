@@ -1,0 +1,165 @@
+{
+ "kernel": "mpas_sw_driver_times",
+ "engine": "hex",
+ "pin": "16251589f19aec0012fd164d1ea060126208aed1",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 3430,
+ "launch_site": "rrtmg_sw_v842.py:350-351 (driver_controls; host readback of the 4 words at 354)",
+ "route": "hand",
+ "mode": "exact-zero-state-derivative",
+ "owner_task": "ad/held-mpas_sw_driver_times",
+ "affine": false,
+ "affine_reason": "out has no active input, so its state derivative is the constant 0; in the inactive f32 launch scalars it is affine (slope 1/60, rounded once by __fdiv_rn)",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "source_lines": "3748-3751",
+  "steps": [
+   1,
+   6,
+   12
+  ],
+  "launches_per_radiation_step": "1"
+ },
+ "launch": {
+  "grid": "forward (1)",
+  "block": "forward (64)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "seconds",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Model clock xtime_s (call.time_seconds, set on the host each radiation call); not a function of the model state."
+  },
+  {
+   "name": "interval",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Radiation interval dt_radtsw (namelist constant, 1800 s on hrrrv5)."
+  },
+  {
+   "name": "out",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[2]",
+   "stagger": "none",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "note": "words[:2] of driver_controls' 4-word buffer: xtime_m = seconds/60 and radt = interval/60 (minutes); words[2:] belong to mpas_sw_radconst. Its derivative with respect to the state is identically 0 (no active input)."
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:3750",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Thread guard: only thread (0,0) writes."
+  }
+ ],
+ "limiters": "none: no clamp, min/max or select on a float value (two divisions by the constant 60)",
+ "tables": [],
+ "refusal": {
+  "nonfinite": true,
+  "domain": "seconds and interval finite (aug sets failure[0] otherwise)"
+ },
+ "precondition": "out is a 2-word view at offset 0 of driver_controls' 4-word buffer; the entries touch words 0 and 1 only, so mpas_sw_radconst's words 2 and 3 are never written or consumed here",
+ "precision": "aug: the forward word for word in f32 (__fdiv_rn), built --fmad=false --ftz=false --prec-div=true, bitwise to the forward image. tl: writes +0 to both tangent words (full overwrite). ad: reads and consumes both seeds (sets +0); accumulates into nothing.",
+ "binder_roles": "deriv.rs roles(): out TL out, AD inout (seed read and consumed in place); no snapshot or clear role; no primal is read by tl/ad.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "mpas_sw_driver_times__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "seconds"
+     },
+     {
+      "bind": "scalar",
+      "arg": "interval"
+     },
+     {
+      "bind": "primal",
+      "arg": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3430:mpas_sw_driver_times:nonfinite-clock"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "mpas_sw_driver_times__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "seconds"
+     },
+     {
+      "bind": "scalar",
+      "arg": "interval"
+     },
+     {
+      "bind": "tangent",
+      "arg": "out",
+      "field_id": 1,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3430:mpas_sw_driver_times:nonfinite-clock"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_sw_driver_times__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "seconds"
+     },
+     {
+      "bind": "scalar",
+      "arg": "interval"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "out",
+      "field_id": 1,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3430:mpas_sw_driver_times:nonfinite-clock"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

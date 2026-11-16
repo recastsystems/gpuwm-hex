@@ -163,13 +163,42 @@ def parse_point(text: str) -> tuple[float, float]:
     except ValueError as error:
         raise PointPlanRefusal(f"--point {text!r} is not two numbers: {error}") from error
     if not -90.0 <= lat <= 90.0 or not -180.0 <= lon <= 360.0:
+        swapped = (f"; --point takes LAT,LON, and read the other way round this is a valid point: did you mean "
+                   f"--point {lon:g},{lat:g}?" if -90.0 <= lon <= 90.0 and -180.0 <= lat <= 360.0 else "")
         raise PointPlanRefusal(
             f"--point {text!r} is outside the sphere (latitude -90..90, "
-            f"longitude -180..360)"
+            f"longitude -180..360){swapped}"
         )
+    swapped = swapped_point_refusal(lat, lon)
+    if swapped is not None:
+        raise PointPlanRefusal(swapped)
     if lon > 180.0:
         lon -= 360.0
     return lat, lon
+
+
+#: A point this close to a pole is the pole: a longitude names no place there.
+POLE_POINT_LATITUDE = 89.5
+
+
+def swapped_point_refusal(lat: float, lon: float, option: str = "--point") -> str | None:
+    """Why ``lat, lon`` is most likely a LON,LAT pair typed the wrong way round, or None.
+
+    A point at a pole (latitude within :data:`POLE_POINT_LATITUDE`) given a longitude other than 0 is refused: at
+    the pole a longitude says nothing about where the core is, so the pair is nearly always LON,LAT
+    (``-90,37.5`` meant 37.5 N, 90 W).  A core truly centred on the pole is written ``LAT,0``.
+
+    THE BREAKAGE THIS PREVENTS (gpuwm 3.0.3 candidate check, 2026-11-15, the same door in ArWen): ``--point
+    -90,37.5`` built a domain centred on the South Pole, and nothing said the point was the pole or looked
+    swapped.  A point outside a regional source's grid is refused later by the source's own coverage check.
+    """
+
+    if not -90.0 <= lon <= 90.0 or abs(lat) < POLE_POINT_LATITUDE or lon == 0.0:
+        return None
+    pole = "South" if lat < 0 else "North"
+    return (f"{option} {lat:g},{lon:g} is at the {pole} Pole (latitude {lat:g}), where a longitude names no place, "
+            f"so latitude and longitude look swapped.  {option} takes LAT,LON: did you mean {option} {lon:g},{lat:g}?  "
+            f"For a core centred on the pole itself, write {option} {math.copysign(90.0, lat):g},0")
 
 
 def ladder_rungs(background_km: float, fine_dx_m: float) -> list[float]:

@@ -1,0 +1,882 @@
+{
+ "kernel": "mpas_sw_aerosol_levels",
+ "engine": "hex",
+ "pin": "rrtmg_sw_v842.py sha256 44588ef0b14aaff5d4d84d9672e1ccb311552e178fd358a4c17b699d4a4374cb (installed hex 0.4.12 venv)",
+ "file": "tree/src/hexcore/mpasphys/rrtmg_sw_v842.py",
+ "line": 3559,
+ "launch_site": "rrtmg_sw_v842.py:443-446",
+ "route": "hand",
+ "mode": "exact-with-frozen-coefficients",
+ "owner_task": "ad/held-mpas_sw_aerosol_levels",
+ "affine": false,
+ "affine_reason": "linear in aod3 (and dz, spectral, ssa2, asy2 on the other option paths); polynomial in rh on the frozen node window; rh rational/exponential in p, t, qv",
+ "forward_capture": {
+  "source_sha256": "3c499c7ba10221067f80e300b1003e382a66245027ae997f254005f80b74e700",
+  "image_sha256": "c22c485e0c80715fa5d0a75fcc17be15752f6d995bdab7e40c9460b9d9b270a9",
+  "source_lines": "3878-3900",
+  "steps": [
+   1,
+   6,
+   12
+  ],
+  "launches_per_radiation_step": "1 (nc = 2562 x nl = 60)"
+ },
+ "launch": {
+  "grid": "forward ((nc*nl+63)/64)",
+  "block": "forward (64)",
+  "shared_bytes": 0
+ },
+ "args": [
+  {
+   "name": "nc",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Column count of the SW aerosol call (all 2562 cells on x1.2562; fixed by the wrapper)."
+  },
+  {
+   "name": "nz",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "MPAS layer count (59 on x1.2562 hrrrv5), fixed by the mesh."
+  },
+  {
+   "name": "nl",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Radiation layer count (nz+1 = 60), fixed by the wrapper."
+  },
+  {
+   "name": "has3d",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist: 3-D AOD present (1 on hrrrv5, Thompson-aerosol aod5503d)."
+  },
+  {
+   "name": "angopt",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist angexp_opt (3 on hrrrv5). has3d && angopt != 3 is refused (failure bit 1)."
+  },
+  {
+   "name": "ssaopt",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist aer_ssa_opt (3 on hrrrv5)."
+  },
+  {
+   "name": "asyopt",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist aer_asy_opt (3 on hrrrv5)."
+  },
+  {
+   "name": "ssaval",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist constant single-scattering albedo (used only when ssaopt == 1)."
+  },
+  {
+   "name": "asyval",
+   "role": "scalar",
+   "dtype": "f32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Namelist constant asymmetry (used only when asyopt == 1)."
+  },
+  {
+   "name": "diagnostic_mask",
+   "role": "scalar",
+   "dtype": "i32",
+   "shape": [],
+   "stagger": "none",
+   "active": false,
+   "inactive_reason": "Which aerosol diagnostics are requested (0 on hrrrv5: no slope)."
+  },
+  {
+   "name": "p",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 1,
+   "reads": "k < nz, through rh (frozen clamps F1, F2 and window F3)"
+  },
+  {
+   "name": "t",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 2,
+   "reads": "k < nz, through rh"
+  },
+  {
+   "name": "qv",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 3,
+   "reads": "k < nz, through rh (max(0, qv) frozen, F1)"
+  },
+  {
+   "name": "dz",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 4,
+   "reads": "only when has3d == 0 (unread on hrrrv5)"
+  },
+  {
+   "name": "type",
+   "role": "index",
+   "dtype": "i32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": false,
+   "inactive_reason": "aerosol type table index (1 land, 3 ocean on hrrrv5)",
+   "overwrite": "none",
+   "weight": "none"
+  },
+  {
+   "name": "aod2",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 5,
+   "reads": "only on the slope path with has3d == 0 (unread on hrrrv5)"
+  },
+  {
+   "name": "aod3",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 6,
+   "reads": "when has3d (hrrrv5): tau = S_RAOD(rh) aod3, linear"
+  },
+  {
+   "name": "ssa2",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 7,
+   "reads": "only when ssaopt not in {1, 3} (copy; unread on hrrrv5)"
+  },
+  {
+   "name": "asy2",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc]",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 8,
+   "reads": "only when asyopt not in {1, 3} (copy; unread on hrrrv5)"
+  },
+  {
+   "name": "spectral",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, 14] when has3d == 0, else a 1-word placeholder",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 9,
+   "reads": "only when has3d == 0"
+  },
+  {
+   "name": "zs",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc, nz] when has3d == 0, else a 1-word placeholder",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 10,
+   "reads": "only when has3d == 0"
+  },
+  {
+   "name": "denom",
+   "role": "in",
+   "dtype": "f32",
+   "shape": "[nc] when has3d == 0, else a 1-word placeholder",
+   "stagger": "cell",
+   "active": true,
+   "overwrite": "none",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 11,
+   "reads": "only when has3d == 0"
+  },
+  {
+   "name": "tau",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, 14, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 12,
+   "note": "tauaer: S_RAOD(rh) aod3 (has3d) or spectral/denom dz exp(-zs/2500); 0 at k >= nz"
+  },
+  {
+   "name": "ssa",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, 14, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 13,
+   "note": "ssaaer: S_SSA(rh) / ssaval / ssa2; 1 at k >= nz"
+  },
+  {
+   "name": "asy",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, 14, nl]",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "full",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 14,
+   "note": "asyaer: S_ASY(rh) / asyval / asy2; 0 at k >= nz"
+  },
+  {
+   "name": "slope",
+   "role": "out",
+   "dtype": "f32",
+   "shape": "[nc, nz] when diag&1 && angopt==3, else a 1-word placeholder",
+   "stagger": "layer",
+   "active": true,
+   "overwrite": "conditional",
+   "alias_group": null,
+   "weight": "none",
+   "field_id": 15,
+   "note": "Angstrom slope per level; written only when diag&1 && angopt==3 (never on hrrrv5), otherwise untouched (TL leaves it, AD keeps its seed)"
+  }
+ ],
+ "saved": [],
+ "branches": [
+  {
+   "file_line": "capture source 3c499c7b:3882",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Thread index against the fixed nc*nl extent."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3884",
+   "operation": "predicate",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "k >= nz writes constants (the added radiation top layer)."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3889-3893, 3895",
+   "operation": "select",
+   "active": false,
+   "policy": "inactive-index",
+   "inactive_reason": "Namelist option selects (has3d, angopt, ssaopt, asyopt, diagnostic_mask), launch scalars."
+  },
+  {
+   "file_line": "capture source 3c499c7b:3767",
+   "operation": "max",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "frozen": "F1: rv = max(0, qv); drv/dqv = (qv > 0) on the trajectory",
+   "reason": "clamp of negative vapour; kink at qv = 0"
+  },
+  {
+   "file_line": "capture source 3c499c7b:3770",
+   "operation": "clamp",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "frozen": "F2: rh = min(99, max(0, raw)); drh/draw = (0 < raw < 99) on the trajectory",
+   "reason": "RH clamp; kinks at 0 and 99 (1.0-2.6 % of words clamp at 99)"
+  },
+  {
+   "file_line": "capture source 3c499c7b:3774-3775",
+   "operation": "index",
+   "active": true,
+   "policy": "frozen-coefficient",
+   "frozen": "F3: Lagrange node window [max(0,ii-3), min(7,ii+2)] taken at the primal rh; the interpolant is differentiated as that window's polynomial",
+   "reason": "piecewise polynomial in rh: continuous at the RH nodes, derivative jumps there"
+  }
+ ],
+ "limiters": "three: F1 qv floor, F2 RH clamp [0, 99], F3 RH node window (frozen from the trajectory, documented in the entry header and RESULT.md hazards 1-3)",
+ "tables": [
+  "MPAS_RAOD[3][8][14]",
+  "MPAS_SSA[3][8][14]",
+  "MPAS_ASY[3][8][14]",
+  "MPAS_RHS[8] (copied verbatim from the captured source)"
+ ],
+ "refusal": {
+  "nonfinite": true,
+  "config": "has3d && angopt != 3 sets failure bit 1 and writes nothing (forward leaves tau unwritten; native reads indeterminate storage)",
+  "domain": "every written derivative word finite; slope path needs tau/aod3 (or spectral/aod2) > 0"
+ },
+ "precondition": "the 16 array arguments are distinct allocations (true in every capture); each (c, k) thread owns its tau/ssa/asy words and slope[c,k]; the AD's column-serial thread owns every column-shared word of its column",
+ "precision": "aug: the forward word for word in f32 (__f*_rn, glibc-transcribed gfk_exp/gfk_log), built --fmad=false --ftz=false, bitwise to the forward image. tl/ad: the f32 primal words (rh, es, raw, tau) recomputed as the forward, local partials in double (Lagrange dL/drh in closed form), one rounding to f32 per written word; column-shared adjoints summed in double over the column before their one rounding.",
+ "binder_roles": "deriv.rs roles(): p, t, qv, dz, aod2, aod3, ssa2, asy2, spectral, zs, denom TL in, AD accumulate (never snapshotted); tau, ssa, asy, slope TL out, AD inout (seed read and consumed in place where written; slope untouched when not written). Primal inputs are pre-launch words; the kernel writes none of them.",
+ "launch_abi": {
+  "schema": "ad.entry/v1",
+  "entries": {
+   "aug": {
+    "function": "mpas_sw_aerosol_levels__aug",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "diagnostic_mask"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "type"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod2"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod3"
+     },
+     {
+      "bind": "primal",
+      "arg": "ssa2"
+     },
+     {
+      "bind": "primal",
+      "arg": "asy2"
+     },
+     {
+      "bind": "primal",
+      "arg": "spectral"
+     },
+     {
+      "bind": "primal",
+      "arg": "zs"
+     },
+     {
+      "bind": "primal",
+      "arg": "denom"
+     },
+     {
+      "bind": "primal",
+      "arg": "tau"
+     },
+     {
+      "bind": "primal",
+      "arg": "ssa"
+     },
+     {
+      "bind": "primal",
+      "arg": "asy"
+     },
+     {
+      "bind": "primal",
+      "arg": "slope"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3559:mpas_sw_aerosol_levels:nonfinite-or-log-nonpositive",
+       "rrtmg_sw_v842.py:3559:mpas_sw_aerosol_levels:refused-has3d-angopt-not-3"
+      ]
+     }
+    ]
+   },
+   "tl": {
+    "function": "mpas_sw_aerosol_levels__tl",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "diagnostic_mask"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "type"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod2"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod3"
+     },
+     {
+      "bind": "primal",
+      "arg": "spectral"
+     },
+     {
+      "bind": "primal",
+      "arg": "zs"
+     },
+     {
+      "bind": "primal",
+      "arg": "denom"
+     },
+     {
+      "bind": "tangent",
+      "arg": "p",
+      "field_id": 1,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "t",
+      "field_id": 2,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "qv",
+      "field_id": 3,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "dz",
+      "field_id": 4,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "aod2",
+      "field_id": 5,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "aod3",
+      "field_id": 6,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ssa2",
+      "field_id": 7,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "asy2",
+      "field_id": 8,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "spectral",
+      "field_id": 9,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "zs",
+      "field_id": 10,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "denom",
+      "field_id": 11,
+      "io": "in"
+     },
+     {
+      "bind": "tangent",
+      "arg": "tau",
+      "field_id": 12,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "ssa",
+      "field_id": 13,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "asy",
+      "field_id": 14,
+      "io": "out"
+     },
+     {
+      "bind": "tangent",
+      "arg": "slope",
+      "field_id": 15,
+      "io": "out"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3559:mpas_sw_aerosol_levels:nonfinite-or-log-nonpositive",
+       "rrtmg_sw_v842.py:3559:mpas_sw_aerosol_levels:refused-has3d-angopt-not-3"
+      ]
+     }
+    ]
+   },
+   "ad": {
+    "function": "mpas_sw_aerosol_levels__ad",
+    "geometry": "forward",
+    "args": [
+     {
+      "bind": "scalar",
+      "arg": "nc"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nz"
+     },
+     {
+      "bind": "scalar",
+      "arg": "nl"
+     },
+     {
+      "bind": "scalar",
+      "arg": "has3d"
+     },
+     {
+      "bind": "scalar",
+      "arg": "angopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyopt"
+     },
+     {
+      "bind": "scalar",
+      "arg": "ssaval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "asyval"
+     },
+     {
+      "bind": "scalar",
+      "arg": "diagnostic_mask"
+     },
+     {
+      "bind": "primal",
+      "arg": "p"
+     },
+     {
+      "bind": "primal",
+      "arg": "t"
+     },
+     {
+      "bind": "primal",
+      "arg": "qv"
+     },
+     {
+      "bind": "primal",
+      "arg": "dz"
+     },
+     {
+      "bind": "primal",
+      "arg": "type"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod2"
+     },
+     {
+      "bind": "primal",
+      "arg": "aod3"
+     },
+     {
+      "bind": "primal",
+      "arg": "spectral"
+     },
+     {
+      "bind": "primal",
+      "arg": "zs"
+     },
+     {
+      "bind": "primal",
+      "arg": "denom"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "p",
+      "field_id": 1,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "t",
+      "field_id": 2,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "qv",
+      "field_id": 3,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "dz",
+      "field_id": 4,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "aod2",
+      "field_id": 5,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "aod3",
+      "field_id": 6,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ssa2",
+      "field_id": 7,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "asy2",
+      "field_id": 8,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "spectral",
+      "field_id": 9,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "zs",
+      "field_id": 10,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "denom",
+      "field_id": 11,
+      "io": "accumulate"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "tau",
+      "field_id": 12,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "ssa",
+      "field_id": 13,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "asy",
+      "field_id": 14,
+      "io": "inout"
+     },
+     {
+      "bind": "adjoint",
+      "arg": "slope",
+      "field_id": 15,
+      "io": "inout"
+     },
+     {
+      "bind": "failure",
+      "slots": 1,
+      "source_ids": [
+       "rrtmg_sw_v842.py:3559:mpas_sw_aerosol_levels:nonfinite-or-log-nonpositive",
+       "rrtmg_sw_v842.py:3559:mpas_sw_aerosol_levels:refused-has3d-angopt-not-3"
+      ]
+     }
+    ],
+    "note": "column-serial: thread (c, k == 0) walks the column; threads k > 0 return"
+   }
+  }
+ }
+}

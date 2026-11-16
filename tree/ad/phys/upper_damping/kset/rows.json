@@ -1,0 +1,171 @@
+[
+ {
+  "function": "upper_cam_f32",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "upper-damping-upper_cam_f32",
+   "group": "upper-damping",
+   "spec": {
+    "path": "specs/upper_cam_f32.json"
+   },
+   "cuda": {
+    "path": "ad/phys/upper_damping/cuda/upper_cam_f32.ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "nl",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "nc",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "solved",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "levels",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "length",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "coefficient",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "values",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ },
+ {
+  "function": "upper_rayleigh_f32",
+  "class": "rowed",
+  "gate_ready": true,
+  "derivative": {
+   "row": "upper-damping-upper_rayleigh_f32",
+   "group": "upper-damping",
+   "spec": {
+    "path": "specs/upper_rayleigh_f32.json"
+   },
+   "cuda": {
+    "path": "ad/phys/upper_damping/cuda/upper_rayleigh_f32.ad.cu"
+   }
+  },
+  "arguments": [
+   {
+    "name": "nl",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "ne",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "solved",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "levels",
+    "kind": "scalar",
+    "dtype": "<i4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "days",
+    "kind": "scalar",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 0,
+    "value_hex": null
+   },
+   {
+    "name": "tendency",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "rho",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   },
+   {
+    "name": "velocity",
+    "kind": "device",
+    "dtype": "<f4",
+    "shape": [],
+    "strides_bytes": null,
+    "pointer_depth": 1,
+    "value_hex": null
+   }
+  ]
+ }
+]
