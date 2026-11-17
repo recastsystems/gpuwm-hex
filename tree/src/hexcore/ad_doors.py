@@ -6440,6 +6440,7 @@ def param_bundle_check(bundle: Path, pin: dict | None = None) -> dict:
 def run_param_grad(args: argparse.Namespace) -> int:
     plant_request(args, load_table(), "param-grad")   # a planting word in the environment: refused before any download
     route = gradient_route(args, "param-grad")   # a coarse mesh is refused by name here
+    say_storm_measures(load_table(), args, "param-grad", [getattr(args, "metric", None)])
     ctx = Context(args, "param-grad")
     ctx.gradient_route = route
     import struct
@@ -6746,9 +6747,10 @@ def add_ad_parsers(commands: argparse._SubParsersAction) -> None:
                            "the row's gradient line where it has one)")
     fast.add_argument("--boundary-layer", default=None, choices=("taped", "tape-free", "guarded", "floored"),
                       help="on a row with a gradient line: the boundary layer's backward without its tape "
-                           "(tape-free: faster; the answer differs from the exact one by a few parts in a million "
-                           "of each field's largest value, about one in ten thousand for the stored pressure; not "
-                           "byte-equal) or from its tape (taped: the exact route, for windows up to about 30 "
+                           "(tape-free: faster; from this build a different linear model from the exact route, which "
+                           "differentiates the turbulence closure, the plume's transport and the boundary-layer "
+                           "height that the exact route holds, so its answer differs by design and is not "
+                           "byte-equal; the size of the difference was not measured on this build) or from its tape (taped: the exact route, for windows up to about 30 "
                            "minutes at 3 km, measured on the example; a longer window runs with a one-line "
                            "warning), or, on the 3 km storm row, from its tape with the boundary layer's mixing "
                            "differentiated under a weak-shear guard (guarded: for a near-ground wind question over "
@@ -6765,9 +6767,9 @@ def add_ad_parsers(commands: argparse._SubParsersAction) -> None:
                   for n in (((r.get("gradient_line") or {}).get("cloud_derivative") or {}).get("routes") or {})})
     fast.add_argument("--cloud-derivative", default=None, choices=cds or ("shipped",),
                       help="on a row whose gradient line names the option (the 3 km storm row): the cloud scheme's "
-                           "derivative as shipped, or gated (the rime ratio held where riming is slow, which fixes "
-                           "the gradient of cloud and rain targets at single columns); default: the row's (shipped "
-                           "in this build)")
+                           "derivative with rain and droplet number following the forecast (number), the same "
+                           "form with both numbers held (gated), or as the earlier builds of this release ran it "
+                           "(shipped); default: the row's (number on the 3 km storm row)")
     fg = load_table()["doors"]["sensitivity"].get("first_gradient") or {}
     fast.add_argument("--first-gradient", default=None, choices=sorted(fg.get("routes") or {"recorded": {}}),
                       help="how a first gradient of a new forecast is made: recorded (record the forecast first, "

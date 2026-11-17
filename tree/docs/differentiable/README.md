@@ -105,7 +105,7 @@ is in [LIMITS.md](LIMITS.md)).
 
 ## Larger meshes: what box to bring, and how long a gradient takes
 
-These were measured with the engine on one 96 GB RTX PRO 6000 Blackwell card. The 60 km mesh and the larger 3 km box are not commands of this release. The 3 km storm box (38,278 cells) ships as a second example: `--row hrrrv5-q3.96.38278.n40.60w91.30` downloads its mesh and a one-hour plan of the HRRR 2023-03-31 18Z start (about 2.4 GB more; 3 steps when `--steps` is not given, up to 239; the README's commands give `--steps 59`), and `--init example` records a plan of its own from that start (not yet run through to a gradient on a card in this release; [GUIDE.md](GUIDE.md), section 4). It needs one 96 GB card with 96,600 MiB free on the default route of `sensitivity` (93,000 MiB on the exact route and for the other commands). A 59-step `sensitivity` is admitted on 258,057 MiB of host memory for a first call (the answer check; it held 241,895 MiB) and on 249,661 MiB as a later command, which keeps its forward for the next gradient (it held 233,216 MiB; 158,617 MiB with `--keep-forward off`), and the command states its need and stops on a host with less; the three-step windows need 110,592 MiB. On this row the boundary layer's backward runs without its tape by default: the answer differs from the exact route's by a few parts in a million in temperature, moisture and wind and by up to one part in ten thousand in the stored pressure sensitivity (measured on the example), and `--boundary-layer taped` runs the exact route. Through the command on one 96 GB card, `sensitivity` and the 59-step `adjoint-test` (PASS on the default route: the number cloud route and the live transport limiter; [LIMITS.md](LIMITS.md)) have run on this row.
+These were measured with the engine on one 96 GB RTX PRO 6000 Blackwell card. The 60 km mesh and the larger 3 km box are not commands of this release. The 3 km storm box (38,278 cells) ships as a second example: `--row hrrrv5-q3.96.38278.n40.60w91.30` downloads its mesh and a one-hour plan of the HRRR 2023-03-31 18Z start (about 2.4 GB more; 3 steps when `--steps` is not given, up to 239; the README's commands give `--steps 59`), and `--init example` records a plan of its own from that start (not yet run through to a gradient on a card in this release; [GUIDE.md](GUIDE.md), section 4). It needs one 96 GB card with 96,600 MiB free on the default route of `sensitivity` (93,000 MiB on the exact route and for the other commands). A 59-step `sensitivity` is admitted on 258,057 MiB of host memory for a first call (the answer check; it held 241,895 MiB) and on 249,661 MiB as a later command, which keeps its forward for the next gradient (it held 233,216 MiB; 158,617 MiB with `--keep-forward off`), and the command states its need and stops on a host with less; the three-step windows need 110,592 MiB. On this row the boundary layer's backward runs without its tape by default (the tape-free route). From this build it is a different linear model from the exact route: it differentiates the boundary layer's turbulence closure, the plume's transport with the plume's own coefficients held, and the boundary-layer height the column returns, which the exact route holds at the forecast's values, so its answer differs from the exact route's by design; the size of that difference was not measured on this build. `--boundary-layer taped` runs the exact route. Through the command on one 96 GB card, `sensitivity` and the 59-step `adjoint-test` (PASS on the default route: the number cloud route and the live transport limiter; [LIMITS.md](LIMITS.md)) have run on this row.
 
 | mesh (cells) | window | card memory at peak | host memory at peak | one gradient |
 |---|---|---|---|---|
@@ -245,14 +245,17 @@ above, or `all`; the default is the four, and on the 3 km storm row `bump` and `
 direction with its seed and its verdict, and its `checks_passed` is the verdict of the first window's checks and
 the whole-state dot alone, which is what `--strict-from` takes.
 
-Measured so far, one run: on a 12 km cut of a storm box (another storm day, 15 steps, one card; not a row of this
-release, and run without the whole-state dot) `bump` read 1.0001 at its best step size, INSIDE; `descent` 0.954 to
-0.956 at four step sizes, OUTSIDE (the real change is 4.4 per cent short of the gradient's prediction);
-`near-ground-moisture` 0.850 to 0.882 at three, OUTSIDE (12 per cent short); `smooth-draw` UNRESOLVED. That is a
-FAIL where the bump alone read inside the bar. That run was of the exact route, whose boundary layer holds the
-turbulence closure and the plume's heat and moisture. With this build's default route on the same cut (its
-boundary layer differentiates them; README, "The default route is fast") the test read PASS: bump inside, 0.1 per cent off; descent inside, 0.0065 per cent off; near-ground-moisture unresolved (the real change read 0.982 to 1.149 of the gradient's prediction over the step sizes that count); smooth-draw unresolved (the real change read 1.015 to 1.079 of the gradient's prediction over the step sizes that count). What the
-directions read on the shipped examples has not yet been measured on a card.
+Measured on the 12 km example (15 steps, one card). On the exact route (`--boundary-layer taped`), whose boundary
+layer holds the turbulence closure and the plume's heat and moisture, an earlier build of this release, run without
+the whole-state dot, read `bump` 1.0001 at its best step size, INSIDE; `descent` 0.954 to 0.956 at four step sizes,
+OUTSIDE (the real change is 4.4 per cent short of the gradient's prediction); `near-ground-moisture` 0.850 to 0.882
+at three, OUTSIDE (12 per cent short); `smooth-draw` UNRESOLVED. That is a FAIL where the bump alone read inside the
+bar. On this build's default route (its boundary layer differentiates them; README, "The default route is fast")
+the same command ends PASS: the bump inside (9.9e-04 from 1), the descent inside (5.0e-04 from 1), near-ground
+moisture and the smooth draw unresolved (7.2e-03 and 1.5e-02 from 1), and near-ground moisture is a known limit,
+about 2 to 4 per cent short ([LIMITS.md](LIMITS.md)). On the 3 km storm box the default route ends PASS on the bump
+and the descent (3.65e-04 and 1.92e-03 from 1). On the 120 km rows the 1-step window read PASS on an earlier build
+and `--steps 3` ends NOT PASSED (UNRESOLVED) ([LIMITS.md](LIMITS.md)).
 
 ## 2. `gpuwm-hex tangent`
 
@@ -357,7 +360,7 @@ The rows in `data/ad-doors.v1.json` are a seed, not a whitelist. `--mesh NAME|GR
 from the suite template (`--suite`, default hrrrv5): cells, edges and levels from the mesh files, the timestep from
 hex's rule (6 s per km of `nominalMinDc`, dividing the radiation step; `--dt` overrides, a given `--plan` wins), and
 the memory need from the suite rule (`--need-mib` overrides). The made row is kept in the row cache
-(`GPUWM_HEX_AD_ROWS`, default `<hex cache>/ad/rows`) and `--row` finds it afterwards. Only the 120 km and 3 km storm-box plans can be downloaded, so another mesh needs a plan of its own: `--init FILE` records one on this card first, with the recorder
+(`GPUWM_HEX_AD_ROWS`, default `<hex cache>/ad/rows`) and `--row` finds it afterwards. Only the three examples' plans can be downloaded (120 km, the 3 km storm box and its 12 km cut), so another mesh needs a plan of its own: `--init FILE` records one on this card first, with the recorder
 the `ad` extra installs (`GPUWM_HEX_AD_RECORDER` names another recorder of the same contract). This route has not been
 run from a plain install, and a plan recorded with `--init` has not yet passed the strict check.
 

@@ -58,8 +58,8 @@ gpuwm-hex sensitivity --row hrrrv5-q12.96.2890.n40.60w91.30 --steps 15 \
 
 - `--metric`: `theta_m` (default), `theta`, `qv`, `qc`, `qr`, `pressure_p`, `rho`, `w`.
   `qr`, `qc` and `w` measure the storm itself, and no PASS of this release covers them: on the 12 km example's
-  storm band the rain measure's check fails (0.118 against 0.01; read centred on both signs, 1.04 of the real
-  change) and the updraft's is unresolved; on a 3 km storm cell the updraft's fails (1.008 to 1.023). The map
+  storm band the rain measure's check fails (0.118 against 0.01; read centred on both signs, the real change is
+  1.04 of the gradient's prediction) and the updraft's is unresolved; on a 3 km storm cell the updraft's fails (1.008 to 1.023). The map
   shows where and with what sign such a measure responds, not its size to 1 per cent. A temperature measure placed
   on a storm cell is not covered either: on a 3 km cell (a 40 km circle, levels 1-10) its check fails (0.245
   against 0.01). The PASSes are for the README's measures (low-level temperature and moisture averaged over circles of 100 to 150 km radius). For `qr`, `qc` and `w`
@@ -268,9 +268,14 @@ the reference's: zero differing values, no tolerance. It is a claim about the fo
   names the native run folder); tables built with the strict recipe (step 2's note) change the forecast.
 - `hrrrv5` on `x1.40962` (120 km, 59 levels), 2023-03-31 12Z, 24 hours: 8 same-host ranks on one card against native
   at 8 MPI ranks on the same partition, 0 of 1,958,644,100 history, diagnostics and restart values different; one
-  card against one native rank, 0 of 786,309,080.
+    card against one native rank, 0 of 786,309,080.
+- `hrrrv5` through the plain door on two limited-area meshes, the HRRR 2024-05-21 15Z start, one hour, one process on
+  one RTX 5090: the 12 km cut (2,890 cells, NOAA's 12 km cumulus on), 0 of 86,751,014 values different in 27 files;
+  the 3 km storm box (38,278 cells), 0 of 624,931,668 in 11 files. The same 12 km hour on one RTX 4090: 0 of
+  86,751,014.
 
-Other meshes, dates, process counts and longer runs are not claimed. Native MPAS is not bit for bit across process
+Other meshes, dates, process counts and longer runs are not claimed. The steps below walk the six-hour `x1.2562`
+case; this release gives no walk for the two limited-area hours. Native MPAS is not bit for bit across process
 counts, so every claim fixes the count.
 
 **The reference is patched, and says so.** It is RRFS-MPAS at 44c0849 built with a strict GNU recipe (single

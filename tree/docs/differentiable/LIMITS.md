@@ -128,7 +128,7 @@ adjoint are; the README's *The differentiable engine* has every number with its 
     levels 1-20) fails** the first window's finite-difference check: 0.118 against 0.01 (exit 1). Read again at
     twelve step sizes of both signs (1 to 0.003), the real model's change carries an offset of about -3.4e-08 kg/kg
     (0.03 per cent of the measure) at every small step of either sign, so the one-sided ratios the command prints
-    scatter from 0.40 to 2.93 at steps under 0.03. Read centred (each size at both signs, which cancels the offset
+    scatter from -0.94 to 2.93 at steps under 0.03. Read centred (each size at both signs, which cancels the offset
     and the curvature), the bump is 1.036 and 1.038 of the gradient's prediction at steps 0.1 and 0.03, 1.016 at
     0.01 and 0.99 at 0.003; at 1 and 0.3 it is 0.83 to 0.85, where rain answers a 1 K bump nonlinearly.
     **Updraft (`w`, levels 12-30) is NOT PASSED (UNRESOLVED):** the bump 0.877 to 1.009 and the steepest descent
@@ -145,7 +145,7 @@ adjoint are; the README's *The differentiable engine* has every number with its 
     to 1 per cent. On the 12 km row the cloud scheme's derivative is the earlier builds' form (rain and droplet
     number held) and the transport limiter is held; the 3 km row runs the `number` cloud route with the limiter
     live. A map of a storm measure from this release shows where and with what sign the measure responds; its size
-    is not shown to 1 per cent. `sensitivity`, `tangent` and `adjoint-test` print the row's measured line before
+    is not shown to 1 per cent. `sensitivity`, `adjoint-test` and `param-grad` print the row's measured line before
     they run when a measure is `qr`, `qc` or `w` (on a mesh named with `--mesh`, that it has not been read there).
 - **On the 12 km example the whole-state dot is scored on memory allocations, not the model's fields.** The
   example's plan holds 15 step boundaries, so its 15-step window end has no field map; every 12 km command scores
@@ -187,8 +187,21 @@ adjoint are; the README's *The differentiable engine* has every number with its 
   nudge (3 km, 12 steps): the held boundary-layer mixing. The default route differentiates the closure but has not
   been run along that nudge through the command. `--boundary-layer guarded` read 1.003 along it over 12 steps; over
   59 steps it has run through the command on a 96 GB card (answer check 5.34e-08 against 1e-07, no one-word spike,
-  1,478 s) and has not been compared with the real model. It stays a named option: the exact route still holds the
+    1,478 s) and has not been compared with the real model. It stays a named option: the exact route still holds the
   boundary layer.
+- **The 120 km example's near-ground maps are an install check, not a forecast sensitivity.** Measured on that
+  example over 3 steps, on the 87 of 348 box columns where the real forecast answers a nudge steadily: along a
+  low-level east wind nudge of 0.01 to 0.3 m/s the gradient predicts 0.09 of the real model's change; along a
+  low-level temperature nudge 0.77 of it; along a moisture nudge 1.4 to 1.9 times it. The cause is the boundary
+  layer's mixing, held in that row's linear model. `sensitivity` prints this caution on the 120 km example.
+- **`param-grad` is checked against the real model for one constant and one window.** Against reruns of the forward
+  with one constant moved (120 km, 3 steps), on an earlier build of this release, the rerun slope for the
+  Zilitinkevich factor was 0.98 times its gradient at a move of 0.02 in ln p and 1.11 times at 0.1; it was the only
+  constant of the five tried. On an older build with another measure three of four constants disagreed with their
+  reruns (gradient over rerun 0.31, 0.84, and 2.1 to 2.3). Read `param-grad` gradients as trusted only for the
+  constant and window checked, and for windows of up to about an hour.
+- **Near-ground wind is damped too fast.** The gradient damps a near-ground wind nudge about twice as fast as the
+  real model does in its first physics step (measured; README, *The differentiable engine*).
 
 ## Recordings
 

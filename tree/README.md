@@ -28,8 +28,8 @@ direction within 4, and no one-signed lean over 8 or more), and its gradient tes
 [the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.0/tree/docs/differentiable/LIMITS.md)).
 On the forecast side, a plain `--physics-suite hrrrv5` run is NOAA's hrrrv5 deck, and with
 `--physics-mode exact --numerics strict` its one-hour forecasts on a 12 km and a 3 km limited-area mesh match the
-patched native RRFS-MPAS 44c0849 reference in every stored word (0 of 86,751,014 and 0 of 624,931,668 words
-different; *RRFS-MPAS*, below). The forecast also runs on older card families, the RTX 4090 included.
+patched native RRFS-MPAS 44c0849 reference in every stored word (0 of 86,751,014 and 0 of 624,931,668 words different, each hour from the HRRR 2024-05-21 15Z start, one
+process on one RTX 5090; the CHANGELOG's 0.6.0 headline has the files). The forecast also runs on older card families, the RTX 4090 included.
 
 **New here? Start with the [User Manual](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.0/tree/docs/manual/index.md):** a
 plain-language introduction, a quickstart in which every command was run
@@ -490,11 +490,13 @@ Also proven:
   be trusted" in [The differentiable engine](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.0/tree/docs/differentiable/README.md): about 3 hours at
   120 km and 60 km, 14 min 45 s at 3 km, about 1 hour wherever the mountain-drag closure is differentiated. A
   composite-reflectivity measure does not pass the gradient check. Nothing is claimed for a gradient split across several cards (the split is experimental, and says so when used), or for any card family but compute capability 12.0.
-- **RRFS-MPAS is matched on its measured case only.** Six hours of `hrrrv5` on
-  `x1.2562`, one process, every slot on the GPU, is bitwise to the native fork
-  build in every history and diagnostics word hex writes (strict numerics, the
-  reference's TEMPO tables named); other meshes, dates, process counts and
-  longer runs are not measured.
+- **RRFS-MPAS is matched on its measured cases only.** In exact mode with strict
+  numerics, against the patched 44c0849 reference: six hours of `hrrrv5` on
+  `x1.2562` at one process; 24 hours on `x1.40962` at one process and at 8
+  same-host ranks on one card; and one hour on the 12 km cut and on the 3 km
+  storm box from the HRRR 2024-05-21 15Z start, one process (*RRFS-MPAS*, above,
+  and the CHANGELOG). Other meshes, dates, lengths, process counts and several
+  cards are not measured.
 - **Local time stepping is never called identical.** It is a different time
   scheme, and native MPAS has none.
 - A one-step dry pass does not qualify a forecast trajectory or its weather
@@ -1108,8 +1110,10 @@ byte for byte:
   289.6 s and the second 260.8 s (576.2 s in the shell; measured once, the build before). Earlier builds read
   247.3 s and 184.4 s with the forward kept, 239.5 s and 195.7 s without it, and 282.3 s and 254.8 s on the exact
   route.
-  Those seconds were measured with the boundary-layer images of the builds before this one; this build's default
-  route has not been timed on this example. On the 12 km cut its gradient took 22.6 s and 14.7 s (first and later)
+  Those seconds were measured with the boundary-layer images of the builds before this one. With this build's default
+  route, through this command on one 96 GB card (16 Nov): a first gradient 231.7 s, a further target in the same
+  command 179.8 s, a later command that attached 178.1 s, and a first call with its answer check 617.6 s and 630.4 s
+  (two runs). On the 12 km cut its gradient took 22.6 s and 14.7 s (first and later)
   against 23.4 s and 15.0 s with the images before, in one lease on one home card.
 
 **The default route is fast, and differentiates more of the boundary layer than the exact route.** On this row
@@ -1166,7 +1170,7 @@ family only, and on another the command stops and says so.
 **What the answer check shows, and in which direction.** The check is the whole-state dot test over the window asked
 for: every word of the start state moved at once, in a random direction. In that direction the 3 km check read,
 through this command, 2.78e-08 on the default route and 1.75e-08 on the exact one over the 15-minute window (59
-steps; 0.23 and 0.15 single-precision roundings of the dot against a bar of 4, pass; measured on the build before, with the refined cloud derivative). Those readings are of the boundary-layer images of the builds before this one; with this build's default route the check has not been run on the 3 km example (on the 12 km cut over 15 steps it read 8.57e-08 and 6.88e-08). Earlier builds, with the
+steps; 0.23 and 0.15 single-precision roundings of the dot against a bar of 4, pass; measured on the build before, with the refined cloud derivative). Those readings are of the boundary-layer images of the builds before this one; with this build's default route the check read 1.786e-07 on the 3 km example (-1.50 roundings against the bar of 4, pass; through `adjoint-test` and through a first `sensitivity`, each on one 96 GB card) and 7.49e-08 on the 12 km example (+0.63 roundings). Earlier builds, with the
 cloud derivative of the builds before, read 9.1e-09 and 1.3e-08. In the direction
 of a storm sensitivity (a 1 K warm bump low under an updraft, against the mean upward wind above it; measured on a
 3 km recording of another storm day, with this kernel set) it reads 1.7e-06 on the default route and 2.2e-06 on the
@@ -1435,8 +1439,10 @@ again. `adjoint-test` always runs it, and `--strict` runs it on any command.
 one card: `adjoint-test` 219.4 s (the answer check, one test direction, the bump, and the example's files taken
 from a local folder), then `tangent` 32.9 s and `sensitivity` 47.3 s, each taking the kept verdict, and
 `param-grad --check` 181.7 s, which runs its own check. On the full-physics row `adjoint-test` took 253.3 s and a
-`tangent` after it 29.5 s. `adjoint-test` now runs three more test directions after the bump, one more window each:
-their seconds, and what they read on this example, have not yet been measured on a card. A FAIL along a direction
+`tangent` after it 29.5 s. `adjoint-test` now runs three more test directions after the bump, one more window each, on its own 1-step window:
+271.9 to 307 s on the default row and 305.6 s on the full-physics row (an earlier build of this release), ending PASS
+there; with `--steps 3` it took 443 s and 548 s on the two rows and ended NOT PASSED (UNRESOLVED), only the bump
+resolved ([the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.0/tree/docs/differentiable/LIMITS.md)). A FAIL along a direction
 is a reading of the gradient along it, not of the install: the receipt's `checks_passed` is the verdict of the
 first window's checks and the whole-state dot test alone.
 
@@ -1521,8 +1527,7 @@ More on the 3 km storm example (the row `hrrrv5-q3.96.38278.n40.60w91.30`, near 
 one hour of the HRRR 2023-03-31 18Z start: 3 steps by default, up to 239. `--init example` records a plan of its own
 from that start (not yet run through to a gradient on a card in this release). A 59-step `sensitivity` keeps its checkpoints in host memory; `tangent`, `adjoint-test`,
 `param-grad` and `--checked-forward` keep every step and write what does not fit to the output folder, and the
-command states that disk before it runs and stops if the folder has less. Of its commands only `sensitivity` has run
-from a plain install on a card. On this row `adjoint-test` runs two test directions by default, `bump` and
+command states that disk before it runs and stops if the folder has less. Of its commands `sensitivity` and the 59-step `adjoint-test` have run from a plain install on a card; `tangent` and `param-grad` have not been run on this row that way. On this row `adjoint-test` runs two test directions by default, `bump` and
 `descent`; `--directions all` runs the four, one more window of the box each.
 
 Limits, in short. The 120 km example covers 1 to 3 steps, the 12 km example 1 to 15 and the 3 km storm box 1 to 239;

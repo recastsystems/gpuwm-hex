@@ -43,3 +43,24 @@ def test_a_row_without_a_reading_says_so():
     other = next(r for r in table["rows"] if r not in table["storm_measures"]["rows"])
     lines = ad_doors.storm_measure_lines(table, _args(row=other, metric="w"), "adjoint-test", ["w"])
     assert lines and "has not been read on row" in lines[0]
+
+
+def test_param_grad_prints_the_line_before_it_runs(monkeypatch, capsys):
+    """param-grad takes --metric too: a storm measure prints the row's line before the door builds anything."""
+    import pytest
+
+    class Stop(Exception):
+        pass
+
+    def stop(*a, **k):
+        raise Stop
+
+    parser = argparse.ArgumentParser()
+    ad_doors.add_ad_parsers(parser.add_subparsers(dest="command"))
+    args = parser.parse_args(["param-grad", "--row", "hrrrv5-q3.96.38278.n40.60w91.30", "--metric", "w",
+                              "--out", "pg"])
+    monkeypatch.setattr(ad_doors, "Context", stop)
+    with pytest.raises(Stop):
+        args.handler(args)
+    out = capsys.readouterr().out
+    assert "gpuwm-hex param-grad: storm measure (w): no PASS of this release covers it" in out
