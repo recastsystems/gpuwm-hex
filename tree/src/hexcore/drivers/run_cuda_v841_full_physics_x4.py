@@ -106,7 +106,7 @@ NOMINAL_DX_M = np.float32(25_000.0)
 EXPECTED_ARWEN_P_TOP_PA_F32 = np.float32(1_159.38818359375)
 EXPECTED_TOP_PRESSURE_RANGE_PA = (592.24884, 1_233.00952, 1_342.08362)
 # Both floors come from the ONE admission surface, re-fitted at the merged
-# tip 2026-08-26 (ruling, 2026-08-26) from the measured affine row --
+# tip 2026-08-26 from the measured affine row --
 # hexcore.device_admission.FLOOR_DERIVATION is the derivation of record.
 # They replace the asserted ``24 GiB`` / ``22 GiB`` pair, which stood 1.2x
 # above the measured 20,446 MiB x4 peak and, scaled linearly per mesh,
@@ -355,7 +355,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # Re-frozen 2026-08-26 for the convection ruling: the per-component
     # physics cadence table reports ``convection: None`` when no cumulus
     # scheme is selected instead of calling float() on it.  MEASURED
-    # (the proving RTX 5070 Ti): the first convection-off arm bound clean,
+    # (an RTX 5070 Ti): the first convection-off arm bound clean,
     # admitted its timestep, built its sealed constructor and died inside
     # composite step 0 with "float() argument must be a string or a real
     # number, not 'NoneType'", surfacing as "composite step at 0.0 s was
@@ -454,7 +454,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # carry is active from the second step (SG2, class A, MPAS behaviour, no
     # switch).  Dry runs launch neither kernel.  This file is byte-identical to
     # correct/storm-growth 312cf586; the digest is that branch's.
-    # Re-frozen 2026-10-14 (release 0.4.0, lane H1, on integrate/hex-mpas): the
+    # Re-frozen 2026-10-14 (release 0.4.0): the
     # integrate line's cuda_driver.py with the forecast-batch host mesh rows
     # above and the SG2 producer series merged in.  Re-run against this digest:
     # the dry derecho cap450 identity (fixed step 30 min, active LTS 1 h) and
@@ -575,7 +575,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # (step_anchor_record), no longer a gate.
     "src/hexcore/step_anchors.py": "97ffbc5fb7414269096156ee22f50a08a1806d1f87085feda441f9fdbcc59765",
     "src/hexcore/data/dycore-step-anchors.v1.json": "f9a102a3f4fd848e95bf9fabe5a5ccd0579ba01de739de9e7da8e4ed7930e62d",
-    # New pin (convection ruling, 2026-08-26): the frozen config ADMITS
+    # New pin (the convection rule by spacing): the frozen config ADMITS
     # config_convection_scheme from this module and the frozen timestep
     # registry keys on the selection it produces, so the pinned config's
     # meaning depends on these bytes -- the same reason dt_admission.py is
@@ -608,8 +608,12 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # The x4 proof names cu_grell_freitas explicitly, so its configuration
     # does not pass through the changed branch; uniform meshes are decided
     # byte-identically (tests/test_convection_admission_variable_mesh.py).
+    # Re-frozen 2026-11-17: comments and two text constants reworded (the New
+    # Tiedtke rule's text, which receipts carry as ntiedtke_ruling, and the coarse
+    # band's decision text).  Text only: the file's AST is identical once those two
+    # string constants are normalised.
     "src/hexcore/convection_admission.py": (
-        "9128972130e8022538e6fea8c41ab50df70246736f58515439e7dc2adb317f5e"
+        "ec6fc5f35ee56b83eb80290d29e88d7ab5d4d5bab7a92601fe2b9afaf647a389"
     ),
     # THE BREAKAGE THIS PREVENTS: config_v841.validate() now ADMITS the
     # model timestep from this module, so the pinned config's meaning
@@ -632,7 +636,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # called from "every step" to "never" and that is part of what an
     # anchor's forecasts measured.  Every existing row keeps its evidence
     # and its meaning; a convection-off run can no longer read one.  Two
-    # convection-off rows were then EARNED on the proving RTX 5070 Ti at 20 s and 5 s
+    # convection-off rows were then EARNED on an RTX 5070 Ti at 20 s and 5 s
     # (evidence/convection-off-20260826/), and the 5 s Grell-Freitas row's
     # open attribution was retired against them: with the closure never
     # called the same timestep still reaches |w| max 93.96 against its
@@ -782,7 +786,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # both correct/mpas-water-budget's physics.mode plumbing and
     # correct/storm-growth's SG2 producer (lagged_heating_v841: stage in
     # finish_step, publish in commit_step, carried in restart state).
-    # Re-frozen 2026-10-14 (release 0.4.0, lane H1): correct mode on an engine
+    # Re-frozen 2026-10-14 (release 0.4.0): correct mode on an engine
     # whose column batch takes no mode keywords is a named gap, not a refusal:
     # the seam is built without the keywords and the receipt names WB4/WB5 as
     # gaps (_engine_correct_mode, _engine_kwargs).  Exact mode builds the seam

@@ -289,8 +289,8 @@ def test_on_a_busy_machine_a_bump_off_the_cut_is_said_before_the_memory(installe
     for more, words in ((["--level", "60"], "has model levels"), (["--steps", "16"], "1 to 15 steps")):
         with pytest.raises(d.AdDoorError, match=words):
             d.Context(_parse(README_12 + more + ["--out", str(tmp_path / "o")]), "adjoint-test")
-    with pytest.raises(d.AdDoorError, match="offers tape-free, taped"):   # the command's handler judges it first of all
-        d.refuse_speed_words(_parse(README_12 + ["--boundary-layer", "guarded", "--out", "o"]), d.load_table())
+    with pytest.raises(d.AdDoorError, match="offers guarded, tape-free, taped"):   # the command's handler judges it first of all
+        d.refuse_speed_words(_parse(README_12 + ["--boundary-layer", "floored", "--out", "o"]), d.load_table())
     with pytest.raises(d.AdDoorError, match="holds no cell"):
         d.Context(_parse(["sensitivity", "--row", CUT, "--steps", "15", "--circle", "10,-150,150",
                           "--out", str(tmp_path / "o")]), "sensitivity")

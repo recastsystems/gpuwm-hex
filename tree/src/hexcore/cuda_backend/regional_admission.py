@@ -583,7 +583,7 @@ class RegionalContract:
 #: 0c3a9624 (before the specified-zone zero).  Class records are carried,
 #: not newly minted; re-minting the regional classes with physics is a named
 #: follow-up of that report.
-#: (4) 2026-10-14 (hex 0.4.0 release, lane H7): the MPAS v8.4.2 port's LAM
+#: (4) 2026-10-14 (hex 0.4.0 release): the MPAS v8.4.2 port's LAM
 #: identity landing (d4-lam-identity: the native lateral-boundary module,
 #: native regional acoustic rounding, gradual underflow, native LBC scalar
 #: storage) and the golden 0.4.0 merge moved the regional source set from
@@ -804,10 +804,10 @@ class RegionalContract:
 #: (41) 2026-11-11 (hex 0.5.0 re-seal): comment and docstring lines in cuda_driver.py, cuda_regional_forecast_v841.py
 #: and note (13) above reworded; no code, CUDA source string, compile request or arithmetic changed. Re-derived by
 #: tools/repin_source_tables.py; not a new mint.
-#: (42) 2026-11-16 (fwdmatch/remint-dist50, for dist50): the mixing's mesh-size scaling is computed with GNU powf,
+#: (42) 2026-11-16 (for the 0.6.0 build): the mixing's mesh-size scaling is computed with GNU powf,
 #: as native MPAS-A built by gfortran computes it (fwdmatch/mesh-scaling-gnu-powf cfeb3dd9d: meshScalingDel2/Del4 in
 #: cuda_horizontal.py and the regional scaling in regional_v841.py, with mixing.py's host scaling outside this set).
-#: dist49 merged it and reverted it (1a775d052) because it moved this digest. THIS IS AN ARITHMETIC CHANGE on every
+#: An earlier 0.6.0 build merged it and reverted it (1a775d052) because it moved this digest. THIS IS AN ARITHMETIC CHANGE on every
 #: variable mesh with config_h_ScaleWithMesh: a scaling word moves wherever the device powf and GNU powf round
 #: differently. It moves the regional lane TOWARD native, measured, not assumed: against native MPAS-A 44c0849,
 #: strict and exact, the 3 km storm-box hour, the 12 km storm-cut hour and the recut lam7k hour are 0 words
@@ -841,14 +841,14 @@ MINTED_KERNEL_SET_SHA256 = (
 
 _DRY_MINT_CAVEAT = (
     "WHAT THIS CLASS DOES NOT ADMIT: the mint pair is the DRY regional "
-    "dycore, as every regional mint this program has run is.  It certifies "
-    "the 22 boundary kernels and says nothing on its own about the ArWen "
-    "physics seam a full-physics run also drives; the full-physics arms are "
-    "admitted on the reasoning the regional-physics lane recorded, that the "
-    "boundary machinery is the same 22 kernels either way, and that "
-    "reasoning is inherited rather than re-earned.  Endpoint byte-identity "
-    "against the compiled reference is NOT measured here, and is not "
-    "measured for the global lane either."
+    "dycore, as every regional mint is.  It certifies the 22 boundary "
+    "kernels and says nothing on its own about the ArWen physics seam a "
+    "full-physics run also drives; full-physics runs are admitted on the "
+    "earlier regional full-physics measurement, which found the boundary "
+    "machinery to be the same 22 kernels either way, and that measurement "
+    "was not repeated for this class.  Endpoint byte-identity against the "
+    "compiled reference is NOT measured here, and is not measured for the "
+    "global route either."
 )
 
 #: Configuration classes holding a verified forecast mint.  Adding a row is
@@ -863,7 +863,7 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 finest_edge_mm=3_314_810,
                 dt_ms=20_000,
                 # Minted at the kernel set of the species-row generalization
-                # (the door lane's chain landed 2026-09-01), ce63c3dd...,
+                # (2026-09-01), ce63c3dd...,
                 # measured at the mint; the host-path move and the
                 # element-parallel re-map of 2026-09-14 each carried it onto
                 # the tree's constant like every other row, and the
@@ -888,11 +888,11 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 "species-row generalization.  Two independent processes ran "
                 "1,080 steps -- six forecast hours from 2026-08-12_06:00:00, "
                 "config_apply_lbcs=true, config_len_disp 3,750 m, hourly GFS "
-                "boundaries -- in 915 s and 866 s on the desktop RTX 3080 "
-                "beside another tenant, and all THIRTEEN published history frames "
+                "boundaries -- in 915 s and 866 s on an RTX 3080 shared with "
+                "another process, and all THIRTEEN published history frames "
                 "agree under masked digests while every whole-file digest differs "
                 "on its own file_id.  Minted on the geometry it will run on; the "
-                "class inherits the graded-parent lane's finding that the "
+                "class rests on the earlier graded-parent measurement that the "
                 "geometry is not in the key, and pays for that inheritance with "
                 "the cull's own contract deck below.  "
                 + _DRY_MINT_CAVEAT
@@ -927,22 +927,22 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 "THIRTEEN published history frames agree under masked digests "
                 "while every whole-file digest differs on its own file_id.  "
                 "THE CLASS IS EARNED ONCE AND THE EVIDENCE THAT IT IS A CLASS "
-                "IS SEPARATE FROM THE MINT: the nest-ratio lane minted FIVE "
-                "concentric culls of this same parent independently -- 4,440, "
+                "IS SEPARATE FROM THE MINT: FIVE concentric culls of this same "
+                "parent were minted independently -- 4,440, "
                 "7,975, 11,020, 14,050 and 15,755 cells, domains from 155 to "
                 "565 km in radius, interface ratios from 13.5:1 to 3.6:1 -- "
                 "and every one of the five returned the same verdict at the "
                 "same 1.605x Courant margin under a 32.092 s limit.  Not one "
                 "input this instrument reads distinguished them, which is why "
-                "the geometry is not in the key.  RE-MINTED 2026-08-27 at "
-                "the kernel set the provenance scrub produced, on the "
+                "the geometry is not in the key.  Minted again 2026-08-27 at "
+                "the kernel set a source-text clean-up produced, on the "
                 "same 14,050-cell cull and the same namelist: 1,080 steps in "
                 "two independent processes, 192 s and 184 s, all THIRTEEN "
                 "published frames identical under masked digests and every "
                 "whole-file digest differing on its own file_id.  The "
                 "superseded pair was taken at kernel set bdcfe014... and its "
                 "receipts remain in the tree as the record of that run.  "
-                "  RE-MINTED 2026-09-01 at the kernel set the species-row door generalization produced: cuda_driver.py and cuda_regional_forecast_v841.py both moved, so every class lapsed exactly as a whole-file digest is meant to make them.  Same 14,050-cell cull, same namelist, 1,080 steps in two independent processes, 192 s and 183 s, all THIRTEEN published frames identical under masked digests (0 of 13 differing) and every whole-file digest differing on its own file_id (13 of 13).  What moved in the kernel set is measured rather than assumed: of the six kernels in the shared translation unit, only the two moist-coefficient kernels changed PTX at compute_120, and the regional step launches neither (evidence/door-species-20260901/regional-ptx-diff.txt).  "
+                "  Minted again 2026-09-01 at the kernel set the species-row generalization produced: cuda_driver.py and cuda_regional_forecast_v841.py both moved, so every class lapsed exactly as a whole-file digest is meant to make them.  Same 14,050-cell cull, same namelist, 1,080 steps in two independent processes, 192 s and 183 s, all THIRTEEN published frames identical under masked digests (0 of 13 differing) and every whole-file digest differing on its own file_id (13 of 13).  What moved in the kernel set is measured rather than assumed: of the six kernels in the shared translation unit, only the two moist-coefficient kernels changed PTX at compute_120, and the regional step launches neither (evidence/door-species-20260901/regional-ptx-diff.txt).  "
                 + _DRY_MINT_CAVEAT
             ),
         ),
@@ -975,7 +975,7 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 "gate afterwards and reproduced it.  All SEVEN published "
                 "history frames agree under masked digests across all four, "
                 "while every whole-file digest differs on its own file_id.  "
-                "RE-MINTED at the merged tip after the NVRTC "
+                "Minted again after the NVRTC "
                 "reciprocal-rewrite fix, which moved the third-order "
                 "stencil denominator off a source literal in both cuda_driver "
                 "and cuda_transport: the pre-fix pair is superseded.  ONE "
@@ -992,8 +992,8 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 "in SHIPPED_CONTRACTS and refuses a presented receipt, so it "
                 "cannot grow to cover a cull nobody looked at.  Measuring the "
                 "edge on a machine holding the reference mirror retires that "
-                "restriction.  RE-MINTED 2026-08-27 at the kernel set the "
-                "provenance scrub produced, on the same cull and the "
+                "restriction.  Minted again 2026-08-27 at the kernel set a "
+                "source-text clean-up produced, on the same cull and the "
                 "same CANDIDATE-REGIONAL-DRY namelist: 90 steps in two "
                 "independent processes, 13 s each on an RTX 5090, all SEVEN "
                 "published frames identical under masked digests and every "
@@ -1062,8 +1062,8 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 "beside it (18 % apart) and that the Courant admission "
                 "re-measures against the cull's own dcEdge regardless.  "
                 "The class of a 937.5 m limited-area cull of the registered "
-                "v0.9.120.110533 parent, the first sub-kilometre class this "
-                "program has minted: seven boundary rings, 55 levels, the "
+                "v0.9.120.110533 parent, the first sub-kilometre class "
+                "minted: seven boundary rings, 55 levels, the "
                 "cull's own finest edge of 869.251 m (the parent's, in the "
                 "same float64 bits), dt 5 s (a 6.259 s Courant limit at "
                 "125 m/s x 0.9, 1.252x), and this tree's regional kernel set "
@@ -1071,32 +1071,32 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 "independent processes ran 1,080 steps -- 1.5 forecast hours "
                 "from 2026-08-28_18:00:00, config_apply_lbcs=true, "
                 "config_len_disp 937.5 m, hourly GFS boundaries -- in 764 s "
-                "and 562 s on the RTX 5070 Ti of the proving node beside other "
-                "tenants (the first beside a 10.8 GiB one), and all THIRTEEN "
+                "and 562 s on an RTX 5070 Ti shared with other processes (the "
+                "first beside one holding 10.8 GiB), and all THIRTEEN "
                 "published history frames agree under masked digests while "
                 "every whole-file digest differs on its own file_id.  Minted "
                 "on the geometry it will run on, the 40,520-cell cull of the "
-                "speed ladder; the class inherits the graded-parent lane's "
-                "finding that the geometry is not in the key, and pays for "
+                "speed ladder; the class rests on the earlier graded-parent "
+                "measurement that the geometry is not in the key, and pays for "
                 "that inheritance with the cull's own contract deck below.  "
-                "RE-MINTED 2026-09-14 at the kernel set the step's host-path "
+                "Minted again 2026-09-14 at the kernel set the step's host-path "
                 "change produced (three host sources moved, no CUDA source "
                 "string): on the 43,884-cell 937.5 m point cull of a parent "
                 "generated at 41.95 N 94.79 W, HRRR 15Z init and hourly "
                 "boundaries, 720 steps of 5 s, the hostpath tree ran twice in "
-                "two processes on the proving RTX 5090 (215.3 s and "
+                "two processes on an RTX 5090 (215.3 s and "
                 "214.3 s of integration) and both history frames agree "
                 "byte for byte -- and agree byte for byte with the untouched "
                 "0.3.0 tree's run of the same hour in the same session, so the "
                 "kernel set moved and the published bytes did not; the cull's "
                 "own contract deck passed at this digest (8 of 8 bitwise, 22 "
                 "of 22 kernels, dual run identical).  "
-                "RE-MINTED 2026-09-14 at the kernel set the element-parallel "
+                "Minted again 2026-09-14 at the kernel set the element-parallel "
                 "launch geometry produced, landed together with the host-path "
                 "move (six CUDA-bearing sources moved, the per-element "
                 "arithmetic did not): on the same 43,884-cell point cull, "
                 "HRRR 15Z init and hourly boundaries, 2,160 steps of 5 s on "
-                "the proving RTX 5090 in one process (567.7 s of integration), "
+                "an RTX 5090 in one process (567.7 s of integration), "
                 "all four history frames agree byte for byte with the "
                 "untouched 0.3.0 tree's run of the same three hours and with "
                 "the integrated tree's; the cull's own contract deck passed at "
@@ -1130,7 +1130,7 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 "BAND 2026-09-13 (point door): the same-ladder band the "
                 "937.5 m class carries, for the same reason; the two bands do "
                 "not overlap.  "
-                "The finest class this program has minted: an 800 m limited-area "
+                "The finest class minted: an 800 m limited-area "
                 "cull of a generated 800 m parent, seven boundary rings, 55 "
                 "levels, the cull's own finest edge of 710.869 m, dt 5 s (a "
                 "5.118 s Courant limit at 125 m/s x 0.9, 1.024x, the tightest "
@@ -1139,12 +1139,12 @@ ADMITTED_CLASSES: Mapping[str, RegionalClass] = MappingProxyType(
                 "independent processes ran 1,080 steps -- 1.5 forecast hours "
                 "from 2026-08-28_18:00:00, config_apply_lbcs=true, "
                 "config_len_disp 800 m, hourly GFS boundaries -- in 697 s and "
-                "677 s on the proving node's NVIDIA GeForce RTX 5070 Ti, and all "
+                "677 s on an NVIDIA GeForce RTX 5070 Ti, and all "
                 "THIRTEEN published history frames agree under masked digests "
                 "while every whole-file digest differs on its own file_id.  "
                 "Minted on the geometry it will run on, the 56,619-cell cull of "
-                "the speed ladder; the class inherits the graded-parent lane's "
-                "finding that the geometry is not in the key, and pays for that "
+                "the speed ladder; the class rests on the earlier graded-parent "
+                "measurement that the geometry is not in the key, and pays for that "
                 "inheritance with the cull's own contract deck below.  "
                 + _DRY_MINT_CAVEAT
             ),
@@ -1311,7 +1311,7 @@ SHIPPED_CONTRACTS: Mapping[str, RegionalContract] = MappingProxyType(
                     "evidence/nest-ratio-20260827/anchors/d170/contract.json"
                 ),
                 basis=(
-                    "The gentlest boundary interface this program has run: "
+                    "The gentlest boundary interface hex has run: "
                     "15,755 cells, rings 14,208/240/239/229/225/217/205/192, "
                     "driven-ring cells 15.89 to 25.27 km wide, about 3.4:1 at "
                     "the interface.  8 of 8 decks bitwise on THIS cull's zone "
@@ -1347,8 +1347,8 @@ SHIPPED_CONTRACTS: Mapping[str, RegionalContract] = MappingProxyType(
                     "values compared as raw bit patterns (42 payloads), 22 of "
                     "22 declared kernels covered, dual-run stable across two "
                     "passes in one process, and every deck re-run with a "
-                    "deliberately wrong zone geometry FAILS.  468 s on the "
-                    "proving node's RTX 5070 Ti."
+                    "deliberately wrong zone geometry FAILS.  468 s on an "
+                    "RTX 5070 Ti."
                 ),
             ),
             RegionalContract(
@@ -1375,8 +1375,8 @@ SHIPPED_CONTRACTS: Mapping[str, RegionalContract] = MappingProxyType(
                     "compared as raw bit patterns (42 payloads), 22 of 22 "
                     "declared kernels covered, dual-run stable across two passes "
                     "in one process, and every deck re-run with a deliberately "
-                    "wrong zone geometry FAILS.  552 s on the "
-                    "proving node's NVIDIA GeForce RTX 5070 Ti."
+                    "wrong zone geometry FAILS.  552 s on an "
+                    "NVIDIA GeForce RTX 5070 Ti."
                 ),
             ),
         )

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """A region on a producer suite reads its geography before it fetches a source hour. No card, no network.
 
-THE BREAKAGE (a front-door run of the sealed 0.6.0 candidate, 2026-11-15): ``gpuwm-hex country --source icon
+THE BREAKAGE (a front-door run of a 0.6.0 build): ``gpuwm-hex country --source icon
 --forecast-arg=--physics-suite=hrrrv5`` on a machine whose geography held the door's own datasets but not the fork
 static's built the mesh and fetched and decoded seven ICON hours (186 s, 5.1 GB) before the init named the missing
 datasets (modis_landuse_20class_15s).
@@ -51,6 +51,18 @@ def test_a_missing_dataset_is_named_with_what_to_do(tmp_path):
     with pytest.raises(cold.RrfsInitError, match=r"lacks modis_landuse_20class_15s, which the fork static reads "
                                                  r".*gpuwm fetch-geog.*or point --geog at a root that has them"):
         door.refuse_producer_geog_missing(_args(geog), {"commands": {"producer_init": list(INIT)}})
+
+
+def test_the_missing_datasets_come_with_the_exact_command(tmp_path):
+    # 0.6.0 said "stage them with gpuwm fetch-geog": its default set leaves these two out, so a user who ran it
+    # met the same refusal again (seen with ArWen 3.0.3). The command must name them.
+    geog = _geog(tmp_path, leave_out=("modis_landuse_20class_15s", "lai_modis_30s"))
+    with pytest.raises(cold.RrfsInitError) as caught:
+        door.refuse_producer_geog_missing(_args(geog), {"commands": {"producer_init": list(INIT)}})
+    text = str(caught.value)
+    names = text.split(" lacks ", 1)[1].split(", which", 1)[0].split(", ")
+    assert set(names) >= {"modis_landuse_20class_15s"}
+    assert f"gpuwm fetch-geog --root {geog} --datasets {','.join(names)} " in text, text
 
 
 def test_the_chosen_deep_soil_dataset_is_the_one_read(tmp_path):

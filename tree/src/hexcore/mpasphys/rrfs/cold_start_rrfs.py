@@ -282,8 +282,9 @@ def refuse_missing_static_geog(row: Mapping[str, Any], geog: Path, deep_soil: st
     if missing:
         raise RrfsInitError(
             f"the WPS geography at {geog} lacks {', '.join(missing)}, which the fork static reads "
-            "(MODIS 15 s land use, BNU soils, MODIS LAI, the deep-soil temperature); stage them with gpuwm "
-            "fetch-geog (its default set builds soiltemp_era5_1deg from ERA5) or point --geog at a root that has them")
+            "(MODIS 15 s land use, BNU soils, MODIS LAI, the deep-soil temperature); stage them with "
+            f"gpuwm fetch-geog --root {geog} --datasets {','.join(missing)} (soiltemp_era5_1deg comes with "
+            "fetch-geog's default set, which builds it from ERA5) or point --geog at a root that has them")
 
 
 def static_job(row: Mapping[str, Any], *, grid: Path, geog: Path, out: Path, valid_time: str,

@@ -5544,7 +5544,7 @@
       "scheme": null,
       "backend": null,
       "reason": "fork native-defect correction inventory has not been qualified",
-      "owner": "RRFS integrator and fork scheme owners",
+      "owner": "hex RRFS fork physics ports (their correction inventory)",
       "breakage": "Applying v8.4.2 corrections without fork source and replay qualification would change the pinned v8.3.1/GSL behavior."
     }
   },
@@ -10466,7 +10466,7 @@
       "scheme": null,
       "backend": null,
       "reason": "fork native-defect correction inventory has not been qualified",
-      "owner": "RRFS integrator and fork scheme owners",
+      "owner": "hex RRFS fork physics ports (their correction inventory)",
       "breakage": "Applying v8.4.2 corrections without fork source and replay qualification would change the pinned v8.3.1/GSL behavior."
     },
     "route_default": ["hrrrv5"],

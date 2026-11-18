@@ -1,8 +1,17 @@
 # Hex global: one command
 
 ```
-gpuwm-hex global --row global-60km --cycle 2026-10-11T12 --work-dir RUN
+gpuwm fetch-geog      # once per machine: the geography every static needs
+gpuwm-hex global --row global-120km --cycle 2026-10-11T12 --work-dir RUN
 ```
+
+`--row` names any row of the table under *Rows*; the 120 km rows are the measured ones.
+
+The static stage builds the mesh's static on your machine, the published meshes' included, so it needs the
+geography archive. `gpuwm fetch-geog` stages it once (with gpuwm 3.0.3: 16 datasets, about 2.5 GiB to download and
+about 31.3 GiB unpacked, by default into `~/.local/share/gpuwm/WPS_GEOG`, where the static stage looks); `--geog DIR`
+names an archive you already have. Without either, the command stops at its static stage, exit 2, with "no geography
+root".
 
 `gpuwm-hex global` runs a whole global forecast from one row of
 `hexcore/data/global-runs.v1.json` and one cycle. It composes the doors this
@@ -131,6 +140,21 @@ was 7,853 MiB.
 At the 300 s step (the YSU arms' cap) the same day's forecast took 133 s of
 door time on the same card with a warm kernel cache (288 steps); the 263 s
 above included the first run's kernel compilation.
+
+The same row and cycle on one RTX 5090 (32 GB), from a fresh install in an empty
+home with a geography archive named with `--geog` (a 0.6.1 build, 17 Nov 2026): 4
+minutes for the whole command (mesh 7 s, static 27 s, init 48 s, forecast 128 s
+with the prebuilt kernel pack fetched, products 13 s, export 17 s). The command
+returns when the export is done and its last line says that scoring is still
+running; the scorer then works on the CPU (about 9 minutes fetching the globe's
+surface-station list, once, at the archive's pace; then the 25 hourly report
+windows one at a time), and the scorecard's status leaves QUEUED when it ends.
+On a later pre-release build of 0.6.1, same row, cycle and card, the scorer
+ended 26 minutes after the command returned and the run folder was 13 GB; on
+the same build from a fresh `[gpu]` install, after `gpuwm fetch-geog` and
+with no `--geog`, the command returned in 3 min 36 s with the mesh already
+cached from an earlier attempt (static 32 s, init 42 s, forecast 106 s,
+products 16 s, export 19 s).
 
 ## Export
 

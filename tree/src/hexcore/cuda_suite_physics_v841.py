@@ -1504,7 +1504,7 @@ class PersistentSuiteCudaPhysicsBackendV841(PersistentTwoPhaseCudaPhysicsBackend
         # engine's: polar columns flipped water/sea ice/glacier, the history
         # census refused, Noah-MP's glacier water budget failed and the next
         # move refused "carried ice volume has no carried ice area" (the storm
-        # hex storm-following, box M 2026-10-27). Prescribed runs keep the
+        # hex storm-following, 2026-10-27). Prescribed runs keep the
         # route's published ice owner.
         from .ocean_pwp import hex_owns_ice
         if hex_owns_ice() and self._constructor.selection.get("land_surface_scheme") == "noahmp":

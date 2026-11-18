@@ -980,7 +980,7 @@ _SHAPED_ROWS: dict[str, dict[str, Any]] = {
         "stack": "proof-2026-08",
         "provenance": (
             "two-point fit on the per-allocation ledger session measured "
-            "2026-08-26 on the proving RTX 5090 (170 SM) at the merged tip, "
+            "2026-08-26 on an RTX 5090 (170 SM) at the merged tip, "
             "hex 2009db7 + engine 26daaab7e: x1.40962 peaked 8,874.0 MiB and "
             "x4.163842 20,446.0 MiB, both by this process's nvidia-smi row.  "
             "The tiled-workspace terms are subtracted from both points BEFORE "
@@ -999,7 +999,7 @@ _SHAPED_ROWS: dict[str, dict[str, Any]] = {
         "stack": "proof-2026-08",
         "provenance": (
             "two-point fit on the per-allocation ledger session measured 2026-08-25 on "
-            "the proving RTX 5070 Ti (70 SM) at hex 5252421 + engine "
+            "an RTX 5070 Ti (70 SM) at hex 5252421 + engine "
             "26daaab7e: x1.40962 peaked 6,272.0 MiB and u96.64002 8,802.0 MiB.  "
             "NOT MEASURED AT THE MERGED TIP -- the core carries "
             "PIN_RESTATEMENT_BYTES (+484.0 MiB, what the tip moved x1 by on "
@@ -1021,7 +1021,7 @@ _SHAPED_ROWS: dict[str, dict[str, Any]] = {
         "stack": "proof-2026-08",
         "provenance": (
             "single-point core from the per-allocation ledger row measured 2026-08-25 on "
-            "the desktop RTX 3080 (68 SM, sm_86, WDDM) at hex 5252421 + engine "
+            "an RTX 3080 driving a Windows desktop (68 SM, sm_86, WDDM) at hex 5252421 + engine "
             "26daaab7e: x1.40962 peaked 6,340.5 MiB device-view.  WDDM "
             "publishes no per-process row, so that figure INCLUDES the "
             "desktop's 1,142.5 MiB run-start baseline and the baseline is "
@@ -1048,7 +1048,7 @@ _SHAPED_ROWS: dict[str, dict[str, Any]] = {
             "ENVELOPE, NOT A FIT.  The per-allocation instrument has never "
             "been run on a regional mesh, so this core is the LARGEST residue "
             "(peak minus tiled terms minus slope*cells) over the five "
-            "concentric culls measured 2026-08-27 on the proving RTX 5090, "
+            "concentric culls measured 2026-08-27 on an RTX 5090, "
             "all 1,080 steps of full physics at dt 20 s through "
             "`gpuwm-hex forecast --lbc-dir`, whole-device sampler on an idle "
             "card: r4.75.4440 5,552 MiB, r4.75.7975 7,336, r4.75.11020 7,670, "
@@ -1115,7 +1115,7 @@ SHAPED_ROWS: Mapping[str, Mapping[str, Any]] = MappingProxyType(
 #: 24,832.6 MiB the 170 SM row predicted, so a card with 26.6 GB free was
 #: admitted into an out-of-memory.
 #:
-#: MEASURED 2026-10-16 on the proving RTX 5090 (170 SM), route A
+#: MEASURED 2026-10-16 on an RTX 5090 (170 SM), route A
 #: (default ArWen physics) through the bare forecast door, one hour each, the
 #: run's own nvidia-smi row sampled every 500 ms, the same inputs and card for
 #: both arms:
@@ -2037,7 +2037,7 @@ RETIRED_ROW_20260825 = FootprintModel(
     fixed_bytes=4339.1 * MIB,
     bytes_per_cell=103_696.0,
     provenance=(
-        "RETIRED 2026-08-26.  Measured 2026-08-25 on the proving RTX 5090 "
+        "RETIRED 2026-08-26.  Measured 2026-08-25 on an RTX 5090 "
         "(170 SM) at the converged seam pin, hex 7fe514b + engine 26daaab7e, "
         "both published meshes in one per-allocation ledger session; "
         "evidence/pin-move-335-20260825/.  Superseded by the merged-tip "
@@ -2071,7 +2071,7 @@ RETIRED_AFFINE_ROW_20260826 = FootprintModel(
     fixed_bytes=5016.5 * MIB,
     bytes_per_cell=98_748.0,
     provenance=(
-        "RETIRED 2026-08-27.  Measured 2026-08-26 on the proving RTX 5090 "
+        "RETIRED 2026-08-27.  Measured 2026-08-26 on an RTX 5090 "
         "(170 SM) at the merged tip, hex 2009db7 + engine 26daaab7e, both "
         "published meshes in one per-allocation ledger session -- the same session this "
         "module's global/170sm core is fitted from.  Retired for SHAPE, not "

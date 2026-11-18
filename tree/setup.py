@@ -127,6 +127,10 @@ def engine_source() -> Path | None:
                  if (engine / "tools/rustwx/vendor/netcrust/Cargo.toml").is_file()), None)
 
 
+#: Example folders under examples/ that every wheel carries (hexcore.examples_door.SETS names the same ones).
+EXAMPLE_SETS = ("differentiable",)
+
+
 class BuildPy(build_py):
 
     @staticmethod
@@ -165,6 +169,15 @@ class BuildPy(build_py):
                   "helpers) are skipped; build a wheel to get them", file=sys.stderr)
             return
         root = Path(__file__).parent
+        # The runnable examples go into the wheel as hexcore/examples/ (`gpuwm-hex examples` prints or copies them).
+        # THE BREAKAGE THIS PREVENTS (0.6.0, a fresh install from the published files): the pages pointed at examples/differentiable/
+        # and `pip install` placed none of it.  One copy in the tree (examples/), carried by both archives.
+        import shutil
+        for name in EXAMPLE_SETS:
+            source, target = root / "examples" / name, Path(self.build_lib) / "hexcore/examples" / name
+            if target.exists():
+                shutil.rmtree(target)
+            shutil.copytree(source, target, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
         module = ast.parse((root / "src/hexcore/cuda_backend/regional_admission.py").read_text())
         assignment = next(node for node in module.body if
                           (isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
@@ -851,7 +864,7 @@ FETCHED_BRIDGES = "rust/engine-bridges-fetched"
 def fetch_pinned_bridges(root: Path, pins: dict) -> list[Path] | None:
     """The pinned bridges from the release ``engine-bridges.json`` names, each checked against its SHA-256.
 
-    THE BREAKAGE THIS PREVENTS (hex 0.6.0 candidate, 2026-11-11): a wheel built
+    THE BREAKAGE THIS PREVENTS (a hex 0.6.0 build, 2026-11-11): a wheel built
     from source with neither GPUWM_HEX_ENGINE_BRIDGES nor a gpuwm checkout
     (``pip install "<source>[ad]"`` on a GPU box) bundled none of the nine
     bridges, so a door ``--init`` run could not make its forecast from that wheel

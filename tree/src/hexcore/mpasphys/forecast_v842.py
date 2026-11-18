@@ -484,7 +484,7 @@ def _native_route(arguments: Any, *, default_mode: str = 'exact'):
     mode = dict(physics_mode=physics_mode, correct_skip=correct_skip)
     config = route_namelist(text, **mode) if text.strip() else None
     # A run with no MPAS suite route goes to the ArWen door, which reads the same --physics-mode and
-    # --physics-correct-skip (hexcore.correct_mode, lane H1): its corrections are the engine's (WB4, WB5),
+    # --physics-correct-skip (hexcore.correct_mode): its corrections are the engine's (WB4, WB5),
     # and one the engine cannot apply is a named gap in that run's receipt, never a refusal.  Only a mode
     # written in the namelist's &nhyd_model is refused there, because the ArWen door never reads it.
     if config is None and namelist_mode not in (None, 'exact'):
@@ -860,9 +860,9 @@ def bind_limited_area(arguments: Any, text: str) -> str:
     # the scalar halo round native issues before atm_bdy_adjust_scalars wraps the rank's boundary adjust
     # (samehost_v842.SameHostRankExecution.bind_dycore), as the ArWen route's regional ranks do.  IAU is admitted
     # on one card: its increment is held on the padded extent and the stage-density wrapper is carried onto the
-    # regional dycore (guide/l11-regional-iau; the RRFS fork's regional constructor takes it too, fix/hex-lam-da-v842);
+    # regional dycore (the RRFS fork's regional constructor takes it too);
     # a same-host rank's regional dycore does not take that wrapper yet.
-    # The JEDI hand-off is admitted (fix/hex-lam-da-v842): the background is the native pools on the solve cells
+    # The JEDI hand-off is admitted: the background is the native pools on the solve cells
     # (cycling_v842.background_fields strips the garbage element), the analysis is recoupled on the culled mesh
     # (allow_regional_sentinels) and the regional dycore opens on it at the analysis time, so its boundary series,
     # relaxation zone and boundary tendencies are the straight run's (state_at is a function of the clock and the
@@ -1340,7 +1340,7 @@ def run_forecast(arguments: Any, config: Any, text: str) -> int:
         # hooks); a second, fixed --lbc-dir series would drive a zone that no longer sits where the files were cut.
         # A checkpoint, restart or DA analysis on the run's own fixed mesh (--checkpoint-hours, --restart-from,
         # --da-analysis with no GPUWM_HEX_MOVING_* switch) is not a move: its zone sits where the files were cut, and
-        # the regional dycore re-reads the bracketing lbc files at the resume time (fix/hex-lam-da-v842).
+        # the regional dycore re-reads the bracketing lbc files at the resume time.
         raise ValueError('a moving region on the MPAS suite route takes its boundary from the move hooks; drop --lbc-dir')
     text = bind_init_start(text, getattr(arguments, 'init', None))
     from ..stage_timing import stage

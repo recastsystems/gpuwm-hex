@@ -1129,6 +1129,7 @@ def run_global(args: argparse.Namespace) -> int:
             _write_receipt(work, receipt)
             return 0
         live_receipt = None  # the first look's live-frames.json: the products pass skips the hours it rendered
+        scoring = None       # door_scorecard's answer: the last line says whether the scorer has finished
         for name in stages:
             started = time.monotonic()
             if name == "mesh":
@@ -1142,7 +1143,7 @@ def run_global(args: argparse.Namespace) -> int:
                     continue
                 if name == "score":
                     from .observation_scorecard import door_scorecard
-                    joined = door_scorecard(value["paths"]["forecast"], score_config)
+                    joined = scoring = door_scorecard(value["paths"]["forecast"], score_config)
                     if joined is not None:
                         status.skip("score", joined["note"])
                         receipt["stages"][name] = {**joined, "seconds": round(time.monotonic() - started, 1)}
@@ -1178,15 +1179,17 @@ def run_global(args: argparse.Namespace) -> int:
                     result["card_given_back"] = gpu_work_done(env)
                     if "score" in stages:
                         from .observation_scorecard import door_scorecard
-                        result["observation_scoring"] = door_scorecard(value["paths"]["forecast"], score_config)
+                        result["observation_scoring"] = scoring = door_scorecard(value["paths"]["forecast"], score_config)
                 if rc != 0:
                     receipt["stages"][name] = {**result, "seconds": round(time.monotonic() - started, 1)}
                     status.failed(f"the {name} stage exited {rc}")
                     _write_receipt(work, receipt)
                     return rc
             receipt["stages"][name] = {**result, "seconds": round(time.monotonic() - started, 1)}
-        status.done(f"{value['row']['id']} {value['cycle']}: {', '.join(stages)}")
+        from .observation_scorecard import say_scoring, stages_done_text
+        status.done(f"{value['row']['id']} {value['cycle']}: {stages_done_text(stages, scoring)}")
         _write_receipt(work, receipt)
+        say_scoring("global", stages, scoring)   # the terminal's last line: still running, or the scorecard's status
         return 0
     except MpasPortError as error:
         status.refused(str(error))
@@ -1202,15 +1205,20 @@ def run_global(args: argparse.Namespace) -> int:
 
 def _ran_physics(path: Path) -> dict[str, Any] | None:
     """The suite and mode the forecast stage ran, from its own receipt (None until it writes one).
-    No ``configuration.physics_mode`` block means exact: the forecast door records it only for correct."""
+
+    The ArWen route's door receipt records the mode under ``configuration.physics_mode`` (only for correct); the MPAS
+    suite route's record keeps it at ``physics.physics_mode``. Neither means exact.
+    THE BREAKAGE THIS PREVENTS: a correct-mode global run on an MPAS suite wrote ``"ran": {"mode": "exact"}`` into
+    global-receipt.json, because only the ArWen route's key was read."""
 
     try:
         forecast = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+    physics = forecast.get("physics") or {}
     block = (forecast.get("configuration") or {}).get("physics_mode") or {}
-    return {"suite": (forecast.get("physics") or {}).get("suite") or "arwen",
-            "mode": block.get("physics.mode", "exact")}
+    mode = block.get("physics.mode") or physics.get("physics_mode") or "exact"
+    return {"suite": physics.get("suite") or "arwen", "mode": mode}
 
 
 def _write_receipt(work: Path, receipt: Mapping[str, Any]) -> None:

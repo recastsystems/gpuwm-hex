@@ -36,7 +36,7 @@ def dated_plan(tmp_path, monkeypatch):
 
 def test_an_answers_valid_time_comes_from_the_plans_kept_facts_not_a_parse_of_plan_json(dated_plan):
     """THE BREAKAGE: every answer parsed the whole plan.json (708 MB at the 3 km box: 3.4 s and 4,271 MiB of host
-    memory on a home machine) to read one date, in no named stage (2026-11-14)."""
+    memory on one machine) to read one date, in no named stage (2026-11-14)."""
     fmap = SimpleNamespace(doc={}, source=dated_plan.plan / "alloc-map.json")
     assert d._valid_time(fmap, 0, 15.0) == "2023-03-31T18:00:00"
     assert d._valid_time(fmap, 4, 15.0) == "2023-03-31T18:01:00"

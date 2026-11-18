@@ -132,8 +132,8 @@ def door_steps(row: dict, door: str | None, args: argparse.Namespace | None = No
 
     THE BREAKAGE THIS PREVENTS: the shipped 120 km example's adjoint-test ran the row's 3-step (36 minute) window, over
     which the real model's change per unit step moves 1 to 6 per cent between neighbouring step sizes, more than the
-    0.01 bar: a working install printed NOT PASSED (UNRESOLVED), 1 of 8 directions resolved, and exited 1 (box E leg
-    sx-at120, 15 Nov). The test window is the door's own; tangent, sensitivity and param-grad keep the row's."""
+    0.01 bar: a working install printed NOT PASSED (UNRESOLVED), 1 of 8 directions resolved, and exited 1 (one 96 GB card,
+    15 Nov 2026). The test window is the door's own; tangent, sensitivity and param-grad keep the row's."""
     given = getattr(args, "steps", None) if args is not None else None
     if given:
         return int(given)
@@ -147,10 +147,10 @@ def adjoint_test_taylor_h(spec_at: dict, row: dict) -> list[float]:
     THE BREAKAGE THIS PREVENTS: on the 120 km example the table's ladder (1, 0.3, 0.1, 0.03, 0.01) puts neighbouring
     sizes a factor of three apart, and the real model's roughness moves the change per unit step by about 1 per cent
     over such a run of three: a direction that agreed with the gradient to 1.0e-04 at a size that counts was still
-    printed UNRESOLVED (1.0e-04 plus a spread of 1.04e-02 over the 0.01 bar; box E leg sx-f10, 15 Nov). On the 3 km
+    printed UNRESOLVED (1.0e-04 plus a spread of 1.04e-02 over the 0.01 bar; 15 Nov 2026). On the 3 km
     example the table's smallest size moves the measure by only 5.4 single-precision spacings of it, so the descent
-    direction read 1.0044 there and the command printed UNRESOLVED on an install whose bump read inside (box V71 leg
-    f52-d56v-must1 at3, 16 Nov); that row's ladder stops at 0.03."""
+    direction read 1.0044 there and the command printed UNRESOLVED on an install whose bump read inside (16 Nov
+    2026); that row's ladder stops at 0.03."""
     return [float(h) for h in (row.get("adjoint_test_taylor_h") or spec_at["taylor_h"])]
 
 
@@ -271,7 +271,7 @@ def refuse_steps_beyond_example(row_name: str, row: dict, steps: int, args: argp
 
     THE BREAKAGE THIS PREVENTS: ``adjoint-test --steps 12`` on the 120 km example (recorded for 4 steps, a 3-step
     window) downloaded the example (2.4 GB) and then stopped in the runner with "physics step count or single-stream
-    plan is invalid" (the dist47 checker's fresh install). And ``--steps 0`` ran the row's default window."""
+    plan is invalid" (a fresh install of a 0.6.0 build). And ``--steps 0`` ran the row's default window."""
     if getattr(args, "steps", None) is not None and int(args.steps) < 1:
         raise AdDoorError(f"--steps {args.steps}: a window has at least 1 step. Nothing was downloaded")
     if getattr(args, "plan", None) is not None or getattr(args, "init", None) is not None:
@@ -1194,8 +1194,8 @@ def refuse_off_mesh(table: dict, row_name: str, row: dict, args: argparse.Namesp
     a bump level the row does not have, and a metric region that holds no cell, from the mesh file alone.
 
     THE BREAKAGE THIS PREVENTS: ``adjoint-test --at 10,-150`` on the 12 km cut fetched every file of the example
-    (1.19 GB, 3.3 GB unpacked) and only then said "the perturbation is zero on every cell of this mesh" (the dist48
-    checker: 26.5 s from a local folder); the mesh that answers it is a 2 MB file. The same checks after the
+    (1.19 GB, 3.3 GB unpacked) and only then said "the perturbation is zero on every cell of this mesh" (a 0.6.0
+    build: 26.5 s from a local folder); the mesh that answers it is a 2 MB file. The same checks after the
     downloads (theta_direction, refuse_zero_direction, select_cells) stay for a plan or grid given by hand."""
     import numpy as np
     if geometry is None:
@@ -1279,9 +1279,9 @@ def refuse_no_local_gpu() -> None:
 def refuse_hidden_card() -> None:
     """CUDA reads an empty CUDA_VISIBLE_DEVICES (or one that starts with -1) as "no card": a runner is not started on
     a card the caller hid. THE BREAKAGE THIS PREVENTS: the door read the empty word as card 0 and started the runner
-    with CUDA_VISIBLE_DEVICES=0, so a command run with every card hidden ran its windows on card 0 (the release
-    train's no-card dry run on a test host, 2026-11-16 08:05Z: three 12 km windows on the RTX 5090; the independent
-    checker saw "card 0 has 8875 MiB free" with the cards hidden)."""
+    with CUDA_VISIBLE_DEVICES=0, so a command run with every card hidden ran its windows on card 0 (a no-card
+    dry run of a 0.6.1 build: three 12 km windows on an RTX 5090; a second
+    run saw "card 0 has 8875 MiB free" with the cards hidden)."""
     hidden = os.environ.get("CUDA_VISIBLE_DEVICES")
     if hidden is not None and (not hidden.strip() or hidden.strip().startswith("-")):
         raise AdDoorError(f"no card is visible to this command: CUDA_VISIBLE_DEVICES={hidden!r} names none, so the "
@@ -1528,8 +1528,8 @@ def store_need(row: dict, steps: int, available: int | None, line_on: bool,
     # the second, which took the kept forward; the 59-step program, whose two do not fit under the budget together,
     # held 213,650 and 213,687 MiB).
     # THE BREAKAGE THIS PREVENTS: a later 12-step command that attached and took the kept forward held 182,879 MiB
-    # of host memory where the command had stated and been admitted on 168,733 MiB (the build before's card job,
-    # 2026-11-14, leg att2b).
+    # of host memory where the command had stated and been admitted on 168,733 MiB (a 0.6.0 build's card job,
+    # 2026-11-14).
     kept_again = kept_fwd if kept_fwd and cap > 0 and store + kept_fwd <= cap else 0
     if kept_fwd:
         how += (f"; the forward kept for the next gradient of the same forecast: {kept - 1} more states "
@@ -2007,8 +2007,8 @@ class QuietWatch:
     """Says, with the time, when a window's runner has written nothing for QUIET_S seconds: where its log stopped,
     how busy the card is and the memory the runner holds. It does not stop the runner.
 
-    THE BREAKAGE THIS ANSWERS: the dist47 checker's first adjoint-test on the 12 km cut stopped writing in its third
-    window (backward step 12), held the card and kept a processor busy for ten minutes until the checker's own time
+    THE BREAKAGE THIS ANSWERS: a 0.6.0 build's first adjoint-test on the 12 km cut stopped writing in its third
+    window (backward step 12), held the card and kept a processor busy for ten minutes until the caller's own time
     limit ended it; the door printed nothing in that time, and a rerun passed the same window in 73 s. A user saw a
     command that had gone silent, with no word of where or for how long."""
 
@@ -2121,7 +2121,7 @@ def mesh_coordinates(geometry: dict | None, grids=("cell", "interface", "edge"))
     """The latitude and longitude of the mesh's cell centres (and edge midpoints, when the mesh file has them), in
     degrees, as ``write_mesh_fields`` coordinates: {name: (values, units, long_name, standard_name, grid)}.
     THE BREAKAGE THIS PREVENTS: sensitivity.nc held the gradient on cell and edge numbers only, so a user had to find
-    the row's mesh file in the cache to place it (independent checker, 2026-11-15)."""
+    the row's mesh file in the cache to place it (a 0.6.0 build, 2026-11-15)."""
     import numpy as np
     if not geometry:
         return {}
@@ -2239,7 +2239,7 @@ def map_choice(objective: dict, g_theta, g_qv, units: str, asked_level: int | No
     own start field's gradient is in sensitivity.nc). The level is --map-level, else the level that carries most of
     the drawn field (map_level); the line names the measure's own levels beside it.
     THE BREAKAGE THIS PREVENTS: the map of a --metric qv measure over levels 1-5 showed dJ/dtheta at level 12, and
-    nothing on the screen said which field or why that level (independent checker, 2026-11-15)."""
+    nothing on the screen said which field or why that level (a 0.6.0 build, 2026-11-15)."""
     field = objective.get("field") or objective.get("metric") or "theta"
     if field == "qv":
         variable, values, start, shown = "dJ_dqv", g_qv, "initial water vapour (qv)", f"{units}/(kg/kg)"
@@ -2734,7 +2734,7 @@ class Context:
             # card's family and whole size, a row the pinned downloads lack, no plan, --init without the recorder,
             # an unknown metric, the wrong Python or a missing extra, a bump or region off the mesh); then what is
             # free on this machine at this moment (card memory, host memory, disk, /dev/shm).
-            # THE BREAKAGE THIS PREVENTS (the 0.6.0 candidate's checker on a shared card, 2026-11-15): with a
+            # THE BREAKAGE THIS PREVENTS (a 0.6.0 build on a shared card, 2026-11-15): with a
             # busy card (25 GB free) and a busy host (27 GB available) a Python 3.12 install, an install without the
             # ad extra and a bump off the mesh were each first told to free the card or the host; the user frees a
             # card, runs again, and only then learns the install or the command was wrong.
@@ -3471,7 +3471,6 @@ def run_tangent(args: argparse.Namespace) -> int:
     plant_request(args, load_table(), "tangent")   # a planting word in the environment: refused before any download
     route = gradient_route(args, "tangent")   # a coarse mesh is refused by name here
     refuse_speed_words(args, load_table())    # a route the row does not offer: refused before any download
-    say_storm_measures(load_table(), args, "tangent", [getattr(args, "metric", None)])
     ctx = Context(args, "tangent")
     ctx.gradient_route = route
     import numpy as np
@@ -4212,11 +4211,19 @@ def settled_rows(hs: list, values: list, factor: float = SETTLE_FACTOR) -> tuple
     return kept, aside
 
 
-def adjoint_verdict(doc: dict, thresholds: dict) -> dict:
-    """The three numbers (dot, FD, Taylor) and the zero pass from one window receipt."""
+def adjoint_verdict(doc: dict, thresholds: dict, probe: float | None = None) -> dict:
+    """The three numbers (dot, FD, Taylor) and the zero pass from one window receipt.
+
+    With ``probe`` (a storm measure; roughness_view) the FD and Taylor checks read the centred step sizes whose
+    roughness bound is at most half their bar; with none such, each check is UNRESOLVED (``unresolved``: neither a
+    pass nor a failure; the command cannot then pass)."""
+    doc, rough = roughness_view(doc, probe)
     td = doc.get("tangent_dir") or {}
     taylor = doc.get("taylor") or {}
     rows = sorted((r for r in taylor.get("rows", []) if "err" in r), key=lambda r: -r["h"])
+    all_rows = rows
+    if rough:   # only the step sizes the roughness lets the checks read
+        rows = [r for r in rows if rough_counts(r, min(thresholds["fd_tangent_err"], thresholds["taylor_best_err"]))]
     w_mx = td.get("w_Mx")
     dot = td.get("rel")
     hs = [r["h"] for r in rows]
@@ -4247,15 +4254,22 @@ def adjoint_verdict(doc: dict, thresholds: dict) -> dict:
                  "pass": zero is not None and zero <= thresholds["zero_nonzero_words"],
                  "what": "nonzero tangent words after the whole window from x = 0"},
     }
+    if rough and not rows:   # the roughness reads over half the bar at every step size: not a reading either way
+        for key in ("fd", "taylor"):
+            checks[key].update(unresolved=True, why=(
+                f"the forecast's own roughness (a nudge of {rough['probe_h']:g} moved the measure by "
+                f"{rough['floor']:.2e}) moves the ratio by more than half the bar at every step size"))
     def field(r: dict) -> dict:
         # the metric field at the window end, word by word: the real model's difference quotient against the tangent
         f = (r.get("state_fields") or [{}])[0]
         return {"field_fd_minus_tl_rel_l2": f.get("fd_minus_tl_rel_l2"), "field_fd_tl_cos": f.get("fd_tl_cos"),
                 "field_changed_words": f.get("changed_words")}
 
-    return {"checks": checks, "passed": all(c["pass"] for c in checks.values()),
+    return {"checks": checks, "passed": all(c["pass"] or c.get("unresolved") for c in checks.values()),
+            **({"roughness": rough} if rough else {}),
             "taylor_rows": [{"h": r["h"], "fd_quotient": r["fd_quotient"], "ratio": r["ratio"], "err": r["err"],
-                             **field(r)} for r in rows], "w_Mx": w_mx, "x_MTw": td.get("x_MTw"),
+                             **({"noise": r.get("noise"), "centred": True} if rough else {}),
+                             **field(r)} for r in all_rows], "w_Mx": w_mx, "x_MTw": td.get("x_MTw"),
             "taylor_rows_what": "per step size h (the bump is h times the perturbation): err = |dJ / (h <x, M^T w>) "
                                 "- 1| on the scalar metric; field_fd_minus_tl_rel_l2 = |FD - TL| / |TL| over the "
                                 "whole metric field at the window end (FD = the real model's difference quotient). "
@@ -4529,6 +4543,22 @@ def steady_steps(rows: list[dict], within: float, run: int) -> tuple | None:
     return best
 
 
+def storm_measure_probe(table: dict, args: argparse.Namespace) -> float | None:
+    """The roughness probe step of a storm measure (table storm_measures.probe_h) for adjoint-test's --metric, else
+    None (every other measure is read as before, one-sided)."""
+    block = table.get("storm_measures") or {}
+    if getattr(args, "metric", None) in (block.get("metrics") or []) and block.get("probe_h"):
+        return float(block["probe_h"])
+    return None
+
+
+def storm_taylor_h(ladder: list, probe: float, own: list | None = None) -> list[float]:
+    """A storm measure's step sizes: the row's storm ladder (table storm_measures.taylor_h.<row>, else the row's
+    adjoint-test ladder) at both signs, and the probe at both signs."""
+    pos = [abs(float(h)) for h in (own or ladder) if float(h) != 0.0]
+    return pos + [probe, -probe] + [-h for h in reversed(pos)]
+
+
 def storm_measure_lines(table: dict, args: argparse.Namespace, door: str, metrics: list) -> list[str]:
     """The table's measured line for a storm measure (``storm_measures``: rain water, cloud water, vertical velocity)
     on the row this command names, printed before anything runs or is downloaded.
@@ -4560,7 +4590,66 @@ def say_storm_measures(table: dict, args: argparse.Namespace, door: str, metrics
         print(line, flush=True)
 
 
-def direction_reading(doc: dict, bar: float, within: float, run: int) -> dict:
+def roughness_view(doc: dict, probe: float | None) -> tuple[dict, dict | None]:
+    """A window receipt read against the forecast's own roughness: (the receipt with its Taylor rows centred, the
+    roughness), or (the receipt unchanged, None) when ``probe`` is None or the window ran no probe step.
+
+    The probe rows are the step sizes of magnitude at most ``probe`` (both signs). The gradient predicts a change of
+    the measure of ``probe`` times its directional derivative there, far below one rounding of any field, so what
+    they read is the forecast's own reaction to a nudge: its roughness, ``floor`` = the largest |dJ| of a probe row.
+    Every other step size is read centred, (dJ(+h) - dJ(-h)) / 2 (which cancels the curvature and the part of the
+    roughness both signs share), and carries ``noise`` = floor / (h |prediction per unit step|): how far the
+    roughness alone can move its ratio. A step size run at one sign only is left out.
+
+    THE BREAKAGE THIS PREVENTS: on the 12 km example's storm band a rain-water measure printed FAIL (the first
+    window's finite-difference check 0.118 against 0.01) and the ratios 0.40 to 2.93 below a step of 0.03, read as a
+    wrong gradient. A rerun at step 0 is byte-equal to the base, but a nudge of 1e-06 of the 1 K bump moved the mean
+    rain by -7.6e-08 and +3.0e-08 kg/kg, 13,000 times the gradient's prediction for it, and 1e-04 by -5.5e-08: the
+    rain field reacts to a one-rounding change of the start, and that floor equals the linear signal near a step of
+    0.01. Centred, the steps 0.1 to 0.003 read 0.99 to 1.04 of the gradient; no step size can read it to 1 per cent
+    (one RTX 5090, 0.6.0's wheel, 16 Nov 2026). The floor is a lower bound (a larger step flips more switches:
+    over 5 steps the 12 km updraft bump moved 8 per cent at step 0.1 where it read 0.3 per cent), so the steady
+    rule of direction_reading still applies to the rows it lets count."""
+    if not probe:
+        return doc, None
+    td = doc.get("tangent_dir") or {}
+    pred = td.get("x_MTw")
+    pred = float(pred) if isinstance(pred, (int, float)) and math.isfinite(pred) and pred != 0.0 else None
+    num = lambda v: float(v) if isinstance(v, (int, float)) and math.isfinite(v) else None
+    rows = [r for r in (doc.get("taylor") or {}).get("rows", []) if num(r.get("h")) and num(r.get("dJ")) is not None]
+    probes = [r for r in rows if abs(float(r["h"])) <= probe * (1 + 1e-9)]
+    if not probes:
+        return doc, None
+    floor = max(abs(float(r["dJ"])) for r in probes)
+    by_h = {float(r["h"]): r for r in rows if abs(float(r["h"])) > probe * (1 + 1e-9)}
+    out = []
+    for h in sorted({abs(x) for x in by_h}, reverse=True):
+        plus, minus = by_h.get(h), by_h.get(-h)
+        if plus is None or minus is None:
+            continue
+        dj = (float(plus["dJ"]) - float(minus["dJ"])) / 2.0
+        ratio = None if pred is None else dj / (h * pred)
+        row = {"h": h, "dJ": dj, "fd_quotient": dj / h, "ratio": ratio,
+               "err": None if ratio is None else abs(ratio - 1.0), "centred": True,
+               "noise": None if pred is None else floor / (h * abs(pred)),
+               "one_sided_ratio": [num(plus.get("ratio")), num(minus.get("ratio"))]}
+        if plus.get("state_fields"):
+            row["state_fields"] = plus["state_fields"]
+        out.append(row)
+    view = dict(doc)
+    view["taylor"] = {**(doc.get("taylor") or {}), "rows": out}
+    return view, {"probe_h": probe, "floor": floor, "probe_dJ": [[float(r["h"]), float(r["dJ"])] for r in probes],
+                  "predicted_per_unit_h": pred,
+                  "floor_over_prediction_at_largest_h": (None if pred is None or not out
+                                                         else floor / (out[0]["h"] * abs(pred)))}
+
+
+def rough_counts(row: dict, bar: float) -> bool:
+    """A centred step size counts only where the roughness alone moves its ratio by at most half the bar."""
+    return row.get("noise") is None or row["noise"] <= bar / 2.0
+
+
+def direction_reading(doc: dict, bar: float, within: float, run: int, probe: float | None = None) -> dict:
     """What one direction's window says of the gradient: per step size the real model's change of the measure over
     the gradient's prediction (ratio), and the direction's verdict:
 
@@ -4576,7 +4665,11 @@ def direction_reading(doc: dict, bar: float, within: float, run: int) -> dict:
     near-ground moisture direction, 0.850, 0.881 and 0.882 at h = 0.3, 0.1 and 0.03 (agreeing within 3.6 per cent)
     and 0.966 at h = 0.01, where the measure's change was 2.6e-05 K, the last digits of a float32 mean near 300 K;
     that step size still agreed with its neighbours within the steady bound (8.8 per cent), so a gradient 12 per
-    cent off was printed UNRESOLVED, which fails no verdict."""
+    cent off was printed UNRESOLVED, which fails no verdict.
+
+    With ``probe`` (a storm measure) the rows are read centred against the forecast's roughness (roughness_view): a
+    step size whose roughness bound is over half the bar does not count, and its spread is at least that bound."""
+    doc, rough = roughness_view(doc, probe)
     td = doc.get("tangent_dir") or {}
     num = lambda v: float(v) if isinstance(v, (int, float)) and math.isfinite(v) else None
     predicted = num(td.get("x_MTw"))
@@ -4589,8 +4682,17 @@ def direction_reading(doc: dict, bar: float, within: float, run: int) -> dict:
         ratio = num(r.get("ratio"))
         if ratio is None and predicted:
             ratio = dj / (h * predicted)
-        rows.append({"h": h, "dJ": dj, "ratio": ratio, "err": None if ratio is None else abs(ratio - 1.0)})
+        rows.append({"h": h, "dJ": dj, "ratio": ratio, "err": None if ratio is None else abs(ratio - 1.0),
+                     **({"noise": r.get("noise"), "one_sided_ratio": r.get("one_sided_ratio")} if rough else {})})
     best = steady_steps(rows, within, run)
+    if rough:   # the roughness bound: a step size it can move by more than half the bar does not count
+        for r in rows:
+            if r["counts"] and not rough_counts(r, bar):
+                r["counts"] = False
+            if r["counts"] and r.get("noise") is not None:
+                r["spread"] = max(r["spread"] or 0.0, r["noise"])
+        if best is not None and not any(r["counts"] for r in best[1]):
+            best = None
     steadiest = [] if best is None else best[1]
     counted = [r for r in rows if r["counts"]]
     judged = [r for r in counted if r["err"] is not None]
@@ -4608,13 +4710,18 @@ def direction_reading(doc: dict, bar: float, within: float, run: int) -> dict:
         status = "unresolved"
         value = min((r["err"] for r in (steadiest or judged) if r["err"] is not None), default=None)
         why = (f"fewer than {run} step sizes: whether the real change is steady cannot be read" if len(rows) < run
-               else f"the real change is not steady over any {run} neighbouring step sizes (within {within:g}): "
-                    "the measure changes less than the forecast's own roughness along this direction"
+               and not rough else
+               (f"the forecast's own roughness (a nudge of {rough['probe_h']:g} moves the measure by "
+                f"{rough['floor']:.2e}) moves the ratio by more than half the bar at every step size "
+                f"({rows[0]['noise']:.2g} at the largest, centred on both signs)")
+               if rough and rows and not counted and rows[0].get("noise") is not None else
+               f"the real change is not steady over any {run} neighbouring step sizes (within {within:g}): "
+               "the measure changes less than the forecast's own roughness along this direction"
                if not counted else
                "the steadiest step sizes read within their own spread of the bar on either side")
     return {"status": status, "value": value, "bar": bar, "why": why, "rows": rows,
             "predicted_per_unit_h": predicted, "w_Mx": num(td.get("w_Mx")), "dot_rel": num(td.get("rel")),
-            "steady_within": within, "steady_steps": run}
+            "steady_within": within, "steady_steps": run, **({"roughness": rough} if rough else {})}
 
 
 def directions_verdict(directions: list[dict], checks_passed: bool, rule: dict) -> dict:
@@ -4676,13 +4783,13 @@ def failed_checks(checks: dict) -> list[str]:
     """The checks of an adjoint-test verdict that failed, each named with its own reading and bar, the whole-state
     dot last. THE BREAKAGE THIS PREVENTS: a seeded run whose only failure was the whole-state dot ended "FAIL: a check
     of the first window or the whole-state dot failed; a window was not a valid derivative", which did not say which
-    check failed, and blamed the windows, which were valid (independent checker, seed 3, 2026-11-15)."""
+    check failed, and blamed the windows, which were valid (a 0.6.0 build, seed 3, 2026-11-15)."""
     names = {"dot": "the first window's dot", "fd": "the first window's finite-difference check",
              "taylor": "the first window's Taylor check", "zero": "the zero-direction check"}
     out = []
     for key, name in names.items():
         c = checks.get(key)
-        if c and not c.get("pass"):
+        if c and not c.get("pass") and not c.get("unresolved"):
             v, bar = c.get("value"), c.get("bar")
             if key == "zero":
                 read = f"{v} nonzero words"
@@ -4708,7 +4815,7 @@ def limits_word(over: dict, limits: dict, passed: bool, checks_passed: bool = Tr
     with a known limit, and the window's own limit (the whole-state consistency on seeded directions) when the
     whole-state dot failed (``dot_failed``; None, as callers before it: when any check failed). Empty when none applies.
     THE BREAKAGE THIS PREVENTS: a seeded run that failed on its whole-state dot ended "FAIL: ... near-ground-moisture:
-    a known limit", naming a direction that read UNRESOLVED and did not cause the FAIL (independent checker, seed 3,
+    a known limit", naming a direction that read UNRESOLVED and did not cause the FAIL (a 0.6.0 build, seed 3,
     2026-11-15); and a failed finite-difference check is not the window limit."""
     if passed:
         left = [n for n in over.get("unresolved", []) if n in limits]
@@ -4892,8 +4999,9 @@ def run_adjoint_test(args: argparse.Namespace) -> int:
     dspec = spec_at.get("directions") or {}
     rule = {"steady_within": 0.1, "steady_steps": 3, **dict(dspec.get("rule") or {})}
     bar = float(rule.get("bar") or ctx.table["thresholds"]["taylor_best_err"])
+    storm = storm_measure_probe(ctx.table, args)   # a storm measure: read against the forecast's roughness
     reading = lambda window_doc: direction_reading(window_doc, bar, float(rule["steady_within"]),
-                                                   int(rule["steady_steps"]))
+                                                   int(rule["steady_steps"]), probe=storm)
     names = direction_names(ctx.table, ctx.row, asked)
     state = PlanState(ctx.plan)
     direction = _perturbation(ctx, state)
@@ -4902,7 +5010,9 @@ def run_adjoint_test(args: argparse.Namespace) -> int:
     metric_field = ctx.fmap.resolve(ctx.table, ctx.table["metrics"][args.metric]["field"], ctx.row, window_end=True)
     obj_path = ctx.out / "objective.json"
     _write_json(obj_path, objective)
-    hs = args.taylor or ",".join(f"{h:g}" for h in adjoint_test_taylor_h(spec_at, ctx.row))
+    own = ((ctx.table.get("storm_measures") or {}).get("taylor_h") or {}).get(ctx.row_name)
+    hs = args.taylor or ",".join(f"{h:g}" for h in (storm_taylor_h(adjoint_test_taylor_h(spec_at, ctx.row), storm, own)
+                                                     if storm else adjoint_test_taylor_h(spec_at, ctx.row)))
     ctx.stage("inputs (direction, objective)", t0, "1 thread (setup, small)")
     # the window end's tangent of the metric field: the runner forms <w, M x> beside <x, M^T w> only with a dump
     dump = ctx.rank_list("dump-state", [(metric_field["alloc"], metric_field["offset"],
@@ -4919,7 +5029,7 @@ def run_adjoint_test(args: argparse.Namespace) -> int:
                         if getattr(ctx, "split", None)
                         else ",".join(str(a) for a in sorted({a for f in gfields for a, _ in f["copies"]}))]
     doc = ctx.window(first_words)
-    verdict = adjoint_verdict(doc, ctx.table["thresholds"])
+    verdict = adjoint_verdict(doc, ctx.table["thresholds"], probe=storm)
     # one more window for each further direction of the table: the same objective and step sizes, its own direction
     first_name = dspec.get("first") or "bump"
     scales = (dspec.get("rows") or {}).get(first_name, {}).get("size") or {}
@@ -5001,9 +5111,10 @@ def run_adjoint_test(args: argparse.Namespace) -> int:
     print(f"  dot     {fmt(c['dot']['value'])}   bar {c['dot']['bar']:.0e}   {'PASS' if c['dot']['pass'] else 'FAIL'}"
           "   (this objective's direction; the bar is the float32 window dot's: the program's bar, in "
           "single-precision roundings of the dot, is the whole-state dot's below)")
-    print(f"  fd      {fmt(c['fd']['value'])}   bar {c['fd']['bar']:.0e}   {'PASS' if c['fd']['pass'] else 'FAIL'}")
+    word3 = lambda k: "PASS" if c[k]["pass"] else ("UNRESOLVED" if c[k].get("unresolved") else "FAIL")
+    print(f"  fd      {fmt(c['fd']['value'])}   bar {c['fd']['bar']:.0e}   {word3('fd')}")
     print(f"  taylor  {fmt(c['taylor']['value'])}   bar {c['taylor']['bar']:.0e}   "
-          f"{'PASS' if c['taylor']['pass'] else 'FAIL'}{'' if c['taylor']['resolved_interval'] else ' (no step size confirmed by a neighbour)'}"
+          f"{word3('taylor')}{'' if c['taylor']['resolved_interval'] else ' (no step size confirmed by a neighbour)'}"
           f"{'   set aside (no neighbour within 10x): h = ' + ', '.join(f'{h:g}' for h in c['taylor']['set_aside_h']) if c['taylor']['set_aside_h'] else ''}")
     print(f"  zero    {c['zero']['value']} nonzero words   {'PASS' if c['zero']['pass'] else 'FAIL'}")
     if rec.get("split"):
@@ -5012,11 +5123,20 @@ def run_adjoint_test(args: argparse.Namespace) -> int:
               f"(the ranks' runners report: {', '.join(s['exchange_seen_by_ranks']) or 'nothing'})")
     if verdict.get("self_dot_skipped"):
         print("  whole-state dot  not run (--no-self-dot): the verdict below does not cover it")
-    print("  real model against the tangent, per bump size (h x the perturbation):")
-    print("       h     metric err    field |FD - TL| / |TL|")
+    rough = verdict.get("roughness")
+    if rough:   # a storm measure: the forecast's own roughness, read by the probe steps, and the centred rows
+        print(f"  roughness: a nudge of +-{rough['probe_h']:g} x the perturbation moved the measure by up to "
+              f"{rough['floor']:.3e} (the gradient predicts {abs(rough['predicted_per_unit_h'] or 0) * rough['probe_h']:.1e}); "
+              "each step size below is read centred (both signs), and counts only where that roughness moves its "
+              "ratio by at most half the bar (noise column)")
+    print("  real model against the tangent, per bump size (h x the perturbation)"
+          + (", centred on both signs:" if rough else ":"))
+    print("       h     metric err    field |FD - TL| / |TL|" + ("    noise" if rough else ""))
     for r in verdict["taylor_rows"]:
         rel = r.get("field_fd_minus_tl_rel_l2")
-        print(f"    {r['h']:>5g}   {r['err']:>9.3e}    {'n/a' if rel is None else format(rel, '.3g')}")
+        err = "n/a" if r.get("err") is None else format(r["err"], ">9.3e")
+        print(f"    {r['h']:>5g}   {err:>9}    {'n/a' if rel is None else format(rel, '.3g')}"
+              + (f"    {r['noise']:.3g}" if rough and r.get("noise") is not None else ""))
     print_directions(directions, {**rule, "bar": bar})
     print_known_limits(directions, limits)
     if "self_dot" in c:
@@ -5155,7 +5275,7 @@ def cloud_route_for_window(args: argparse.Namespace, table: dict) -> None:
     and the command says so in one line (args.cloud_derivative then names it, so the receipt does too).
     THE BREAKAGE THIS PREVENTS: with the limiter's coefficients held, rain number's tangent on the number route grows
     until it is not finite: the README's 3 km adjoint-test with the limiter held stopped at step 28 of 59 on a non-finite
-    cloud tangent in rain mass, rain number and reflectivity (box F f52-fr-f12-at3N; the cloud tangent's norm 1.5e+12 at
+    cloud tangent in rain mass, rain number and reflectivity (one 96 GB card; the cloud tangent's norm 1.5e+12 at
     step 11, 1.0e+18 at step 27, where the gated route holds 3e+09 to 9e+09 over all 59 steps)."""
     if getattr(args, "mesh", None) or getattr(args, "checked_forward", False) or getattr(args, "steps", None) is None:
         return
@@ -5227,7 +5347,7 @@ def refuse_speed_words(args: argparse.Namespace, table: dict) -> None:
 
 #: The doors whose windows run the row's boundary-layer route (its default, or the one --boundary-layer names):
 #: sensitivity's gradient, the adjoint-test that checks that gradient and the tangent of the same linear model.
-#: THE BREAKAGE THIS PREVENTS (dist48, 2026-11-15): the README's first command, adjoint-test on the 12 km example,
+#: THE BREAKAGE THIS PREVENTS (a 0.6.0 build, 2026-11-15): the README's first command, adjoint-test on the 12 km example,
 #: checked the row's own (held, exact-route) linear model and ended FAIL (descent 4.42e-02, near-ground moisture
 #: 1.18e-01 off), while the default route a sensitivity runs read PASS on the same cut through a harness only: the
 #: test checked a linear model no default command computes. param-grad keeps the row's own files (its parameter
@@ -5337,7 +5457,7 @@ def route_row(row: dict, args: argparse.Namespace) -> tuple[dict, list[dict]]:
 
 def _route_back(row: dict, word: str, route: dict) -> str:
     """The word a route's refusal offers in its place: the option's other word, else the exact route; and where the
-    exact route itself runs a kernel set or scheme bundle of its own (from dist45 it runs the default route's), the
+    exact route itself runs a kernel set or scheme bundle of its own (on 0.6.0 builds it runs the default route's), the
     word that runs the row's own files. THE BREAKAGE THIS PREVENTS: a refusal that said "--boundary-layer taped runs
     without it" about a file the taped route runs too."""
     if route.get("other_word"):
@@ -5450,7 +5570,7 @@ def route_window_words(ctx: "Context", door: str) -> tuple[dict, dict | None]:
     (route_image_paths, each checked against its pin); its kernel set and scheme bundle already stand in the row's
     place (route_row, check_route_assets). Not taken: the gradient line's own words (the moved start, the checkpoint
     sizes, the route's replace_args and gradient_env, a kept forward), which belong to sensitivity's gradient windows.
-    THE BREAKAGE THIS PREVENTS (dist48): adjoint-test ran the row's held linear model and ended FAIL on the README's
+    THE BREAKAGE THIS PREVENTS (a 0.6.0 build): adjoint-test ran the row's held linear model and ended FAIL on the README's
     first command while the default route sensitivity runs passed the same test in a harness; the test must check the
     linear model the user's gradient comes from, and say which one it checked."""
     name, route, is_default = boundary_layer_route(ctx.row, getattr(ctx.args, "boundary_layer", None))
@@ -6696,7 +6816,7 @@ def add_ad_parsers(commands: argparse._SubParsersAction) -> None:
 
     a = commands.add_parser("adjoint-test", help="dot, finite-difference and Taylor checks of the tangent and the "
                                                  "adjoint against the recorded thresholds (PASS/FAIL)")
-    _common(a, "model steps (default: the row's)")
+    _common(a, "model steps (default: the row's; on the 120 km rows this command runs 1 step unless told)")
     _perturbation_args(a)
     _metric_args(a, "a circle 1.25 bump radii around the bump")
     a.add_argument("--taylor", default=None, help="comma list of Taylor step sizes h (default: the table's)")
@@ -6800,3 +6920,4 @@ def add_ad_parsers(commands: argparse._SubParsersAction) -> None:
                    help="test direction of the whole-state dot (the runner's --seeds; default: the table's, 1)")
     _dot_bar_arg(p)
     p.set_defaults(handler=_exit_codes(run_param_grad))
+

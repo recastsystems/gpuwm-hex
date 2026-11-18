@@ -133,7 +133,7 @@ def _open_lbc(path: Path):
     boundary files.  The netCDF4-python reader this replaced had to stay on
     the forecast coordinator under the free-threaded serial-I/O guard, which
     is why the door's regional N-rank path refused at step 1 with
-    SerialExtensionIoError (rrfs-h-h3 skeptic finding, 2026-10-05).
+    SerialExtensionIoError (found in review, 2026-10-05).
     """
 
     from gpuwm.netcdf_bridge import open_dataset

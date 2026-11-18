@@ -309,8 +309,8 @@ class DriverConfig(shared.DriverConfig):
             return None
         lines = [f"CORRECT MODE: named gaps ({len(self.gaps)}): selected fork behavior retained"]
         for gap in self.gaps:
-            lines.append(f"CORRECT MODE:   {gap.finding} on {gap.slot}: {gap.reason}; "
-                         f"owner {gap.owner}. {gap.breakage}")
+            # The gap and its reason only; the run record's gap rows also say which part of hex closes it.
+            lines.append(f"CORRECT MODE:   {gap.finding} on {gap.slot}: {gap.reason}. {gap.breakage}")
         lines.append("CORRECT MODE:   applied fork corrections: "
                      + (", ".join(sorted(self.corrections)) or "none"))
         held = self.fork_carried()

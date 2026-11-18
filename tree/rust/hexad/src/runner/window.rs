@@ -9192,7 +9192,7 @@ fn run_window(argv: Vec<String>) -> Result<(), String> {
         receipt["fct_frozen"] = json!(w.fct_frozen);
         receipt["mesh_constants"] = json!(w.mesh_constants);
         if w.fct_frozen {
-            receipt["approximation"] = json!("FCT limiter coefficients frozen from the forward trajectory (constants in TL and AD): fct_scale's scale_in/scale_out carry zero tangent and drop their cotangent; fct_minmax_source differentiates source_old only. Coordinator ruling 2026-11-05 08:35Z. This operator is not the exact derivative of the forward's limiter.");
+            receipt["approximation"] = json!("FCT limiter coefficients frozen from the forward trajectory (constants in TL and AD): fct_scale's scale_in/scale_out carry zero tangent and drop their cotangent; fct_minmax_source differentiates source_old only. This operator is not the exact derivative of the forward's limiter.");
         }
         let (mut d0, mut dn): (Option<std::sync::Arc<Bytes>>, Option<Bytes>) = (None, None);
         if !dead_ranges().is_empty() { receipt["dot_dead_ranges"] = json!({"file":std::env::var("AD_DOT_DEAD").ok(),"allocations":dead_ranges().len(),"bytes":dead_ranges().values().flatten().map(|r| r.1 - r.0).sum::<usize>(),

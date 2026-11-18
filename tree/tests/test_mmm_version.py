@@ -1,4 +1,4 @@
-"""MMM-physics generation for hex's YSU and revised MM5 (mmm_version.py; lane L5, MMM a4baf7f -> 550b5b4)."""
+"""MMM-physics generation for hex's YSU and revised MM5 (mmm_version.py; MMM a4baf7f -> 550b5b4)."""
 from dataclasses import dataclass, field
 from types import MappingProxyType
 

@@ -488,7 +488,7 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
     physics_flags = _physics_default_flags(args, source=source["id"], cold=parent is None)
     producer = _producer_suite({"forecast_args": physics_flags})
     if args.vertical_spec and producer:
-        # THE BREAKAGE THIS PREVENTS (LEFT-BEHIND 13 Nov, k50-forward-defect): a producer suite builds its start with
+        # THE BREAKAGE THIS PREVENTS (13 Nov 2026): a producer suite builds its start with
         # its producer's own vertical grid (L60 for hrrrv5) and never reads the file, so a region asked for other
         # levels ran on L60 and said nothing.
         raise RegionalRefusal(

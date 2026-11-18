@@ -1,6 +1,6 @@
 # Using the tangent-linear and adjoint
 
-A guide for a scientist who wants gradients from gpuwm-hex 0.6.0: what the tangent and adjoint are, what they hold,
+A guide for a scientist who wants gradients from gpuwm-hex 0.6.1: what the tangent and adjoint are, what they hold,
 how to take a gradient of your own measure, how to check it yourself, what a recording costs, how to drive the
 linear model from a variational system, exact against fast mode, and what "bit for bit with NOAA's RRFS-MPAS" means.
 Start with [FIRST-HOUR.md](FIRST-HOUR.md) if nothing has run yet. Every limit is in [LIMITS.md](LIMITS.md).
@@ -41,6 +41,11 @@ They are linearisations around one recorded forecast, over one window. What they
 | `hrrrv5-x1.40962` (the 120 km default) | global 120 km, 40,962 cells, 59 levels, 3 steps of 720 s | dynamics, land (RUC), cloud microphysics (tangent in double precision) | radiation and cloud fraction (64 kernel kinds, listed in the receipt); the transport limiter's coefficients; the boundary layer's turbulence closure, mass-flux plume and returned height; the mountain-drag closure |
 | `hrrrv5-full-x1.40962` | as above | as above, plus radiation and cloud fraction, the transport limiter differentiated (not held), and the boundary layer with its moisture mixing and its plume live (the plume's speed on a ramp; the `floored` route by default) | the mountain-drag closure |
 
+The 12 km row also takes `--boundary-layer guarded` (from 0.6.1): nothing of the boundary layer held, under the
+weak-shear guard, as on the 3 km row. It is the route for a measure near the ground under rain or cloud, where the
+default route's held plume and mixing length leave the gradient about 2 per cent short, and it is not the default:
+the README's 12 km command ends NOT PASSED (UNRESOLVED) on it ([LIMITS.md](LIMITS.md), *Storm measures*).
+
 Cumulus: no example of this release has a cumulus scheme in its recording, and no cumulus derivative ships; on the 12 km row a plan recorded with New Tiedtke on runs its 26 launch kinds as identity, named in `window.json`. The lateral
 boundaries of a limited-area window are held at the recorded values.
 
@@ -58,8 +63,10 @@ gpuwm-hex sensitivity --row hrrrv5-q12.96.2890.n40.60w91.30 --steps 15 \
 
 - `--metric`: `theta_m` (default), `theta`, `qv`, `qc`, `qr`, `pressure_p`, `rho`, `w`.
   `qr`, `qc` and `w` measure the storm itself, and no PASS of this release covers them: on the 12 km example's
-  storm band the rain measure's check fails (0.118 against 0.01; read centred on both signs, the real change is
-  1.04 of the gradient's prediction) and the updraft's is unresolved; on a 3 km storm cell the updraft's fails (1.008 to 1.023). The map
+  storm band rain reacts to a one-rounding nudge of its start by more than the gradient's whole prediction at
+  small steps, so its check cannot read 1 per cent (centred, 0.99 to 1.04 of the real change); the updraft reads
+  inside along the bump and unresolved along the steepest descent, where the forecast's own switches move the
+  real change 1 to 5 per cent at small steps (on a 3 km storm cell, read one-sided, 1.008 to 1.023). The map
   shows where and with what sign such a measure responds, not its size to 1 per cent. A temperature measure placed
   on a storm cell is not covered either: on a 3 km cell (a 40 km circle, levels 1-10) its check fails (0.245
   against 0.01). The PASSes are for the README's measures (low-level temperature and moisture averaged over circles of 100 to 150 km radius). For `qr`, `qc` and `w`
@@ -67,7 +74,7 @@ gpuwm-hex sensitivity --row hrrrv5-q12.96.2890.n40.60w91.30 --steps 15 \
   readings.
 - the region: `--box S,N,W,E` or `--circle LAT,LON,RADIUS_KM`; without one, the whole mesh.
 - `--levels a-b` or `a,b` (1-based model levels); without it, every level.
-- `--steps`: the window, 1 to 15 on the 12 km row, 1 to 239 on the 3 km row, 1 to 3 on the 120 km rows (3 by default).
+- `--steps`: the window, 1 to 15 on the 12 km row, 1 to 239 on the 3 km row, 1 to 3 on the 120 km rows (3 by default; `adjoint-test` runs 1 step there unless `--steps` is given).
 
 It writes `sensitivity.nc` (the gradient to each start field, with units, and the latitude and longitude of each
 cell centre and edge midpoint in degrees, `latCell`, `lonCell`, `latEdge`, `lonEdge`, so the gradient is placed
@@ -157,7 +164,9 @@ tangent are untouched. The command says so in one line before it runs; its verdi
 FAIL; its receipt is never valid and its answer check is never kept for later commands; it exits 4 when the check
 caught the error and 5 when it did not; and `sensitivity` refuses the option. On the 12 km example (one RTX 5090,
 16 Nov 2026), the plain command read the whole-state dot at +0.63 roundings, PASS. With
-`--plant-error boundary-layer:1.01` it read 7.964e-06, 66.8 roundings against the bar of 4, exit status 4. With
+`--plant-error boundary-layer:1.01` it read 7.964e-06, 66.8 roundings against the bar of 4, exit status 4 (on a
+pre-release build of 0.6.1, one RTX 5090: 638.8 s, card peak 24,766 MiB, host peak 46,486 MiB, inside the 12 km row's
+47,104 MiB). With
 `boundary-layer:1.001` (0.1 per cent) it read 8.545e-07, 7.2 roundings: caught, but by less than twice the bar, so an
 error much smaller than 0.1 per cent in this code would hide under rounding. `acoustic:1.01` read 271.5 roundings,
 exit status 4. `advection` has not been run on a card for this release; on a row where the kernel it names does not
@@ -312,7 +321,7 @@ step 6 then measures your build, not the reference of record.
 **0. Fetch REF** (18 s):
 
 ```sh
-T=/path/to/gpuwm_hex-0.6.0/tools/rrfs_44c0849_reference   # the unpacked sdist
+T=/path/to/gpuwm_hex-0.6.1/tools/rrfs_44c0849_reference   # the unpacked sdist
 bash $T/make_ref.sh REF
 ```
 
@@ -410,9 +419,12 @@ gpuwm-hex forecast --mesh x1.2562 --grid CASE/static.nc --init CASE/init.nc \
 tables of step 2 among them). The folder named must hold every table file the run lists; hex refuses, in one
 sentence, a folder that misses one.
 
-Time and memory: on one RTX 5090 with its kernels already compiled, this step took 107 s. A fresh install first
-fetches the prebuilt kernel pack for your CUDA version; where it finds none, it says so and compiles every CUDA
-module through NVRTC before the first step, which takes far longer than the run and much more host memory.
+Time and memory: on one RTX 5090 with its kernels already compiled and its tables already fetched, this step took
+107 s. From an empty home, with the published 0.6.0 wheel and everything fetched from its public hosts, it took 113 s
+on the same card: 63 s of that fetching the 1,000 MB of RRFS physics tables (once) and 20 s the prebuilt kernel pack
+for the installed CUDA version (217 MB, once); host peak 3.4 GB, card peak 3.8 GB (3,758 MiB). Where a fresh install
+finds no prebuilt kernel pack, it says so and compiles every CUDA module through NVRTC before the first step, which
+takes far longer than the run and much more host memory.
 
 **7. Compare every stored value:**
 

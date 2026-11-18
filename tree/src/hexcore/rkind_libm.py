@@ -21,7 +21,7 @@ field per snapshot (the sites where libimf itself is off correct rounding).
 
 For the byte-identity authority proof the hooks below can be rebound to a
 ctypes bridge over the exact libimf the reference executable linked
-(the proving RTX 5090), driving the residue to zero without changing the shipped
+(an RTX 5090), driving the residue to zero without changing the shipped
 default.
 """
 
@@ -82,7 +82,7 @@ def _sinf_correctly_rounded(phase: FloatArray) -> FloatArray:
 
 
 #: Rebindable hooks.  Default: correctly rounded via float64 (the pinned
-#: defined behaviour).  The proving RTX 5090 authority ladder may rebind these to the
+#: defined behaviour).  The RTX 5090 authority ladder may rebind these to the
 #: reference executable's own libimf via ctypes to prove full byte identity.
 powf_rkind: Callable[[FloatArray, float], FloatArray] = _powf_correctly_rounded
 sinf_rkind: Callable[[FloatArray], FloatArray] = _sinf_correctly_rounded
@@ -98,7 +98,7 @@ __all__ = [
 def wsm6_device_math_header() -> str:
     """Return the WSM6 composition of existing shared device operators.
 
-    Retained p2-wsm6 qualification
+    The retained WSM6 qualification
     records whole WSM6 and forecast results separately from broad math ABI
     differences; this composition is not a universal glibc identity claim.
     Build with direct NVRTC and --fmad=false --ftz=false.

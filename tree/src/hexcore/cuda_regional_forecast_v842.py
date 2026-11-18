@@ -311,5 +311,6 @@ def run_native_regional_dynamics(arguments, config, layout, payload, streams, li
     from .device_memory_release import process_release
     receipt['device_memory_release']=process_release().receipt()
     (out/'native-physics-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
-    print(json.dumps(receipt))
+    from .correct_mode import terminal_record
+    print(json.dumps(terminal_record(receipt)))
     return 0

@@ -1817,7 +1817,7 @@ def resolve_request(
     # file-free, and ahead of every expensive check.
     #
     # In PREFLIGHT the refusal is collected, not raised.  THE BREAKAGE THIS
-    # PREVENTS (measured 2026-08-26, the proving RTX 5090): asked whether the
+    # PREVENTS (measured 2026-08-26, an RTX 5090): asked whether the
     # 224,210-cell row fits the card, the door exited on the timestep and
     # never printed the memory verdict at all -- so the answer to "will this
     # run?" was half an answer, which is the one thing preflight promises not
@@ -2283,7 +2283,7 @@ def resolve_request(
         if iau_route == "hex" and iau_analysis is None:
             raise _refuse("--iau-route hex forms its increment from two recoupled initial-conditions files "
                           "and needs --iau-analysis; an MPAS increment file alone runs --iau-route native")
-    # Retired 2026-10-14 (lane W1): IAU and the balance series needed the active full-step
+    # Retired 2026-10-14: IAU and the balance series needed the active full-step
     # class executor, the only one with a held-tendency hook.  The fixed-step executor has the
     # same hook now (hexcore.iau_native), and so do the same-host ranks (one class per rank);
     # only the balance series stays on one card (drivers/samehost_forecast_v841.execute_samehost).
@@ -3082,7 +3082,7 @@ def run_default_products(request: ForecastRequest, history: Sequence[Path],
                 f"DEVICE released {released['released_bytes'] / 2**20:.0f} MiB before "
                 f"products; {released['still_in_use_bytes'] / 2**20:.0f} MiB of "
                 f"{released['device_total_bytes'] / 2**20:.0f} MiB still in use on the "
-                f"card (all tenants)", flush=True)
+                f"card (all processes)", flush=True)
     print("PRODUCTS $ " + " ".join(command), flush=True)
     parser = argparse.ArgumentParser(prog="gpuwm-hex products")
     add_products_arguments(parser)
@@ -3537,7 +3537,8 @@ def _run_preflight(request: ForecastRequest, registry: Mapping[str, MeshRow],
     if written is not None:
         print(f"RECEIPT {written}", flush=True)
     else:
-        print(json.dumps(receipt, indent=2, sort_keys=True, default=str))
+        from .correct_mode import terminal_record
+        print(json.dumps(terminal_record(receipt), indent=2, sort_keys=True, default=str))
     for problem in problems:
         print(f"PREFLIGHT REFUSED {problem}", file=sys.stderr)
     print(
@@ -4265,7 +4266,7 @@ def _run_forecast(arguments: argparse.Namespace) -> int:
     """The ``gpuwm-hex forecast`` handler.  Returns the process exit code."""
 
     from .mpasphys.forecast_v842 import native_route, run_forecast as run_native_physics
-    # --analysis (lane W1): check the bundle against the run and rewrite it into the door's own
+    # --analysis: check the bundle against the run and rewrite it into the door's own
     # inputs (--init, or the background with an IAU window, or a DA-cycling restart), so the
     # forecast below is the code a plain --init run executes.
     from .analysis_door import AnalysisDoorRefusal, resolve_analysis
@@ -4621,7 +4622,8 @@ def _run_forecast(arguments: argparse.Namespace) -> int:
     if written is not None:
         print(f"RECEIPT {written}", flush=True)
     else:
-        print(json.dumps(receipt, indent=2, sort_keys=True, default=str))
+        from .correct_mode import terminal_record
+        print(json.dumps(terminal_record(receipt), indent=2, sort_keys=True, default=str))
 
     print(
         f"DOOR mesh={request.mesh} steps={request.steps} "
@@ -4782,8 +4784,8 @@ def add_forecast_arguments(parser: argparse.ArgumentParser) -> None:
              "`gpuwm-hex physics import FILE` prints the verdict per option")
     parser.add_argument(
         "--physics-mode", choices=("correct", "exact"), default=None,
-        help="physics.mode on every route. 'correct' (the default when the run names no mode, owner "
-             "ruling 2026-10-13: correct mode is the standard) applies the fixes this tree and the engine "
+        help="physics.mode on every route. 'correct' (the default when the run names no mode: correct "
+             "mode is the standard) applies the fixes this tree and the engine "
              "carry: on an MPAS suite route (--physics-suite or the namelist's config_physics_suite) the "
              "fixes for native MPAS v8.4.2 defects (hexcore.mpasphys.driver_v842.CORRECTIONS_V842); on the "
              "ArWen route the engine's corrections (hexcore.correct_mode: WB4 New Tiedtke dry-mass "

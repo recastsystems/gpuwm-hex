@@ -545,7 +545,7 @@ six-field GFL transaction commits device carriers, exchanges native
 views before the slot continues. Empty MPI1 rings retain their index and the
 native exchange still executes. Prepared rank-4 `(i,k,j,species)` storage is
 exposed as `(species,k,i)` and copied back without touching inactive padding.
-Scheme arithmetic remains in the owning lane.
+Scheme arithmetic remains in the scheme's own port.
 
 ### RRFS native initialization tables
 
@@ -632,11 +632,11 @@ missing output or unchanged field cannot prove the switch.
 
 The native trace collector, actual extension resolution sidecar, fault runner
 and verifier sidecar retention are still required integration work. Until they
-produce fresh evidence, the lane's reproduce script cannot return success. Unit
+produce fresh evidence, the reproduce script cannot return success. Unit
 fixtures validate this audit contract only; they are not forecast receipts.
 
-The visual proof rule also applies to this driver lane. The maintainers' delivery
-helper (`rrfs_forecast_sheets.py verify-mpas`, kept with the proof-lane harness and
+The visual proof rule also applies to this driver. The maintainers' delivery
+helper (`rrfs_forecast_sheets.py verify-mpas`, kept with the proof harness and
 not distributed) runs inside the proof GPU queue when sheets need the fresh
 outputs: it delegates to the unchanged verifier and real model door, records the
 ordinary receipt, and retains owned output until comparison and inspection
@@ -650,19 +650,19 @@ manifest through a file reference, fixed difference-table SHA, observations for
 every hash-bound PNG, and an evolution observation. All eight products must exist
 at 6, 12 and 24 hours; additional produced frames and images must also be inspected.
 Manifest deck/native/output hashes must match the actual field-verification
-receipt. This is an artifact audit: it cannot perform visual judgment. The lane
-opens every image and records what it saw; the integrator opens them before
-landing. Renderer maxima never substitute for those observations. Missing sheets
+receipt. This is an artifact audit: it cannot perform visual judgment. Whoever
+runs the proof opens every image and records what it saw, and the images are
+opened again before the change is merged. Renderer maxima never substitute for those observations. Missing sheets
 or inspections fail the complete delivery proof audit.
 
 ### Real RRFS driver boundary replay
 
-The integrator's 2026-10-14 03:00 ruling supersedes the per-lane forecast
-matrix as a landing requirement. The matrix and witness audits above retain
+Since 2026-10-14 the per-scheme forecast matrix is no longer required before a
+change is merged. The matrix and witness audits above retain
 their historical scope. Landing now requires complete bitwise module replay
-from real native-tap inputs, a clean-checkout run of the lane's replay script, and one
+from real native-tap inputs, a clean-checkout run of the scheme's replay script, and one
 24-hour forecast with the implementation enabled and inspected native comparison
-sheets. The integrator owns the headline exact whole-forecast configuration.
+sheets. The headline exact whole-forecast configuration is proven on its own.
 
 `tests/rrfs_driver_dump_replay.py` consumes the complete `physics_get_tend`
 boundary (fork `mpas_atmphys_todynamics.F:65-550`). Rust decodes and writes
@@ -951,12 +951,12 @@ The findings (`CORRECTIONS_V842`, clusters mpas-rad-pbl-lsm-seaice and mpas-wate
 
 | Id | Native defect | On this tree | Follow-up owner of the gap |
 |---|---|---|---|
-| RP6 | `config_pbl_interval` stretches the surface/PBL step but the schemes are still called every step, so they integrate interval/dt times too long | Fixed: the surface layer, ocean mixed layer, land surface, sea ice, PBL and GWDO are called when the PBL alarm rings, and the land surface and sea ice receive every step's precipitation since their last call. Gaps: Noah-MP (it must step by `dt_pbl`), and a native-file restart (the window cannot be held in the pristine restart stream) | p17-noahmp; the MPAS integrator with f3's checkpoint provider |
+| RP6 | `config_pbl_interval` stretches the surface/PBL step but the schemes are still called every step, so they integrate interval/dt times too long | Fixed: the surface layer, ocean mixed layer, land surface, sea ice, PBL and GWDO are called when the PBL alarm rings, and the land surface and sea ice receive every step's precipitation since their last call. Gaps: Noah-MP (it must step by `dt_pbl`), and a native-file restart (the window cannot be held in the pristine restart stream) | hex Noah-MP land-surface port (sf_noahmp); hex restart (a checkpoint that carries the surface precipitation window) |
 | RP4 | `config_mynn_tkeadvect=true` resets TKE to a field MPAS never advects | Fixed by refusal: correct mode refuses the option, as the native correct-mode build does | none |
-| RP1 | MYNN removes cloud water, ice and snow on every call | Fixed in the hex-cuda MYNN slot (p12): the exact inverse of the forward conversion, word for word the native correct-mode build. Gap: native-cpu MYNN, which runs pristine v8.4.2 | p12-bl-mynn (select the hex-cuda slot) |
-| WB3 | Precipitable water divides the dry density by (1+qv) a second time (0.6 % low on average, up to 1.3 %) | Fixed in the hex-cuda WSM6, Thompson and Kessler slots: each compiles its CUDA text with the one density statement corrected (exact mode compiles the original text); the words equal the native correct-mode build's loop. Gaps: native-cpu microphysics, and Thompson-aerosols, whose hex-cuda slot is not in this tree | p2-wsm6, p3-thompson, p1-kessler, p4-thompson-aerosols (select the hex-cuda slot) |
-| WB5 | WSM6 books the below-ground part of the falling cell at the flat mean while the remap moves it with a sloped profile, so column plus surface water is not conserved | Fixed in the hex-cuda WSM6 slot: the two rain-out statements use the remap's profile; whole columns equal the native correct-mode build word for word (surface precipitation changes, the atmosphere does not). Gap: native-cpu WSM6 | p2-wsm6 (select the hex-cuda slot) |
-| RP3 | Fractional sea ice loses its ice temperature (the blended skin temperature is fed back); active whenever `config_frac_seaice`, which defaults to true | Named gap on the sea-ice and surface-layer slots | p18-seaice; p9-sfclay-mm5 (`sf_monin_obukhov`, `sf_monin_obukhov_rev`); p10-sf-mynn (`sf_mynn`) |
+| RP1 | MYNN removes cloud water, ice and snow on every call | Fixed in the hex-cuda MYNN slot: the exact inverse of the forward conversion, word for word the native correct-mode build. Gap: native-cpu MYNN, which runs pristine v8.4.2 | hex MYNN-EDMF boundary-layer port (bl_mynn) (select the hex-cuda slot) |
+| WB3 | Precipitable water divides the dry density by (1+qv) a second time (0.6 % low on average, up to 1.3 %) | Fixed in the hex-cuda WSM6, Thompson and Kessler slots: each compiles its CUDA text with the one density statement corrected (exact mode compiles the original text); the words equal the native correct-mode build's loop. Gaps: native-cpu microphysics, and Thompson-aerosols, whose hex-cuda slot is not in this tree | hex WSM6, Thompson, Kessler and aerosol-aware Thompson microphysics ports (mp_wsm6, mp_thompson, mp_kessler, mp_thompson_aerosols) (select the hex-cuda slot) |
+| WB5 | WSM6 books the below-ground part of the falling cell at the flat mean while the remap moves it with a sloped profile, so column plus surface water is not conserved | Fixed in the hex-cuda WSM6 slot: the two rain-out statements use the remap's profile; whole columns equal the native correct-mode build word for word (surface precipitation changes, the atmosphere does not). Gap: native-cpu WSM6 | hex WSM6 microphysics port (mp_wsm6) (select the hex-cuda slot) |
+| RP3 | Fractional sea ice loses its ice temperature (the blended skin temperature is fed back); active whenever `config_frac_seaice`, which defaults to true | Named gap on the sea-ice and surface-layer slots | hex sea-ice port (seaice slot); hex MM5 surface-layer port (`sf_monin_obukhov`, `sf_monin_obukhov_rev`); hex MYNN surface-layer port (`sf_mynn`) |
 
 Named gaps are never refusals. A finding is
 applied whole or not at all: when any active slot it lives in has an

@@ -135,7 +135,7 @@ that row is equal to the producer of record, not to a fresh native rerun.
 The referee is the strict single-precision, one-rank init derivative with exactly
 two optional aerosol pointer `NULLIFY` statements carried from the earlier
 approved init correction. The pristine native binary segfaults on these case-7
-inputs. The reference publication labels the carried ruling as confirmation
+inputs. The reference publication labels the carried correction as confirmation
 pending; these results are against the labelled derivative.
 
 | File | Stored values | Different |

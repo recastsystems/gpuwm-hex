@@ -217,7 +217,7 @@ def stage_case(case_path: Path, casedir: Path, *, source: str | None = None, sta
     if tc_init:
         # TC-VI1 on hex (hexcore.tc_vortex): the case's storm.tc_initialization moves and corrects the source's own
         # vortex toward the vitals (and/or merges a declared inner core) on the canonical source frame before the mesh
-        # interpolates it. Breakage it prevents (the storm box M, 2026-10-27): hex members started from their source's
+        # interpolates it. Breakage it prevents (the storm, 2026-10-27): hex members started from their source's
         # weak, broad vortex and the first analysis rejected the core observations.
         from .tc_vortex import stage_source
         log("stage: TC canonical composition with vortex initialization")

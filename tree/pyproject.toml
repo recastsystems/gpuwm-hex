@@ -43,8 +43,8 @@ name = "gpuwm-hex"
 # partition-invariant, but it has no door, no demo, and no re-proof at the
 # current engine pin, so it is not what a version number should be sold on.
 # Numbers are not reserved here any more.  A minor bump names what shipped.
-version = "0.6.0"
-description = "GPU global atmospheric model on unstructured Voronoi meshes: a CUDA port of the MPAS-A v8.4.2 dycore with ArWen physics, arbitrary mesh generation and single-card mesh streaming for 12-16 GB GPUs; its tangent-linear and adjoint model runs on one 96 GB card."
+version = "0.6.1"
+description = "MPAS-Atmosphere v8.4.2 and NOAA's hrrrv5 (RRFS-MPAS) configuration on NVIDIA GPUs: bit for bit against native MPAS-A and the patched native RRFS-MPAS on the measured cases (exact mode, strict numerics), with the tangent-linear and adjoint of the exact-mode hrrrv5 forecast (12 km example on a 32 GB card of compute capability 12.0)."
 readme = "README.md"
 requires-python = ">=3.11"
 # Apache-2.0, the same licence gpuwm ships under: this is one project and one
@@ -191,7 +191,7 @@ dependencies = [
 # Search terms, which is what a keyword is: the words somebody types into
 # PyPI when they are looking for this kind of thing.  `MPAS` is here as a
 # NOMINATIVE reference -- what this software is a port of -- which is the
-# one use of the name the brand ruling leaves open, and it is the term a
+# one use of the name trademark practice leaves open, and it is the term a
 # reader searching for exactly this would use.  The distribution name, the
 # console script and the parser prog carry no MPAS token, and
 # tests/test_packaging_declaration.py is what keeps that true.
@@ -223,10 +223,12 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    # 3.14 is the interpreter the derivative commands need (the [ad] extra), and the one the release is gated on.
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Rust",
     "Topic :: Scientific/Engineering :: Atmospheric Science",
+    # Linux only: the one wheel is manylinux x86_64, and no Windows install of a release has been run.
     "Operating System :: POSIX :: Linux",
-    "Operating System :: Microsoft :: Windows",
 ]
 
 [project.urls]
@@ -324,7 +326,7 @@ dev = ["pytest>=8.0", "setuptools>=77"]
 # model.  `hexcore` names the two things that ARE pinned, the hexagonal
 # Voronoi mesh and the dycore, and it matches the distribution name.
 #
-# It was never cheap, which is why it took a ruling rather than a tidy-up:
+# It was never cheap, which is why it took a decision rather than a tidy-up:
 # this tree pins its OWN files by path and by SHA-256 -- the frozen execution
 # set in src/hexcore/drivers/run_cuda_v841_full_physics_x4.py, the regional kernel set in
 # hexcore.cuda_backend.regional_admission, and the proof-guard fixtures -- so

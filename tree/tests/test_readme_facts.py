@@ -141,6 +141,10 @@ def test_the_pages_name_every_test_direction_adjoint_test_runs():
         assert "PASS or FAIL against fixed bars" not in text, page.name
 
 
+#: The release whose derivative engine library and pinned downloads this one carries unchanged.
+ENGINE_RELEASE = "0.6.0"
+
+
 def test_every_text_that_names_this_release_names_the_declared_version():
     """THE BREAKAGE THIS PREVENTS (a sealed candidate, 2026-11-14): a candidate was stamped with the patch number
     after its release's own, and the package, the engine crate, the pin tag, the changelog heading and forty README
@@ -157,15 +161,17 @@ def test_every_text_that_names_this_release_names_the_declared_version():
         assert headings[0] == VERSION and len(set(headings)) == len(headings), headings[:3]
         numbers = [tuple(map(int, h.split("."))) for h in headings]
         assert numbers == sorted(numbers, reverse=True), "newest entry first, one entry a release"
+    # 0.6.1 is a defect release: it keeps the files 0.6.0 published (the pinned downloads) and the derivative engine
+    # library 0.6.0 built, so the pin tag and the engine crate stay at ENGINE_RELEASE while the package moves.
     pins = (ROOT / "src/hexcore/data/ad-assets.json").read_text(encoding="utf-8")
-    assert f'"tag": "ad-assets-v{VERSION}"' in pins
+    assert f'"tag": "ad-assets-v{ENGINE_RELEASE}"' in pins
     crate = ROOT / "rust/hexad/Cargo.toml"
     if crate.is_file():
-        assert tomllib.loads(crate.read_text(encoding="utf-8"))["package"]["version"] == VERSION
+        assert tomllib.loads(crate.read_text(encoding="utf-8"))["package"]["version"] == ENGINE_RELEASE
         lock = (ROOT / "rust/hexad/Cargo.lock").read_text(encoding="utf-8")
-        assert f'name = "hexad-phys"\nversion = "{VERSION}"' in lock
+        assert f'name = "hexad-phys"\nversion = "{ENGINE_RELEASE}"' in lock
     helpers = ROOT / "licenses/THIRD-PARTY-LICENSES-helper-binaries.txt"
-    assert f"  hexad-phys {VERSION}\n" in helpers.read_text(encoding="utf-8")
+    assert f"  hexad-phys {ENGINE_RELEASE}\n" in helpers.read_text(encoding="utf-8")
 
 
 def test_the_source_package_carries_the_changelog_this_file_reads():

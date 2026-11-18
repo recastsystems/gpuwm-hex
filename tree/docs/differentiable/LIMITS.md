@@ -1,4 +1,4 @@
-# Limits of the differentiable engine in 0.6.0
+# Limits of the differentiable engine in 0.6.1
 
 Every limit here was measured, and each states where. Nothing on this page is a limit nobody has reproduced. When a
 limit is lifted it leaves this page in the release that lifts it. [GUIDE.md](GUIDE.md) says what the tangent and
@@ -17,8 +17,10 @@ adjoint are; the README's *The differentiable engine* has every number with its 
 - **Card memory.** 28,700 MiB free for the 12 km example, 73,156 MiB for the 120 km example (80,000 MiB on its
   full-physics row), 96,600 MiB for the 3 km storm box. A card whose whole memory is smaller is refused before any
   download; free memory is checked after the row's mesh file (2 MB for the 12 km cut) and before the rest.
-- **Host memory on the 12 km example.** 47,104 MiB available. The README command peaked at 41,022 MiB on the run
-  `examples/differentiable/expected.json` gives (up to 44,613 MiB on a 512 GiB host) and the release check `adjoint-test --directions all --dot-directions 8` at 46,681 MiB (one RTX 5090 host).
+- **Host memory on the 12 km example.** 47,104 MiB available. The README command peaked at 41,190 to 44,109 MiB on
+  0.6.0's release builds and at 40,990 MiB on a pre-release build of 0.6.1, the same command with
+  `--plant-error boundary-layer:1.01` at 46,486 MiB on another pre-release build of 0.6.1, and the check
+  `adjoint-test --directions all --dot-directions 8` at 46,681 MiB on a 0.6.0 build (one RTX 5090 host).
 - **Host memory on the 3 km storm box.** Every command states its need on this host before it downloads the
   example and stops in one sentence on a host with less: 258,057 MiB for a first `sensitivity` with its answer
   check on a large host. `adjoint-test` keeps every step boundary, in host memory up to 0.4 of what is available,
@@ -123,46 +125,90 @@ adjoint are; the README's *The differentiable engine* has every number with its 
   single-precision roundings of the dot), over the bar of 4.
 - **Storm measures (rain water, cloud water, vertical velocity, and any measure placed on a storm cell) are not
   covered by any PASS of this release.** The PASSes above are for the README's measures (low-level temperature and moisture averaged over circles of 100 to 150 km radius).
-  Read with `adjoint-test --metric` on measures placed on the storm itself, on the sealed wheel, 16 Nov:
-  - 12 km example, 15 steps, a 60 km circle on the radar's 58 dBZ band at 41.85N 92.92W. **Rain water (`qr`,
-    levels 1-20) fails** the first window's finite-difference check: 0.118 against 0.01 (exit 1). Read again at
-    twelve step sizes of both signs (1 to 0.003), the real model's change carries an offset of about -3.4e-08 kg/kg
-    (0.03 per cent of the measure) at every small step of either sign, so the one-sided ratios the command prints
-    scatter from -0.94 to 2.93 at steps under 0.03. Read centred (each size at both signs, which cancels the offset
-    and the curvature), the bump is 1.036 and 1.038 of the gradient's prediction at steps 0.1 and 0.03, 1.016 at
-    0.01 and 0.99 at 0.003; at 1 and 0.3 it is 0.83 to 0.85, where rain answers a 1 K bump nonlinearly.
-    **Updraft (`w`, levels 12-30) is NOT PASSED (UNRESOLVED):** the bump 0.877 to 1.009 and the steepest descent
-    0.972 to 1.052 over steps 1 to 0.01; its first-window checks pass (7.2e-03).
-  - 3 km example, 59 steps, a 40 km circle on a 66 dBZ cell at 39.85N 91.11W. **Updraft (`w`, levels 12-30) fails**
-    along the steepest descent: 1.008 to 1.023 of the gradient's prediction (1.8e-02 from 1, bar 1e-02); the bump
-    reads 0.953 to 0.998 (unresolved); the first-window checks pass (2.0e-03). **Low-level temperature (`theta_m`,
-    levels 1-10) on the same cell fails too:** the first window's finite-difference check 0.245 against 0.01, the
-    steepest descent 1.022 to 1.025 of the gradient's prediction (outside), the bump unresolved (0.60 to 1.68). So a
-    temperature measure is covered only as the README poses it, not on a storm cell. Rain water was not read through
-    the command at 3 km.
+  Read with `adjoint-test --metric` on measures placed on the storm itself, on 0.6.0's release build, 16 Nov:
+  - **12 km rain water cannot be checked to 1 per cent** (15 steps, `qr` levels 1-20, a 60 km circle on the radar's
+    58 dBZ band at 41.85N 92.92W). A rerun at step 0 is byte-equal to the forecast, but a nudge of 1e-06 of the 1 K
+    bump moves the mean rain by up to 7.6e-08 kg/kg, about 13,000 times what the gradient predicts for it: the rain
+    field reacts to a one-rounding change of its start. That roughness is as large as the linear change near a step
+    of 0.01 and more than half the bar at every step size, while above a step of 0.1 rain answers the bump
+    nonlinearly (0.83 to 0.85 at 1 and 0.3). Read centred (each size at both signs) the steps 0.1 to 0.003 give 0.99
+    to 1.04 of the gradient. The command reads this roughness itself and ends NOT PASSED (UNRESOLVED), naming it
+    (before it, the one-sided check printed FAIL, 0.118 against 0.01).
+  - **12 km updraft** (`w` levels 12-30, the same circle): the bump is inside the bar read centred (0.9995 to 1.005
+    of the gradient at steps 1, 0.6 and 0.3, where the roughness moves the ratio by under 0.25 per cent); the
+    steepest descent reads 1.0005, 1.008, 1.012 and 1.016 at steps 1, 0.6, 0.3 and 0.1 and 1.04 to 1.05 at 0.03,
+    while the bump falls the same way below 0.3 (0.983 at 0.1, 0.957 at 0.03). Every linear model tried shows the
+    same rise of 1.5 to 2 per cent from step 1 to step 0.1 (the live limiter 0.998 to 1.016, the boundary layer's
+    exact route 1.0008 to 1.019, the cloud route with rain and droplet number following and the live limiter 0.990
+    to 1.011), and over a 5-step window the same
+    direction reads 0.992 to 1.0004 at steps 0.3 to 0.03. So the rise is the forecast's own switches growing over
+    the window (a branch taken at one sign and not the other, which does not shrink with the step), not a held
+    piece of the linear model; the command reads this direction UNRESOLVED (8.0e-03 from 1, within its spread)
+    and the bump INSIDE (4.9e-04), the first window's finite-difference check 4.9e-04.
+    **What that reading is: the forecast's own melt-or-freeze switch, in one column.** Read again with the real
+    model alone at 20 step sizes of both signs (one RTX 5090): in 55 of the circle's 56 cells the real change is
+    0.997 to 1.009 of the gradient's prediction at every step from 0.07 to 1. One column near the melting level,
+    where the cloud scheme either melts snow or sublimates it, adds 0.4 to 1.6 per cent to the whole-circle reading
+    at those steps and more below them (the circle reads 1.049 at a step of 0.03 and 1.006 at 0.01). In that column
+    the real model's vertical velocity is off the linear prediction by about 20 mm/s at every negative step from
+    0.015 to 0.1 and by 0.1 mm/s inside a step of 0.005: a branch taken or not, not a slope. No derivative follows it and no
+    step size removes it. Released one at a time, no held piece moves it: each changes the prediction by under
+    0.6 per cent, the same at every step.
+  - **12 km low-level temperature on the storm cell** (`theta_m` levels 1-10, the same circle, 15 steps): the real
+    model is smooth along this measure's steepest descent, and read centred it gives 1.020 to 1.024 of the default
+    route's prediction at steps 0.1 to 0.01: the gradient is 2.2 per cent short. The cause is the boundary layer's
+    plume and mixing length, which the default route holds. With nothing of the boundary layer held
+    (`--boundary-layer guarded`, an option on this row from 0.6.1) the same direction reads 0.996 to 1.000; with
+    the boundary layer held whole (the exact route) 1.040 to 1.043; the cloud numbers, the cloud route and the
+    limiter change it by under 0.1 per cent. Through `adjoint-test` on the guarded route the measure reads INSIDE
+    along its own descent (1.89e-04 from 1; the command as a whole prints FAIL on its bump, a bump at level 32
+    against a measure at levels 1-10, which reads outside on both routes). **`guarded` is an option on this row,
+    not its default:** the README's own 12 km command on it ends NOT PASSED (UNRESOLVED). Both dots pass (window
+    4.2e-09, whole-state +0.11 roundings), the bump is inside (1.07e-03 from 1), and the steepest descent reads
+    0.973, 0.980, 0.986, 0.997 and 1.005 at steps 1, 0.3, 0.1, 0.03 and 0.01, which the command cannot resolve;
+    466 and 487 s, card peak 23,610 MiB, host peak 40,580 and 41,089 MiB through the command on two pre-release
+    builds of 0.6.1, one RTX 5090 (the same readings, in 565 s, on the 0.6.0 wheel with this row's route added).
+    The default route passes that command (352 and 398 s, 24,766 MiB, 40,775 and 41,307 MiB on the same two
+    builds and card): the guarded route's minutes and memory would allow it as
+    the default, and its unresolved descent is what keeps it an option. The updraft reading above is the same on the guarded route (0.9998,
+    1.0071, 1.0134 and 1.0142 at steps 1, 0.6, 0.3 and 0.1).
+  - **3 km updraft** (59 steps, `w` levels 12-30, a 40 km circle on a 66 dBZ cell at 39.85N 91.11W), read one-sided
+    before the roughness reading: the steepest descent 1.008 to 1.023 of the gradient (1.8e-02 from 1), the bump
+    0.953 to 0.998. **Low-level temperature (`theta_m`, levels 1-10) on the same cell fails too:** the first
+    window's finite-difference check 0.245 against 0.01, the steepest descent 1.022 to 1.025 of the gradient's
+    prediction (outside), the bump unresolved (0.60 to 1.68). So a temperature measure is covered only as the
+    README poses it, not on a storm cell. Rain water was not read through the command at 3 km.
   - The transpose holds on every one of these windows (window dot 2e-08 to 2.5e-06, bar 2e-05): the backward code is
-    the transpose of the tangent. What is not shown is that the tangent follows the real model's rain and updraft
-    to 1 per cent. On the 12 km row the cloud scheme's derivative is the earlier builds' form (rain and droplet
-    number held) and the transport limiter is held; the 3 km row runs the `number` cloud route with the limiter
-    live. A map of a storm measure from this release shows where and with what sign the measure responds; its size
-    is not shown to 1 per cent. `sensitivity`, `adjoint-test` and `param-grad` print the row's measured line before
-    they run when a measure is `qr`, `qc` or `w` (on a mesh named with `--mesh`, that it has not been read there).
+    the transpose of the tangent. The two pieces the 12 km row holds and the 3 km row runs live (rain and droplet
+    number following the forecast, the transport limiter's derivative) were read on the 12 km measures and do not
+    close them: with both live the rain gradient moves 4.6 per cent away from the real change, the updraft descent
+    to 0.990 to 1.011 and the updraft bump to 0.985 to 0.991 (the live limiter alone: descent 0.998 to 1.016,
+    bump unchanged; the boundary layer's exact route: descent 1.0008 to 1.019, bump unchanged). The 3 km readings
+    above were read one-sided, before the command read the roughness; they have not been read again.
+  - A map of a storm measure from this release shows where and with what sign the measure responds; its size is
+    not shown to 1 per cent. `sensitivity`, `adjoint-test` and `param-grad` print the row's measured line before they
+    run when a measure is `qr`, `qc` or `w` (on a mesh named with `--mesh`, that it has not been read there),
+    and `adjoint-test` reads such a measure against the forecast's own
+    roughness: the row's step sizes at both signs and a probe step of 1e-06 at both signs, every size read centred,
+    and a size counts only where the roughness moves its ratio by at most half the bar and its neighbours agree.
+    The probe's roughness is a lower bound (a larger step flips more switches), which is why the neighbours must
+    agree as well.
 - **On the 12 km example the whole-state dot is scored on memory allocations, not the model's fields.** The
   example's plan holds 15 step boundaries, so its 15-step window end has no field map; every 12 km command scores
   the dot on the window's memory allocations (134 of them) and prints "scored on memory allocations, not the model's
   fields" with the reason. The 3 km example scores the 12 model fields. Scoring the 12 km example on its fields needs
-  the row recorded one step longer, which is planned for 0.6.1.
+  the row recorded one step longer, which 0.6.1 does not carry (it keeps 0.6.0's recordings).
 - **The limiter's own scratch words.** With the transport limiter live, the tangent and the adjoint disagree on
   the limiter's scratch memory (relative 5.85e-06, measured on the engine before this release); the model's fields
   pass on every window measured. The shipped checks are not affected: the 12 km and 120 km default rows hold the
   limiter, the 3 km example scores its fields (-1.50 roundings), and the 120 km full-physics row leaves that work
   memory out of the dot and proves on its plan that it is never read. A check you score on memory allocations
-  (`AD_DOT_SELF_UNITS=pool`) on a window with the limiter live may read it. The fix is planned for 0.6.1.
+  (`AD_DOT_SELF_UNITS=pool`) on a window with the limiter live may read it. 0.6.1 does not carry a fix.
 - **On NOAA's deck the cloud scheme's boundary-layer subgrid radii are not in the shipped cloud images.** The
   runner can take that launch down the taped route, but only with a cloud image built with it, and the images this
   release ships are not: a plan you record on NOAA's hrrrv5 deck (with `config_tempo_ml_for_bl_nc`) is refused at
   the first launch that runs the path, naming the image's missing part. The shipped example plans do not run it.
-  Planned for 0.6.1.
+  0.6.1 keeps 0.6.0's cloud images.
 - **The per-species check misses on rain at 12 km.** The runner's per-species form (`AD_DOT_PLANES=scalars`, [CHECKS.md](CHECKS.md)),
   read on the 12 km cut over 14 steps of 60 s with the transport limiter held: the rain plane's own dot is off by
   -2.2e-05 of itself (-42.9 roundings) and -1.7e-05 (-33.7) at two sizes on test direction 1, and +8.0e-06 (+18.8)
@@ -186,8 +232,8 @@ adjoint are; the README's *The differentiable engine* has every number with its 
 - **Near-ground wind on the exact route** reads about 1.37 times the real change along a box-wide low-level wind
   nudge (3 km, 12 steps): the held boundary-layer mixing. The default route differentiates the closure but has not
   been run along that nudge through the command. `--boundary-layer guarded` read 1.003 along it over 12 steps; over
-  59 steps it has run through the command on a 96 GB card (answer check 5.34e-08 against 1e-07, no one-word spike,
-    1,478 s) and has not been compared with the real model. It stays a named option: the exact route still holds the
+  59 steps it has run through the command on a 96 GB card (answer check 1.304e-07, +1.09 roundings against the bar of 4, in 1,488 s on
+    0.6.0's final wheel; 5.34e-08 with no one-value spike, in 1,478 s, on the build before) and has not been compared with the real model. It stays a named option: the exact route still holds the
   boundary layer.
 - **The 120 km example's near-ground maps are an install check, not a forecast sensitivity.** Measured on that
   example over 3 steps, on the 87 of 348 box columns where the real forecast answers a nudge steadily: along a
@@ -195,7 +241,7 @@ adjoint are; the README's *The differentiable engine* has every number with its 
   low-level temperature nudge 0.77 of it; along a moisture nudge 1.4 to 1.9 times it. The cause is the boundary
   layer's mixing, held in that row's linear model. `sensitivity` prints this caution on the 120 km example.
 - **`param-grad` is checked against the real model for one constant and one window.** Against reruns of the forward
-  with one constant moved (120 km, 3 steps), on an earlier build of this release, the rerun slope for the
+  with one constant moved (120 km, 3 steps), on an earlier build of 0.6.0, the rerun slope for the
   Zilitinkevich factor was 0.98 times its gradient at a move of 0.02 in ln p and 1.11 times at 0.1; it was the only
   constant of the five tried. On an older build with another measure three of four constants disagreed with their
   reruns (gradient over rerun 0.31, 0.84, and 2.1 to 2.3). Read `param-grad` gradients as trusted only for the

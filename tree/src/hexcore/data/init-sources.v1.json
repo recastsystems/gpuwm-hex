@@ -4178,7 +4178,7 @@
         }
       },
       "limits": [
-        "Default ERA5 route (ruling of 2026-10-20): keyless; the Copernicus licence permits commercial use with attribution, which every receipt carries. The CDS route stays selectable as era5-cds.",
+        "Default ERA5 route: keyless; the Copernicus licence permits commercial use with attribution, which every receipt carries. The CDS route stays selectable as era5-cds.",
         "Google public ARCO store coverage and preliminary ERA5T availability bound the requested UTC hour.",
         "All 37 pressure levels and native quarter-degree global fields are fetched through the engine Rust Zarr path."
       ],

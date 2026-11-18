@@ -1,5 +1,93 @@
 # Changelog
 
+## 0.6.1
+
+Requires gpuwm>=3.0.0,<3.1. A defect release: it fixes what a first user of 0.6.0 met, adds the command that finds
+the examples now in the wheel (`gpuwm-hex examples`) and one option (`--boundary-layer guarded` on the 12 km example
+row). The downloads 0.6.0 pinned are unchanged (the kernel packs, the engine bridges and the derivative engine's
+files).
+
+Fixed:
+- **Installing `[gpu]` and then `[ad]` left two CuPy packages, and `doctor` said OK.** `gpuwm-hex doctor` now reports
+  two CuPy packages as a required gap and prints the one command that leaves one. The pages say which install a user
+  of the derivative commands needs: `pip install "gpuwm-hex[ad]"` in a Python 3.14 environment of its own, not on top
+  of `[gpu]` (pip does not remove one CuPy package when it installs the other).
+- **The examples were not in the wheel.** The wheel now carries `run-32gb.sh`, `run-96gb.sh`, `own_measure.py`,
+  `expected.json` and their README; `gpuwm-hex examples` prints their folder and `gpuwm-hex examples --copy DIR`
+  copies them.
+- **Surface-station (ASOS) scoring of a global run never measured.** The station list of the whole globe takes about
+  9 minutes to fetch at the archive's pace with gpuwm 3.0 (533.6 s measured), and the scorer gave it 180 s, so all
+  500 surface rows of a 24-hour global run read NOT_MEASURED. The request now gets the time it needs, and a run
+  fetches the list once.
+- **`gpuwm-hex global` and `gpuwm-hex country` ended "done ... score" while the scorer was still running.** The last
+  line, in the terminal and in the door's log, now says scoring is still running in the background, with its process
+  number and the file to watch, or gives the scorecard's status and its count of measured metrics when it has finished.
+- **A correct-mode forecast printed internal names**: as the owner of a gap in its list of named gaps, and in the
+  record line it prints when it finishes (the gaps' owners and the surface service's unit). The printed lines now give
+  each gap and its reason; the receipt files, and the record line's surface service, name the part of hex concerned
+  in plain words. A regional forecast's record line and receipt also carried development remarks in the evidence
+  text of the configuration class it was admitted on; that text now states the measurements only.
+- **The kernel pack was fetched with nothing in the terminal.** A pinned file fetched from the network now says one
+  line first: its name, its size, that it is fetched once, and where from.
+- **`rw_s2s_energy --help`** printed "No such file or directory". It prints its usage and exits 0.
+- **`adjoint-test` on a measure of the storm itself** (`--metric qr`, `qc` or `w`) printed FAIL on a one-sided
+  reading the forecast's own roughness decides. It now reads each step size at both signs beside a probe step of
+  1e-06, counts a step size only where the roughness leaves it readable, and ends NOT PASSED (UNRESOLVED) with the
+  reason when it cannot tell. No PASS covers these measures, as before; `tangent`, which takes no measure, no longer
+  carries the call for their line.
+- **`doctor`'s engine line** said the engine "this port was measured against is 2.9.7" on an install whose range is
+  gpuwm 3.0. It now names the installed engine and the range, and says the 2.9.7 is where the seam manifest was last
+  measured (information, not a gate).
+- **Every `window.json` the derivative commands write carried an internal note with a date** in its `approximation`
+  field. The field now states the approximation only.
+- **An `hrrrv5` static build that lacked two geography sets said "stage them with gpuwm fetch-geog"**, whose default
+  set leaves those two out, so the same refusal came back. It now prints the exact command,
+  `gpuwm fetch-geog --root DIR --datasets NAME,NAME`, with the root and the missing sets.
+- **`global-receipt.json` said `"ran": {"mode": "exact"}` for a correct-mode run on an MPAS suite.** It read only the
+  ArWen route's mode key; it now reads the MPAS suite route's as well and records the mode the run used.
+- **A scorer command that failed with nothing on its error stream gave an empty reason** (`exited 2:`). It now gives
+  the command's output, or the path of its log when it printed nothing.
+- **`doctor` said this distribution "has no fetch path" for a mesh**, while `gpuwm-hex global` fetches its row's
+  published mesh. The mesh line now says so, and that every other door takes `--grid` and `--static`.
+
+Added as an option, not a default:
+- **`--boundary-layer guarded` on the 12 km example row.** With nothing of the boundary layer held, a low-level
+  temperature measure placed on the storm cell reads 0.996 to 1.000 of the gradient's prediction, where the default
+  route is 2.2 per cent short. It is not the default: the README's 12 km command ends NOT PASSED (UNRESOLVED) on it
+  (466 s, card peak 23,610 MiB, on one RTX 5090, on a pre-release build of 0.6.1). `docs/differentiable/LIMITS.md` has both readings.
+
+Text corrected:
+- **The README's first install command stopped on a system Python** (`error: externally-managed-environment`, Ubuntu
+  26.04). Every install the README prints now starts with the line that makes the Python environment it goes in.
+- The package summary and the README's first screen say what the package is, with the install and check commands;
+  "0.4 in short" moved under the earlier releases. The classifiers list Python 3.14 and no longer list Windows (the
+  one wheel is Linux x86_64).
+- `docs/differentiable/LIMITS.md` states the 12 km updraft reading plainly: it is the forecast's own melt-or-freeze
+  switch in one column (the other 55 cells of the circle read 0.997 to 1.009), which no derivative follows.
+- The 12 km example's seconds and memory on the README, the first-hour page, the limits page and the examples'
+  page name the build they were measured on: 0.6.0's release builds (320 to 645 s on a first run), or a pre-release
+  build of 0.6.1 (418 s). The 3 km answer checks are given against a bar of 4 single-precision roundings
+  (1.786e-07 and 1.304e-07), not 1e-07. The counts of bundled programs (38 files, nine engine bridges), the engine
+  versions named beside the 3.0 range and the manual's quickstart versions are corrected.
+- **The global quick start stopped at its static stage on a fresh install** ("no geography root"): every static needs
+  the geography, the published global meshes' included. The README's quick start and the global door's page print
+  `gpuwm fetch-geog` before the command, with its size, and the README and the first-hour page say which commands
+  need it.
+- GUIDE section 7 gives step 6's time and memory from an empty home, and the global door's page gives a fresh
+  install's stage times, the run folder's size and how long scoring takes.
+- The README no longer says that a nest under an `hrrrv5` parent stops: gpuwm 3.0.3, which pip resolves for this
+  release, fixes it, and the README gives the measured run. It also gives the `gpuwm fetch-geog` command an `hrrrv5`
+  run needs on a fresh install.
+- **The User Manual's quickstart stopped at two of its commands as printed.** `pip download --no-binary :all:
+  gpuwm-hex` built every dependency from source and stopped in cmake's build on a machine without `make`; the page
+  now prints `pip download --no-deps --no-binary :all: gpuwm-hex` and the line that copies the vertical specs out.
+  Its render step named `cuda-history.*.nc`, which the default (MPAS) route does not write; it names `history.*.nc`,
+  as do the forecast and render chapters and the transport products page, whose render of several frames now names
+  the run's start (without it every frame was filed as lead 0 and the pictures replaced one another). The quickstart also prints the published
+  mesh download and the `gpuwm-hex init-source` command that makes its met input, and says what a 0.6.1 forecast
+  prints and writes. The first-hour page and the derivative engine's page say the `[ad]` line needs a `python3.14`,
+  which Ubuntu 26.04 has and Ubuntu 24.04 has not.
+
 ## 0.6.0
 
 Requires gpuwm>=3.0.0,<3.1.
@@ -1089,8 +1177,8 @@ Fixed:
   published artifacts only: mesh, static, GFS init, a 6 h forecast at
   dt 5 s on a 16 GB card, and 637 rendered frames, all through the shipped
   doors.
-- A published comment the release scrub had mangled reads correctly again,
-  and the scrub no longer doubles an article in front of a substituted
+- A published comment the release tooling had mangled reads correctly again,
+  and the tooling no longer doubles an article in front of a substituted
   label.
 
 ## 0.2.1 (2026-08-31)
@@ -1438,7 +1526,7 @@ either as open.)*:
   Until it does, the 512 MiB headroom is not spendable and graded meshes want
   margin above what the row returns.
 - Two registered meshes — `x1.40962` and `v15.150.38857` — move from admitted
-  to refused on the DEFAULT row on the 10 GiB desktop card, which the 08-25
+  to refused on the DEFAULT row on a 10 GiB RTX 3080, which the 08-25
   row admitted. The refusal is conservative rather than correct: the default
   row carries the 170 SM card's fixed term, and that card was measured
   running `x1.40962` at a 6,340.5 MiB peak. Its own row admits the mesh with
@@ -1659,8 +1747,8 @@ Fixed:
   166,376 values on the reference cull. Those eight sites are fixed in the
   next entry.
 - The eight shared literal divisors are gone, and the rewrite is an
-  architecture boundary rather than a property of one stack. MEASURED on the
-  desktop RTX 3080 (sm_86, NVRTC 13.0.48 `CL-36260728`, CUDA driver 13030):
+  architecture boundary rather than a property of one stack. MEASURED on an
+  RTX 3080 (sm_86, NVRTC 13.0.48 `CL-36260728`, CUDA driver 13030):
   one compiler, one option set, one source — NVRTC emits `div.rn.f32`
   against the literal for every target up to `compute_90` and `mul.rn.f32`
   by the literal's float32 reciprocal from `compute_100` up, which covers
@@ -1741,8 +1829,8 @@ Fixed:
   1,774.0 MiB + 115,143 B/cell (x1 6,272 / u96 8,802 MiB, u96 rc 0 under
   the new floor); RTX 3080 x1 6,340.5 MiB device-view, fixed 2,289.6 MiB
   with the slope borrowed and said so — x1.40962 is now admitted on the
-  10 GiB desktop card, where the superseded row refused it. No 12 GiB card
-  exists in the fleet: the 12 GiB tier figure ships as a DECLARED
+  10 GiB RTX 3080, where the superseded row refused it. No 12 GiB card
+  was measured: the 12 GiB tier figure ships as a DECLARED
   DERIVATION, labeled `DERIVED, NOT MEASURED`, and the label is
   test-pinned.
 - Regional (limited-area) meshes are admitted. `Mesh.validate()` recognises
@@ -1780,7 +1868,7 @@ Fixed:
   of the 2026-08-25 regional oracle (`GPUWM_HEX_LBC_ORACLE_DIR`). Derived
   coupled fields (`lbc_rho_zz`, `lbc_ru`, `lbc_rho_edge`, `lbc_rtheta_m`)
   and driver wiring are deliberately out: they need mesh state and belong to
-  the runtime lane; the pool refuses their names and says whose they are.
+  the runtime; the pool refuses their names and says where they belong.
 - Graded (variable-resolution) meshes are registrable and bindable. Four
 - **A generated variable-resolution mesh completes a full-physics
   forecast** -- the first in this project. Registry row `v20.80.151649`
@@ -1904,8 +1992,8 @@ Fixed:
   restart payload. The F030 checkpoint never captured it, so every
   restored run re-entered step 16 with zero forcing lanes while the
   unbroken run fed the real step-15 pair, and the step-16 identity gate
-  failed deterministically on every arm (the step-16 restart divergence, 5/5 red on the reference node, red
-  since the forcing lanes landed). Checkpoint schema v3 downloads the
+  failed deterministically on every arm (the step-16 restart divergence, 5/5 red on the reference machine, red
+  since the forcing changes landed). Checkpoint schema v3 downloads the
   pair at F030, refuses to write a checkpoint without it, re-seeds it on
   restore in both the fresh-process worker and the in-process
   instrument, and gates the rehydration with its own fingerprint

@@ -80,7 +80,7 @@ class PoolWords:
     def written_words(self):
         """Only the words put_field wrote, never a field get_field merely read from the member's own inputs.
 
-        THE BREAKAGE THIS PREVENTS (box-aws2x 2026-10-24, MPAS-route storm-following, member statics from a
+        THE BREAKAGE THIS PREVENTS (a two-card cloud machine, 2026-10-24, MPAS-route storm-following, member statics from a
         WPS_GEOG with MODIS lakes): restore_physics reads the target's land-use classes from the hydrated
         static, so ``data`` held its raw ivgtyp with class 21. Handed over as carrier words, it overwrote the
         ranks'/classes' lake fold (runtime_v842.fold_lake_class) and every moved segment died at its first

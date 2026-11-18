@@ -21,7 +21,7 @@ def test_storm_measure_line_on_the_example_rows():
             assert len(lines) == 1 and "no PASS of this release covers it" in lines[0] and "LIMITS.md" in lines[0]
     twelve = ad_doors.storm_measure_lines(table, _args(row="hrrrv5-q12.96.2890.n40.60w91.30"), "sensitivity",
                                           ["qr", "w", "theta_m"])
-    assert "0.118" in twelve[0] and "(qr, w)" in twelve[0]
+    assert "13,000" in twelve[0] and "(qr, w)" in twelve[0]
 
 
 def test_no_line_for_the_readme_measures():

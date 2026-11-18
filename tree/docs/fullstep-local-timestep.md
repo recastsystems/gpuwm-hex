@@ -472,7 +472,7 @@ own layout, and advances its own boundary clock by its own class step.
   (`cuda_fullstep_lts_scalars.tap_acoustic_momentum`). Before 0.4.5 the tap
   sat only on the global kernel, never fired on a region, and the first class
   step of any region with an interior interface stopped with "class 0 imposed
-  the child's interface flux 0 times". Measured 2026-10-24 (box L, one RTX
+  the child's interface flux 0 times". Measured 2026-10-24 (one RTX
   PRO 6000): a 1400 km cap cut from a 120-15 km globe (7,173 cells; 4,082 at
   rate 1, 3,091 at rate 2), GFS 2024-05-06 18Z, ArWen physics, 1 h. Stock
   0.4.4 stopped at the first class step; fixed, it runs, the interior budget

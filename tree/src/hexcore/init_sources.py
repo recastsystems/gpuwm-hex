@@ -101,7 +101,7 @@ _INDEX_FORMATS = {"ecmwf-jsonl", "ncep-idx"}
 #: bursts answer 503 Slow Down, which the retry ladder absorbs).
 DEFAULT_STREAMS = 3
 #: Objects :func:`acquire` fetches at once when each arrives on one stream (a row codec such as bz2, no index): DWD's
-#: ICON open data is about 120 bz2 objects a lead. THE BREAKAGE THIS PREVENTS (a test host, 2026-11-13): ICON's objects
+#: ICON open data is about 120 bz2 objects a lead. THE BREAKAGE THIS PREVENTS (measured 2026-11-13): ICON's objects
 #: came one after another at 0.4-0.6 MB/s each, 992 s for one lead, so a hex region's hourly boundaries from ICON
 #: took hours; 8 at once moved 2.7 MB/s from the same host (16 at once, 2.9 MB/s).
 SINGLE_STREAM_OBJECTS_AT_ONCE = 8

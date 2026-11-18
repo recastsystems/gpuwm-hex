@@ -67,10 +67,12 @@ def test_the_texts_state_the_reflectivity_readings_and_their_scope():
                   "not steady at any nudge size", "--cloud-derivative gated"):
         assert words in says, words
     assert "not this build's runner, and not through this command" in cd["default_when"]
-    assert "this build's runner and this command on a card" in cd["routes"]["number"]["measured"]["not_yet"]
+    # 0.6.1: the route was read through the command on the final builds of 0.6.0, so it is no longer listed as not yet read
+    assert "this build's runner and this command on a card" not in cd["routes"]["number"]["measured"]["not_yet"]
+    assert "3.65e-04 and 1.92e-03 from 1" in says and "(-1.50 roundings)" in says
     assert "--cloud-derivative number" in cd["routes"]["gated"]["says"]
     w = cd["routes"]["number"]["measured"]["window_12km"]     # the twelve directions, as read
     assert "+3.97" in w and "no one-signed drift (mean +0.18, standard error 0.54)" in w
-    # the held readings were taken on the ship pick, not on the gated images: the texts must say which
+    # the held readings were taken on an earlier form of the derivative, not on the gated images: the texts must say which
     assert "gated itself was not read on this measure" in cd["default_when"]
-    assert "ship pick" in says and "measured on the engine line's ship pick" in cd["routes"]["gated"]["says"]
+    assert "an earlier form of the derivative" in says and "measured on an earlier form of the derivative" in cd["routes"]["gated"]["says"]

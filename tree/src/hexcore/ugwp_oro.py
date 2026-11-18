@@ -9,7 +9,7 @@ con, oa1-4, ol1-4 at large and small scale) from the mesh's
 region, a point mesh, a storm-following member -- the forecast refused before
 its first step: "--orographic-statistics names a missing file
 .../region-adb5903adc0b.ugwp_oro_data.nc" (3 km region from GFS 2026-10-23
-18Z f348, box L, 2026-10-24).
+18Z f348, 2026-10-24).
 
 This module builds the file for any mesh, from the 30-arc-second terrain the
 static already reads (``topo_gmted2010_30s``), with the Rust generator

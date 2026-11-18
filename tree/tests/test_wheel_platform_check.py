@@ -1,6 +1,6 @@
 """The publish-time platform-tag check refuses a wheel older hosts cannot install.
 
-THE BREAKAGE (verify-final-hex QA H3, 2026-10-12): the 0.4.0 candidate wheel
+THE BREAKAGE (a release review of 0.4.0, 2026-10-12): a 0.4.0 build's wheel
 was tagged ``manylinux_2_35_x86_64`` because it was built on a glibc 2.35+
 host, so pip on glibc 2.28-2.34 hosts skipped it and fell back to an sdist
 build that needs cargo and an engine checkout.  ``tools/check_wheel_platform.py``

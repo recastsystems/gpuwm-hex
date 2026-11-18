@@ -108,7 +108,7 @@ def _regional_boundary_zone_present(arrays: Mapping[str, Any]) -> bool:
     """True when the complete mask triple carries at least one ring element.
 
     THE BREAKAGE THIS PREVENTS (measured 2026-08-26, ``v20.80.151649`` on
-    the proving RTX 5090): an all-zero triple is MPAS's global convention and the
+    an RTX 5090): an all-zero triple is MPAS's global convention and the
     unified ``rw_mpas_static`` writes it on every generated static, so
     classifying on PRESENCE refused every generated global mesh at load --
     "not a bounded disk: nCells-nEdges+nVertices = 2, not 1" and "rings
@@ -617,7 +617,7 @@ def regional_ring_shell_errors(
     the boundary blend has a hole nothing announces.
 
     THIS REPLACES A TEST THAT DID NOT IMPLY ITS OWN CLAIM, and the counter-
-    example is measured (2026-08-27, the proving RTX 5090, evidence/nest-ratio-20260827/).
+    example is measured (2026-08-27, an RTX 5090, evidence/nest-ratio-20260827/).
     The check here used to be that ring POPULATIONS grow outward, on the
     stated reasoning that "each ring wraps the previous in a growing shell".
     Populations are a proxy for wrapping on a UNIFORM mesh only, and the only
@@ -1630,7 +1630,7 @@ class Mesh:
         triple_complete = len(bdy_present) == len(REGIONAL_BOUNDARY_MASK_NAMES)
         # THE BREAKAGE THIS PREVENTS, MEASURED (2026-08-26, all three fleet
         # cards on the published x1.40962 at the anchored 120 s timestep, and
-        # v20.80.151649 on the proving RTX 5090): carrying the triple is NECESSARY
+        # v20.80.151649 on an RTX 5090): carrying the triple is NECESSARY
         # for a mesh to be regional and it is not SUFFICIENT.  Native MPAS-A
         # writes bdyMaskCell/Edge/Vertex into the static file of a GLOBAL mesh
         # too, all zero -- the published x1.40962 static (NCAR,

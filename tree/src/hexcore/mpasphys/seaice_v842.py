@@ -872,7 +872,7 @@ def _module_on(device: int, nsoil: int):
 
     source = cuda_source(nsoil)
     # RawModule's cache compiler appends forced FTZ after caller options.
-    # Direct NVRTC preserves strict native subnormals (pool proof-bar ruling).
+    # Direct NVRTC preserves strict native subnormals (the proof bar's rule).
     binary = direct_image(source,
         options=_hex_numerics.options(("--std=c++11", "--fmad=false", "--ftz=false",
                  "--prec-div=true", "--prec-sqrt=true"), keep_ftz=True),

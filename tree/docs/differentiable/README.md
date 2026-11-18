@@ -41,14 +41,20 @@ this release is narrower, and you should know it before you start:
 
 ## Install and run
 
+Install the `ad` extra in a Python 3.14 environment of its own, not on top of `[gpu]`: each of the two extras brings its own CuPy package, one environment holds one, and pip does not remove the other. `[ad]` installs the CUDA 13 CuPy, so it needs a driver that serves CUDA 13; the forecast commands of this release were run from a `[gpu]` environment. `gpuwm-hex doctor` reports two CuPy packages as a required gap and prints the command that leaves one. The runnable example scripts travel in the wheel: `gpuwm-hex examples` prints their folder,
+and `gpuwm-hex examples --copy DIR` copies them.
+
 ```bash
-python3.14 -m venv hexad && . hexad/bin/activate
-pip install "gpuwm-hex[ad]==0.6.0"
+python3.14 -m venv hexad && . hexad/bin/activate   # Debian and Ubuntu: sudo apt install python3-venv first
+pip install "gpuwm-hex[ad]==0.6.1"
 gpuwm-hex adjoint-test --out at
 gpuwm-hex tangent      --steps 3 --out tl
 gpuwm-hex sensitivity  --steps 3 --metric theta_m --box 30,48,-105,-80 --levels 1-10 --out se
 gpuwm-hex param-grad   --steps 3 --check --out pg
 ```
+
+The first line needs a `python3.14`: Ubuntu 26.04's system Python is one; Ubuntu 24.04's is 3.12, and there the
+line stops with `python3.14: command not found` (install a Python 3.14 first, or use Ubuntu 26.04).
 
 Add `--row hrrrv5-full-x1.40962` to any of them for the full-physics row. Each command prints what it needs before
 it starts and what it used at the end, and writes `receipt.json` in its `--out` folder: its numbers, every stage's
@@ -105,7 +111,7 @@ is in [LIMITS.md](LIMITS.md)).
 
 ## Larger meshes: what box to bring, and how long a gradient takes
 
-These were measured with the engine on one 96 GB RTX PRO 6000 Blackwell card. The 60 km mesh and the larger 3 km box are not commands of this release. The 3 km storm box (38,278 cells) ships as a second example: `--row hrrrv5-q3.96.38278.n40.60w91.30` downloads its mesh and a one-hour plan of the HRRR 2023-03-31 18Z start (about 2.4 GB more; 3 steps when `--steps` is not given, up to 239; the README's commands give `--steps 59`), and `--init example` records a plan of its own from that start (not yet run through to a gradient on a card in this release; [GUIDE.md](GUIDE.md), section 4). It needs one 96 GB card with 96,600 MiB free on the default route of `sensitivity` (93,000 MiB on the exact route and for the other commands). A 59-step `sensitivity` is admitted on 258,057 MiB of host memory for a first call (the answer check; it held 241,895 MiB) and on 249,661 MiB as a later command, which keeps its forward for the next gradient (it held 233,216 MiB; 158,617 MiB with `--keep-forward off`), and the command states its need and stops on a host with less; the three-step windows need 110,592 MiB. On this row the boundary layer's backward runs without its tape by default (the tape-free route). From this build it is a different linear model from the exact route: it differentiates the boundary layer's turbulence closure, the plume's transport with the plume's own coefficients held, and the boundary-layer height the column returns, which the exact route holds at the forecast's values, so its answer differs from the exact route's by design; the size of that difference was not measured on this build. `--boundary-layer taped` runs the exact route. Through the command on one 96 GB card, `sensitivity` and the 59-step `adjoint-test` (PASS on the default route: the number cloud route and the live transport limiter; [LIMITS.md](LIMITS.md)) have run on this row.
+These were measured with the engine on one 96 GB RTX PRO 6000 Blackwell card. The 60 km mesh and the larger 3 km box are not commands of this release. The 3 km storm box (38,278 cells) ships as a second example: `--row hrrrv5-q3.96.38278.n40.60w91.30` downloads its mesh and a one-hour plan of the HRRR 2023-03-31 18Z start (about 2.4 GB more; 3 steps when `--steps` is not given, up to 239; the README's commands give `--steps 59`), and `--init example` records a plan of its own from that start (not yet run through to a gradient on a card in this release; [GUIDE.md](GUIDE.md), section 4). It needs one 96 GB card with 96,600 MiB free on the default route of `sensitivity` and of `adjoint-test` (93,000 MiB on the exact route, and for `tangent` and `param-grad`). A 59-step `sensitivity` is admitted on 258,057 MiB of host memory for a first call (the answer check; it held 241,895 MiB) and on 249,661 MiB as a later command, which keeps its forward for the next gradient (it held 233,216 MiB; 158,617 MiB with `--keep-forward off`), and the command states its need and stops on a host with less; the three-step windows need 110,592 MiB. On this row the boundary layer's backward runs without its tape by default (the tape-free route). From this build it is a different linear model from the exact route: it differentiates the boundary layer's turbulence closure, the plume's transport with the plume's own coefficients held, and the boundary-layer height the column returns, which the exact route holds at the forecast's values, so its answer differs from the exact route's by design; the size of that difference was not measured on this build. `--boundary-layer taped` runs the exact route. Through the command on one 96 GB card, `sensitivity` and the 59-step `adjoint-test` (PASS on the default route: the number cloud route and the live transport limiter; [LIMITS.md](LIMITS.md)) have run on this row.
 
 | mesh (cells) | window | card memory at peak | host memory at peak | one gradient |
 |---|---|---|---|---|
@@ -130,7 +136,7 @@ commands replay three. Every receipt carries the row's own words (`row_what`).
 | transport limiter | coefficients held | differentiated |
 | boundary layer (MYNN-EDMF c6d08709, the code RRFS 44c0849 runs; not the v6.1.1 a plain hrrrv5 forecast runs) | turbulence closure and mass-flux plume held | moisture mixing live, plume speed on a ramp |
 | land (RUC) | differentiated | bounded derivative |
-| mountain-drag closure (GSL drag) | held | held (earlier builds of this release differentiated it here, trusted to about 1 hour) |
+| mountain-drag closure (GSL drag) | held | held (earlier builds of 0.6.0 differentiated it here, trusted to about 1 hour) |
 | cloud microphysics (TEMPO) | tangent in double precision | tangent in single precision |
 | identity kernels | two set-up kernels of the first step that read no model state (`mynnsfc_tables`, `w_filter_geometry_v841_f32`) | none |
 
@@ -178,7 +184,7 @@ gpuwm-hex adjoint-test --out at
 ```
 
 On this build `adjoint-test` on the 120 km rows runs its own 1-step window (12 minutes) at eight step sizes; that
-window read PASS on both rows on an earlier build of this release (`examples/differentiable/expected.json`). With
+window read PASS on both rows on an earlier build of 0.6.0 (`examples/differentiable/expected.json`). With
 `--steps 3` it ends NOT PASSED (UNRESOLVED), exit status 1, because over three steps only the bump resolves
 ([LIMITS.md](LIMITS.md)). What `--steps 3` printed on an earlier build, which ran one test direction, the
 bump (paths shortened); this build prints one block more, the test directions below, before the `whole-state dot`
@@ -246,7 +252,7 @@ direction with its seed and its verdict, and its `checks_passed` is the verdict 
 the whole-state dot alone, which is what `--strict-from` takes.
 
 Measured on the 12 km example (15 steps, one card). On the exact route (`--boundary-layer taped`), whose boundary
-layer holds the turbulence closure and the plume's heat and moisture, an earlier build of this release, run without
+layer holds the turbulence closure and the plume's heat and moisture, an earlier build of 0.6.0, run without
 the whole-state dot, read `bump` 1.0001 at its best step size, INSIDE; `descent` 0.954 to 0.956 at four step sizes,
 OUTSIDE (the real change is 4.4 per cent short of the gradient's prediction); `near-ground-moisture` 0.850 to 0.882
 at three, OUTSIDE (12 per cent short); `smooth-draw` UNRESOLVED. That is a FAIL where the bump alone read inside the
@@ -327,7 +333,8 @@ part of the reading, and this page claims no reading for it.
 | `--gradient-mesh native`, `auto` or `6km` | `sensitivity` on the 3 km storm box: the gradient on the mesh itself (`native`; `auto`, the default, is native today) or on its 6 km companion, carried back (see "A 3 km gradient taken on the 6 km mesh") |
 
 The measure commands (`adjoint-test`, `sensitivity`, `param-grad`) take `--metric` (`theta`, `theta_m`, `qv`, `qc`,
-`qr`, `pressure_p`, `rho`, `w`; default `theta_m`), a region (`--box S,N,W,E` or `--circle LAT,LON,RADIUS_KM`) and
+`qr`, `pressure_p`, `rho`, `w`; default `theta_m`; `qr`, `qc` and `w` measure the storm itself, and no PASS of this
+release covers them: [LIMITS.md](LIMITS.md), *Storm measures*), a region (`--box S,N,W,E` or `--circle LAT,LON,RADIUS_KM`) and
 `--levels`. Without a region, `adjoint-test` measures a circle around its bump and the other two the whole mesh.
 `adjoint-test` also takes `--taylor` (the bump sizes) and `--directions` (its test directions, section 1); `tangent`
 takes `--fields`; `sensitivity` takes `--map-level` and `--no-map`; `param-grad` takes `--params` and `--check`.
@@ -349,7 +356,8 @@ do not take a coarse mesh and say why.
 target: the mean modified potential temperature (`--metric theta_m`) over the 150 km circle at 40.6N 91.3W, every
 level. One window: 885 s (59 steps of 15 s on 3 km; 30 steps of 30 s on 6 km). One card class (RTX PRO 6000
 Blackwell, 96 GB). On that case the 6 km gradient took 98 s and 95 s against 502 s and 499 s for the 3 km one on the
-same card; it points the same way (cosine above 0.99 for temperature and for moisture, sizes within 2 per cent); and
+same card (an earlier build's times; on 0.6.0's final wheel the 3 km gradient takes 180 to 232 s, and the 6 km one
+was not timed again); it points the same way (cosine above 0.99 for temperature and for moisture, sizes within 2 per cent); and
 the real 3 km cost falls 0.995 as much along the carried 6 km direction as along the 3 km one. Not shown: storm-scale
 targets (rain water, low-level wind, vertical velocity, a small circle), any other day, any other region, 12 km,
 longer windows, the edge-wind fields. The command refuses a target outside the shown list by name.

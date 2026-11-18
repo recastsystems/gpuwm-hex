@@ -75,7 +75,7 @@ def test_the_rows_words_are_the_measured_ones_and_its_needs_hold_the_measured_pe
     table = d.load_table()
     row, storm = table["rows"][Q12], table["rows"][STORM]
     # 59 levels: the recorded plan's (sensitivity.nc of the shipped example, nVertLevels 59); the row said 55 until
-    # the independent checker read 59 (2026-11-15), and --level 56 to 59 were refused
+    # a review of 0.6.0 read 59 (2026-11-15), and --level 56 to 59 were refused
     assert (row["cells"], row["edges"], row["levels"], row["dt_s"]) == (2890, 8834, 59, 60.0)
     assert row["example_plan_steps"] == row["default_steps"] == 15
     assert row["example_plan_start"] == "2024-05-21T15:00:00"

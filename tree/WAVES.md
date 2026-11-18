@@ -23,12 +23,12 @@ roughness feedback is false. The completed 192-hour MPAS pair compared every
 field in 33 histories and 33 diagnostic files: 3,330,686,997 stored words,
 including 3,159,010,701 floating words, with zero differences. Global attributes
 were outside that comparison. This proves the recorded MPAS pair, not every
-physics route or later source tree; exact run provenance is in the lane's
-`receipts/atmosphere-identity.json`.
+physics route or later source tree; exact run provenance is in
+`receipts/atmosphere-identity.json`, kept with the maintainers' records.
 
 Prepared input uses the shared Rust `gpuwm.waves.prepared/v1` contract. The
 `prepared` option selects an existing verified manifest folder. Automatic mesh
-preparation delegates to the data lane's `prepare_mesh` entry point. Native
+preparation delegates to the data preparation's `prepare_mesh` entry point. Native
 cell order and coordinates are checked before constructing the solver.
 The source `preparation` option is metadata for that shared entry point.
 
@@ -63,6 +63,6 @@ native cell values without smoothing. The six-hour sequence includes Hs with
 peak travel-direction arrows, Tp, wind sea and all three swell partitions.
 Products and station files are under `<case>/<domain>/waves/`.
 
-Implementation status and qualification are separate. The lane report names
+Implementation status and qualification are separate. The implementation report names
 the committed tree, executed commands, missing dependencies and whole-run
 evidence. This document is not a scientific skill or release-readiness claim.

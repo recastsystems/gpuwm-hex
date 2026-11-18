@@ -316,6 +316,7 @@ _DOORS: tuple[tuple[tuple[str, ...], Callable[[argparse._SubParsersAction], None
     (("tc-verify",), _door(".tc_verify", "register_cli")),
     (("country",), _door(".country_door", "add_country_parser")),
     (("version",), _add_version_parser),
+    (("examples",), _door(".examples_door", "add_examples_parser")),
     (("verify-dycore", "verify-mpas"), _add_verify_parsers),
     (("doctor",), _door(".doctor", "add_doctor_parser")),
     (("mesh-plan",), _door(".mesh_plan_door", "add_mesh_plan_parser")),

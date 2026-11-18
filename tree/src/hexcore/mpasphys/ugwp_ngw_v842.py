@@ -1538,7 +1538,7 @@ def _module(nlev: int, math_header: str, device_id: int):
 
     if not math_header.strip():
         raise RuntimeError("UGWP needs the shared glibc device math header; "
-                           "the lane base rkind_libm.py has host hooks only")
+                           "the base rkind_libm.py has host hooks only")
     source = cuda_source(nlev, math_header)
     with cp.cuda.Device(device_id):
         # Direct NVRTC preserves --ftz=false; CuPy RawModule appends --ftz=true.

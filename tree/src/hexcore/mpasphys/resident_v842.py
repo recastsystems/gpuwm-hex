@@ -395,7 +395,7 @@ class ResidentPhysicsGlue:
         # closed-sphere geometry indexes that endpoint as column nCellsSolve, one past the tendency arrays.
         # THE BREAKAGE THIS PREVENTS: on an MPAS-suite LTS class the PBL edge projection read whatever followed
         # rublten/rvblten in device memory into those edges' momentum tendency, and the first step of some class
-        # was refused by the dycore validation flag at time 0 (3 of 3 storm-following moving segments on box L
+        # was refused by the dycore validation flag at time 0 (3 of 3 storm-following moving segments on a rented machine
         # and on an RTX 4090 host; every class with 0x7F-filled fresh pool blocks: 1,159 edges of the rate-4
         # class at |tend| ~ 3e36, MPAS-ROUTE-SPEED-2026-10-24).  Such edges take the regional geometry's zero
         # garbage column: half their one real cell's tendency, native's tend_toEdges word.

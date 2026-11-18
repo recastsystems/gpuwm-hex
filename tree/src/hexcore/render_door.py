@@ -762,7 +762,7 @@ def default_label(mesh: Path | None) -> str:
 def legacy_product_file_name(label: str, engine_name: str, product: str) -> str:
     """``<label>_<YYYYMMDD>_<HH>z_f<lead>_<product>.png`` for one engine PNG.
 
-    THE BREAKAGE THIS PREVENTS (the owner's naming ruling, restated 2026-10-10):
+    THE BREAKAGE THIS PREVENTS:
     the engine names every frame it imports from a wrfout-shaped file
     ``rustwx_wrf_<date>_<H>z_f<NNN>_d01-<dx>km_...``, so a hex global
     forecast's maps were filed under another model's name and a resolution

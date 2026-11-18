@@ -429,7 +429,7 @@ class Use:
 
         THE BREAKAGE THIS PREVENTS: the line was printed before those checks, so on a 32 GB card the 3 km storm
         command first said "STARTED FRESH: ... this command leaves its program loaded for the next one", then was
-        refused for the card's size, and no program was ever loaded (the dist47 checker's fresh install)."""
+        refused for the card's size, and no program was ever loaded (a fresh install of a 0.6.0 build)."""
         lines, self.held_lines, self.defer = self.held_lines, [], False
         for text in lines:
             print(text, flush=True)
@@ -440,7 +440,7 @@ class Use:
         removed when no program is loaded for this card (``unlock(tidy=True)``).
 
         THE BREAKAGE THE REMOVAL PREVENTS: a 3 km command refused for the card's size left ``card<N>.lock`` in the
-        user's sessions folder although no program was ever loaded (the dist48 and dist49 checkers' fresh
+        user's sessions folder although no program was ever loaded (two 0.6.0 builds' fresh
         installs)."""
         if not self.defer:
             return
@@ -1048,7 +1048,7 @@ class SensitivitySession:
             # program, the same answer and bytes as the command, as GUIDE section 2 says of the 12 km row.
             # THE BREAKAGE THIS PREVENTS: the shipped example (examples/differentiable/own_measure.py, GUIDE section
             # 2, run-32gb.sh step 3) stopped at once on the 12 km row with "no session on this row or command"
-            # (independent checker, 2026-11-15).
+            # (a review of 0.6.0, 2026-11-15).
             self.per_call = self.use.why_off
             print(f"gpuwm-hex sensitivity: no session on this row ({self.use.why_off}): each gradient() runs its "
                   "own program, as the command does", flush=True)

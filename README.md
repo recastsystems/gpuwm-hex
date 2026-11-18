@@ -1,6 +1,7 @@
 # gpuwm-hex
 
-MPAS-Atmosphere v8.4.2 on the GPU. gpuwm-hex 0.6.0 ports the whole model to
+MPAS-Atmosphere v8.4.2 and NOAA's hrrrv5 (RRFS-MPAS) configuration on NVIDIA GPUs, with the tangent-linear and
+adjoint of the exact-mode hrrrv5 forecast. gpuwm-hex 0.6.1 ports the whole model to
 CUDA: the dynamical core, both MPAS physics suites and their scheme options,
 initialization and static fields, the incremental analysis update, limited-area
 runs, streams, restart and diagnostics (the scheme list and what is not yet in
@@ -8,8 +9,10 @@ are in `tree/README.md`). MPAS's own physics is the default; ArWen's physics
 stays one flag away (`--physics-suite arwen_mpas_column`), and hex adds
 capabilities MPAS does not have: one-command global forecasts, local time
 stepping, an experimental storm-following region, and a tangent-linear and
-adjoint model of its own forecast step. It runs on one consumer
-card.
+adjoint model of its own forecast step. Forecasts run on one consumer CUDA card
+(larger meshes take more memory or more cards, as `tree/README.md` says); the
+12 km adjoint example runs on a 32 GB card, and the 3 km and 120 km adjoint
+examples need a 96 GB card.
 
 This is the repository. The distribution it builds lives in [`tree/`](tree/),
 and its user documentation is [`tree/README.md`](tree/README.md) (the
@@ -17,12 +20,17 @@ capability contract: every claim with its scope) and the
 [user manual](tree/docs/manual/index.md). This page says what the project is,
 what it is matched against and how that is checked.
 
-**Install:** `pip install gpuwm-hex`. It requires the ArWen engine, gpuwm 3.0
-(`gpuwm>=3.0.0,<3.1`), and pip resolves it.
+**Install:** `pip install "gpuwm-hex[gpu]"` for forecasts, then `gpuwm-hex doctor`
+to see what the install can reach, and `gpuwm fetch-geog` once for the geography
+every static build needs, `gpuwm-hex global` included (about 2.5 GiB to
+download, about 31 GiB unpacked). For the derivative commands install
+`pip install "gpuwm-hex[ad]"` instead, in a Python 3.14 environment of its own
+(not on top of `[gpu]`). Either way pip resolves the engine it requires, gpuwm 3.0
+(`gpuwm>=3.0.0,<3.1`).
 
 ---
 
-## What 0.6.0 claims, and how far
+## What 0.6.1 claims, and how far
 
 Each line is measured, and each carries its scope. Nothing outside the scope
 is claimed. [`tree/README.md`](tree/README.md) gives the detail.
@@ -120,7 +128,7 @@ tree/            the gpuwm-hex distribution
   licenses/        every upstream licence text
 ```
 
-Every measurement quoted in this repository names the receipt it came from.
+The measurements quoted in `tree/README.md` that carry an `evidence/...` reference name the receipt they came from.
 The receipts themselves are not carried here; `tree/evidence/EVIDENCE.md` says
 why and what an `evidence/...` reference means.
 

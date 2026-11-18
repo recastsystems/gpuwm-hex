@@ -136,7 +136,7 @@ def _read_verified(path: Path, size: int, sha256: str, what: str = "moving carri
 
     Returns the uint8 buffer; the caller unpickles from it.  THE COST THIS REMOVES: a full hash pass and then a full
     pickle read of the ~3 GB carrier, one after the other, on one core at the start of every resumed segment
-    (box-aws2x 2026-10-24).
+    (a two-card cloud machine, 2026-10-24).
     """
     import numpy as np
     from concurrent.futures import ThreadPoolExecutor
@@ -207,7 +207,7 @@ def _write_sealed(path: Path, payload: dict[str, Any], summary: dict[str, Any]) 
 
     class HashingWriter:
         # The receipt hash comes from the bytes as pickle writes them, in order: no second full read of
-        # the ~3 GB carrier on one core after writing it (box-aws2x 2026-10-24).
+        # the ~3 GB carrier on one core after writing it (a two-card cloud machine, 2026-10-24).
         def __init__(self, stream):
             self.stream = stream
 
@@ -593,7 +593,7 @@ class MovingRoute:
                 return finite, mapped, method
 
             # THE COST THIS REMOVES: every carried physics field (vectors first) was mapped one after another on
-            # one thread, 7.9 s of a resumed MPAS-route storm-following segment (box-aws2x 2026-10-24, sampled).
+            # one thread, 7.9 s of a resumed MPAS-route storm-following segment (a two-card cloud machine, 2026-10-24, sampled).
             # The maps are independent calls; they run on all cores, and the native pool writes stay in order.
             largest_donors(weights)  # cached on the map before any task needs it
             jobs = [(_key(row, level), row['dimensions']) for row in rows for level in range(1, row['nlevels']+1)]

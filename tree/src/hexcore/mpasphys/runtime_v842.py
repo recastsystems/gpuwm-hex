@@ -154,7 +154,7 @@ class ResidentNativeCoupling:
             # THE BREAKAGE THIS PREVENTS: this path refused every cull ("resident wind reconstruction requires a
             # closed global mesh", then "resident wind pool shape/dtype/layout differs") at the first output, so no
             # MPAS-suite region ran once fix/hex-mpasphys-host met fix/hex-mpas-regional (3 km GFS 2026-10-23 18Z
-            # f348 region at 33.5N 101W, box L, 2026-10-24).
+            # f348 region at 33.5N 101W, 2026-10-24).
             if garbage is not None and int(garbage) != shape[1] - 1:
                 raise ValueError(f'the regional garbage column is the last element of the padded extent; '
                                  f'got {garbage} with {shape[1]} columns')
@@ -2498,5 +2498,6 @@ def _run_native_dynamics(arguments, config, layout, payload, streams, library,
     from ..device_memory_release import process_release
     receipt['device_memory_release']=process_release().receipt()
     receipt_path.write_text(json.dumps(receipt,indent=2,default=str)+'\n')
-    print(json.dumps(receipt,default=str))
+    from ..correct_mode import terminal_record
+    print(json.dumps(terminal_record(receipt),default=str))
     return 0

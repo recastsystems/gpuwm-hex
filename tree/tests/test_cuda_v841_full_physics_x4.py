@@ -171,7 +171,7 @@ def test_frozen_source_hashes_and_adapter_contract_are_exact() -> None:
         "src/hexcore/config_v841.py": (
             "117aae79f8d7550bfccc2cd5c68bc6477935997514529f70b31879cd03a6c492"
         ),
-        # New pin (convection ruling, 2026-08-26): the frozen config admits
+        # New pin (the convection rule by spacing): the frozen config admits
         # config_convection_scheme from this module and the timestep registry
         # keys on the selection it produces; the rationale lives beside the
         # runner's pin.
@@ -181,9 +181,9 @@ def test_frozen_source_hashes_and_adapter_contract_are_exact() -> None:
         # of the two digest gates is an admission-time refusal, not a test.
         # Measured inert by AST; the rationale lives beside the runner's pin.
         # Re-frozen 2026-10-11: variable-resolution meshes decided per cell;
-        # the rationale lives beside the runner's pin.
+        # the rationale lives beside the runner's pin.  Re-frozen 2026-11-17: the rule's text only.
         "src/hexcore/convection_admission.py": (
-            "9128972130e8022538e6fea8c41ab50df70246736f58515439e7dc2adb317f5e"
+            "ec6fc5f35ee56b83eb80290d29e88d7ab5d4d5bab7a92601fe2b9afaf647a389"
         ),
         # New pin (the timestep-anchor campaign): the frozen config ADMITS config_dt from this
         # module, so the pinned config's meaning depends on these bytes.

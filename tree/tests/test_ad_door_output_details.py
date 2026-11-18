@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""What the gradient commands print and write, as a new user reads it (independent checker's items 3 and 7, 0.6.0):
+"""What the gradient commands print and write, as a new user reads it (a review of 0.6.0):
 the FAIL line names the check that failed, the direction line follows --seed, sensitivity.nc places its cells, the
 map of a non-theta measure draws (or names) the measure's own field, the 12 km row's level count, the shipped Python
 example's refusal. No card: the table, the printing functions and the NetCDF writer."""

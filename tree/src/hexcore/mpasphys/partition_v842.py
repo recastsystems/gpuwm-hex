@@ -189,7 +189,7 @@ def project_payloads(layout: RegistryLayout, payload: Path, partitions, outputs,
     Each source field is decoded once for every partition, and the fields are projected, written and hashed on
     all cores.  THE COST THIS REMOVES: the MPAS LTS class executor projected the whole payload once per class,
     field after field (numpy take, file write, sha256), about 30 s before the first step of a storm-following
-    segment on box-aws2x and the largest part of a resumed segment's 90 s preparation
+    segment on a two-card cloud machine and the largest part of a resumed segment's 90 s preparation
     (MPAS-ROUTE-SPEED-2026-10-24).  The bytes and manifests written are project_payload's.
     """
     import os

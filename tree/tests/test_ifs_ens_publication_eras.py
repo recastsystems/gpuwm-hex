@@ -1,6 +1,6 @@
 """ECMWF ENS open data as it was published: one ifs-ens member from a past cycle.
 
-THE BREAKAGE THESE TESTS PREVENT (gpuwm-hex 0.5.0, run on a test host 2026-11-13): `init-source --source ifs-ens --member 7`
+THE BREAKAGE THESE TESTS PREVENT (gpuwm-hex 0.5.0, 2026-11-13): `init-source --source ifs-ens --member 7`
 from the 2024-05-14 12Z cycle refused at f000, "no address has it ... the index .../oper/20240514120000-0h-oper-fc.index
 has no record matching {'param': 'z', 'levtype': 'sfc'}", and from the 2024-05-22 18Z cycle at f006 with HTTP 404 on
 both mirrors. The row's terrain donor asked only the cycle's own oper step-0 file for its surface geopotential z, which

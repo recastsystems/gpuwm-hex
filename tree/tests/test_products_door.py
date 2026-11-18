@@ -903,7 +903,7 @@ def _write_patch_mesh(path: Path, *, lat0=35.0, lon0=-97.0, half_deg=3.0, step_d
 
 
 def test_mesh_point_check_splits_on_and_off_mesh_points(tmp_path):
-    # graded-plateau 1 km region, box J, 2026-10-24: London was 7,025 km off a
+    # graded-plateau 1 km region, 2026-10-24: London was 7,025 km off a
     # 300 km Oklahoma region and its refusal took every sounding with it.
     mesh = tmp_path / "patch.grid.nc"
     _write_patch_mesh(mesh)

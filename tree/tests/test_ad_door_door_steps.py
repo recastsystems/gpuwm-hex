@@ -4,6 +4,7 @@ the window its directions resolve in while tangent, sensitivity and param-grad k
 from __future__ import annotations
 
 import argparse
+import re
 
 from hexcore import ad_doors as d
 
@@ -61,7 +62,9 @@ def test_the_3km_row_reruns_the_real_model_above_the_rounding_floor_of_its_measu
     assert hs == [0.3, 0.2, 0.1, 0.06, 0.03]
     assert min(hs) >= 0.03 and hs == sorted(hs, reverse=True)
     assert all(b / a >= 0.5 for a, b in zip(hs, hs[1:]))   # neighbours at most a factor of two apart
-    assert "5.4 spacings" in row["adjoint_test_taylor_h_what"] and "f52-d56v-must1" in row["adjoint_test_taylor_h_what"]
+    assert "5.4 spacings" in row["adjoint_test_taylor_h_what"] and "RTX PRO 6000 Blackwell, 16 Nov 2026" in row["adjoint_test_taylor_h_what"]
+    # no internal run name (a lettered machine, a numbered run leg) in a printed source
+    assert not re.search(r"\bbox [A-Z]\d*\b|\b[a-z]\d{2}-[a-z0-9]", row["adjoint_test_taylor_h_what"])
 
 
 def test_every_door_window_in_the_table_names_a_door_that_exists():

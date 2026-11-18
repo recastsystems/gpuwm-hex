@@ -205,7 +205,7 @@ EARTH_RADIUS_KM = 6371.229
 #: Cities a LIMITED-AREA run takes its soundings at when none are named: the
 #: ones on its mesh, nearest the domain centre first, at most
 #: ``DEFAULT_REGION_POINT_COUNT``; a domain with none of them gets its centre.
-#: THE BREAKAGE THIS PREVENTS (graded-plateau 1 km region, box J,
+#: THE BREAKAGE THIS PREVENTS (graded-plateau 1 km region,
 #: 2026-10-24): a regional run fell back to the world set (London, Tokyo,
 #: Sydney), rw_hex_points refused London as 7,025 km off the mesh, and that
 #: one refusal took every sounding with it.

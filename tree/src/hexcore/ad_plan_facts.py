@@ -5,7 +5,7 @@ THE COST THIS REMOVES. A door command read the plan's ``plan.json`` whole severa
 again while it wrote its answer: the card family of the recording, the timestep, the allocation table (the field map's
 padding search, the answer's start state, the wind fold) each parsed it on their own, and the field map's padding
 search inflated every recorded start payload to compare it. On the 3 km storm example ``plan.json`` is 707,709,916
-bytes: one read and parse took 7.4 s on a home machine (2026-11-14, read 4.1 s, parse 3.35 s), the padding search
+bytes: one read and parse took 7.4 s on one machine (2026-11-14, read 4.1 s, parse 3.35 s), the padding search
 17.8 s, and a later ``sensitivity`` command spent 42.25 s before its own clock started (card run of 2026-11-14, read from
 the command's own file times), on no receipt. Every one of those answers is a function of the plan's
 files alone.
@@ -185,7 +185,7 @@ class PlanFacts:
         """The clock the recording read before step 1 (plan.json physics.state_xtime), when the plan names one.
 
         THE BREAKAGE THIS PREVENTS: every answer of a sensitivity command parsed the whole plan.json (708 MB at the
-        3 km box: 3.4 s and 4,271 MiB of host memory on a home machine) to read this one date, in no named stage, so
+        3 km box: 3.4 s and 4,271 MiB of host memory on one machine) to read this one date, in no named stage, so
         7 to 8 s of a target showed in no stage on the card (2026-11-14)."""
         self._from_doc()
         value = self._facts.get("state_xtime")

@@ -66,7 +66,7 @@ def arch_of(compute_capability: str) -> str:
 #: NVIDIA card families by compute architecture, with cards of each, for refusals in plain words.
 #: THE BREAKAGE THIS PREVENTS: on an H100 the README's command said only "its derivative images are built for sm_120
 #: and the row names no image recipe for sm_90": compiler words that name neither the cards that run the row nor what
-#: to do (the dist47 and dist48 checkers).
+#: to do (two 0.6.0 builds).
 CARD_FAMILIES = {
     "sm_70": ("Volta", "V100"),
     "sm_72": ("Volta", "Jetson AGX Xavier"),

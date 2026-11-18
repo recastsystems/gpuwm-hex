@@ -156,6 +156,11 @@ def _download(name, row, source, origin, destination):
     verify(destination, row)
 
 
+def fetch_size(count):
+    """A download's size as a user reads it: whole MB from 1 MB up (decimal, as the pages give sizes)."""
+    return f'{count / 1e6:,.0f} MB' if count >= 1e6 else f'{max(1, round(count / 1e3)):,} kB'
+
+
 def fetch_one(name, pins, *, cache=None, from_directory=None, _staged=None):
     """Fetch one pinned file and receipt; writers of other assets run in parallel."""
     started = time.perf_counter()
@@ -179,6 +184,12 @@ def fetch_one(name, pins, *, cache=None, from_directory=None, _staged=None):
         if needed:
             if prepared is None:
                 prepared = Path(staging) / name
+                if source is None:
+                    # THE BREAKAGE THIS PREVENTS (0.6.0, a fresh install from the published files): a first forecast
+                    # fetched its 221 MB kernel pack for 20 s with nothing in the terminal, while the physics
+                    # tables beside it announced theirs. One line, before the bytes move.
+                    print(f'gpuwm-hex: fetching {name} ({fetch_size(row["bytes"])}, once) from {origin["url"]}',
+                          file=sys.stderr, flush=True)
                 _download(name, row, source, origin, prepared)
             verify(prepared, row)
         with _lock(target.parent / '.fetch.lock'):

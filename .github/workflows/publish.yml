@@ -23,10 +23,10 @@ name: publish
 # the runner proves its identity to PyPI directly, so there is no long-lived
 # credential to leak, rotate, or accidentally print.
 #
-# WHY THE BUILD RUNS IN manylinux_2_28 (verify-final-hex QA H3, 2026-10-12).
+# WHY THE BUILD RUNS IN manylinux_2_28 (a release review of 0.4.0, 2026-10-12).
 # setup.py tags the wheel from the newest GLIBC symbol version its bundled
 # executables name.  Built on the ubuntu-24.04 runner, that is the runner's
-# glibc, and the 0.4.0 candidate came out `manylinux_2_35_x86_64`: pip on
+# glibc, and a 0.4.0 build came out `manylinux_2_35_x86_64`: pip on
 # every host with glibc 2.28-2.34 (RHEL 8/9, Ubuntu 20.04/22.04, most HPC
 # login nodes) skipped the wheel and tried the sdist, which needs cargo and an
 # engine source checkout to build the helpers.  Building inside the
@@ -114,7 +114,7 @@ jobs:
 
       - name: a static classic-only netCDF-C for the template copier
         # gpuwm-hex-netcdf-copy (the init door's CDF-5 vertical template
-        # copier, verify-final-hex item 4) links libnetcdf.  Linked against
+        # copier) links libnetcdf.  Linked against
         # the distribution's shared library it dragged 31 grafted libraries
         # into the wheel; the pinned static build keeps it self-contained.
         # The MPAS route's Registry pool reader (rw_mpas_physics_pool) links

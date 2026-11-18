@@ -1,10 +1,12 @@
 # The first hour with the differentiable engine
 
-This page is for someone who has just installed gpuwm-hex 0.6.0 and wants to know, within an hour, whether the
-tangent-linear and adjoint run on their machine and what they show. Every command below was run as printed, from a
-fresh install of gpuwm-hex 0.6.0 in an empty home directory, and the numbers are read from those runs: sections 2
-to 4 on this release's wheel (one RTX 5090), section 5 on earlier builds of this release (one 96 GB RTX PRO 6000
-Blackwell). What the
+This page is for someone who has just installed gpuwm-hex 0.6.1 and wants to know, within an hour, whether the
+tangent-linear and adjoint run on their machine and what they show. The commands of sections 2 to 4 were run on a
+pre-release build of 0.6.1, in a fresh Python 3.14 environment with an empty home directory, on one RTX 5090:
+section 2's install line with that build's wheel file in place of the published package name, every other
+command as printed. The output in section 3 is that run's. Section 5's commands were run on builds of 0.6.0 (one
+96 GB RTX PRO 6000 Blackwell), and on that build of 0.6.1 on a 32 GB card, where they stop as section 5 says. The
+12 km figures name the wheel they were measured on; the 120 km and 3 km figures are from builds of 0.6.0. What the
 engine is and is not is in [GUIDE.md](GUIDE.md); every current limit is in [LIMITS.md](LIMITS.md).
 
 ## 1. Will it run on my machine?
@@ -25,7 +27,7 @@ What else to bring:
 
 | example | card memory free | host memory | download (once) | first command |
 |---|---|---|---|---|
-| 12 km cut of the storm box (2,890 cells, 15 steps of 60 s) | 28,700 MiB | 47,104 MiB (the README command peaked at 41,022 MiB on the run `examples/differentiable/expected.json` gives, and at up to 44,613 MiB on a 512 GiB host; the 8-direction release check at 46,681 MiB) | 1.20 GB (3.4 GB unpacked in the cache) | 415 to 446 s (about 7 to 7.5 minutes) |
+| 12 km cut of the storm box (2,890 cells, 15 steps of 60 s) | 28,700 MiB | 47,104 MiB (the README command peaked at 41,190 to 44,109 MiB on 0.6.0's release builds and at 40,990 MiB on a pre-release build of 0.6.1; the 8-direction check at 46,681 MiB on a 0.6.0 build) | 1.20 GB (3.4 GB unpacked in the cache) | 320 to 645 s on 0.6.0's wheels, 418 s on a pre-release build of 0.6.1 (5 to 11 minutes) |
 | 120 km global (40,962 cells, 3 steps of 720 s) | 73,156 MiB (80,000 MiB for the full-physics row) | 81,920 MiB (110,592 MiB for the full-physics row) | about 2.4 GB | 271.9 to 307 s for its 1-step `adjoint-test` (about 4.5 to 5 minutes) |
 | 3 km storm box (38,278 cells, 59 steps of 15 s) | 96,600 MiB | 258,057 MiB for a first `sensitivity` (it runs the answer check), 249,661 MiB later. `adjoint-test` on this row keeps every step boundary, so its need follows the host: at least 102,948 MiB available (on a smaller host than the runner's default suits, more of its store goes to the run folder), and it held 254,885 to 262,306 MiB on 512 GiB hosts, and 420,360 MiB on the run that read PASS at the row's five step sizes | about 2.7 GB | about 12 minutes for `sensitivity` |
 
@@ -41,19 +43,27 @@ Linux x86_64, Python 3.14, and the `ad` extra (it pins the CUDA libraries the ex
 byte):
 
 ```bash
-python3.14 -m venv hexad && . hexad/bin/activate
-pip install "gpuwm-hex[ad]==0.6.0"
+python3.14 -m venv hexad && . hexad/bin/activate   # Debian and Ubuntu: sudo apt install python3-venv first
+pip install "gpuwm-hex[ad]==0.6.1"
 gpuwm-hex version
 ```
+
+Install the `ad` extra in a Python 3.14 environment of its own, not on top of `[gpu]`: each of the two extras brings its own CuPy package, one environment holds one, and pip does not remove the other. `[ad]` installs the CUDA 13 CuPy, so it needs a driver that serves CUDA 13; the forecast commands of this release were run from a `[gpu]` environment. `gpuwm-hex doctor` reports two CuPy packages as a required gap and prints the command that leaves one.
+
+Ubuntu 26.04's system Python is 3.14, so the first line runs there as printed. Ubuntu 24.04's is 3.12 and it has
+no `python3.14`, so there the line stops with `python3.14: command not found`: use Ubuntu 26.04, or install a
+Python 3.14 first and name it in place of `python3.14`. (The `[gpu]` forecast install runs on 24.04's `python3`.)
 
 The package itself installs into Python 3.11 or newer (the forecast runs there), so `pip` does not stop you in
 Python 3.12 or 3.13; the adjoint commands then refuse in one sentence, before any download, and say to make a
 Python 3.14 environment.
 
 `gpuwm-hex doctor` checks the whole forecast install. On a fresh install it exits 1 and names one missing item,
-`WPS_GEOG`, the geography archive the forecast's static builder needs. The adjoint commands do not need it: their
-examples download everything they replay. Install it only when you build your own meshes and statics
-(`gpuwm fetch-geog --datasets mesh`, as doctor prints).
+`WPS_GEOG`, the geography archive the forecast's static builder needs. The adjoint commands on this page do not
+need it: their examples download everything they replay. The forecast commands do, `gpuwm-hex global` on its
+published meshes included, because their static is built on your machine. Stage it once with `gpuwm fetch-geog`
+(16 datasets, about 2.5 GiB to download and about 31.3 GiB unpacked with gpuwm 3.0.3; `--explain` prints the plan
+first); after it, doctor reported every check passed on the `[gpu]` install of the same build.
 
 ## 3. The first command: the 12 km gradient test (a 32 GB card)
 
@@ -110,8 +120,9 @@ How to read it, line by line:
   moisture, where the gradient is about 2 to 4 per cent short: the boundary layer's plume speed and condensation are
   held in this linear model.
 
-Measured, the same wheel, one RTX 5090: 415 to 446 s on a first run (including fetching and unpacking the 1.20 GB
-from a local folder), card peak 24,766 MiB, host peak 41,022 MiB. The receipt (`cut12/receipt.json`) holds every
+Measured on a pre-release build of 0.6.1, one RTX 5090: 418 s on a first run (about 7 minutes, including
+fetching the 1.20 GB from GitHub and unpacking it), card peak 24,766 MiB, host peak 40,990 MiB. On 0.6.0's published
+wheel the same run took 458 s (host peak 41,190 MiB), and 320 to 645 s over the runs of 0.6.0's release builds. The receipt (`cut12/receipt.json`) holds every
 number, each window's file, the runner's and the recording's SHA-256 and the peaks.
 
 ## 4. A gradient on the same window
@@ -124,8 +135,9 @@ The gradient of the mean modified potential temperature over model levels 1 to 1
 window's end, with respect to the start state. It writes `cut12s/sensitivity.nc` (`dJ_dtheta` in K per K,
 `dJ_dqv` in K per kg/kg, the gradient to every stored start field, and each cell centre's latitude and longitude,
 `latCell` and `lonCell`, in degrees) and a map. It takes the answer check from the
-`adjoint-test` just run instead of running it again, and says so in one line. Measured: 49 to 89 s over the runs of this release's candidates (88.5 s on the
-run `examples/differentiable/expected.json` gives), card peak 27,048 MiB, host peak 36,904 to 37,595 MiB. The map shows a positive disc of `dJ_dtheta` over the 150 km circle at 40.6N 91.3W,
+`adjoint-test` just run instead of running it again, and says so in one line. Measured: 108.8 s on the
+pre-release build of 0.6.1 above (card peak 27,048 MiB, host peak 37,116 MiB), and 55 to 119 s over the runs of
+0.6.0's release builds (card peak 27,048 MiB). The map shows a positive disc of `dJ_dtheta` over the 150 km circle at 40.6N 91.3W,
 strongest on its south-west edge, and nothing outside it, as a 15-minute window should.
 
 ## 5. On a 96 GB card
@@ -150,8 +162,9 @@ has 32607 MiB in all; this row's window needs 96600 MiB, more than the whole car
 (the 120 km rows name their own need, 73,156 or 80,000 MiB). What they need and cost on a 96 GB card
 is in the README (*The differentiable engine*). `adjoint-test` on the 3 km example takes about 45 minutes and ends
 PASS on its default route today (the bump and the descent inside) and FAIL on the
-exact route ([LIMITS.md](LIMITS.md), *3 km*). [examples/differentiable/](../../examples/differentiable/README.md)
-holds both sets as scripts, with the numbers to expect.
+exact route ([LIMITS.md](LIMITS.md), *3 km*). The wheel carries both sets as scripts, with the numbers to expect: `gpuwm-hex examples` prints their folder and
+`gpuwm-hex examples --copy DIR` copies them ([examples/differentiable/](../../examples/differentiable/README.md)
+in the source archive and the repository).
 
 ## 6. Where to go next
 

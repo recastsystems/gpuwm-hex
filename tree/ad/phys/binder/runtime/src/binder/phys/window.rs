@@ -4317,7 +4317,7 @@ pub fn run(argv: Vec<String>) -> Result<(), String> {
         let mut taylor_gx: Option<f64> = None;
         receipt["fct_frozen"] = json!(w.fct_frozen);
         if w.fct_frozen {
-            receipt["approximation"] = json!("FCT limiter coefficients frozen from the forward trajectory (constants in TL and AD): fct_scale's scale_in/scale_out carry zero tangent and drop their cotangent; fct_minmax_source differentiates source_old only. Coordinator ruling 2026-11-05 08:35Z. This operator is not the exact derivative of the forward's limiter.");
+            receipt["approximation"] = json!("FCT limiter coefficients frozen from the forward trajectory (constants in TL and AD): fct_scale's scale_in/scale_out carry zero tangent and drop their cotangent; fct_minmax_source differentiates source_old only. This operator is not the exact derivative of the forward's limiter.");
         }
         let (mut d0, mut dn): (Option<std::sync::Arc<Bytes>>, Option<Bytes>) = (None, None);
         receipt["stable_directions"] = json!(if w.stable_dir { "on: translated address words, relocation slots, address-bearing tables and declared residue ranges of each boundary get zero weight, so x and y are the same in every process" } else { "off" });

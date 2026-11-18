@@ -1,6 +1,6 @@
 #!/bin/bash
 # The 120 km install check and the 3 km storm example on one 96 GB card of compute capability 12.0 (for example an
-# RTX PRO 6000 Blackwell). Needs: Python 3.14 with gpuwm-hex[ad]==0.6.0; 96,600 MiB free on the card; 258,057 MiB of
+# RTX PRO 6000 Blackwell). Needs: Python 3.14 with gpuwm-hex[ad]==0.6.1; 96,600 MiB free on the card; 258,057 MiB of
 # host memory for the 3 km sensitivity (81,920 MiB for the 120 km commands). The package fetches its own inputs
 # (about 2.4 GB for the 120 km example and 2.7 GB for the 3 km one, once, each checked by SHA-256).
 # Expected numbers: expected.json, "96gb". About 30 minutes in all on a first run.

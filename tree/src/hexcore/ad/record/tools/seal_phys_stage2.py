@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Stage 2 of the hrrrv5 milestone-1 plan sealer .
 
-Applies the coordinator's 16:21Z rulings (COMMON-AD 103.2 and 103.3) to a partial plan
+Applies two sealing rules (103.2 and 103.3 of the recording notes) to a partial plan
 (make_partial_plan.py) of recording A, with recording B as the second independent recording:
 
 * R3 holds. Every operation issued inside a held slot (radiation_sw, radiation_lw,
@@ -113,7 +113,7 @@ SOURCE_LITERALS = {
 #: The moisture slot the isobaric diagnostics read (current_qv) starts the same way, from the initial level-1 words of
 #: state scalars(index_qv), uploaded by cp.array; the observer records cp.array of a host array as it records
 #: cp.asarray, so that upload has its site. THE BREAKAGE THIS PREVENTS: the 12 km release example recorded by the
-#: release recorder (port rowrec r2, a test host, 2026-11-16) refused at seal with one 'upload_needs_live_rule' word, step
+#: release recorder refused at seal with one 'upload_needs_live_rule' word, step
 #: 15, sequence 361733, allocation 1343, 682,276 bytes = 59 x 2,891 float32 (qv 0 to 0.0178), "payload is not a table
 #: of 8-byte words": the upload had no site because only cp.asarray was observed.
 RESIDENT_OUTPUT_INITIAL = ('mpasphys/resident_output_diagnostics_v842.py',
@@ -144,7 +144,7 @@ KISS_JUMP_GPOINTS = (140, 112)
 #: the card has room, else in the step's own stream; the same fields to the same pinned host targets, read by the
 #: writer only), the pool re-pack after the diagnostics reset (both spellings of the one upload), the isobaric
 #: literals and the MCICA jump table.
-#: THE BREAKAGE THIS PREVENTS: the sealed 0.6.0 candidate's recorder could not seal any window that holds an output
+#: THE BREAKAGE THIS PREVENTS: a 0.6.0 build's recorder could not seal any window that holds an output
 #: time. The 12 km example (15 steps of 60 s, history every 15 minutes) recorded from the wheel ended "pair cannot
 #: seal: stage-2 residual {'upload_needs_live_rule': 9, 'device_to_host_consumer': 27, ...}", every word at step 15:
 #: the 27 history downloads came from streams_output_v842.py:426 (the rule said :394), the isobaric literals from

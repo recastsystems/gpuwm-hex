@@ -65,12 +65,33 @@ def test_every_route_door_runs_the_route_and_param_grad_and_checked_forward_do_n
 def test_a_route_the_row_does_not_offer_is_refused_before_any_download():
     table = _table()
     for door in ("adjoint-test", "tangent"):
-        with pytest.raises(d.AdDoorError, match=r"offers tape-free, taped\. Nothing was downloaded"):
-            d.refuse_speed_words(_parse([door, "--row", Q12, "--boundary-layer", "guarded"]), table)
+        with pytest.raises(d.AdDoorError, match=r"offers guarded, tape-free, taped\. Nothing was downloaded"):
+            d.refuse_speed_words(_parse([door, "--row", Q12, "--boundary-layer", "floored"]), table)
+        d.refuse_speed_words(_parse([door, "--row", Q12, "--boundary-layer", "guarded"]), table)
         with pytest.raises(d.AdDoorError, match="has no gradient line and names no boundary-layer routes"):
             d.refuse_speed_words(_parse([door, "--row", "hrrrv5-x1.40962", "--boundary-layer", "tape-free"]), table)
         d.refuse_speed_words(_parse([door, "--row", Q12, "--boundary-layer", "taped"]), table)
         d.refuse_speed_words(_parse([door, "--row", STORM, "--boundary-layer", "guarded"]), table)
+
+
+def test_the_12km_row_offers_the_storm_rows_guarded_boundary_layer_as_a_named_option():
+    """0.6.1: a measure near the ground under rain reads about 2 per cent short on the 12 km row's default route (the
+    plume's own speed, area and condensation and the mixing length are held); the guarded route, the 3 km storm row's
+    named option, differentiates them. It is the same three images from the same pack, laid over this row's bundle,
+    with this row's species hold, and it is not the default."""
+    table = _table()
+    bl12 = d.row_boundary_layer(table["rows"][Q12]); bl3 = d.row_boundary_layer(table["rows"][STORM])
+    assert bl12["default"] == "tape-free" and sorted(bl12["routes"]) == ["guarded", "tape-free", "taped"]
+    g12 = bl12["routes"]["guarded"]; g3 = bl3["routes"]["guarded"]
+    images = g12["scheme_bundle"]["images"]
+    assert sorted(images) == ["p3/rel.0.cubin", "p3/rel.1.cubin", "p3/rel.2.cubin"]
+    for name, item in images.items():
+        assert item == g3["scheme_bundle"]["images"][name] and item["path"].startswith("latest/aux/bl-guarded/")
+    assert g12["scheme_bundle"]["over"] == "bundle" and g12["scheme_bundle"]["pinned_in"] == "ad-aux-bl-guarded-sm120-v1.tar.gz"
+    assert g12["window_env"] == {"AD_P3_HOLD_OUT": bl12["routes"]["tape-free"]["window_env"]["AD_P3_HOLD_OUT"]}
+    assert "images" not in g12                      # taped: no tape-free backward image
+    name, route, is_default = d.boundary_layer_route(table["rows"][Q12], "guarded")
+    assert (name, is_default) == ("guarded", False) and route is g12 or route == g12
 
 
 def _ctx(tmp_path, asked):

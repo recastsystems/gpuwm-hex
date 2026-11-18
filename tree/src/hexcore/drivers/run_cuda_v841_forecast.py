@@ -1200,7 +1200,7 @@ def _build_forecast_config(
 ) -> Any:
     """Build the run's configuration AT THE BOUND MESH'S TIMESTEP.
 
-    THE BREAKAGE THIS PREVENTS, MEASURED (2026-08-26, the proving RTX 5090):
+    THE BREAKAGE THIS PREVENTS, MEASURED (2026-08-26, an RTX 5090):
     this function did not exist and the configuration was constructed from
     its dataclass defaults, so ``config_dt`` was 120.0 no matter what mesh
     was bound.  ``bind_mesh`` rebinds ``DT_SECONDS`` in this module and in
@@ -1386,7 +1386,7 @@ def supplied_undriven_scalars(
     ``driven`` holds the stream's own ``lbc_``-prefixed names, as
     :func:`select_lbc_scalar_names` returns them, so the comparison is made on
     those names.  Comparing the bare species name against it listed every
-    driven mass as undriven in the receipt (rrfs-h-h4a skeptic finding,
+    driven mass as undriven in the receipt (found in review,
     2026-10-05).
     """
 
@@ -3561,7 +3561,7 @@ def execute_forecast(
     install_step_gate_batch(stack, cp)
     labels = schedule["labels"]
     steps = int(schedule["steps"])
-    # Incremental analysis update on this executor (lane W1): one class, every cell and
+    # Incremental analysis update on this executor: one class, every cell and
     # edge, the same hook the full-step class executor uses.  None leaves the step loop
     # exactly as before.
     iau_forcing = None

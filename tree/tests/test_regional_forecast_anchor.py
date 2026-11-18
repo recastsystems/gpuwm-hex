@@ -96,7 +96,7 @@ SOURCE_DRIFT_SINCE_CAMPAIGN: dict[str, dict[str, str]] = {
         "recorded": "cb6477ef2fd02ad551e9b6c8af0724c94fc4d90bdc712fff1378d218662f5d04",
         "current": "5cf4bd473b2435476f0a56db17a2d1b15fbbc2e366f190fde95e007cf1a672de",
         "why": (
-            "convection ruling, 2026-08-26: _v841_physics_cadences reports "
+            "the convection rule by spacing: _v841_physics_cadences reports "
             "convection: None when no cumulus scheme is selected instead of "
             "calling float() on it.  Every configuration these four receipts "
             "recorded selects Grell-Freitas, and on that branch the function "

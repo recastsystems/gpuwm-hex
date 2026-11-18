@@ -32,7 +32,7 @@ graft rust/wave-products
 prune rust/wave-products/target
 include WAVES.md
 # The changelog: tests/test_readme_facts.py reads the release's heading from it, and from an unpacked source package
-# that test failed because the file was not there (the 0.6.0 candidate, 2026-11-15).
+# that test failed because the file was not there (a 0.6.0 build, 2026-11-15).
 include CHANGELOG.md
 
 # The MPAS physics suites' table decoders, which setup.py builds into the wheel
@@ -83,7 +83,7 @@ prune third_party/metis-5.1.0/build
 graft verification
 # The ops-into-next recovery archives (an engine source tarball, native tool
 # tarballs and per-run 4 MB receipts, 93 MB together) are recovery material
-# for that lane, read by no test or tool, and alone took the 0.4.0 sdist to
+# for that work, read by no test or tool, and alone took the 0.4.0 sdist to
 # 96 MB against PyPI's 100 MB file limit.  They stay in the repository.
 prune verification/ops-into-next-20261012/release
 prune verification/ops-into-next-20261012/evidence

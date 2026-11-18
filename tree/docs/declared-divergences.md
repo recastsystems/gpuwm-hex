@@ -165,8 +165,8 @@ is byte-identical to 2.7.3 on all 500 arrays of that profile
 That the manifest does not reach the boundary-layer kernel is a named
 follow-up; it is not a claim this page makes.
 
-The 2026-10-05 move to the gpuwm 2.8.6 candidate (an unpublished
-2.8.6 engine build) moved ten of the sixteen pinned files
+The 2026-10-05 move to an unpublished gpuwm 2.8.6 engine build
+moved ten of the sixteen pinned files
 against the 2.8.0 manifest, measured against the engine tree:
 `gpuwm/config.py`, `gpuwm/core/gf.py`, `gpuwm/core/kernels/gf.cu`,
 `gpuwm/core/kernels/__init__.py`, `gpuwm/core/microphysics.py`,
@@ -363,8 +363,8 @@ different causes:
   so it does not drive the cold drift. It does inflate RAINC, which bears on
   section 2's live-referee sign.
 
-**Fixed by default, 2026-10-05: New Tiedtke at 20 km and coarser.** This
-ruling was delegated by the owner on 2026-10-05: New Tiedtke becomes the hex
+**Fixed by default, 2026-10-05: New Tiedtke at 20 km and coarser.** Decided
+on 2026-10-05: New Tiedtke becomes the hex
 coarse-mesh default once a second case confirms it. It supersedes the
 2026-08-26 resolution rule's Grell-Freitas answer for those meshes. The
 reason is the observation-scored drift above, not parity.
@@ -650,7 +650,7 @@ way from the deficit. Three things would move the rest.
 2. **A profile referee for (1)** — radiosondes or a provenance-pinned analysis
    profile. Choosing the reference is not an automated decision and this work
    did not make it.
-3. **Any GF-lane change re-measures all three**, (3) explicitly only after (2).
+3. **Any Grell-Freitas change re-measures all three**, (3) explicitly only after (2).
    The re-measurement now has a standing target rather than an empty column:
    a GF change that removes the convective rainfall deficit against native
    would, on this evidence, make the port *wetter* against observations than it

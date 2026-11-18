@@ -247,7 +247,7 @@ def _suite_parent_init(value, parent_init, mesh):
     """The parent init completed for the planned forecast's physics suite, or None when it needs nothing.
 
     THE BREAKAGE THIS PREVENTS (3 km region from GFS 2026-10-23 18Z f348 with
-    rrfs_v2_dev, box L, 2026-10-24): RUC integrates 9 soil levels, the init
+    rrfs_v2_dev, 2026-10-24): RUC integrates 9 soil levels, the init
     writes Noah's 4, and the forecast door replays the soil from the init's
     recorded source analysis -- which a CUT init does not carry, so every
     RRFS-shape region refused ("ruc needs 9 soil levels; mesh.init.nc has 4 and
@@ -849,6 +849,7 @@ def _run_stage(name, args, value, status, stages=(), state=None):
         if joined is not None:
             status.note(joined["note"])
             print(json.dumps(joined), flush=True)
+            state["scoring"] = joined
             return {**joined, "returncode": 0}
     command = list(value["commands"][name])
     if name == "forecast" and "producer_init" in value["commands"] and "--orographic-statistics" not in command:
@@ -925,8 +926,10 @@ def run_country(args):
                 timing["card_given_back"] = gpu_work_done()
                 if "score" in stages:
                     from .observation_scorecard import door_scorecard
-                    timing["observation_scoring"] = door_scorecard(root / "forecast", config)
-        status.done(f"{args.row} {args.cycle}: {', '.join(stages)}")
+                    timing["observation_scoring"] = state["scoring"] = door_scorecard(root / "forecast", config)
+        from .observation_scorecard import say_scoring, stages_done_text
+        status.done(f"{args.row} {args.cycle}: {stages_done_text(stages, state.get('scoring'))}")
+        say_scoring("country", stages, state.get("scoring"))   # the terminal's last line
         return 0
     except MpasPortError as error:
         status.refused(str(error))

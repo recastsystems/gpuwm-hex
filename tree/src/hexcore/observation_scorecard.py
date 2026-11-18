@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 import json
 import re
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import tempfile
@@ -131,7 +132,8 @@ class Commands:
             log.write_text(p.stdout + "\n" + p.stderr, encoding="utf-8")
             record["returncode"] = p.returncode
             if p.returncode:
-                raise RuntimeError(f"{argv[0]} exited {p.returncode}: {p.stderr.strip()[-800:]}")
+                said = p.stderr.strip() or p.stdout.strip() or f"it printed nothing (log {log})"
+                raise RuntimeError(f"{argv[0]} exited {p.returncode}: {said[-800:]}")
             return json.loads(p.stdout) if json_output else p.stdout
         except subprocess.TimeoutExpired as error:
             log.write_text("command timed out\n", encoding="utf-8")
@@ -453,6 +455,32 @@ SONDE_ACQUISITIONS = {"gdas_prepbufr": acquire_sondes_prepbufr, "igra2_snapshot"
 SURFACE_HALF_WINDOW = timedelta(minutes=10)
 
 
+#: Seconds `rw_asos` waits between requests to the archive (its own default, `--request-pause-ms 2000`), plus one
+#: second for the request itself. The archive answers HTTP 429 to a faster client.
+ASOS_SECONDS_PER_NETWORK = 3.0
+
+
+def station_list_seconds(networks, default):
+    """Seconds the station-list request is given: one metadata request per network, at the archive's pace.
+
+    THE BREAKAGE THIS PREVENTS (0.6.0, a fresh install from the published files; cause found by running the
+    request by hand): the globe is 266 networks. gpuwm 3.0's `rw_asos` waits its 2 s pause between those requests,
+    so the list takes about 9 minutes (533.6 s measured; the 2.9 binary took 21 to 30 s), and it was given the
+    180 s every scorer command gets. The one request timed out, its failure was shared by every frame, and all
+    500 ASOS rows of a 24 h global run read NOT_MEASURED ("command timed out: .../rw_asos"). A region's handful of
+    networks still gets the default."""
+    count = len([name for name in str(networks).split(",") if name.strip()])
+    return max(float(default or 0), count * ASOS_SECONDS_PER_NETWORK + 120.0)
+
+
+def station_table_ready(path):
+    """True for a frozen station table `rw_asos stations` finished writing."""
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8")).get("status") == "READY"
+    except (OSError, ValueError, AttributeError):
+        return False
+
+
 def acquire_surface(valid, folder, commands, region=None):
     """ASOS/METAR reports within ten minutes of ``valid`` as a neutral table.
 
@@ -475,9 +503,20 @@ def acquire_surface(valid, folder, commands, region=None):
     pace = getattr(commands, "iem", None) or threading.Lock()
 
     def stations():
-        path = shared / ("asos-stations-" + hashlib.sha256(f"{networks}|{bbox}".encode()).hexdigest()[:12] + ".json")
+        name = "asos-stations-" + hashlib.sha256(f"{networks}|{bbox}".encode()).hexdigest()[:12] + ".json"
+        path = shared / name
+        # The list a run already froze is read again: a live cycle is scored lead by lead, in many scoring calls.
+        kept = Path(commands.out) / name if getattr(commands, "out", None) else None
+        if kept is not None and station_table_ready(kept):
+            return kept
+        widened = station_list_seconds(networks, getattr(commands, "timeout", 0))
         with pace:
-            commands.run([asos, "stations", "--networks", networks, "--bbox", bbox, "--out", str(path)])
+            commands.run([asos, "stations", "--networks", networks, "--bbox", bbox, "--out", str(path)],
+                         **({"timeout": widened} if widened > getattr(commands, "timeout", 0) else {}))
+        if kept is not None and station_table_ready(path):
+            temp = kept.with_name(kept.name + ".partial")
+            shutil.copyfile(path, temp)
+            os.replace(temp, kept)
         return path
     table = _once(commands, ("asos-stations", networks, bbox), stations)
     with pace:
@@ -889,7 +928,7 @@ def future_frames(frames, config, now=None):
 
     The automatic scorer never waits for these. Breakage it prevents: a 3 km region forecast from GFS f348
     (valid 13 days ahead) left its watcher sleeping in the leased command's tree for 75 min, until it was
-    killed by PID, and the run's products step waited behind it (box L, 2026-10-24, INVENTORY F-SCORE-LEASE).
+    killed by PID, and the run's products step waited behind it (2026-10-24).
     Each frame gets the time its observations can first be scored and the command that scores it then."""
     now = now or datetime.now(timezone.utc)
     delay = timedelta(hours=float(config.get("observation_delay_hours", 7)))
@@ -1174,6 +1213,46 @@ def door_scorecard(run, config_path):
     raise RuntimeError(f"could not schedule CPU observation scoring: {scheduled}")
 
 
+#: Scorer states that mean the scorecard is not written yet (the CPU scorer is still at work, or waits for observations).
+UNFINISHED_SCORING = frozenset({"QUEUED", "NOT_YET_OBSERVABLE", "DEFERRED"})
+
+
+def stages_done_text(stages, scoring):
+    """A composed door's last line: the stages that are done, and the truth about scoring.
+
+    THE BREAKAGE THIS PREVENTS (0.6.0, a fresh install from the published files): `gpuwm-hex global` ended
+    "done ...: mesh, static, init, forecast, products, export, score" and exit 0 while the scorer it had handed the
+    run to was still working on the CPU; `scorecard.json` said QUEUED for minutes after the prompt came back. The
+    door does not wait (scoring is CPU and archive work, and a live cycle's observations arrive hours later), so
+    its last line says scoring is still running, which process holds it, and how to tell when it has finished.
+    ``scoring`` is ``door_scorecard``'s result (None when the door had no score stage)."""
+    stages = list(stages)
+    if "score" not in stages or not isinstance(scoring, dict):
+        return ", ".join(stages)
+    done = ", ".join(name for name in stages if name != "score")
+    status = scoring.get("status")
+    if status in UNFINISHED_SCORING:
+        holder = f"pid {scoring['pid']}" if scoring.get("pid") else "a CPU worker"
+        tail = (f"score STILL RUNNING in the background ({holder}, no card held): {scoring.get('path')} is "
+                f"complete when its status is no longer {status}")
+    elif scoring.get("joined") == "skipped" or status == "SKIPPED":
+        tail = "score skipped"
+    else:
+        tail = f"score ({status}, {scoring.get('measured_metrics', 0)} measured metrics)"
+    return f"{done} done; {tail}" if done else tail
+
+
+def say_scoring(door, stages, scoring):
+    """A composed door's last line IN THE TERMINAL: what scoring is doing. The door's `done` line goes to its log
+    file; a 0.6.0 user saw the prompt come back after "EXPORT done" with the scorecard still QUEUED and
+    nothing on the screen saying a scorer was at work. Returns the line it printed, or None with no score stage."""
+    if "score" not in list(stages) or not isinstance(scoring, dict):
+        return None
+    line = f"gpuwm-hex {door}: {stages_done_text(['score'], scoring)}"
+    print(line, flush=True)
+    return line
+
+
 def join_automatic_scorer(run, config_path, *, poll_seconds=10.0):
     """Join the forecast's automatic scorer when it was queued with this same config file.
 
@@ -1194,6 +1273,7 @@ def join_automatic_scorer(run, config_path, *, poll_seconds=10.0):
         card = json.loads(card_path.read_text(encoding="utf-8")) if card_path.is_file() else {}
         status = card.get("status", state.get("status"))
         return {"joined": "automatic", "status": status, "path": str(card_path),
+                "measured_metrics": card.get("measured_metrics", 0),
                 "note": f"scored once, by the forecast's automatic scorer: {status}, "
                         f"{card.get('measured_metrics', 0)} measured metrics in {card_path}"}
     if not plan.is_file() or not _alive(state.get("pid")):

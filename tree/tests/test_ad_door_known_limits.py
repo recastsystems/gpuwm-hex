@@ -33,7 +33,7 @@ def test_the_default_12km_route_names_near_ground_moisture_and_its_cause():
 def test_the_120km_example_names_its_two_unresolved_directions_and_why():
     table = d.load_table()
     limits = d.known_limits(table["rows"]["hrrrv5-x1.40962"], None)
-    # on its own 1-step window and factor-two ladder near-ground moisture resolves inside the bar (box E sx-f10 b),
+    # on its own 1-step window and factor-two ladder near-ground moisture resolves inside the bar (one 96 GB card, 15 Nov 2026),
     # so only descent and the smooth draw are named
     assert set(limits) == {"descent", "smooth-draw"}
     assert set(limits) <= set(table["doors"]["adjoint-test"]["directions"]["rows"])
