@@ -119,6 +119,20 @@ FORK_CORRECTIONS: Mapping[str, Mapping[str, Any]] = MappingProxyType({
         "breakage": "the two branches are the wrong way round, so with bm_s = 2 every snow moment (number, the "
                     "fall, riming, deposition and reflectivity moments) is built on a fitted second moment "
                     "(smob / a)^(1 / b) in place of smob itself"},
+    "TP6": {
+        "slot": "microphysics", "schemes": ("mp_tempo",),
+        "carried_by": (),
+        "upstream": "ufs-community/ccpp-physics Thompson module_mp_thompson.F90 (the lineage of TEMPO's activation): "
+                    "activ_ncloud(temp(k), w1d(k)+rand3, nwfa(k), lsml) passes the land-sea mask; NCAR/TEMPO v3.2.5 "
+                    "and main call activate_cloud_number(temp(k), w1d(k), nwfa(k)) with no land in cloud_condensation",
+        "what": "droplet activation takes the cell's land mask (MPAS xland: 1 land, 2 water or sea ice), so TEMPO's own "
+                "floor on the activated fraction applies: 0.15 of the aerosol number over water and sea ice, 0 over "
+                "land (activate_cloud_number's lower_lim_nuc_frac)",
+        "breakage": "with land absent lower_lim_nuc_frac stays 0 and the water floor never runs: where the resolved "
+                    "vertical velocity sits at the activation table's floor (0.011 m/s, coarse cells) marine "
+                    "stratocumulus activates about 21 droplets per cm3 from about 600 aerosol per cm3 and drizzles, a "
+                    "false light-echo sheet over the oceans (18 h zoom-globe run of 19 Nov 2026: 29.7 per cent of the "
+                    "cells off California at 5 dBZ or more at 18 h, 11.4 per cent with the floor)"},
 })
 
 

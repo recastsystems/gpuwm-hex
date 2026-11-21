@@ -850,3 +850,60 @@ and BSD notices (licenses/LICENSE-CCCL.txt). The recorder uses NVIDIA CUPTI
 from the user's CUDA toolkit at run time; no NVIDIA library is
 redistributed. The kernel-set builder installs NVIDIA's CUDA compiler wheels
 from PyPI under NVIDIA's own terms; they are not redistributed either.
+
+==========================================================================
+19. Fixes brought from jacobbieker/woof -- Apache-2.0
+==========================================================================
+
+github.com/jacobbieker/woof is a public fork that carries this engine as
+woof/hex. Its author, Jacob Prince-Bieker (GitHub jacobbieker),
+published the changes below under Apache-2.0. Each was ported by hand onto
+this tree (environment names and module paths are ours) and its commit
+names the pull request it came from. Tests brought with them keep the
+same attribution in their docstrings.
+
+  - pull request 447: src/hexcore/cuda_driver_lts.py (the LTS divergence damping's native_stored_inverse keyword)
+  - pull request 473: src/hexcore/cuda_subcycle_graphs.py and drivers/run_cuda_v841_forecast.py (CUDA graphs under --local-timestep)
+  - pull request 379: src/hexcore/init_physics.py (registry-id selectors with no suite-table row)
+  - pull request 488: src/hexcore/cuda_backend/cupy_cache.py and drivers/run_cuda_v841_forecast.py (kernel images in the box cache)
+  - pull request 495: src/hexcore/mpasphys/runtime_v842.py (the wind-reconstruction refusal names its check)
+  - pull request 497: src/hexcore/moving_run.py and mpasphys/moving_resident_v842.py (moving runs: the resident record follows the move; the host-memory gate; heap trim)
+  - pull request 216: src/hexcore/cuda_transport_v841.py (the regional target-density check without a host wait)
+  - pull request 224: src/hexcore/cuda_edge_hoist.py and cuda_transport_v841.py (hoisted FCT kernels from 15,000 edges; the hoist check on regional meshes)
+  - pull request 137: src/hexcore/moving_vertical.py (256-layer source columns)
+  - pull request 302: src/hexcore/physics_suites.py and data/profiles/mpas-physics-suites.v1.json (the refused_settings mechanism; the rows are ours)
+  - pull request 509: src/hexcore/forecast_door.py and mpasphys/config_v842.py (the MPAS suite route binds the upper-damping flags into &damping)
+  - pull request 433: src/hexcore/products_door.py (the severe set on regional views)
+  - pull request 239: src/hexcore/kernel_plan.py (the kernel-plan compile pool capped by available host memory: COMPILE_WORKER_BYTES, COMPILE_MEMORY_SHARE, _memory_workers)
+
+==========================================================================
+20. Learned and symbolic surface and boundary-layer closures -- Apache-2.0
+==========================================================================
+
+src/hexcore/mpasphys/rrfs/closures/ and src/hexcore/data/closures/ are
+project code and project data (Apache-2.0): three options on the RRFS
+hrrrv5 route, each off unless named, made by the project (November
+2026). No outside code was read or copied for them. The 16-class soil porosity,
+field-capacity and wilting-point numbers they read are a table of
+published soil properties. What each was trained or fitted on (none of
+the four test days 2024-05-21, 2024-08-15, 2024-11-15 and 2025-03-15):
+
+  - surface-flux net r4 (sfn_r4.pt, config_surface_flux_net=r4_a50):
+    our own MPAS runs (eleven 30 km days 2023-2025, then four rounds
+    coupled in 3 km runs on five of them) against public station
+    observations (NWS/FAA ASOS reports as the Iowa Environmental Mesonet
+    serves them) and NOAA HRRR analyses' soil wetness (US Government
+    data).
+  - neural boundary layer v1 and v2 (neural_pbl_v1.pt,
+    config_neural_pbl=v1|v2): our own coupled 30 km MPAS runs on the same
+    eleven days against the same ASOS reports (2 m temperature, dew point,
+    10 m wind); v2 adds a fixed gate, no training.
+  - 8-parameter closure v2, v3_bowen and v2_warm_night
+    (autophysics_pbl_sets.v1.json, config_autophysics_pbl=...): eight
+    numbers fitted through our own coupled 30 km MPAS runs on ten
+    training days against 47,483 ASOS reports; no weights. v2_warm_night
+    is the v2 numbers with the nocturnal cooling gated to warm nights.
+
+The learned column correction (src/hexcore/ad/learned_correction.py,
+GPUWM_HEX_LEARNED_CORRECTION) is project code; it ships with no weights.
+A checkpoint a user names is the user's own, under its own terms.

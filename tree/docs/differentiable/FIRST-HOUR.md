@@ -27,7 +27,7 @@ What else to bring:
 
 | example | card memory free | host memory | download (once) | first command |
 |---|---|---|---|---|
-| 12 km cut of the storm box (2,890 cells, 15 steps of 60 s) | 28,700 MiB | 47,104 MiB (the README command peaked at 41,190 to 44,109 MiB on 0.6.0's release builds and at 40,990 MiB on a pre-release build of 0.6.1; the 8-direction check at 46,681 MiB on a 0.6.0 build) | 1.20 GB (3.4 GB unpacked in the cache) | 320 to 645 s on 0.6.0's wheels, 418 s on a pre-release build of 0.6.1 (5 to 11 minutes) |
+| 12 km cut of the storm box (2,890 cells, 15 steps of 60 s) | 28,700 MiB | 47,104 MiB (the README command peaked at 41,190 to 44,109 MiB on 0.6.0's release builds and at 40,990 MiB on a pre-release build of 0.6.1; the 8-direction check at 46,681 MiB on a 0.6.0 build) | 1.20 GB (3.4 GB unpacked in the cache) | 320 to 645 s on 0.6.0's wheels, 418 to 708 s on builds of 0.6.1, 769 s on 0.6.2's with the host shared (5 to 13 minutes) |
 | 120 km global (40,962 cells, 3 steps of 720 s) | 73,156 MiB (80,000 MiB for the full-physics row) | 81,920 MiB (110,592 MiB for the full-physics row) | about 2.4 GB | 271.9 to 307 s for its 1-step `adjoint-test` (about 4.5 to 5 minutes) |
 | 3 km storm box (38,278 cells, 59 steps of 15 s) | 96,600 MiB | 258,057 MiB for a first `sensitivity` (it runs the answer check), 249,661 MiB later. `adjoint-test` on this row keeps every step boundary, so its need follows the host: at least 102,948 MiB available (on a smaller host than the runner's default suits, more of its store goes to the run folder), and it held 254,885 to 262,306 MiB on 512 GiB hosts, and 420,360 MiB on the run that read PASS at the row's five step sizes | about 2.7 GB | about 12 minutes for `sensitivity` |
 
@@ -44,7 +44,7 @@ byte):
 
 ```bash
 python3.14 -m venv hexad && . hexad/bin/activate   # Debian and Ubuntu: sudo apt install python3-venv first
-pip install "gpuwm-hex[ad]==0.6.1"
+pip install "gpuwm-hex[ad]==0.6.2"
 gpuwm-hex version
 ```
 

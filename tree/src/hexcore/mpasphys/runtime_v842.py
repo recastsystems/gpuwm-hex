@@ -50,6 +50,42 @@ def commit_outer_scalar_groups(session, atmosphere, cp):
         target[first:last, :, :source.shape[-1]] = cp.asarray(source[first:last])
 
 
+def wind_reconstruction_refusal(cp, geometry, normal_velocity, value) -> str:
+    """The wind reconstruction's refusal, naming which of its checks failed.
+
+    reconstruct_winds_v841_f32 raises ONE word for every check it makes: the geometry against its sealed copy,
+    an edge slot or count out of range, a non-finite coefficient, a non-finite sine or cosine, and a non-finite
+    normal velocity.  Only the first is a geometry fault; the last is the model state blowing up.  The word is
+    read at most one step after it was raised, so this looks at the arrays when the refusal is made: a sealed
+    copy that still differs, or a state that is still non-finite.
+    THE BREAKAGE THIS PREVENTS (hex 0.6.1; fork jacobbieker/woof PR 495): every one of those checks was reported
+    as "the mesh geometry differs from its sealed copy", so a run whose winds had gone non-finite pointed
+    whoever debugged it at the mesh instead of the integration.
+    """
+    names = ('edges_on_cell', 'n_edges_on_cell', 'coeffs_reconstruct', 'lat_cell', 'lon_cell')
+    try:
+        changed = [name for name in names
+                   if not bool(cp.array_equal(getattr(geometry, f'_{name}').view(cp.uint8),
+                                              getattr(geometry, f'_sealed_{name}').view(cp.uint8)))]
+        bad = ~cp.isfinite(normal_velocity)
+        per_level = cp.asnumpy(bad.sum(axis=-1)) if normal_velocity.ndim == 2 else None
+        n_bad = int(bad.sum())
+    except Exception as error:  # pragma: no cover - the diagnosis must never hide the refusal
+        return (f'MPAS_to_physics CUDA wind reconstruction refused (invalid word {value}); '
+                f'the check could not be attributed: {error!r}')
+    if changed:
+        return ('MPAS_to_physics CUDA wind reconstruction failed geometry validation: the mesh geometry differs '
+                f'from its sealed copy in {", ".join(changed)} (invalid word {value})')
+    if n_bad:
+        levels = [] if per_level is None else [int(k) + 1 for k in range(per_level.size) if per_level[k]]
+        shown = ', '.join(str(k) for k in levels[:12]) + (', ...' if len(levels) > 12 else '')
+        return ('MPAS_to_physics CUDA wind reconstruction found a non-finite normal velocity: '
+                f'{n_bad} edge values on {len(levels)} levels (1-based: {shown}); the dynamics went '
+                f'non-finite; the mesh geometry equals its sealed copy (invalid word {value})')
+    return ('MPAS_to_physics CUDA wind reconstruction refused (invalid word '
+            f'{value}): the mesh geometry equals its sealed copy and the normal velocity is finite now, so '
+            'a reconstruction coefficient, edge index or trigonometric value was invalid when it ran')
+
 class ResidentNativeCoupling:
     """Hold outer sources and hand transport to native; mpas_atm_time_integration.F:2140-2816."""
 
@@ -216,8 +252,8 @@ class ResidentNativeCoupling:
         # The aggregate preparation this replaces refused a sealed-geometry change by reading this
         # word every synchronization. The same refusal now reads it off the step path.
         from .deferred_checks_v842 import defer
-        defer(invalid, 'MPAS_to_physics CUDA wind reconstruction failed geometry validation: '
-                       'the mesh geometry differs from its sealed copy (invalid word {value})')
+        velocity = atmosphere.saved.normal_velocity
+        defer(invalid, lambda value: wind_reconstruction_refusal(self.cp, geometry, velocity, value))
         return outputs
 
     def stage(self, *, rk_step, dynamics_substep, state, saved, diagnostics):
@@ -943,8 +979,24 @@ def moving_publication_due(moving, *, step, steps, dt):
     """
     if moving is None:
         return False
-    if step == 0 or step >= steps:
+    if step == 0:
         return True
+    if step >= steps:
+        from ..speed_words import PUBLISH_LEAN, on
+        if not on(PUBLISH_LEAN):
+            return True
+        # GPUWM_HEX_PUBLISH_LEAN: at the last step the host pools are read by a checkpoint sealed at this step or a
+        # tracker frame; an export publishes again itself before it reads them (MovingRoute.finish,
+        # DistributedMoving.finish: publish_after_output), and is kept here as before.  With none of them this
+        # download of every resident pool has no reader (the CONUS globe, 8 ranks: about 10 GB a rank a run).
+        route = getattr(moving, 'route', moving)
+        if getattr(route, 'export_path', None):
+            return True
+        due = getattr(moving, 'checkpoint_due', None)
+        if due is not None and due(step, dt):
+            return True
+        return (getattr(moving, 'control', None) is not None
+                and float(getattr(moving, 'frame_seconds', 0.0) or 0.0) > 0.0)
     checkpoint_due = getattr(moving, 'checkpoint_due', None)
     if checkpoint_due is not None and checkpoint_due(step, dt):
         # A checkpoint seals the host pool views at this step ("native state already published").
@@ -1289,7 +1341,7 @@ def load_native_regional_inputs(arguments, layout, payload, *, keep_initialized_
     from ..rust_geometry import _run
     init, overlay, invariant, cold_start = native_state_sources(arguments, layout)
 
-    # THE COST THIS REMOVES (mv3km 3 km limited area, 206,726 cells, V6000, 2026-10-28): this loader ran
+    # THE COST THIS REMOVES (mv3km 3 km limited area, 206,726 cells, RTX PRO 6000, 2026-10-28): this loader ran
     # 10-13 s on one host thread while the card waited (about 80-100 s at e3km/conus3km).  The Rust pool
     # payload work does not touch the mesh or the netCDF reads, so it runs on a side thread beside them:
     # the payload digests (hashlib releases the GIL) beside the mesh read, then the scalar words copied in
@@ -2200,6 +2252,13 @@ def _run_native_dynamics(arguments, config, layout, payload, streams, library,
                 uh_layers_row=attach_uh_layers(diagnostics,output,halo=halo)
                 if uh_layers_row is not None:
                     receipt['uh_layers']=uh_layers_row
+            from ..hailcast import attach_mpas as attach_hailcast, mode as hailcast_mode
+            if hailcast_mode()!='off':
+                # HAILCAST hail size and the size-distribution hail maxima (hexcore.hailcast): on by default where
+                # the mesh is finer than 4 km, ArWen's shared GPU stone model (HRRR v4's by default).
+                hailcast_row=attach_hailcast(diagnostics,output,halo=halo)
+                if hailcast_row is not None:
+                    receipt['hailcast']=hailcast_row
             session.output_streams=output
             restore_continuation=getattr(moving,'restore_continuation',None) if resumed else None
             if callable(restore_continuation):

@@ -27,7 +27,7 @@
   "default_row": "hrrrv5-x1.40962",
   "rows": {
     "hrrrv5-any": {
-      "what": "template of the rows made on demand (--mesh), fast composition of the published set 20261112T0001Z-284234ec: RRFS hrrrv5 suite with every physics derivative live except radiation, the boundary layer's turbulence closure and MYNN-EDMF plume, the mountain-drag closure and the FCT limiter coefficients, which are held (below); labelled simplifications in the derivative only (the forward is the recorded forecast): the MYNN-EDMF boundary layer's turbulence closure, mass-flux plume and returned height are frozen at the trajectory (bundle B9); the mountain-drag closure (GSL drag) is held at the trajectory (bundle genB9-gfrz): with it live the gradient passes the same checks but stops predicting the forecast after about an hour, the TEMPO tangent runs in double precision (ti2.tlf.cubin: with it in single precision the whole-state dot test missed its bar in two of four test directions on this example), the TEMPO adjoint is the block reverse (recomputed, not taped); radiation is held (its launches are refused by name); two set-up kernels of the first step that read no model state run as identity (mynnsfc_tables, w_filter_geometry_v841_f32); FCT limiter coefficients frozen from the trajectory; the kernel set builds its topology tables per launch from the run's own mesh (--local-topology 1), so one kernel set serves every mesh",
+      "what": "template of the rows made on demand (--mesh), fast composition of the published set 20261112T0001Z-284234ec: RRFS hrrrv5 suite with every physics derivative live except radiation, the boundary layer's turbulence closure and MYNN-EDMF plume, the mountain-drag closure and the FCT limiter coefficients, which are held (below); labelled simplifications in the derivative only (the forward is the recorded forecast): the MYNN-EDMF boundary layer's turbulence closure, mass-flux plume and returned height are frozen at the trajectory (bundle B9); the mountain-drag closure (GSL drag) is held at the trajectory (bundle genB9-gfrz): with it live the gradient passes the same checks but stops predicting the forecast after about an hour, the TEMPO tangent runs in double precision (ti2.tlf.cubin: with it in single precision the whole-state dot test missed its bar in two of four test directions on this example), the TEMPO adjoint is the block reverse (recomputed, not taped); radiation is held (its launches are refused by name); two set-up kernels of the first step that read no model state run as identity (mynnsfc_tables, w_filter_geometry_v841_f32); FCT limiter coefficients frozen from the trajectory on the global classes; the limited-area classes run the limiter live up to fct_live_max_s and hold it past that; the kernel set builds its topology tables per launch from the run's own mesh (--local-topology 1), so one kernel set serves every mesh",
       "mesh": null,
       "dt_s": null,
       "cells": null,
@@ -47,6 +47,164 @@
       "record_env_why": "the forward kernel forms the kernel set has rows for: hex hoists the edge kernels at nEdges >= 30,000 (hoisted/chunked/element/column forms) and picks MYNN-EDMF lane widths by size; on x1.10242 without these the window refused 30 kernel kinds (dot 1.1e-3, Taylor err 2.28); the forms carry the same bits. Since 2026-11-11 also the plain ordered add (two add_inplace_f32 for one add_pair_inplace_f32) and the twelve-month ozone update (ozone_time for ozone_time_pair): the kernel set has a row for the first and the radiation list holds the second by name, and a 120 km plan recorded from --init without them was refused at step 1 (ozone_time_pair) and step 3 (add_pair_inplace_f32): no derivative row and no rule",
       "kset_mesh": "any",
       "template_only": true,
+      "boundary_layer": {
+        "default": "taped",
+        "what": "--boundary-layer taped|guarded on the doors of a row made for --mesh (tangent, adjoint-test, sensitivity): the linear model its windows run. taped is the template's own files (the held closure), the default of the global classes; guarded is the 3 km storm row's guarded route, laid over the made row's scheme bundle, the default of the limited-area classes (window classes 3km and 3km-bounded, their boundary_layer_default)",
+        "routes": {
+          "taped": {
+            "window_env": {}
+          },
+          "guarded": {
+            "window_env": {
+              "AD_P3_HOLD_OUT": "rncblten,rniblten,rnifablten,rnwfablten"
+            },
+            "error": "the answer differs from the default (tape-free) route's and from the exact (taped) route's near the ground, by design, and is not byte-equal: this route differentiates the boundary layer's mixing length and the plume's own speed, area and condensation, which the default route holds, and the whole scheme, which the exact route holds, under the weak-shear guard (1e-4 s-2)",
+            "exact_word": "--boundary-layer taped",
+            "scheme_bundle": {
+              "name": "gen-B9-bl-guarded",
+              "over": "bundle",
+              "pinned_in": "ad-aux-bl-guarded-sm120-v1.tar.gz",
+              "what": "the guarded boundary layer's three derivative images (tangent, taped reverse, tape count) laid over the row's scheme bundle",
+              "images": {
+                "p3/rel.0.cubin": {
+                  "path": "latest/aux/bl-guarded/rel.0.cubin",
+                  "arch": "sm_120",
+                  "sha256": "a90522cea9fbf27f68019246eb0ebbf68a8a22a90f5c78297a7160d0700206bc"
+                },
+                "p3/rel.1.cubin": {
+                  "path": "latest/aux/bl-guarded/rel.1.cubin",
+                  "arch": "sm_120",
+                  "sha256": "849608c867e0ba9fd71ecc4bd1534f0901522ffa3adac80c8441ea8724dfb709"
+                },
+                "p3/rel.2.cubin": {
+                  "path": "latest/aux/bl-guarded/rel.2.cubin",
+                  "arch": "sm_120",
+                  "sha256": "4c0bd4d62adb66c76757da8fd2ebc609e1a5e7be8d35eefafc80684dd8dbc742"
+                }
+              }
+            },
+            "what": "the boundary layer's turbulence closure, its diffusivities, its mixing length, the plume and the boundary-layer height it returns are differentiated, under the weak-shear guard: where the forecast's own squared wind shear between two model levels is under 1e-4 s-2, that interface's stability functions keep their forecast value and carry no slope; the species outputs of the four number tendencies (nc, ni, nifa, nwfa) are held (hold_out). The 3 km storm row's guarded route: the same three images, laid over the made row's scheme bundle. Taped. The default of the limited-area classes; on the global classes a named option, whose default holds the diffusivities and the height at the trajectory, so a change in stability reaches the surface layer and the land without its mixing (a 30 km tangent 12.5 per cent off at 11 steps)",
+            "hold_out": "the four number tendencies of the boundary layer (nc, ni, nifa, nwfa) carry no derivative; the three cloud species tendencies (qc, qi, qs) stay live. Holding all seven, as the 3 km and 12 km rows do, put this row's 11-step tangent 6.9 per cent off at h 0.1 (4.2 at h 0.01) where the four alone leave it at 0.77 (2.1), the same to nine digits as nothing held",
+            "shown": {
+              "where": "30 km limited-area mesh point-n38.50w96.00-30000m-r1900km-cull (16,933 columns, 150 s steps, from 14Z), its 11-step plan, one RTX PRO 6000, 2026-11-19, the made row's files with these three images laid over gen-B9's p3 and this route's window_env",
+              "tangent_against_real_model": {
+                "what": "theta_m bump 1 K at 40.0N 94.8W, R 150 km, levels 1-8 box mean 40-43N 96.5-92W at the window end: |fd / tangent - 1| at h 1 / 0.1 / 0.01",
+                "steps_1": [
+                  0.0726,
+                  0.0093,
+                  0.0035
+                ],
+                "steps_3": [
+                  0.1267,
+                  0.0184,
+                  0.0091
+                ],
+                "steps_11": [
+                  0.0172,
+                  0.0077,
+                  0.0211
+                ],
+                "default_route_steps_3": 0.0426,
+                "default_route_steps_11": 0.1254,
+                "steps_11_seven_held": [
+                  0.0782,
+                  0.0694,
+                  0.0424
+                ],
+                "steps_24": [
+                  0.0668,
+                  0.0434,
+                  0.2595
+                ],
+                "default_route_steps_24": [
+                  0.0128,
+                  0.0094,
+                  0.1958
+                ],
+                "steps_24_note": "at 1 hour (two radiation steps, tempo-image's F08 TEMPO image) this box-mean measure reads further from the real model with this route than with the default (4.3 against 0.94 per cent at h 0.1); h 0.01 is the forecast's own roughness in both. Not yet split by term"
+              },
+              "surface_layer_inputs_step_2": {
+                "what": "projection FD.TL/TL.TL at h 0.01 of the MYNN surface layer's packed inputs at step 2 after the same bump",
+                "level1_qv": [
+                  0.997,
+                  14.95
+                ],
+                "pblh": [
+                  0.989,
+                  null
+                ],
+                "level1_u": [
+                  0.973,
+                  1.902
+                ],
+                "level1_v": [
+                  0.984,
+                  1.985
+                ],
+                "lh": [
+                  0.984,
+                  -3.431
+                ],
+                "order": "[this route, the default route]"
+              },
+              "self_dot_steps_11": {
+                "what": "the door's own self-dot window (seeded whole-state direction), each species its own unit (21 fields), bar 4 roundings",
+                "this_route_roundings": -0.374,
+                "nothing_held_roundings": -0.307,
+                "seven_held_roundings": -2.092,
+                "default_route_roundings": 0.305
+              },
+              "reverse_s_steps_11": {
+                "this_route": 41.53,
+                "default_route": 34.87,
+                "what": "the window's adjoint entry, seconds"
+              },
+              "self_dot_steps_24": {
+                "this_route_roundings": -0.331,
+                "default_route_roundings": 0.364,
+                "what": "the same self-dot window, 24 steps, species units (20 fields), F08 TEMPO image"
+              },
+              "reverse_s_steps_24": {
+                "this_route": 97.41,
+                "default_route": 90.9,
+                "what": "the window's adjoint entry, seconds"
+              },
+              "front_door_steps_11": {
+                "command": "adjoint-test --boundary-layer guarded, with these words (theta_m levels 1-8 box 40-43N 96.5-92W, bump 1 K at 40.0N 94.8W R 150 km level 4)",
+                "fd": 0.007723,
+                "dot": 1.479e-07,
+                "self_dot_roundings": -0.88,
+                "bump": [
+                  0.9828,
+                  0.9746,
+                  0.9923,
+                  1.0295,
+                  1.0211
+                ],
+                "descent": [
+                  0.8708,
+                  0.9261,
+                  0.9687,
+                  0.9775,
+                  1.0024
+                ],
+                "h": [
+                  1,
+                  0.3,
+                  0.1,
+                  0.03,
+                  0.01
+                ],
+                "verdict": "NOT PASSED (UNRESOLVED): both directions inside the bar, neither steady over three step sizes",
+                "default_route": "fd 1.254e-01 FAIL; bump 0.835-0.875 and descent 0.868-0.901 OUTSIDE"
+              }
+            }
+          }
+        },
+        "default_when": "taped on the global classes (the guarded route is not measured on a global made row); guarded on the limited-area classes from 0.6.2 (boundary_layer_default). The held closure leaves the 30 km made row's 11-step tangent 12.5 per cent off the real model; the guarded route with the four number tendencies held reads 1.7 / 0.77 / 2.1 per cent at h 1 / 0.1 / 0.01, its species self-dot -0.37 roundings at 11 steps and -0.33 at 1 hour, -0.73 at 29 steps on the 6 km made row (bar 4); its reverse costs 1.19x the held closure's at 30 km (41.4 s against 34.9 s) and 1.46x at 6 km (92.9 s against 63.8 s), on an RTX PRO 6000. The tape-free form (aux/bl-closure) is not this row's default: on the same 11 steps its tangent reads 3.7 / 2.7 / 0.096 per cent at h 1 / 0.1 / 0.01, worse than guarded at the two larger sizes, and with no hold its reverse carries the aerosol-number plane 1.34e6 times the shipped bundle's (a taped run against a generated one) Past 30 minutes the held closure runs (default_live_max_s).",
+        "default_live_max_s": 1800,
+        "default_live_max_what": "a made row whose class runs a live boundary layer by default (the limited-area classes: guarded) runs it on windows up to this many seconds and the held closure (taped) on longer ones when the command names no route, and says so in one line; --boundary-layer guarded still runs it on any window. The limiter's rule and number (fct_live_max_s). THE BREAKAGE THIS PREVENTS: on the 30 km made row (the same plan, the same theta bump, the same TEMPO image F08 and the same guarded images, read by sha256) the guarded route with the four number tendencies held is the best linear model to 11 steps (27.5 min: 1.7 / 0.77 / 2.1 per cent from the real model at h 1 / 0.1 / 0.01, against 16.5 / 15.7 / 13.3 held) and the worst at 1 hour (24 steps: its tangent 8.867e-02 sits below the real model's change at every step size, 9.002e-02 to 9.459e-02 over h 1 to 0.1, 6.7 / 4.3 per cent at h 1 / 0.1; held 9.339e-02, 1.3 / 0.94 per cent). The guarded route with the three cloud species held as well read 9.264e-02 at 1 hour (0.13 per cent at h 0.1, adj-3h a3-x24L) and 6.9 per cent at 11 steps: that hold list, not the image or the measure, is the whole difference between the two 1-hour readings, and at 1 hour the real model moves 5 per cent between h 1 and 0.3, so it cannot rank the held closure against that route"
+      },
       "assets": {
         "tempo_serial_cubin": "latest/aux/tempo_ad_serial_sm120.cubin",
         "bundle": "latest/bundle/genB9-gfrz",
@@ -112,7 +270,9 @@
         "sm_120"
       ],
       "latest_id": "20261112T0001Z-284234ec",
-      "runner_needs": "the window runner this wheel carries (hexcore/libexec/ad-binder), with the files of the published set 20261112T0001Z-284234ec"
+      "runner_needs": "the window runner this wheel carries (hexcore/libexec/ad-binder), with the files of the published set 20261112T0001Z-284234ec",
+      "fct_live_max_s": 1800,
+      "fct_live_max_what": "the made limited-area rows (window classes 3km and 3km-bounded) run the transport limiter live (--fct-frozen 0) on windows up to this many seconds and hold it (--fct-frozen 1) on longer ones: the proven 3 km row's rule and number (rows.hrrrv5-q3.*.fct_live_max_s). The global classes keep the template's --fct-frozen 1, so the rule does not touch them. THE BREAKAGE THIS PREVENTS: with the limiter held the 6 km made row's 29-step whole-state self-dot read +5.47 roundings and its water-vapour unit missed by 9.19e-6; with the limiter live and nothing else changed the water-vapour unit misses by 1.6e-8 and the check passes (a control run, its window.json read 2026-11-19 01:00Z); the gated cloud-number images with the limiter live read 2.15e-8 (gem-c1-dg200-f0). So the held limiter, not the TEMPO image, carried that miss"
     },
     "hrrrv5-any-exact": {
       "what": "template of the rows made on demand (--mesh --suite hrrrv5-exact), exact composition of the published set 20261112T0001Z-284234ec: the same suite without the fast row's plume, drag and TEMPO simplifications in the derivative (MYNN-EDMF plume differentiated, float64 TEMPO tangent, taped TEMPO adjoint, the mountain-drag closure differentiated); slower and larger than the fast row. Held in this composition as in the fast row: radiation is held (its launches are refused by name); two set-up kernels of the first step that read no model state run as identity (mynnsfc_tables, w_filter_geometry_v841_f32); FCT limiter coefficients frozen from the trajectory; the kernel set builds its topology tables per launch from the run's own mesh (--local-topology 1), so one kernel set serves every mesh. The mountain-drag closure (GSL drag) is differentiated in this composition (bundle gen-A). Differentiated, that closure's derivative grows without bound over high ground after about an hour at 120 km (measured on three dates, with the closure live on the fast composition; not measured at 60 km), so read the gradients of rows made with --suite hrrrv5-exact on a global mesh as gradients for windows of up to about an hour. The fast and full suites hold that closure at the trajectory on global meshes. On a 3 km mesh it has nothing to act on: below about 3.6 km grid spacing (ls_taper under 0.01 in ugwp_oro_v842.py) the drag scheme skips its mesoscale drag and blocking entirely, and the closure (the stress limiter and the Richardson number) belongs to that part.",
@@ -2652,7 +2812,7 @@
             "--anchors",
             "2",
             "--fct-frozen",
-            "1",
+            "0",
             "--local-topology",
             "1",
             "--mesh-constants",
@@ -2683,8 +2843,8 @@
             "bundle": "latest/bundle/gen-B9",
             "tempo_block_cubin": "latest/img/c2chain_120.cubin",
             "tempo_tlf_cubin": "latest/img/tlfd-fp32.cubin",
-            "cubins": "latest/kset/storm-h/cubins",
-            "kernels": "latest/kset/storm-h/kernels.json",
+            "cubins": "latest/kset/storm-bs5-lean2-astra2-dynE5-sp74-ddr/cubins",
+            "kernels": "latest/kset/storm-bs5-lean2-astra2-dynE5-sp74-ddr/kernels.json",
             "schemes": "latest/aux/schemes18.json",
             "tempo_cubin": "latest/aux/split2.cubin",
             "refuse": "rows/hrrrv5-any/refuse-3km.txt"
@@ -2709,7 +2869,9 @@
             "margin": 1.0,
             "source": "ONE measured point: the 38,278-cell 3 km box x 59 levels, 4-step window, card peak 90.8 GB (development work, the 3 km storm-box setup needs.card_mib 93000); one WHOLE card"
           },
-          "what": "3 km limited-area mesh of up to 50,000 cells on one whole card (the 38,278-cell storm box's size; the class's sizes measured on a 4-step window of that box), the fast composition as development work measured it (MYNN-EDMF bundle B9, its boundary layer held, fixed adjoint arena, TEMPO block reverse that keeps no tape, fp32 TEMPO tangent; kernel set storm-h; radiation and land live, NO refuse list; --local-topology 1 --mesh-constants 1). The check it makes is the strict self dot (AD_DOT_SELF=1). Labelled approximations: FCT limiter coefficients held; lateral-boundary driving data held (zero tangent), the relax zone itself is differentiated; B9 holds the MYNN-EDMF boundary layer (its turbulence closure, plume and returned height). The mountain-drag closure is live in this class (bundle gen-B9, as measured on the storm box), unlike the fast suite's global classes: below about 3.6 km grid spacing (ls_taper under 0.01 in ugwp_oro_v842.py) the drag scheme skips its mesoscale drag and blocking entirely, and the closure (the stress limiter and the Richardson number) belongs to that part, so on the storm box it has nothing to act on. On a coarser limited-area mesh it acts, and its derivative can grow without bound after about an hour, as on the 120 km globe."
+          "what": "3 km limited-area mesh of up to 50,000 cells on one whole card (the 38,278-cell storm box's size; the class's sizes measured on a 4-step window of that box), the fast composition as development work measured it (MYNN-EDMF bundle B9 with the guarded boundary-layer images laid over it (the turbulence closure, plume and returned height differentiated under the weak-shear guard; the species outputs of the four number tendencies held), fixed adjoint arena, TEMPO block reverse that keeps no tape, fp32 TEMPO tangent; kernel set storm-bs5-lean2-astra2-dynE5-sp74-ddr (the 3 km storm row's default-route set: the same tangent to seven digits on the 30 km made row, its reverse 21.0 s against 41.4 s on the set it replaces); radiation and land live, NO refuse list; --local-topology 1 --mesh-constants 1). The check it makes is the strict self dot (AD_DOT_SELF=1). Labelled approximations: the FCT limiter runs live on windows up to fct_live_max_s and holds its coefficients past that; the species outputs of the boundary layer's four number tendencies held; lateral-boundary driving data held (zero tangent), the relax zone itself is differentiated; --boundary-layer taped runs B9's own held boundary layer instead. The mountain-drag closure is live in this class (bundle gen-B9, as measured on the storm box), unlike the fast suite's global classes: below about 3.6 km grid spacing (ls_taper under 0.01 in ugwp_oro_v842.py) the drag scheme skips its mesoscale drag and blocking entirely, and the closure (the stress limiter and the Richardson number) belongs to that part, so on the storm box it has nothing to act on. On a coarser limited-area mesh it acts, and its derivative can grow without bound after about an hour, as on the 120 km globe.",
+          "boundary_layer_default": "guarded",
+          "kernel_set_why": "storm-bs5-lean2-astra2-dynE5-sp74-ddr replaces storm-h (0.6.2): on the 30 km made row (its 11-step plan, guarded boundary layer, limiter live) the tangent's slope is 0.10062330897 against 0.10062329383 on storm-h, the species self-dot -1.05 roundings against -0.37 (bar 4), the reverse's adjoint entry 21.0 s against 41.4 s and the window 69 s against 120 s (RTX PRO 6000). The 3 km row's other gradient-line words (34 GiB tape, checkpoints sqrt, the eleven environment words) added nothing here (22.5 s with them, ar-fsd11k), so they are not taken. A run first showed this set's speed on a made row (23.2 s, its tape-free closure)."
         },
         {
           "mesh_kind": "limited-area",
@@ -2722,7 +2884,7 @@
             "--anchors",
             "2",
             "--fct-frozen",
-            "1",
+            "0",
             "--local-topology",
             "1",
             "--mesh-constants",
@@ -2789,7 +2951,7 @@
             "margin_mib": 0,
             "source": "a floor, not a measured peak: the class's card words hold the runner inside the admitted card's free memory less 3,072 MiB and put every byte past it in host memory (the runner's out-of-core budget: where bytes live changes, no word does); below 16,384 MiB free the door does not try"
           },
-          "what": "3 km limited-area mesh of up to 200,000 cells on one card, or two with --cards A,B (the MYNN-EDMF and TEMPO columns split over them), the fast composition of the 3 km recipe (MYNN-EDMF bundle B9, its boundary layer held, TEMPO block reverse that keeps no tape, fp32 TEMPO tangent; kernel set storm-h-ws; radiation and land live, NO refuse list; --local-topology 1 --mesh-constants 1). The check it makes is the strict self dot (AD_DOT_SELF=1). Labelled approximations: FCT limiter coefficients held; lateral-boundary driving data held (zero tangent), the relax zone itself is differentiated; B9 holds the MYNN-EDMF boundary layer (its turbulence closure, plume and returned height). SIZED TO THE MESH AND THE CARD: kernel set storm-h-ws binds the column-solve row's scratch to the size it uses (the hand-written row, whose words differ from the per-cell graph row of the whole 3 km class by rounding); reverse scratch from the mesh's size; the step tape streamed through host memory; a card budget of the admitted card's free memory less 3,072 MiB and a host budget of 0.8 of the available host memory, with every byte past the card budget in host memory. The mountain-drag closure is live in this class (bundle gen-B9, as in the whole-card 3 km class): below about 3.6 km grid spacing (ls_taper under 0.01 in ugwp_oro_v842.py) the drag scheme skips its mesoscale drag and blocking entirely, and the closure (the stress limiter and the Richardson number) belongs to that part, so on a mesh that fine it has nothing to act on. On a coarser limited-area mesh it acts, and its derivative can grow without bound after about an hour, as on the 120 km globe.",
+          "what": "3 km limited-area mesh of up to 200,000 cells on one card, or two with --cards A,B (the MYNN-EDMF and TEMPO columns split over them), the fast composition of the 3 km recipe (MYNN-EDMF bundle B9 with the guarded boundary-layer images laid over it (the turbulence closure, plume and returned height differentiated under the weak-shear guard; the species outputs of the four number tendencies held), TEMPO block reverse that keeps no tape, fp32 TEMPO tangent; kernel set storm-h-ws; radiation and land live, NO refuse list; --local-topology 1 --mesh-constants 1). The check it makes is the strict self dot (AD_DOT_SELF=1). Labelled approximations: the FCT limiter runs live on windows up to fct_live_max_s and holds its coefficients past that; the species outputs of the boundary layer's four number tendencies held; lateral-boundary driving data held (zero tangent), the relax zone itself is differentiated; --boundary-layer taped runs B9's own held boundary layer instead. SIZED TO THE MESH AND THE CARD: kernel set storm-h-ws binds the column-solve row's scratch to the size it uses (the hand-written row, whose words differ from the per-cell graph row of the whole 3 km class by rounding); reverse scratch from the mesh's size; the step tape streamed through host memory; a card budget of the admitted card's free memory less 3,072 MiB and a host budget of 0.8 of the available host memory, with every byte past the card budget in host memory. The mountain-drag closure is live in this class (bundle gen-B9, as in the whole-card 3 km class): below about 3.6 km grid spacing (ls_taper under 0.01 in ugwp_oro_v842.py) the drag scheme skips its mesoscale drag and blocking entirely, and the closure (the stress limiter and the Richardson number) belongs to that part, so on a mesh that fine it has nothing to act on. On a coarser limited-area mesh it acts, and its derivative can grow without bound after about an hour, as on the 120 km globe.",
           "card_words": {
             "{scratch_gib}": {
               "from": "mesh",
@@ -2819,7 +2981,8 @@
           "shard_env": {
             "AD_MYNN_SHARD_DEVICES": "{ordinals}",
             "AD_TEMPO_SHARD_DEVICES": "{ordinals}"
-          }
+          },
+          "boundary_layer_default": "guarded"
         }
       ],
       "radiation_s": 1800,
@@ -3391,7 +3554,7 @@
       },
       "ownerreduce": {
         "selected": "ranks/ownerreduce",
-        "what": "the door builds the rank kernel set from the row's own kernel set plus the owner-reduced selected divergence-damping row (hexcore.ad.ownerreduce.ensure, the box chain's add_selected_row.py), once per (kernel set, row) in the row cache. The folder holds kernels.json (the row), specs/divergence_damping_selected_f32.json and cubins/divergence_damping_selected_f32.{fatbin,provenance.json}",
+        "what": "the door builds the rank kernel set from the row's own kernel set plus the owner-reduced selected divergence-damping row (hexcore.ad.ownerreduce.ensure, the rank chain's add_selected_row.py), once per (kernel set, row) in the row cache. The folder holds kernels.json (the row), specs/divergence_damping_selected_f32.json and cubins/divergence_damping_selected_f32.{fatbin,provenance.json}",
         "why": "a rank plan runs divergence damping as two selected passes; a one-card kernel set has no row for them, and a rank window on it stops at its first selected launch (DEFECT: divergence_damping_selected_f32: required damping derivative unavailable: no derivative row; storm box, two ranks, 2026-11-13)"
       },
       "experimental": {
@@ -3425,7 +3588,7 @@
       "assets": {},
       "ownerreduce": {
         "selected": "ranks/ownerreduce",
-        "what": "the door builds the rank kernel set from the row's own kernel set plus the owner-reduced selected divergence-damping row (hexcore.ad.ownerreduce.ensure, the box chain's add_selected_row.py), once per (kernel set, row) in the row cache. The folder holds kernels.json (the row), specs/divergence_damping_selected_f32.json and cubins/divergence_damping_selected_f32.{fatbin,provenance.json}",
+        "what": "the door builds the rank kernel set from the row's own kernel set plus the owner-reduced selected divergence-damping row (hexcore.ad.ownerreduce.ensure, the rank chain's add_selected_row.py), once per (kernel set, row) in the row cache. The folder holds kernels.json (the row), specs/divergence_damping_selected_f32.json and cubins/divergence_damping_selected_f32.{fatbin,provenance.json}",
         "why": "a rank plan runs divergence damping as two selected passes; a one-card kernel set has no row for them, and a rank window on it stops at its first selected launch (DEFECT: divergence_damping_selected_f32: required damping derivative unavailable: no derivative row; storm box, two ranks, 2026-11-13)"
       },
       "env_drop": [
@@ -3467,6 +3630,54 @@
       "experimental": {
         "line": "a gradient split over cards is experimental on this row: it has not been shown equal to the one-card gradient (in a 12-step two-card test on the 3 km storm box, 12 of 13 gradient fields agreed and the wind along edges differed by up to 7.4 per cent), nor faster than it. For a gradient you rely on, run on one card (--card N).",
         "until": "a split gradient equal to the one-card gradient field by field, and faster than one card on the same box"
+      }
+    },
+    "made": {
+      "what": "a row made for a mesh (--mesh, any size the recorder takes) as 2 to 8 ranks, one a card, when its rank plans are given with --rank-plans PREFIX: a rank-thread recording of the same start as the one-card plan given with --plan (GPUWM_HEX_RECORD_RANKS=N), sealed, split (split_plan.py) and mapped back (rank-gather.json). Every card is asked for the made row's one-card need (an upper bound, not measured per rank); host memory per rank is the rank launcher's (0.8 x MemAvailable / ranks), so the class's one-process --host-budget-gb is dropped",
+      "doors": [
+        "sensitivity",
+        "adjoint-test"
+      ],
+      "cards_max": 8,
+      "exchange": "shm-fenced",
+      "exchanges": {
+        "file": {
+          "env": {},
+          "runner_label": "file mailbox",
+          "what": "the shipped runner: one tmpfs file per halo message with a card drain on both sides"
+        },
+        "shm-fenced": {
+          "env": {
+            "AD_PEER_SHM": "1"
+          },
+          "runner_label": "shm fenced (AD_PEER_SHM=1)",
+          "what": "page-locked shared slots in /dev/shm, drained around every copy; needs a runner with AD_PEER_SHM (a development build); the wheel's runner has none, and a window that asks for it on that runner is refused after it runs, by the ranks own peer block"
+        }
+      },
+      "gather": "rank-gather.json",
+      "assets": {},
+      "ownerreduce": {
+        "selected": "ranks/ownerreduce",
+        "what": "the door builds the rank kernel set from the row's own kernel set plus the owner-reduced selected divergence-damping row (hexcore.ad.ownerreduce.ensure, the rank chain's add_selected_row.py), once per (kernel set, row) in the row cache. The folder holds kernels.json (the row), specs/divergence_damping_selected_f32.json and cubins/divergence_damping_selected_f32.{fatbin,provenance.json}",
+        "why": "a rank plan runs divergence damping as two selected passes; a one-card kernel set has no row for them, and a rank window on it stops at its first selected launch (DEFECT: divergence_damping_selected_f32: required damping derivative unavailable: no derivative row; storm box, two ranks, 2026-11-13)"
+      },
+      "env_drop": [
+        "AD_TAPE_UNREAD",
+        "AD_MYNN_FWD_LANES"
+      ],
+      "env_drop_why": "AD_TAPE_UNREAD names allocations of the one-card plan; the MYNN-EDMF forward lane relayout moves whole 32-column groups and a rank's workspace holds its own column count (rank 0 refused at step 1: workspace allocation 349 ... fewer than 19168 columns), so it is off on every rank (the one-card answer is the same without it: same grad-raw.npz and sensitivity.npz)",
+      "window_args": [],
+      "window_args_drop": [
+        "--host-budget-gb"
+      ],
+      "window_args_drop_why": "the class sizes the host for one process; the rank launcher gives each rank 0.8 x MemAvailable / ranks when no --host-budget-gb is in the line (ranks.rs R3)",
+      "row_overrides": {
+        "self_dot_dead": null
+      },
+      "row_overrides_why": "the left-out scratch list names ranges of the one-card example plan; a rank plan has none measured, so the strict self dot runs with no left-out memory",
+      "experimental": {
+        "line": "a gradient split over cards is experimental on a made mesh: it has not been shown equal to the one-card gradient on this mesh, nor faster than it. For a gradient you rely on, run on one card (--card N).",
+        "until": "a split gradient equal to the one-card gradient field by field on a made mesh, and faster than one card on the same box"
       }
     }
   },

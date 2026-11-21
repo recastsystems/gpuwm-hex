@@ -116,7 +116,7 @@ def test_the_texts_state_the_3km_verdict_and_what_a_pass_means():
     section = readme[readme.index("## The differentiable engine"):]
     assert "the new default route has not been measured" not in section
     assert "ended **PASS** on the default route" in section and "INSIDE (3.65e-04 from 1)" in section
-    assert "INSIDE (1.92e-03 from 1)" in section   # the descent at the row's own step sizes (V71 f52-d56h-at3)
+    assert "INSIDE (1.92e-03 from 1)" in section   # the descent at the row's own step sizes
     assert "**3 km: `adjoint-test` ends PASS on the default route and FAIL on the exact route.**" in limits
     for text in (section, guide):   # the verdict rule and its exit status, in each
         assert "PASS" in text and "NOT PASSED (UNRESOLVED)" in text and "exit status 0" in text and "exit status 1" in text

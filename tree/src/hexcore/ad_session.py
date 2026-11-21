@@ -45,7 +45,6 @@ once and returns a gradient for each new target.
 from __future__ import annotations
 
 import argparse
-import fcntl
 import hashlib
 import json
 import os
@@ -58,6 +57,22 @@ import sys
 import time
 from pathlib import Path
 from typing import Any
+
+try:
+    import fcntl
+except ImportError:
+    # POSIX only. THE BREAKAGE THIS PREVENTS (0.6.1 on Windows): the import at the top of this module stopped
+    # `gpuwm-hex --help`, which builds every door, with "No module named 'fcntl'" once `resource` was fixed.
+    # The session's lock is the one use; it says what it needs (_posix_lock).
+    fcntl = None
+
+
+def _posix_lock():
+    """``fcntl``, or a refusal that names it: a card session locks its folder with ``flock``, which Windows lacks."""
+    if fcntl is None:
+        raise RuntimeError("a derivative command's card session locks its folder with fcntl.flock, which this platform "
+                           "lacks: the derivative commands run on Linux")
+    return fcntl
 
 SESSIONS_ENV = "GPUWM_HEX_AD_SESSIONS"
 MODE_ENV = "GPUWM_HEX_AD_SESSION"
@@ -165,24 +180,46 @@ def _alive(pid: int | None, ticks: int | None) -> bool:
     return _threads_left(pid)
 
 
-def _serves(pid: int, folder: Path) -> bool:
+def _serves(pid: int, folder: Path, settle_s: float = 0.5) -> bool:
     """Whether process ``pid`` is a runner serving ``folder`` (its command line names --resident FOLDER). A process
     whose first thread has ended reads an empty command line in /proc while its other threads run on; theirs is read
-    then (the threads of one process share it)."""
+    then (the threads of one process share it).
+
+    THE BREAKAGE THIS PREVENTS (test_a_program_that_is_whole_is_not_taken_for_an_ending_one failed 1 run in 40 alone):
+    subprocess starts a program with posix_spawn (vfork), which gives control back to the parent once the child has
+    replaced its memory and before the kernel has set the new argument area, so /proc/<pid>/cmdline of a program
+    started a moment ago reads EMPTY (329 of 400 reads straight after Popen, Python 3.14), and a program
+    just started read as serving nothing. An empty command line of a process whose first thread runs is read again
+    for up to ``settle_s``; a command line that names anything is an answer at once."""
+    for _ in range(max(1, int(settle_s / 0.002))):
+        said = _serves_once(pid, folder)
+        if said is not None:
+            return said
+        if _start_ticks(pid) is None:
+            break
+        time.sleep(0.002)
+    return False
+
+
+def _serves_once(pid: int, folder: Path) -> bool | None:
+    """_serves read once: True or False, or None when every command line read was empty (not set yet, or ended)."""
     target = os.fsencode(str(folder))
     names = [f"/proc/{int(pid)}/cmdline"]
     try:
         names += [f"/proc/{int(pid)}/task/{task}/cmdline" for task in sorted(os.listdir(f"/proc/{int(pid)}/task"))]
     except OSError:
         pass
+    seen = False
     for name in names:
         try:
-            words = Path(name).read_bytes().split(b"\0")
+            raw = Path(name).read_bytes()
         except OSError:
             continue
+        seen = seen or bool(raw)
+        words = raw.split(b"\0")
         if any(w == b"--resident" and i + 1 < len(words) and words[i + 1] == target for i, w in enumerate(words)):
             return True
-    return False
+    return False if seen else None
 
 
 def _host_mib(pid: int) -> int:
@@ -460,7 +497,7 @@ class Use:
         while True:
             fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o600)
             try:
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                _posix_lock().flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except OSError:
                 try:
                     holder = os.pread(fd, 300, 0).decode("utf-8", "replace").strip()
@@ -468,7 +505,7 @@ class Use:
                     holder = ""
                 print(f"gpuwm-hex {self.door}: session {self.name} is serving another command"
                       + (f" ({holder})" if holder else "") + ": waiting for it", flush=True)
-                fcntl.flock(fd, fcntl.LOCK_EX)
+                _posix_lock().flock(fd, fcntl.LOCK_EX)
             # the file this command locked must still be the one the name leads to: a command that ends with no
             # program loaded removes its lock file (unlock(tidy=True)), and a lock on a removed file excludes nobody
             try:
@@ -946,7 +983,7 @@ def stop_sessions(name: str | None = None, wait_s: float = STOP_WAIT_S) -> list[
             continue
         fd = os.open(root / f"{item['name']}.lock", os.O_RDWR | os.O_CREAT, 0o600)
         try:
-            fcntl.flock(fd, fcntl.LOCK_EX)
+            _posix_lock().flock(fd, fcntl.LOCK_EX)
             live = read_live(root, item["name"])
             if live is not None:
                 done.append(stop_live(live, wait_s))

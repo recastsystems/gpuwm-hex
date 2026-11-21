@@ -3,7 +3,7 @@
 These files travel in the wheel. `gpuwm-hex examples` prints the folder they are installed in, and
 `gpuwm-hex examples --copy DIR` copies them to a folder of yours.
 
-Each script is meant to run end to end from a plain install (`pip install "gpuwm-hex[ad]==0.6.1"` in a Python 3.14 environment of its own, not on top of `[gpu]`) and
+Each script is meant to run end to end from a plain install (`pip install "gpuwm-hex[ad]==0.6.2"` in a Python 3.14 environment of its own, not on top of `[gpu]`) and
 fetches its own inputs, once, each checked by SHA-256. `run-32gb.sh` ran whole that way on 0.6.0's published wheel
 and on a pre-release build of 0.6.1 (one RTX 5090, empty home). `run-96gb.sh` has not been run whole: each of its
 commands was read on a 96 GB card on builds of 0.6.0. `expected.json` holds the numbers to expect and the run each

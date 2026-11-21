@@ -130,8 +130,6 @@ jobs:
   # -------------------------------------------------------------------------
   packaging:
     runs-on: ubuntu-24.04
-    env:
-      GPUWM_CI_ZLIB_URL: https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
     steps:
       - uses: actions/checkout@v4
         with:

@@ -216,9 +216,11 @@ started in one and moved five times, keeping the storm inside.
   Guide: [Moving nests](../moving-nest.md).
 - **The balance fix is the default.** Those three runs used the remap before
   it, and at 2 of the 15 moves the short-term shock went over its limit
-  (1.5004 and 1.81 against 1.5). On `gpuwm-hex moving check` the fix brings
-  the worst post-move jolt from 16.2 to 1.01 on a card with local time
-  stepping and from 21.4 to 1.04 on the CPU (ordinary integrator); see
+  (1.5004 and 1.81 against 1.5). On 0.6.2, `gpuwm-hex moving check --lts`
+  brings the worst post-move jolt from 12.97 to 1.014 on its gentle case and
+  from 152.8 to 1.029 on its steep case (an RTX 4090 and an RTX 5070 Ti print
+  the same numbers), and `--device cpu` brings the gentle case from 19.3 to
+  1.04 (ordinary integrator); the first measurement is in
   [the jolt report](../moving-jolt-report.md).
 - **MPAS physics moves too.** A case whose physics is an MPAS-A v8.4.2 suite
   carries the suite's own state across each move, so convection, boundary

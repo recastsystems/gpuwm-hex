@@ -2094,6 +2094,15 @@ fn admissible_readings(data: &[u8], ranges: &[(u64, u64, u64)], low: u64, high: 
                 if word == replay & !HIGH_HALF && replay & HIGH_HALF != 0 { values.push(forward & !HIGH_HALF); }
                 if word & HIGH_HALF == replay & HIGH_HALF && replay & HIGH_HALF != 0 { values.push((forward & HIGH_HALF) | (word & !HIGH_HALF)); }
                 if word & TOP_BYTES == replay & TOP_BYTES && replay & TOP_BYTES != 0 { values.push((forward & TOP_BYTES) | (word & !TOP_BYTES)); }
+                // im p60: an old address with one to three of its five low bytes rewritten and the rest kept: the
+                // recorded address with the same bytes rewritten. THE BREAKAGE THIS PREVENTS: the 60-step 12 km plan
+                // p60 stopped its strict replay at step 28 ("state hash mismatch at step 28, 1 allocations, first
+                // 790"): step 28 clears 1 byte at 790+103,754, byte 2 of a land pointer-table entry step 23 wrote at
+                // 790+103,752 and nothing rewrote since (replay 0x72eb5b000000); the half and five-byte readings
+                // replace whole halves or five bytes, and none gave the recording's word.
+                let changed = word ^ replay;
+                let mask = (0..8).map(|b| 0xff_u64 << (8 * b)).filter(|m| changed & m != 0).fold(0_u64, |a, m| a | m);
+                if mask != 0 && mask & TOP_BYTES == 0 && mask.count_ones() <= 24 { values.push((forward & !mask) | (word & mask)); }
                 if word & !HIGH_HALF == replay & !HIGH_HALF && replay & !HIGH_HALF != 0 && word & HIGH_HALF != replay & HIGH_HALF {
                     values.push((word & HIGH_HALF) | (forward & !HIGH_HALF));
                 }
@@ -3811,9 +3820,11 @@ impl Execution {
                 let data = pointer_table::build_descriptors(&pairs, 5, &self.allocations)?;
                 let target = self.address(*destination, data.len())?;
                 let stream = self.stream(*stream)?;
-                let mut host = ptr::null_mut();
-                checked("cuMemHostAlloc descriptor table", (self.cuda.host_alloc)(&mut host, data.len(), 0))?;
-                self.pinned.push(host);
+                // runner overhead (0.6.2): the staging buffer comes from the window's page-locked pool (pinned_take, as
+                // the pointer tables above), live until the next drain, which returns it to the pool after a sync. THE COST
+                // THIS REMOVES: a new cuMemHostAlloc for every table and a cuMemFreeHost (which waits for the card) for each
+                // at the drain: 472 of each a step at 12 km. The same bytes are uploaded from the same kind of memory.
+                let host = self.pinned_take(data.len())?;
                 ptr::copy_nonoverlapping(data.as_ptr(), host.cast::<u8>(), data.len());
                 checked("cuMemcpyHtoDAsync descriptor table", (self.cuda.upload_async)(target, host, data.len(), stream))?;
                 self.note_table_pointers(*destination, &data);
@@ -4168,8 +4179,8 @@ impl Execution {
                 }
             }
             let driver = submit::NativeDriver { launch: self.cuda.launch, copy: self.cuda.copy, clear: self.cuda.clear };
-            let allocations: Vec<_> = self.allocations.values().copied().collect();
-            self.submitter.submit(&driver, hex_step_validate, hex_step_submit, &allocations,
+            // runner overhead (0.6.2): bound against the live table itself, not a copy of it made per command.
+            self.submitter.submit_live(&driver, hex_step_validate, hex_step_submit, &self.allocations,
                                   &[command], &[], stream).map_err(|e| match op {
                                       Operation::Kernel { function, grid, block, .. } => format!("native submit: {e:?} (kernel {function}, grid {grid:?}, block {block:?})"),
                                       _ => format!("native submit: {e:?}") })?;
@@ -6698,6 +6709,21 @@ mod addr_s_any_reading_tests {
         assert_eq!(any_reading_bound(125_671_424), 546);       // block 347 at 120 km
         assert_eq!(any_reading_bound(2_147_483_648), 32);      // a 2 GiB pool block at 60 km
         assert_eq!(any_reading_bound(1 << 40), 8);
+    }
+
+    #[test]
+    fn an_old_address_with_one_low_byte_rewritten_has_the_recorded_reading() {
+        // p60 step 28, block 790: a 1-byte clear over byte 2 of a pointer the table held since step 23
+        let old = (0x72eb_5b12_3400_u64, 0x7b82_6c56_3400_u64);
+        let previous = PointerHistory::from([(0, old)]);
+        let data = bytes(&[0x72eb_5b00_3400]);
+        let read = admissible_readings(&data, &[], 1, 0, Some(&previous));
+        assert_eq!(read.len(), 1);
+        assert!(read[0].alts.iter().any(|a| a.2 && a.0 == 0x7b82_6c00_3400), "{:?}", read[0].alts);
+        // a top byte changed: not an old address with low bytes rewritten
+        let data = bytes(&[0x73eb_5b00_3400]);
+        let read = admissible_readings(&data, &[], 1, 0, Some(&previous));
+        assert!(!read.iter().flat_map(|w| w.alts.iter()).any(|a| a.0 == 0x7b82_6c00_3400), "{read:?}");
     }
 
     #[test]

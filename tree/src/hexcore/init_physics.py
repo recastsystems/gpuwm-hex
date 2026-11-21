@@ -323,13 +323,22 @@ def prepare_forecast_init(init, destination, physics, start_time):
     from .species_row import species_row_for_scheme
     from .init_door import resolve_engine
     selectors = physics["selectors"]
-    land = load_table()["options"]["config_lsm_scheme"][selectors["config_lsm_scheme"]].get("carried")
+    # A selector the generic column seam runs straight from the engine's
+    # registry (``lin-mp2``, ``ssib``: its registry option id) has no row in
+    # the suite table at all.  THE BREAKAGE (hex 0.6.1; found by the option
+    # matrix of fork jacobbieker/woof PR 379): every such microphysics, and
+    # SSiB, stopped here with a bare KeyError before the forecast opened.  An
+    # absent row is an engine-only row, the same as a table row without a
+    # carried block.
+    options = load_table()["options"]
+    land = options["config_lsm_scheme"].get(selectors["config_lsm_scheme"], {}).get("carried")
     if land is None:
         return init, None
     names = species_row_for_scheme(selectors["config_microp_scheme"]).names()
     # Engine-only rows (including non-aerosol Thompson) have no legacy
     # carried block. Aerosol requirements remain explicit metadata, as for TEMPO.
-    required = load_table()["options"]["config_microp_scheme"][selectors["config_microp_scheme"]].get("carried", {}).get("requires_aerosol_climatology", False)
+    required = (options["config_microp_scheme"].get(selectors["config_microp_scheme"], {})
+                .get("carried", {}).get("requires_aerosol_climatology", False))
     synthetic_source = required and _synthetic_source(init)
     with Dataset(init) as ds:
         soil = len(ds.dimensions["nSoilLevels"])

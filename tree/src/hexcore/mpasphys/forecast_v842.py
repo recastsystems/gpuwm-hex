@@ -503,6 +503,8 @@ def _native_route(arguments: Any, *, default_mode: str = 'exact'):
     mmm_explicit = {}
     from . import gwdo_version as _gwdo
     gwdo_explicit = {}
+    from .rrfs import closures as _closures
+    closures_explicit = {}
     if config is not None and overrides:
         # Reconstruct one native physics group so parse_fortran_namelist never
         # discards a repeated group. WOOF-only selectors have no Registry row.
@@ -524,6 +526,11 @@ def _native_route(arguments: Any, *, default_mode: str = 'exact'):
             if option in _mmm.KEYS:
                 # Engine extension (mmm_version.py): selects the MMM-physics generation, never a Registry key.
                 mmm_explicit[option] = value.strip()
+                continue
+            if option in _closures.KEYS:
+                # Engine extension (rrfs/closures): the learned and symbolic surface and boundary-layer closures,
+                # each its own key, never a Registry option.
+                closures_explicit[option] = value.strip()
                 continue
             if option in _gwdo.KEYS:
                 # Engine extension (gwdo_version.py): the drag generation and the PR #1409 knobs, which enter the
@@ -552,6 +559,8 @@ def _native_route(arguments: Any, *, default_mode: str = 'exact'):
         config = _mmm.configure(config, mmm_explicit)
         config = _gwdo.configure(config, gwdo_explicit, text)
         init_soil_refusal(getattr(arguments, 'init', None), config, selected or getattr(config, 'suite', None))
+    # The closures (off unless a --physics key or a GPUWM_HEX_* word names one; refused by name otherwise).
+    config = _closures.configure(config, closures_explicit)
     return config, text
 
 
@@ -1150,6 +1159,82 @@ def _marked_durable(frame: Path, marker: Path) -> bool:
             and receipt.get('mtime_ns') == stat.st_mtime_ns)
 
 
+def cpu_slot_refusal(arguments: Any, config: Any) -> str | None:
+    """Refuse, before any download, a selection with a slot on the CPU and no native MPAS library to run it.
+
+    THE BREAKAGE THIS PREVENTS: ``--physics-suite hrrrv5 --physics config_convection_scheme=cu_tiedtke`` (a scheme the
+    RRFS 44c0849 row has no GPU slot for; cu_grell_freitas too, before this release) printed "PHYSICS ON CPU",
+    fetched 1 GB of RRFS tables (115 s on an RTX 4090 host, 20 Nov 2026) and stopped on "the packaged physics
+    manifest has no assets for these pin sets": no release ships a native MPAS library, and the sentence named
+    neither the cause nor a choice that runs.  A run that names a library (--native-physics-library or
+    MPAS_NATIVE_LIBRARY), or has one installed by ``gpuwm-hex physics-resources build``, goes on as before.
+    """
+    if config is None:
+        return None
+    cpu = [(slot, scheme) for slot, scheme in (getattr(config, 'selectors', None) or {}).items()
+           if config.active(slot) and str(config.backends.get(slot)) == 'native-cpu']
+    if not cpu:
+        return None
+    if getattr(arguments, 'native_physics_library', None) or os.environ.get('MPAS_NATIVE_LIBRARY'):
+        return None
+    from .resources_build import PhysicsResourceError, ROUTE_KEYS, resolve_resource
+    pin_set = getattr(config, 'pin_set', None) or 'v8.4.2'
+    try:
+        resolve_resource(ROUTE_KEYS[pin_set]['native-library'])
+        return None
+    except (PhysicsResourceError, KeyError):
+        pass
+    from .resident_v842 import gpu_choices
+    reasons = {item.slot: item.reason for item in getattr(config, 'cpu_slots', ()) or ()}
+    choices = gpu_choices(config)
+    options = getattr(config, 'options', None) or {}
+    suite = str(options.get('config_physics_suite', '') or 'this selection')
+    words = []
+    for slot, scheme in cpu:
+        line = f'{slot}={scheme} runs only on the CPU here ({reasons.get(slot, "no GPU slot")})'
+        if slot in choices:
+            selector, schemes = choices[slot]
+            line += ('; with the other choices of this run, ' + slot + ' runs on the GPU as '
+                     + ' or '.join(f'--physics {selector}={name}' for name in schemes))
+        words.append(line)
+    return (f'MPAS physics suite {suite}: ' + '. '.join(words) + '. A slot on the CPU needs a native MPAS '
+            'library, which no gpuwm-hex release ships; name a site build with --native-physics-library.')
+
+
+def forecast_args_slot_refusal(flags: Any) -> str | None:
+    """Why a run with these forecast-door flags would stop at the forecast door on a slot with no GPU route (the
+    refusals of ``forecast_door._run_forecast``: :func:`resident_v842.ported_route_refusal`, then
+    :func:`cpu_slot_refusal`), read from the flags alone; None when it would not, or when its physics cannot be read
+    from the flags (the forecast door then decides, as before).
+
+    For the doors that build a mesh and fetch a start before they reach the forecast door (``regional``, ``global``),
+    which call it with their ``--forecast-arg`` flags once the hex default physics is filled in.  THE BREAKAGE THIS
+    PREVENTS (0.6.2, 21 Nov 2026): ``gpuwm-hex regional ... --forecast-arg=--physics-suite=hrrrv5
+    --forecast-arg=--physics=config_convection_scheme=cu_tiedtke`` built the 800 km region's mesh, fetched HRRR and
+    built its start and boundaries (17 GB, 282 s on a fresh install) before the forecast door named the choice it
+    cannot run.
+    """
+    import argparse
+    import contextlib
+    import io
+    from ..forecast_door import PHYSICS_MODE_DEFAULT, add_forecast_arguments
+    parser = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+    add_forecast_arguments(parser)
+    try:
+        with contextlib.redirect_stderr(io.StringIO()):
+            arguments, _unknown = parser.parse_known_args([str(item) for item in flags or ()])
+            config, _text = native_route(arguments, default_mode=PHYSICS_MODE_DEFAULT)
+    except (ValueError, KeyError, OSError, SystemExit):
+        return None
+    if config is None:
+        return None
+    from .resident_v842 import ported_route_refusal
+    refusal = ported_route_refusal(config)
+    if refusal is not None and not named_library_route(arguments, config):
+        return refusal
+    return cpu_slot_refusal(arguments, config)
+
+
 def named_library_route(arguments: Any, config: Any) -> bool:
     """Whether a run that names a native MPAS library takes it because the ported framework cannot run the selection.
 
@@ -1190,6 +1275,11 @@ def native_table_source(config: Any, named_source: Any, source: Any, ported_fram
 
 def run_forecast(arguments: Any, config: Any, text: str) -> int:
     """Hydrate Registry pools for resident physics; core.F:589-596."""
+    # The learned correction (hexcore.ad.learned_correction) goes on the external-tendency slot only when
+    # GPUWM_HEX_LEARNED_CORRECTION names a checkpoint. Unset (the default): nothing is imported or installed.
+    if os.environ.get('GPUWM_HEX_LEARNED_CORRECTION'):
+        from ..ad import learned_correction as _learned_correction
+        _learned_correction.install_from_env(getattr(arguments, 'init'), getattr(arguments, 'dt', None))
     pin_set = getattr(config, 'pin_set', None) or 'v8.4.2'
     reader = getattr(arguments, 'native_pool_reader', None) or os.environ.get('MPAS_NATIVE_POOL_READER')
     source = getattr(arguments, 'mpas_source', None) or os.environ.get('MPAS_SOURCE')
@@ -1343,6 +1433,10 @@ def run_forecast(arguments: Any, config: Any, text: str) -> int:
         # the regional dycore re-reads the bracketing lbc files at the resume time.
         raise ValueError('a moving region on the MPAS suite route takes its boundary from the move hooks; drop --lbc-dir')
     text = bind_init_start(text, getattr(arguments, 'init', None))
+    # The run's surface or boundary-layer closure (rrfs/closures) on the RUC land and MYNN-EDMF slots, its files'
+    # sums checked here, before any step; none (the default) leaves the slots' ACTIVE at None.
+    from .rrfs import closures as _closures
+    _closures.install(config, out)
     from ..stage_timing import stage
     timings = []
     out.mkdir(parents=True, exist_ok=True)
@@ -1437,6 +1531,10 @@ def run_forecast(arguments: Any, config: Any, text: str) -> int:
         dt=Fraction(str(selected_dt))
     if dt<=0:
         raise ValueError('native physics needs a positive config_dt')
+    if os.environ.get('GPUWM_HEX_LEARNED_CORRECTION'):
+        # The correction's clock is this route's step (the slot's state carries none here).
+        from ..ad import learned_correction as _learned_correction
+        _learned_correction.bind_step(dt)
     hours=getattr(arguments,'hours',None)
     duration=Fraction(str(hours))*3600 if hours is not None else interval_seconds(layout.configs['config_run_duration'])
     duration = integral_duration(duration, dt)

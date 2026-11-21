@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from . import env
+from . import route as routes
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -57,6 +58,11 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--retention", default=None, help="base retention list (default: the shipped list for the row)")
     r.add_argument("--pairs", default=None, help="base CIndexer pairs (default: the shipped base)")
     r.add_argument("--hold-slots", default="", help="physics slots held (default none: radiation and land live)")
+    r.add_argument("--route", choices=routes.names(), default=routes.default(),
+                   help="the forecast's kernel forms (data/record-routes.v1.json): derivative (default) records the "
+                        "forms this release has derivative rows for; forecast records the installed forecast's own "
+                        "defaults. Every form gives the same bits. A plan with a kernel kind that has no derivative "
+                        "is refused when it is sealed, on either route")
     r.add_argument("--boundary-workers", type=int, default=4)
     r.add_argument("--compile-workers", type=int, default=8)
     r.add_argument("--xdg", type=Path, default=None, help="XDG cache root for the forecasts (default: the user's)")
@@ -64,6 +70,10 @@ def main(argv: list[str] | None = None) -> int:
                    help="on a shared card, wait up to this long when hex's memory admission refuses a forward")
     r.add_argument("--no-replay", action="store_true")
     r.add_argument("--keep-work", action="store_true", help="keep the recordings after sealing")
+    r.add_argument("--ranks", type=int, default=None, metavar="N",
+                   help="record the forecast as N rank threads on the one card and, once sealed, cut the plan into one "
+                        "plan per rank, OUT-r0 .. OUT-r<N-1> (split_plan.py): the plans a window split over N cards "
+                        "runs. Default 1 (or GPUWM_HEX_RECORD_RANKS): the one-card recording, unchanged")
 
     p = sub.add_parser("replay", help="replay a sealed package")
     p.add_argument("package", type=Path)
@@ -104,6 +114,10 @@ def main(argv: list[str] | None = None) -> int:
     import os
     from .chain import refuse_other_physics_mode
     refuse_other_physics_mode(extra)   # before any card or build: a recording is of the exact-mode forecast
+    if o.ranks is not None:   # one word for the whole chain: every stage and tool reads the count from the environment
+        if o.ranks < 1:
+            env.defect(f"--ranks {o.ranks}: a count of rank threads, 1 or more")
+        os.environ["GPUWM_HEX_RECORD_RANKS"] = str(o.ranks)
     o.forecast_extra = extra
     o.card_b = o.card_b or o.card
     if o.cpus:

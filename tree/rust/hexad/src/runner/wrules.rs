@@ -10,6 +10,119 @@
 use crate::{plan::{self, Operation}, submit, Execution};
 use std::collections::HashMap;
 
+/// batched replay (AD_RB_DEFER_TABLES=1, off by default): the tables the limited-area specified-zone rule
+/// (speczone_overwrite: the owner list) and the garbage-column scrub rule (scrub_columns: the descriptor table) read
+/// from the card while a step is taped for the reverse are copied into page-locked memory in stream order
+/// (cuMemcpyDtoHAsync on the legacy stream, no host wait), each command's rule is left as a placeholder, and the
+/// rules are built from those bytes when the taped range ends, after one drain (Win::rb_resolve). THE WASTE THIS
+/// REMOVES: each read was a blocking cuMemcpyDtoH that emptied the card's queue before the host could classify the next
+/// command, about 480 a step on the 3 km storm box (36 scrub and 30 specified-zone launches between two drains, 10
+/// to 40 a step, by an nsys export, 18 Nov 2026); the taped replay's rule classification was
+/// 17.9 s of that 175.7 s sweep. The bytes are the ones the blocking read gave (read at the same place in
+/// stream order: every command of an ordered plan runs on that stream), the rule code is the same code, so the rows,
+/// the gathers and the gradient bytes are the same. Only the taping loop's own rule call defers (scope), never the
+/// tangent pass, the walk-back or a plan with streams of its own (Win::ordered).
+/// batched replay (AD_RB_RULE_CACHE=1, off by default): the specified-zone and scrub rules are pure functions of the
+/// launch (function, arguments, grid, block), the table bytes the rule read and the allocations those name. A rule
+/// built once is kept under the launch and the bytes, with the (id, address, size) of every allocation it resolved;
+/// a later launch with the same launch and the same bytes, whose allocations all still stand where they stood, takes
+/// the kept rule. THE WASTE THIS REMOVES: the scrub rule finds each descriptor's allocation by walking every live
+/// allocation (about 450 scrub launches a 3 km step, several descriptors each), and both rules rebuild the same rows
+/// every step: the taped replay's rule classification was 17.9 s of a 175.7 s 3 km sweep (18 Nov 2026). Same key,
+/// same bytes, same allocations: the same rule, so the same rows and gradient bytes.
+pub mod rb_cache {
+    use std::cell::RefCell;
+    use std::collections::HashMap;
+    pub struct Key { pub h: u64, pub f: String, pub grid: [u32; 3], pub block: [u32; 3], pub args: String, pub raw: Vec<u8> }
+    struct Ent { f: String, grid: [u32; 3], block: [u32; 3], args: String, raw: Vec<u8>, r: super::R, allocs: Vec<(u64, u64, usize)> }
+    thread_local! { static C: RefCell<(HashMap<u64, Vec<Ent>>, u64, u64)> = RefCell::new((HashMap::new(), 0, 0)); }
+    pub fn on() -> bool {
+        static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+        *ON.get_or_init(|| std::env::var("AD_RB_RULE_CACHE").as_deref() == Ok("1"))
+    }
+    pub fn key(f: &str, args: &[crate::submit::Argument], grid: [u32; 3], block: [u32; 3], raw: &[u8]) -> Key {
+        let args = format!("{args:?}");
+        let mut h = 0xcbf29ce484222325u64;
+        for b in f.as_bytes().iter().chain(args.as_bytes()).chain(raw) { h ^= *b as u64; h = h.wrapping_mul(0x100000001b3); }
+        for v in grid.iter().chain(&block) { h ^= *v as u64; h = h.wrapping_mul(0x100000001b3); }
+        Key { h, f: f.to_owned(), grid, block, args, raw: raw.to_vec() }
+    }
+    /// The kept rule for this key, if every allocation it resolved still is (id, address, size) by `same`.
+    pub fn get(k: &Key, same: impl Fn(u64, u64, usize) -> bool) -> Option<super::R> {
+        C.with(|c| {
+            let mut c = c.borrow_mut();
+            let hit = c.0.get(&k.h).and_then(|v| v.iter().find(|e| e.f == k.f && e.grid == k.grid && e.block == k.block && e.args == k.args && e.raw == k.raw
+                && e.allocs.iter().all(|&(id, a, n)| same(id, a, n))).map(|e| e.r.clone()));
+            if hit.is_some() { c.1 += 1; } else { c.2 += 1; }
+            hit
+        })
+    }
+    pub fn put(k: Key, r: super::R, allocs: Vec<(u64, u64, usize)>) {
+        C.with(|c| c.borrow_mut().0.entry(k.h).or_default().push(Ent { f: k.f, grid: k.grid, block: k.block, args: k.args, raw: k.raw, r, allocs }));
+    }
+    /// (hits, misses) since the process began.
+    pub fn counts() -> (u64, u64) { C.with(|c| { let c = c.borrow(); (c.1, c.2) }) }
+}
+
+pub mod rb_defer {
+    use crate::cuda::{checked, Cuda};
+    use std::cell::RefCell;
+    pub const MARK: &str = "rb-deferred table read";
+    const CAP: usize = 64 << 20;
+    pub struct Pending { pub f: String, pub args: Vec<crate::submit::Argument>, pub grid: [u32; 3], pub block: [u32; 3],
+                         pub off: usize, pub bytes: usize, pub counted: bool }
+    #[derive(Default)]
+    struct St { scope: bool, pin: Option<crate::pinned::PinnedBuf>, used: usize, pending: Vec<Pending>, supply: Option<Vec<u8>>,
+                full: u64 }
+    thread_local! { static ST: RefCell<St> = RefCell::new(St::default()); }
+    pub fn on() -> bool {
+        static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+        *ON.get_or_init(|| std::env::var("AD_RB_DEFER_TABLES").as_deref() == Ok("1"))
+    }
+    /// The taping loop's rule call begins (true) or ends (false); only an ordered plan defers.
+    pub fn scope(on: bool) { if self::on() { ST.with(|s| s.borrow_mut().scope = on) } }
+    /// A taped range begins: nothing is pending (an earlier attempt that overflowed left its placeholders with its tape).
+    pub fn clear() { if on() { ST.with(|s| { let mut s = s.borrow_mut(); s.pending.clear(); s.used = 0; }) } }
+    pub fn take_pending() -> Vec<Pending> { ST.with(|s| std::mem::take(&mut s.borrow_mut().pending)) }
+    pub fn mark_counted(c: bool) { ST.with(|s| if let Some(p) = s.borrow_mut().pending.last_mut() { p.counted = c; }) }
+    pub fn pending_len() -> usize { ST.with(|s| s.borrow().pending.len()) }
+    /// Reads that found no room in the page-locked buffer and were made at once (blocking), since the process began.
+    pub fn full_reads() -> u64 { ST.with(|s| s.borrow().full) }
+    /// The bytes a deferred read landed (after the drain), handed to the next table read of the rule built from them.
+    pub fn supply_from(off: usize, bytes: usize) -> Result<(), String> {
+        ST.with(|s| { let mut s = s.borrow_mut();
+            let v = s.pin.as_ref().ok_or("DEFECT rb-defer: no page-locked buffer")?.get(off..off + bytes).ok_or("DEFECT rb-defer: read outside its buffer")?.to_vec();
+            s.supply = Some(v); Ok(()) })
+    }
+    pub fn supply_clear() { ST.with(|s| s.borrow_mut().supply = None) }
+    /// A rule's device table: Some(bytes) to build the rule now; None when the read was queued (the rule returns
+    /// the placeholder R::Identity(MARK) and is built again from these bytes by Win::rb_resolve).
+    pub unsafe fn table(cuda: &Cuda, src: u64, bytes: usize, f: &str, args: &[crate::submit::Argument], grid: [u32; 3], block: [u32; 3])
+                        -> Result<Option<Vec<u8>>, String> {
+        if let Some(v) = ST.with(|s| s.borrow_mut().supply.take()) {
+            if v.len() != bytes { return Err(format!("DEFECT rb-defer: {f}: the deferred read was {} bytes, the rule reads {bytes}", v.len())); }
+            return Ok(Some(v));
+        }
+        if bytes > 0 && on() && ST.with(|s| s.borrow().scope) {
+            let at = ST.with(|s| -> Result<Option<(usize, u64)>, String> {
+                let mut s = s.borrow_mut();
+                if s.pin.is_none() { s.pin = Some(crate::pinned::PinnedBuf::new(cuda, CAP)?); }
+                let off = s.used.div_ceil(64) * 64;
+                if off + bytes > CAP { s.full += 1; return Ok(None); }
+                s.used = off + bytes;
+                let base = s.pin.as_ref().map(|p| p.as_ptr() as u64).unwrap_or(0);
+                Ok(Some((off, base + off as u64)))
+            })?;
+            if let Some((off, host)) = at {
+                checked("cuMemcpyDtoHAsync rb-defer table", (cuda.download_async)(host as *mut std::ffi::c_void, src, bytes, std::ptr::null_mut()))?;
+                ST.with(|s| s.borrow_mut().pending.push(Pending { f: f.to_owned(), args: args.to_vec(), grid, block, off, bytes, counted: false }));
+                return Ok(None);
+            }
+        }
+        Ok(Some(crate::deriv::predict::table(cuda, src, bytes)?))
+    }
+}
+
 /// Element type `T` of every module that launches cupy_concatenate_same_size, from the module's recorded CuPy source
 /// (`typedef <T> T;` in recording/sources/<sha>.cu, named by any argument of any launch of that module; the runner has
 /// already checked each named source against its sha256, crate::verify_copy_indexer_sources /
@@ -372,6 +485,12 @@ pub enum R {
     /// No exact rule: identity both ways, listed by name. A kind named with --refuse is NOT this unless what it writes
     /// is unknown (hold_refused): it runs as its own rule with the derivative held (fill rows, ZeroView, Zero).
     Refused(String),
+    /// NOAA's model-top damping (hexcore/cuda_upper_damping_v841.py, 2026-11-18): kind 0 upper_cam_f32 (the
+    /// CAM viscosity floor: values = max(values, floor_k)), kind 1 upper_rayleigh_f32 (tendency -= rho velocity c_k), on
+    /// levels k >= nl - levels and columns c < solved. `e` are the shadow elements of [values or tendency, rho,
+    /// velocity]; `prim` the primal spans taped before the launch (cam: values, and an empty span; rayleigh: rho,
+    /// velocity), taped as the frozen limiter's are (tape_fct). `p` is [length, coefficient] or [days, 0].
+    UpperDamp { kind: u8, nl: i32, nn: i32, solved: i32, levels: i32, p: [f32; 2], e: [i64; 3], prim: [(u64, usize, usize); 2] },
     /// Frozen FCT limiter (--fct-frozen 1): fct_minmax_source with the limiter bounds held constant. `e` are the shadow
     /// element indices of old, source, rho_old, source_old, minimum, maximum; `prim` the primal spans of source and
     /// rho_old (allocation, first word, words), taped before the launch.
@@ -412,6 +531,8 @@ pub(crate) fn hold_refused(f: &str, why: &str, own: Result<R, String>, row: impl
         Ok(R::Copy { dst, n, .. }) => return R::Zero { ranges: vec![(dst, n)], label },
         Ok(R::Axpy { y, n, .. }) => return R::Zero { ranges: vec![(y, n)], label },
         Ok(R::Zero { ranges, .. }) | Ok(R::Held { ranges, .. }) => return R::Zero { ranges, label },
+        Ok(R::UpperDamp { nl, nn, solved, levels, e, .. }) =>
+            return R::Zero { ranges: (nl - levels..nl).map(|k| (e[0] + k as i64 * nn as i64, solved as usize)).collect(), label },
         Ok(R::Identity(s)) => return R::Identity(s),
         Ok(R::Entry) => "row".to_string(),
         Ok(R::Refused(s)) => s,
@@ -535,6 +656,62 @@ pub fn accumulate_rule(args: &[submit::Argument], el: impl Fn(u64, usize) -> Res
     if m > 0 && x < y + m as i64 && y < x + m as i64 { return Err("rate and total overlap".into()); }
     Ok(R::Axpy { y, x, n: m, c: dt as f64 })
 }
+/// `external_tendency_f32(int n, const float *ext, float *tend)` (hexcore/ad/external_tendency.py): tend[i] += ext[i]
+/// over [0, n), an exact identity add: R::Axpy { y: tend, x: ext, n, c: 1 }.
+pub fn external_tendency_rule(args: &[submit::Argument], el: impl Fn(u64, usize) -> Result<i64, String>) -> Result<R, String> {
+    if args.len() != 3 { return Err(format!("{} arguments, not 3 (n, ext, tend)", args.len())); }
+    let n = match &args[0] { submit::Argument::Bytes(b) if b.len() == 4 => i32::from_le_bytes(<[u8; 4]>::try_from(&b[..4]).unwrap()) as i64,
+                             _ => return Err("argument 0 is not a 4-byte scalar".into()) };
+    let dev = |k: usize| match &args[k] { submit::Argument::Device(s) if s.offset % 4 == 0 => Ok(s),
+                                          _ => Err(format!("argument {k} is not an aligned device pointer")) };
+    let (ext, tend) = (dev(1)?, dev(2)?);
+    if n < 0 { return Err(format!("n {n}")); }
+    let (x, y) = (el(ext.allocation, ext.offset)?, el(tend.allocation, tend.offset)?);
+    let m = n as usize;
+    if m > 0 && x < y + n && y < x + n { return Err("ext and tend overlap".into()); }
+    Ok(R::Axpy { y, x, n: m, c: 1.0 })
+}
+/// `upper_cam_f32(int nl, int nc, int solved, int levels, float length, float coefficient, float *values)` and
+/// `upper_rayleigh_f32(int nl, int ne, int solved, int levels, float days, float *tendency, const float *rho,
+/// const float *velocity)` (hexcore/cuda_upper_damping_v841.py): R::UpperDamp. Every array is level-major nl x nn.
+pub fn upper_damping_rule(f: &str, args: &[submit::Argument], el: impl Fn(u64, usize) -> Result<i64, String>,
+                          bytes: impl Fn(u64) -> Option<usize>) -> Result<R, String> {
+    let cam = f == "upper_cam_f32";
+    let want = if cam { 7 } else { 8 };
+    if args.len() != want { return Err(format!("{} arguments, not {want}", args.len())); }
+    let word = |k: usize| match &args[k] { submit::Argument::Bytes(b) if b.len() == 4 => Ok(<[u8; 4]>::try_from(&b[..4]).unwrap()),
+                                           _ => Err(format!("argument {k} is not a 4-byte scalar")) };
+    let int = |k: usize| word(k).map(i32::from_le_bytes);
+    let (nl, nn, solved, levels) = (int(0)?, int(1)?, int(2)?, int(3)?);
+    if nl <= 0 || nn <= 0 || !(0..=nn).contains(&solved) || !(1..=nl).contains(&levels) {
+        return Err(format!("shape nl {nl} nn {nn} solved {solved} levels {levels}"));
+    }
+    let words = nl as usize * nn as usize;
+    let dev = |k: usize| match &args[k] {
+        submit::Argument::Device(s) if s.offset % 4 == 0 => {
+            let have = bytes(s.allocation).ok_or_else(|| format!("argument {k}: allocation not live"))?;
+            if s.offset + 4 * words > have { return Err(format!("argument {k}: {words} words exceed its allocation")); }
+            Ok((s.allocation, s.offset))
+        },
+        _ => Err(format!("argument {k} is not an aligned device pointer")),
+    };
+    let f32_at = |k: usize| word(k).map(f32::from_le_bytes);
+    if cam {
+        let (length, coef) = (f32_at(4)?, f32_at(5)?);
+        let v = dev(6)?;
+        let ev = el(v.0, v.1)?;
+        return Ok(R::UpperDamp { kind: 0, nl, nn, solved, levels, p: [length, coef], e: [ev, ev, ev],
+                                 prim: [(v.0, v.1 / 4, words), (v.0, v.1 / 4, 0)] });
+    }
+    let days = f32_at(4)?;
+    if !(days.is_finite() && days > 0.0) { return Err(format!("days {days}")); }
+    let (t, r, u) = (dev(5)?, dev(6)?, dev(7)?);
+    let (et, er, eu) = (el(t.0, t.1)?, el(r.0, r.1)?, el(u.0, u.1)?);
+    let span = |a: i64, b: i64| a < b + words as i64 && b < a + words as i64;
+    if span(et, er) || span(et, eu) { return Err("tendency overlaps rho or velocity".into()); }
+    Ok(R::UpperDamp { kind: 1, nl, nn, solved, levels, p: [days, 0.0], e: [et, er, eu],
+                      prim: [(r.0, r.1 / 4, words), (u.0, u.1 / 4, words)] })
+}
 fn scalar_f32(a: &submit::Argument) -> Option<f32> {
     match a { submit::Argument::Bytes(b) if b.len() >= 4 => Some(f32::from_le_bytes(b[..4].try_into().unwrap())), _ => None }
 }
@@ -617,6 +794,13 @@ impl Ctx<'_> {
             "ruc_land_tile_preflight" => return Ok(Self::integer_flags(f, args, |a, o| self.el(a, o), |a| ex.allocations.get(&a).map(|x| x.bytes))
                 .unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))),
             "rrfs_radiation_unpack" => return Ok(self.radiation_unpack_rows(args).unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))),
+            // NOAA's model-top damping, on in its hrrrv5 deck (config_mpas_cam_coef 2.0, config_rayleigh_damp_u true):
+            // exact rules written from the forward kernels (R::UpperDamp). THE BREAKAGE THIS PREVENTS: a plan recorded
+            // on NOAA's deck ran both kinds as "no derivative row and no rule", so no window on it was valid, and a
+            // recording through --init on the 12 km row's own deck could not be checked (2026-11-18).
+            "upper_cam_f32" | "upper_rayleigh_f32" if !self.kernels.contains_key(f) =>
+                return Ok(upper_damping_rule(f, args, |a, o| self.el(a, o), |a| ex.allocations.get(&a).map(|x| x.bytes))
+                    .unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))),
             // MPAS physics accumulations (hexcore/mpasphys/surface_update_v842.py `accumulate`: rainc with New Tiedtke on,
             // the radiation sums): total[i] = total[i] + rate[i] * dt over [begin, end), then total -= bucket where it
             // passes the bucket (a constant shift) and count += 1 (an integer). Exact linear rule (accumulate_rule).
@@ -624,6 +808,12 @@ impl Ctx<'_> {
             // row and no rule", so no window check could run on a forecast with New Tiedtke on.
             "accumulate" if !self.kernels.contains_key(f) =>
                 return Ok(accumulate_rule(args, |a, o| self.el(a, o)).unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))),
+            // The external-tendency slot (hexcore/ad/external_tendency.py): a caller's tendency added to a scratch
+            // copy of a boundary-layer rate before the coupling, tend[i] += ext[i] (a zero ext word leaves tend
+            // untouched, the same value). Identity add: R::Axpy with c = 1, so the reverse hands ext the rate's
+            // cotangent, the slot's sensitivity.
+            "external_tendency_f32" if !self.kernels.contains_key(f) =>
+                return Ok(external_tendency_rule(args, |a, o| self.el(a, o)).unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))),
             _ => {}
         }
         if let Some(r) = Self::integer_result(f, args, |a, o| self.el(a, o)) { return Ok(r.unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))); }
@@ -634,7 +824,7 @@ impl Ctx<'_> {
             if let Some(r) = Self::mesh_scaling(f, args, grid, block, |a, o| self.el(a, o)) { return Ok(r.unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))); }
         }
         if let Some(r) = self.speczone_overwrite(ex, f, args, grid, block) { return Ok(r.unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))); }
-        if let Some(r) = self.scrub_columns(ex, f, args, grid) { return Ok(r.unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))); }
+        if let Some(r) = self.scrub_columns(ex, f, args, grid, block) { return Ok(r.unwrap_or_else(|e| R::Refused(format!("{f}: {e}")))); }
         if let Some(kd) = self.kernels.get(f) {
             let validation_only = kd.spec["launch_abi"]["entries"].as_object().is_some_and(|e| e.is_empty())
                 || (f.starts_with("validate_") && kd.functions.is_empty());
@@ -984,7 +1174,11 @@ impl Ctx<'_> {
             let table = ex.allocations.get(&sp.allocation).ok_or("spec allocation not live")?;
             let bytes = nspec as usize * 4;
             if sp.offset + bytes > table.bytes { return Err("spec array exceeds its allocation".into()); }
-            let raw = unsafe { crate::deriv::predict::table(&ex.cuda, table.address + sp.offset as u64, bytes)? };
+            let raw = match unsafe { rb_defer::table(&ex.cuda, table.address + sp.offset as u64, bytes, f, args, grid, block)? } {
+                Some(v) => v, None => return Ok(R::Identity(rb_defer::MARK.into())) };
+            let ck = rb_cache::on().then(|| rb_cache::key(f, args, grid, block, &raw));
+            if let Some(k) = &ck { if let Some(r) = rb_cache::get(k, |id, a, n| ex.allocations.get(&id).is_some_and(|x| x.address == a && x.bytes == n)) { return Ok(r); } }
+            let mut used: Vec<(u64, u64, usize)> = vec![(table.id, table.address, table.bytes)];
             let idx: Vec<i32> = raw.chunks_exact(4).map(|c| i32::from_le_bytes(c.try_into().unwrap())).collect();
             let mut rows = Vec::new();
             for &k in outs {
@@ -993,8 +1187,11 @@ impl Ctx<'_> {
                 let a = ex.allocations.get(&o.allocation).ok_or_else(|| format!("output argument {k} allocation not live"))?;
                 if o.offset + 4 * (levels * plane) as usize > a.bytes { return Err(format!("output argument {k}: {levels} x {plane} words exceed its allocation")); }
                 rows.extend(speczone_fill_rows(&idx, levels, plane, self.el(o.allocation, o.offset)?)?);
+                used.push((a.id, a.address, a.bytes));
             }
-            Ok(R::Rows { rows, label: "lbc specified-zone overwrite (driving state held)" })
+            let r = R::Rows { rows, label: "lbc specified-zone overwrite (driving state held)" };
+            if let Some(k) = ck { rb_cache::put(k, r.clone(), used); }
+            Ok(r)
         })())
     }
 
@@ -1008,7 +1205,7 @@ impl Ctx<'_> {
     /// pointer is inside a shadowed allocation and the last element stays inside it. THE BREAKAGE THIS PREVENTS: the
     /// launches (about 450 a step on the 3 km cull) reached "no derivative row and no rule" (identity both ways), which
     /// would carry interior tangent through words the forward resets to a constant.
-    fn scrub_columns(&self, ex: &Execution, f: &str, args: &[submit::Argument], grid: [u32; 3]) -> Option<Result<R, String>> {
+    fn scrub_columns(&self, ex: &Execution, f: &str, args: &[submit::Argument], grid: [u32; 3], block: [u32; 3]) -> Option<Result<R, String>> {
         if f != "solve_region_scrub_columns_v841" { return None; }
         Some((|| {
             if args.len() != 2 { return Err(format!("{} arguments, not 2 (table, n_arrays)", args.len())); }
@@ -1019,7 +1216,11 @@ impl Ctx<'_> {
             let table = ex.allocations.get(&t.allocation).ok_or("table allocation not live")?;
             let bytes = n as usize * 40;
             if t.offset + bytes > table.bytes { return Err("descriptor table exceeds its allocation".into()); }
-            let raw = unsafe { crate::deriv::predict::table(&ex.cuda, table.address + t.offset as u64, bytes)? };
+            let raw = match unsafe { rb_defer::table(&ex.cuda, table.address + t.offset as u64, bytes, f, args, grid, block)? } {
+                Some(v) => v, None => return Ok(R::Identity(rb_defer::MARK.into())) };
+            let ck = rb_cache::on().then(|| rb_cache::key(f, args, grid, block, &raw));
+            if let Some(k) = &ck { if let Some(r) = rb_cache::get(k, |id, a, n| ex.allocations.get(&id).is_some_and(|x| x.address == a && x.bytes == n)) { return Ok(r); } }
+            let mut used: Vec<(u64, u64, usize)> = vec![(table.id, table.address, table.bytes)];
             let mut rows = Vec::with_capacity(n as usize);
             for (j, d) in raw.chunks_exact(40).enumerate() {
                 let word = |k: usize| u64::from_le_bytes(d[8 * k..8 * k + 8].try_into().unwrap());
@@ -1032,8 +1233,11 @@ impl Ctx<'_> {
                 let last = off + 4 * ((count - 1) * stride + solve) as usize;
                 if last + 4 > a.bytes { return Err(format!("row {j}: last element outside allocation {}", a.id)); }
                 rows.push(DevRow { dst: self.el(a.id, off)? + solve, src: -1, ds: [0, 0, 0, stride], ss: [0; 4], n: [1, 1, count], count });
+                used.push((a.id, a.address, a.bytes));
             }
-            Ok(R::Rows { rows, label: "garbage-column scrub (constant pool value)" })
+            let r = R::Rows { rows, label: "garbage-column scrub (constant pool value)" };
+            if let Some(k) = ck { rb_cache::put(k, r.clone(), used); }
+            Ok(r)
         })())
     }
 
@@ -1862,6 +2066,43 @@ pub fn speczone_fill_rows(idx: &[i32], levels: i64, plane: i64, base: i64) -> Re
 #[cfg(test)]
 mod tests {
     use super::*;
+    /// Model-top damping: both kinds read their shape, constants and arrays; the held form zeroes exactly the
+    /// words the forward writes (top levels, solved columns); a wrong layout or an overlap refuses.
+    #[test]
+    fn upper_damping_rules_read_their_launches() {
+        let i = |v: i32| submit::Argument::Bytes(v.to_le_bytes().to_vec());
+        let f = |v: f32| submit::Argument::Bytes(v.to_le_bytes().to_vec());
+        let d = |a: u64, o: usize| submit::Argument::Device(submit::Slice { allocation: a, offset: o });
+        let el = |a: u64, o: usize| Ok::<i64, String>(a as i64 * 1_000_000 + (o / 4) as i64);
+        let bytes = |_a: u64| Some(59 * 9000 * 4);
+        let cam = vec![i(59), i(2891), i(2890), i(4), f(12000.0), f(2.0), d(7, 0)];
+        match upper_damping_rule("upper_cam_f32", &cam, el, bytes).unwrap() {
+            R::UpperDamp { kind, nl, nn, solved, levels, p, e, prim } => {
+                assert_eq!((kind, nl, nn, solved, levels, p), (0, 59, 2891, 2890, 4, [12000.0, 2.0]));
+                assert_eq!((e[0], prim[0], prim[1].2), (7_000_000, (7, 0, 59 * 2891), 0));
+            },
+            r => panic!("{r:?}"),
+        }
+        let ray = vec![i(59), i(8900), i(8899), i(6), f(5.0), d(1, 0), d(2, 0), d(3, 0)];
+        let r = upper_damping_rule("upper_rayleigh_f32", &ray, el, bytes).unwrap();
+        match &r {
+            R::UpperDamp { kind, p, e, prim, .. } => {
+                assert_eq!((*kind, *p, *e), (1, [5.0, 0.0], [1_000_000, 2_000_000, 3_000_000]));
+                assert_eq!((prim[0], prim[1]), ((2, 0, 59 * 8900), (3, 0, 59 * 8900)));
+            },
+            r => panic!("{r:?}"),
+        }
+        match hold_refused("upper_rayleigh_f32", "w", Ok(r), || None) {
+            R::Zero { ranges, .. } => assert_eq!(ranges, (53..59).map(|k| (1_000_000 + k * 8900, 8899)).collect::<Vec<_>>()),
+            r => panic!("{r:?}"),
+        }
+        assert!(upper_damping_rule("upper_cam_f32", &cam[..6], el, bytes).is_err());
+        let overlap = vec![i(59), i(8900), i(8899), i(6), f(5.0), d(1, 0), d(1, 400), d(3, 0)];
+        assert!(upper_damping_rule("upper_rayleigh_f32", &overlap, el, bytes).is_err());
+        let bad = vec![i(59), i(8900), i(8899), i(0), f(5.0), d(1, 0), d(2, 0), d(3, 0)];
+        assert!(upper_damping_rule("upper_rayleigh_f32", &bad, el, bytes).is_err());
+    }
+
     /// accumulate: the rule reads n/begin/end/dt and binds rate and total at begin; an overlap or a wrong layout refuses.
     #[test]
     fn accumulate_rule_binds_rate_and_total() {
@@ -1876,6 +2117,21 @@ mod tests {
         let args = vec![i(2890), i(0), i(2890), f(60.0), f(100.0), i(1), d(1, 0), d(1, 400), d(3, 0)];
         assert!(accumulate_rule(&args, el).is_err());
         assert!(accumulate_rule(&args[..8], el).is_err());
+    }
+    #[test]
+    fn external_tendency_rule_is_identity_axpy() {
+        let i = |v: i32| submit::Argument::Bytes(v.to_le_bytes().to_vec());
+        let d = |a: u64, o: usize| submit::Argument::Device(submit::Slice { allocation: a, offset: o });
+        let el = |a: u64, o: usize| Ok::<i64, String>(a as i64 * 10_000_000 + (o / 4) as i64);
+        // step 3 of a (nsteps, 59, 2890) table: the slice offset is carried into x
+        let plane = 59 * 2890;
+        match external_tendency_rule(&[i(plane), d(7, 3 * plane as usize * 4), d(9, 0)], el).unwrap() {
+            R::Axpy { y, x, n, c } => assert_eq!((y, x, n, c), (90_000_000, 70_000_000 + 3 * plane as i64, plane as usize, 1.0)),
+            r => panic!("{r:?}"),
+        }
+        assert!(external_tendency_rule(&[i(100), d(7, 0), d(7, 200)], el).is_err()); // overlap
+        assert!(external_tendency_rule(&[i(100), d(7, 0)], el).is_err());
+        assert!(external_tendency_rule(&[i(100), d(7, 2), d(9, 0)], el).is_err()); // unaligned
     }
     /// machine: gather_quick answers as gather does (flag, and the tables whenever the launch is not injective).
     #[test]

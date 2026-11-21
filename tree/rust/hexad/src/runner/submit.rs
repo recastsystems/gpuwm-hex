@@ -104,6 +104,13 @@ fn address(allocations: &HashMap<u64, Allocation>, slice: Slice, bytes: usize)
     -> Result<u64, Error>
 {
     let a = allocations.get(&slice.allocation).ok_or(Error::MissingAllocation(slice.allocation))?;
+    // runner overhead (0.6.2): a batch bound against the caller's live table (BoundBatch::new_live) checks each
+    // allocation it names here, as new() checks every allocation of the slice it is given: a zero address or size, an
+    // end past 2^64, or a table entry filed under another id is refused. For a batch made by new() these already passed.
+    if a.id != slice.allocation { return Err(Error::DuplicateAllocation(slice.allocation)); }
+    if a.address == 0 || a.bytes == 0 || a.address.checked_add(a.bytes as u64).is_none() {
+        return Err(Error::InvalidAllocation(a.id));
+    }
     if slice.offset >= a.bytes || bytes > a.bytes - slice.offset {
         return Err(Error::OutOfRange(slice.allocation));
     }
@@ -168,15 +175,25 @@ impl<'frame> BoundBatch<'frame> {
     pub unsafe fn new(allocations: &[Allocation], commands: &[Command],
                       frame: &'frame [u8], validate: Validate) -> Result<Self, Error> {
         if commands.is_empty() { return Err(Error::EmptyBatch); }
-        if !cfg!(target_endian = "little") || std::mem::size_of::<usize>() != 8 {
-            return Err(Error::InvalidArgument);
-        }
         let mut map = HashMap::new();
         for &a in allocations {
             if a.address == 0 || a.bytes == 0 || a.address.checked_add(a.bytes as u64).is_none() {
                 return Err(Error::InvalidAllocation(a.id));
             }
             if map.insert(a.id, a).is_some() { return Err(Error::DuplicateAllocation(a.id)); }
+        }
+        Self::new_live(&map, commands, frame, validate)
+    }
+    /// runner overhead (0.6.2): the same batch, bound against the caller's own allocation table (id -> allocation)
+    /// instead of a slice of it. THE COST THIS REMOVES: the replay copied its whole table into a slice and new() hashed
+    /// it back into a map for every single command (about 3,800 a step at 12 km, each over every live allocation).
+    /// Every allocation a command names is checked as new() checks the slice (see address()); the arguments, the
+    /// descriptors and the validation are the same bytes either way.
+    pub unsafe fn new_live(map: &HashMap<u64, Allocation>, commands: &[Command],
+                           frame: &'frame [u8], validate: Validate) -> Result<Self, Error> {
+        if commands.is_empty() { return Err(Error::EmptyBatch); }
+        if !cfg!(target_endian = "little") || std::mem::size_of::<usize>() != 8 {
+            return Err(Error::InvalidArgument);
         }
         // Each inner buffer has a stable heap address even when the outer Vec moves.
         // Fixed argument storage is 16-byte aligned; callers must refuse any
@@ -284,6 +301,16 @@ impl Submitter {
                          frame: &[u8], stream: *mut c_void) -> Result<(), Error> {
         if self.poisoned { return Err(Error::Poisoned); }
         let bound = BoundBatch::new(allocations, commands, frame, validate)?;
+        let result = bound.issue(driver, submit, stream);
+        if result.is_err() { self.poisoned = true; }
+        result
+    }
+    /// runner overhead (0.6.2): submit() bound against the caller's live allocation table (BoundBatch::new_live).
+    pub unsafe fn submit_live(&mut self, driver: &NativeDriver, validate: Validate,
+                              submit: Submit, allocations: &HashMap<u64, Allocation>, commands: &[Command],
+                              frame: &[u8], stream: *mut c_void) -> Result<(), Error> {
+        if self.poisoned { return Err(Error::Poisoned); }
+        let bound = BoundBatch::new_live(allocations, commands, frame, validate)?;
         let result = bound.issue(driver, submit, stream);
         if result.is_err() { self.poisoned = true; }
         result

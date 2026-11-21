@@ -77,25 +77,36 @@ def audit(call_rows, driver_rows, slot_rows):
         if any(row.get('thread_id') != entry['tid'] for row in relevant):
             errors['overlapping_other_thread'] += 1
         launches = [row for row in relevant if row['type'] == 'LaunchKernel']
-        if len(launches) != 1:
+        # cuBLAS splits a transpose whose n exceeds the grid's 65,535 limit into launches of at most 65,535 columns
+        # each (n = 103,950 on the 96-to-24 km zoom globe: 65,535 then 38,415, A and C advanced by the columns done).
+        # THE BREAKAGE THIS PREVENTS: every one-card recording of a mesh above 65,535 columns was refused at sealing
+        # ("launch_count"; zoom globe 1 h plan, 2026-11-18), though the seal already re-issues the whole SGEAM
+        # (seal_phys_stage2: the first launch carries the call, the others are dropped).
+        if not launches:
             errors['launch_count'] += 1
             continue
-        launch = launches[0]
-        name = None
+        names, done = [], 0
         try:
-            name = bytes.fromhex(launch['name_hex']).decode('utf-8')
-            pars = [bytes.fromhex(arg['bytes_hex']) for arg in launch['parameters']]
-            scalar = pars[0]
-            ints = [int.from_bytes(scalar[i:i + 4], 'little') for i in (0, 8, 12, 16, 20)]
-            addresses = [int.from_bytes(pars[i], 'little') for i in (1, 2)]
-            if not (name.startswith('_Z36transpose_readWrite_alignment_kernel')
-                    and len(scalar) == 48 and len(pars[1]) == len(pars[2]) == 8
-                    and ints == [entry['alpha_bits'], entry['m'], entry['n'], entry['lda'], entry['ldc']]
-                    and addresses == [entry['a'], entry['c']]):
+            for launch in launches:
+                name = bytes.fromhex(launch['name_hex']).decode('utf-8')
+                names.append(name)
+                pars = [bytes.fromhex(arg['bytes_hex']) for arg in launch['parameters']]
+                scalar = pars[0]
+                ints = [int.from_bytes(scalar[i:i + 4], 'little') for i in (0, 8, 12, 16, 20)]
+                addresses = [int.from_bytes(pars[i], 'little') for i in (1, 2)]
+                part = ints[2]
+                if not (name.startswith('_Z36transpose_readWrite_alignment_kernel')
+                        and len(scalar) == 48 and len(pars[1]) == len(pars[2]) == 8 and 0 < part
+                        and ints[:2] + ints[3:] == [entry['alpha_bits'], entry['m'], entry['lda'], entry['ldc']]
+                        and addresses == [entry['a'] + 4 * done, entry['c'] + 4 * done * entry['ldc']]):
+                    errors['launch_arguments'] += 1
+                done += part
+            if done != entry['n']:
                 errors['launch_arguments'] += 1
         except (KeyError, ValueError, IndexError, UnicodeDecodeError):
             errors['launch_decode'] += 1
-        call['launches'] = [{'sequence': launch.get('sequence'), 'name': name}]
+        call['launches'] = [{'sequence': launch.get('sequence'), 'name': name}
+                            for launch, name in zip(launches, names + [None] * (len(launches) - len(names)))]
         if not (entry.get('pointer_mode') == 0 and entry.get('mode_status') == 0
                 and entry.get('stream_status') == 0 and entry.get('stream') == 0
                 and entry.get('host_scalars') is True and entry.get('transa') == 1
@@ -139,7 +150,7 @@ def main():
     args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
     print(json.dumps({'calls': result['call_count'], 'errors': result['errors'],
                       'locations': [{'step': call.get('step'), 'slot': call.get('slot'),
-                                     'sequence': call.get('launches', [{}])[0].get('sequence')}
+                                     'sequence': (call.get('launches') or [{}])[0].get('sequence')}
                                     for call in result['calls']]}, sort_keys=True))
     if result['errors']:
         raise SystemExit(1)

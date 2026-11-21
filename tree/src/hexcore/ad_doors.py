@@ -45,7 +45,6 @@ import json
 import math
 import os
 from pathlib import Path
-import resource
 import shutil
 import subprocess
 import sys
@@ -259,6 +258,41 @@ def row_assets(root: Path, row: dict, overrides: dict | None = None) -> dict[str
     return assets
 
 
+#: --tempo-image: the taped TEMPO derivative images a window may run in place of the row's tempo_cubin, by name, each
+#: pinned by sha256. shipped (the default) is the row's own file. f08 is the same source as the shipped split2.cubin
+#: (tree/ad/phys/tempo/f08img/split2.main.cu, sha256 a15591d1..., which rebuilds the shipped ce8d3a67... byte for byte
+#: with NVRTC 13.4.92) with coltest/f08_subgrid.py applied: tempo_warp_steps' PBL subgrid radii (NOAA's hrrrv5 deck,
+#: config_tempo_ml_for_bl_nc) in the record entry, bl (qc_bl, cldfrac_bl) entering as constants. Built by f08img/make.sh.
+#: Its file is GPUWM_HEX_AD_TEMPO_F08 (a path), else <asset root>/latest/aux/split2-f08.cubin.
+TEMPO_IMAGES = {"f08": "358fcde2f05c0079be3191afbb4847987dc114297f114e6551ef20753aed6a41"}
+TEMPO_F08_ENV = "GPUWM_HEX_AD_TEMPO_F08"
+
+
+def tempo_image_word(ctx, args: argparse.Namespace) -> None:
+    """--tempo-image NAME: point the row's tempo_cubin at the named, pinned image (shipped: unchanged).
+
+    THE BREAKAGE THIS PREVENTS: every window on NOAA's hrrrv5 deck stopped at its first radiation step ("ml_bl set, bl
+    present, radii launch: ... no g_tempo_bl") because the shipped taped image predates F08; the 30 km plan's window
+    could not pass 27.5 minutes (18 Nov). The shipped image stays the default, so the sealed release's numbers stay."""
+    name = getattr(args, "tempo_image", None) or "shipped"
+    if name == "shipped":
+        return
+    want = TEMPO_IMAGES[name]
+    if "tempo_cubin" not in ctx.assets:
+        raise AdDoorError(f"--tempo-image {name}: row {ctx.row_name} names no taped TEMPO image (tempo_cubin)")
+    env = os.environ.get(TEMPO_F08_ENV)
+    path = Path(env) if env else Path(ctx.root) / "latest" / "aux" / "split2-f08.cubin"
+    if not path.is_file():
+        raise AdDoorError(f"--tempo-image {name}: {path} is missing (set {TEMPO_F08_ENV} or build it with "
+                          "tree/ad/phys/tempo/f08img/make.sh). Nothing ran")
+    got = hashlib.sha256(path.read_bytes()).hexdigest()
+    if got != want:
+        raise AdDoorError(f"--tempo-image {name}: {path} has sha256 {got}, not the pinned {want}. Nothing ran")
+    ctx.assets = {**ctx.assets, "tempo_cubin": path}
+    print(f"[gpuwm-hex] TEMPO taped image: {name} ({path}, sha256 {got[:16]}): the PBL subgrid-radii path is "
+          "differentiated, bl held as constants", flush=True)
+
+
 def no_plan_words(row_name: str) -> str:
     return (f"row {row_name} ships no example plan: pass --init INIT (the door records a plan package for this mesh) "
             "or --plan PACKAGE")
@@ -323,10 +357,24 @@ def split_row(row: dict, split: dict) -> dict:
     allocations dropped, and its row overrides (a left-out list of the one-card package does not describe a rank)."""
     out = dict(row, **split["row_overrides"])
     out["assets"] = {**row["assets"], **split["assets"]}
-    out["window_args"] = list(row["window_args"]) + list(split["window_args"])
+    out["window_args"] = drop_window_args(list(row["window_args"]), split.get("window_args_drop") or [])         + list(split["window_args"])
     drop = set(split["env_drop"])
     out["window_env"] = {k: v for k, v in (row.get("window_env") or {}).items() if k not in drop}
     out["asset_env"] = {k: v for k, v in (row.get("asset_env") or {}).items() if k not in drop}
+    return out
+
+
+def drop_window_args(argv: list[str], names: list[str]) -> list[str]:
+    """ARGV without each option NAMES lists (an option and its value). THE BREAKAGE THIS PREVENTS: a made row's class
+    sizes the host for one process (60 km class --host-budget-gb 320); four ranks on one host each kept it, 1,280 GB
+    asked of the host together, and the rank launcher's own per-rank budget (0.8 x MemAvailable / ranks) was never
+    given because the option was already there."""
+    out, it = [], iter(argv)
+    for a in it:
+        if a in names:
+            next(it, None)
+            continue
+        out.append(a)
     return out
 
 
@@ -412,10 +460,22 @@ def resolve_plan(args: argparse.Namespace, root: Path, row_name: str, row: dict)
 RECORD_NUMERICS = "strict"
 
 
+def record_ranks_of(args: argparse.Namespace) -> int:
+    """--record-ranks N (default 1). N > 1 needs --init: rank plans are made by recording, not from a given plan."""
+    n = int(getattr(args, "record_ranks", None) or 1)
+    if n < 1:
+        raise AdDoorError(f"--record-ranks {n}: a count of rank threads, 1 or more")
+    if n > 1 and getattr(args, "init", None) is None:
+        raise AdDoorError(f"--record-ranks {n} records rank plans from a start: pass --init INIT")
+    return n
+
+
 def record_plan(args: argparse.Namespace, root: Path, row: dict) -> Path:
-    """Record and seal a plan package from --init with the recorder (``python -m hexcore.ad.record record``)."""
+    """Record and seal a plan package from --init with the recorder (``python -m hexcore.ad.record record``).
+    With --record-ranks N > 1 the recorder also cuts it into OUT/plan-r<k>; the door then prints them and stops."""
     import importlib.util
     import shlex
+    ranks = record_ranks_of(args)
     if str(args.init) == EXAMPLE_INIT:   # the row's example start, from the downloaded case
         if not row.get("example_case"):
             raise AdDoorError("--init example: this row ships no example start; pass --init INIT (and --case for a "
@@ -448,7 +508,8 @@ def record_plan(args: argparse.Namespace, root: Path, row: dict) -> Path:
     fill = {"mesh": row["mesh"], "suite": row["suite"], "init": str(Path(args.init).resolve()), "grid": str(grid),
             "oro": str(oro), "dt": f"{row['dt_s']:g}", "hours": repr(float(hours)), "steps": str(recorded),
             "out": str(out),
-            "card": card_of(args), "numerics": RECORD_NUMERICS, "lam": case["source"] if case else ""}
+            "card": card_of(args), "numerics": RECORD_NUMERICS, "lam": case["source"] if case else "",
+            "route": getattr(args, "record_route", None) or "derivative"}
     recorder = os.environ.get(RECORDER_ENV)
     if recorder:   # another recorder of the same contract (plan.json + alloc-map.json in {out}), named by command
         argv = [part.format(**fill) for part in shlex.split(recorder)]
@@ -463,21 +524,28 @@ def record_plan(args: argparse.Namespace, root: Path, row: dict) -> Path:
                 "--mesh", case["row"] if case else row["mesh"], "--suite", row["suite"],
                 "--init", fill["init"], "--grid", str(grid), "--oro", str(oro),
                 "--dt", fill["dt"], "--hours", fill["hours"], "--out", str(out), "--card", fill["card"],
-                "--numerics", RECORD_NUMERICS, "--serial", "--runner", str(resolve_runner(args.runner))]
+                "--numerics", RECORD_NUMERICS, "--serial", "--runner", str(resolve_runner(args.runner)),
+                "--route", fill["route"]]
         if case is not None:
             argv += ["--lam", case["source"]]
-    if (out / "plan.json").is_file() and (out / "record-receipt.json").is_file():
+        if ranks > 1:
+            argv += ["--ranks", str(ranks)]
+    if (out / "plan.json").is_file() and (out / "record-receipt.json").is_file() and ranks == 1:
         # a finished recording of this door's output directory is reused, never re-recorded, if it reaches the end
         if recorded_end_boundary(out) >= recorded:
             return out
         raise AdDoorError(f"the plan recorded in {out} ends before boundary {recorded} (the end of a {steps}-step "
                           "window, made by a door before the recording ran one step past the window): pass a new "
                           "--out, or --steps no larger than its recorded steps less one")
+    from . import ad_radiation_seed as _radseed
+    argv += forecast_words(_radseed.record_words(args), args)   # --radiation-seed, --cumulus: the forecast's words
     log = Path(args.out).resolve() / "record.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     # the forward kernel forms the row's kernel set has derivative rows for (hex picks hoisted/chunked/element forms
     # and MYNN lane widths by mesh size; a form with no row is refused in the window, i.e. a wrong gradient)
     env = {**os.environ, **{k: str(v) for k, v in (row.get("record_env") or {}).items()}}
+    if ranks > 1:   # a recorder named in GPUWM_HEX_AD_RECORDER reads the count from its environment
+        env["GPUWM_HEX_RECORD_RANKS"] = str(ranks)
     with open(log, "wb") as stream:
         rc = subprocess.run(argv, stdout=stream, stderr=subprocess.STDOUT, env=env).returncode
     if rc != 0:
@@ -485,7 +553,53 @@ def record_plan(args: argparse.Namespace, root: Path, row: dict) -> Path:
         defect = [x for x in lines if "DEFECT" in x][-1:] or lines[-1:]
         raise AdDoorError(f"recording from {args.init} failed (rc {rc}): {defect[0][:300] if defect else ''} "
                           f"(log {log})")
+    if ranks > 1:
+        plans = [Path(f"{out}-r{k}") for k in range(ranks)]
+        lacking = [str(p) for p in plans if not (p / "plan.json").is_file()]
+        if lacking:
+            raise AdDoorError(f"--record-ranks {ranks}: the recording sealed but {len(lacking)} rank plan(s) are "
+                              f"missing ({lacking[0]}); the split's log is in {out}.work/split.log")
+        print(f"gpuwm-hex {getattr(args, 'command', None) or 'door'}: recorded {row['mesh']} as {ranks} rank threads "
+              f"and split it: rank plans {out}-r0 .. {out}-r{ranks - 1} (the one-card plan {out}). A window split "
+              f"over {ranks} cards replays them: ad-binder ranks --ranks {ranks} --cards A,B,.. --pkg {out} -- "
+              "window ...", flush=True)
+        raise SystemExit(0)
     return out
+
+
+#: --cumulus: the cumulus schemes a recording from --init may run (MPAS config_convection_scheme values the hrrrv5
+#: driver integrates). Off by default: the plan runs the suite's own deck for the mesh.
+CUMULUS_SCHEMES = ("cu_ntiedtke", "cu_grell_freitas")
+
+
+def forecast_words(words: list[str], args: argparse.Namespace) -> list[str]:
+    """The recording's forecast words (after ``--``): the radiation seed's, plus the cumulus scheme --cumulus names.
+    No --cumulus: the words unchanged, so every recording is the one it was before."""
+    scheme = getattr(args, "cumulus", None)
+    if not scheme:
+        return list(words)
+    return (list(words) or ["--"]) + ["--physics", f"config_convection_scheme={scheme}"]
+
+
+def plan_scheme_holds(table: dict, row: dict, plan: Path) -> dict:
+    """ROW with every scheme hold by name (``derivative_holds`` of any row of TABLE) whose launch kinds PLAN runs.
+    THE BREAKAGE THIS PREVENTS: the New Tiedtke hold lived on the 12 km row only, so a plan recorded with cumulus on
+    any made row (a 30 km cut, 18 Nov 2026) ran its 26 kinds as "no derivative row and no rule" and the window read
+    invalid, while the recorder had sealed the plan as covered (coverage.held_by_name reads every row). A plan that
+    runs none of the held kinds gets ROW back unchanged."""
+    holds = dict(row.get("derivative_holds") or {})
+    try:
+        from .ad.record import coverage
+        kinds = set(coverage.kinds_of(Path(plan) / "plan.json"))
+    except Exception:  # noqa: BLE001 - an install without the recorder, or a plan it cannot read: the row's own holds
+        return row
+    added = False
+    for other in (table.get("rows") or {}).values():
+        for hold, spec in (other.get("derivative_holds") or {}).items():
+            if hold not in holds and kinds & set(spec.get("kinds", ())):
+                holds[hold] = spec
+                added = True
+    return {**row, "derivative_holds": holds} if added else row
 
 
 def limited_area_case(args: argparse.Namespace, row: dict) -> dict | None:
@@ -1680,7 +1794,12 @@ def refuse_disk_too_small(row_name: str, need: dict | None, folder: Path, free: 
 
 def host_peak_mib() -> int:
     """The largest resident memory of this door or of any runner it waited for, in MiB (getrusage ru_maxrss, KiB on
-    Linux; for the children it is the largest single child, which is the runner)."""
+    Linux; for the children it is the largest single child, which is the runner).
+
+    ``resource`` is POSIX only and imported here: at the top of the module it stopped ``--help`` of every door,
+    and every import of this module, on Windows (``No module named 'resource'``)."""
+    import resource
+
     peak = max(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
                resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss)
     return int(peak) // 1024
@@ -1811,6 +1930,16 @@ def window_command(table: dict, row: dict, assets: dict[str, Path], door: str, r
         else:
             argv += [flag, str(value)]
     live_max = row.get("fct_live_max_s")
+    made = row.get("generated") or {}
+    if (live_max is None and made.get("from_row") and "--fct-frozen" in argv[2:]
+            and ((made.get("window_class") or {}).get("mesh_kind") == "limited-area")):
+        # a made limited-area row runs the limiter live up to its template's fct_live_max_s, also when it (and a plan
+        # recorded with it) was made before the template said so. THE BREAKAGE THIS PREVENTS: the 6 km made row's
+        # 29-step whole-state self-dot read +5.47 roundings with the limiter held (water-vapour unit 9.19e-6 off) and
+        # passes with it live (1.6e-8), and a plan recorded before 0.6.2 would keep holding it
+        live_max = (load_table()["rows"].get(made["from_row"]) or {}).get("fct_live_max_s")
+        if live_max is not None:
+            argv[argv.index("--fct-frozen", 2) + 1] = "0"
     if live_max is not None and "--fct-frozen" in argv[2:] and steps * float(row.get("dt_s") or 0) > float(live_max):
         # THE BREAKAGE THIS PREVENTS: the limiter's exact derivative grows where the forecast oscillates from step to
         # step (measured on the 3 km example past about 30 minutes), so a row that runs it live holds it on longer windows.
@@ -1843,7 +1972,108 @@ def window_command(table: dict, row: dict, assets: dict[str, Path], door: str, r
     for var, key in {**row["asset_env"], **door_spec.get("asset_env", {}), **(env_overrides or {})}.items():
         env[var] = str(assets[key])
     env.update({k: str(v) for k, v in (extra_env or {}).items()})
-    return argv, env
+    return inner_model_words(argv, env)
+
+
+#: inner-model (0.6.2): the inner loop's linear model is one word with three values (18 Nov 2026):
+#: full (the default: the row's own recorded derivative, the window unchanged bit for bit), reduced (the full
+#: derivative with pieces left out by name; INNER_MODEL_KEEP_ENV lists the pieces kept) and simple (the purpose-built
+#: form: the boundary layer as a linear diffusion with MYNN's own diffusivities from the trajectory held, everything
+#: else but the dynamics held at the trajectory's tendencies). Carried to window_command in the route environment.
+INNER_MODEL_ENV = "AD_IM_MODEL"
+INNER_MODEL_KEEP_ENV = "AD_IM_KEEP"
+INNER_MODELS = ("full", "reduced", "simple")
+INNER_MODEL_LINES = {
+    "reduced": "linear model: reduced (--inner-model reduced): the row's own derivative of the dynamics and of the "
+               "pieces kept ({keep}); every piece left out ({out}) held at the trajectory's tendencies. It is an "
+               "inner loop's linear model, not the forecast's derivative",
+    "simple": "linear model: simple (--inner-model simple): the dynamics' exact derivative; the boundary layer as a "
+              "linear diffusion with MYNN's own diffusivities (el sqrt(qke) sh, sm) and the surface coefficients of "
+              "the trajectory held; cloud and rain, radiation, gravity-wave drag, land and sea ice held at the "
+              "trajectory's tendencies. It is an inner loop's linear model, not the forecast's derivative",
+}
+INNER_MODEL_LINE = INNER_MODEL_LINES["simple"]
+#: The launch kinds each piece holds by name when it is left out (the dynamics cannot be left out; the surface layer
+#: is held on every route of this row already). Microphysics is TEMPO (--hold tempo); the boundary layer is held by
+#: the inner-model route with no mixing (AD_IM_BL=held).
+INNER_MODEL_PIECES = {
+    "radiation": ("rlw_cldprmc_coalesced,rlw_inatm,rlw_rtrn_accum_rows,rlw_rtrn_final,rlw_rtrn_march_coalesced,"
+                  "rlw_rtrn_prol_gpoints,rlw_rtrn_secdiff,rlw_setcoef,rlw_taut,rlw_taumol_batched,rsw_cldprmc_b,"
+                  "rsw_inatm_layers_b,rsw_laysolfr_b,rsw_post_b,rsw_setcoef_b,rsw_sfluxzen_b,rsw_spc_accum_b,"
+                  "rsw_spcvmc_gpt_b,rsw_taumol_b,mpas_lw_mcica_gpoint,mpas_lw_mcica_seeds,mpas_lw_outputs,"
+                  "mpas_lw_prepare,mpas_sw_aerosol_columns,mpas_sw_aerosol_finish,mpas_sw_aerosol_levels,"
+                  "mpas_sw_diffuse,mpas_sw_driver_times,mpas_sw_gt_aod,mpas_sw_mcica_gpoint,mpas_sw_mcica_seeds,"
+                  "mpas_sw_outputs,mpas_sw_prep,mpas_sw_radconst,cloud_condensate,cloud_from").split(","),
+    "drag": ["ugwp_oro_run", "ugwp_oro_dx", "ugwp_oro_diff"],
+    "land": ["oracle_land_ruc_land", "oracle_drivers_driver_forcing"],
+    "ice": ["oracle_ice_ruc_ice", "oracle_drivers_correct_tsk_over_seaice", "oracle_drivers_seaice_finish",
+            "oracle_drivers_seaice_prepare"],
+    "microphysics": [],
+    "boundary-layer": [],
+}
+#: reduced's default kept list: tonight's measured form (dynamics + boundary layer + surface layer; MEASURED
+#: Table 4). The dynamics and the surface layer are not in the list (always as the row has them).
+INNER_MODEL_KEEP_DEFAULT = ("boundary-layer",)
+#: The launch kinds the simplified inner model holds by name (radiation and its cloud inputs; drag, land, sea ice and
+#: their drivers), beside TEMPO (--hold tempo) and the boundary layer (AD_IM_BL=fixedk).
+INNER_MODEL_HELD = [k for p in ("radiation", "drag", "land", "ice") for k in INNER_MODEL_PIECES[p]]
+
+
+def inner_model_keep(text: str | None) -> tuple[str, ...]:
+    """The pieces reduced keeps, from --inner-model-keep (comma list; empty keeps only the dynamics)."""
+    if text is None:
+        return INNER_MODEL_KEEP_DEFAULT
+    keep = tuple(x.strip() for x in text.split(",") if x.strip())
+    bad = [x for x in keep if x not in INNER_MODEL_PIECES]
+    if bad:
+        raise AdDoorError(f"--inner-model-keep {','.join(bad)}: the pieces are {', '.join(INNER_MODEL_PIECES)} "
+                          "(the dynamics and the surface layer are always kept)")
+    return keep
+
+
+def _hold_words(argv: list[str], hold_tempo: bool, refuse: list[str]) -> list[str]:
+    out, skip, hold = [], 0, []
+    for i, w in enumerate(argv):
+        if skip:
+            skip -= 1
+            continue
+        if hold_tempo and i >= 2 and w in ("--tempo", "--tempo-arena-gib", "--tempo-cubin", "--hold"):
+            if w == "--hold" and i + 1 < len(argv):
+                hold += [x for x in argv[i + 1].split(",") if x]
+            skip = 1
+            continue
+        out.append(w)
+    if hold_tempo:
+        out += ["--hold", ",".join(hold + [x for x in ("tempo",) if x not in hold])]
+    if refuse:
+        if "--refuse" in out[2:]:
+            at = out.index("--refuse", 2)
+            have = [x for x in out[at + 1].split(",") if x]
+            out[at + 1] = ",".join(have + [k for k in refuse if k not in have])
+        else:
+            out += ["--refuse", ",".join(refuse)]
+    return out
+
+
+def inner_model_words(argv: list[str], env: dict) -> tuple[list[str], dict]:
+    """The runner's line and environment for the inner loop's linear model (``--inner-model full|reduced|simple``).
+    full (the default, or the word absent) returns its arguments untouched, so every default window is the one it was
+    before."""
+    model = env.get(INNER_MODEL_ENV, "full")
+    if model == "reduced":
+        keep = inner_model_keep(env.get(INNER_MODEL_KEEP_ENV))
+        env = {k: v for k, v in env.items() if k not in (INNER_MODEL_ENV, INNER_MODEL_KEEP_ENV)}
+        left = [p for p in INNER_MODEL_PIECES if p not in keep]
+        if "boundary-layer" in left:
+            env = {k: v for k, v in env.items() if not k.startswith("AD_P3_DIRECT")}
+            env["AD_IM_BL"] = "held"
+        refuse = [k for p in left for k in INNER_MODEL_PIECES[p]]
+        return _hold_words(argv, "microphysics" in left, refuse), env
+    if model != "simple":
+        return argv, env
+    env = {k: v for k, v in env.items() if not k.startswith("AD_P3_DIRECT")}   # the tape-free MYNN route is not run
+    env["AD_IM_BL"] = "fixedk"
+    return _hold_words(argv, True, list(INNER_MODEL_HELD)), env
 
 
 def library_path() -> str:
@@ -2049,12 +2279,33 @@ class QuietWatch:
               "command", file=sys.stderr, flush=True)
 
 
+def refuse_runner_without_plan_rules(runner: Path, plan: Path) -> None:
+    """Refuse, before the card is taken, a window whose runner lacks a window rule the plan's sealed coverage relies on
+    (hexcore.ad.record.coverage.RUNNER_RULE_KERNELS names the breakage: 0.6.2 plans on the 0.6.1 runner stopped at
+    their first model-top damping launch with "no derivative row and no rule"). Plans sealed before the coverage
+    file named its rule kinds carry no "rule_kinds" and pass."""
+    cov = Path(plan) / "derivative-coverage.json"
+    if not cov.is_file() or not runner.is_file():
+        return
+    try:
+        kinds = json.loads(cov.read_text()).get("rule_kinds") or []
+    except (OSError, ValueError):
+        return
+    from .ad.record import coverage as _coverage
+    lacks = _coverage.runner_lacks(kinds, runner)
+    if lacks:
+        raise AdDoorError(f"the window runner {runner} has no window rule for {', '.join(lacks)}, which this plan "
+                          "launches (rules of 0.6.2): name a runner built from 0.6.2 or later with --runner or "
+                          "GPUWM_HEX_AD_RUNNER")
+
+
 def run_window(argv: list[str], env: dict, plan: Path, out: Path, card: str, ranks: int | None = None,
                exchange_label: str | None = None) -> dict:
     """One runner process with the plan package as cwd; returns window.json (or names the failure). With ``ranks``
     the process is the rank launcher (ad-binder ranks): its N ranks write out/r<k>, and the receipt returned is
     the one the door composes from theirs (hexcore.ad.ranks.compose_window_doc)."""
     refuse_no_local_gpu()
+    refuse_runner_without_plan_rules(Path(argv[0]), plan)
     from .ad import rows as _rows
     _rows.forget_plan_docs()   # the parsed plan is not held in this process while the runner holds the host's memory
     out.mkdir(parents=True, exist_ok=True)
@@ -2691,7 +2942,8 @@ class Context:
                                        Path(args.oro) if getattr(args, "oro", None) else None)
                 name, row = _rows.make_row(self.table, args.suite, mesh, init=args.init, dt=args.dt,
                                              own_case=bool(args.init or getattr(args, "plan", None)),
-                                             door=door, card_mib=_first_card_total(args))
+                                             door=door, card_mib=_first_card_total(args),
+                                             ranks=record_ranks_of(args))
                 self.table["rows"][name] = row
                 self.row_name, self.row = _row(self.table, name, door)
             else:
@@ -2702,6 +2954,13 @@ class Context:
             refuse_no_local_gpu()   # after the table's own (card-free) refusals, before any card, runner or asset
             self.runner = resolve_runner(args.runner)
             self.steps = door_steps(self.row, door, args)
+            # a made row's live default boundary layer runs up to its template's length, the held closure past it; the
+            # timestep is the given plan's when it names one (the made row follows the recording, below)
+            try:
+                plan_dt = _plan_dt(Path(args.plan)) if (getattr(args, "plan", None) and self.row.get("generated")) else None
+            except Exception:   # an unreadable plan is refused, with its own words, where it is resolved
+                plan_dt = None
+            boundary_layer_for_window(args, self.row, self.steps, plan_dt or self.row.get("dt_s"), door)
             want = int(self.row.get("cards") or 1)
             have = cards_of(args)
             if len(have) < want:
@@ -2712,6 +2971,8 @@ class Context:
             # one a card (ad-binder ranks); every other row, and every one-card door, runs as before.
             self.split = None
             split = _ranks.split_of(self.table, self.row_name)
+            if split is None and getattr(args, "rank_plans", None) is not None and len(have) > 1:
+                split = _ranks.made_split(self.table, self.row)   # a made row whose rank plans the user gives
             if split is not None and getattr(args, "cards", None) and len(have) > 1:
                 self.split = _ranks.choose(split, self.row_name, len(have), door)
                 if self.split.get("experimental"):   # table rank_splits.<row>.experimental: said before it runs
@@ -2824,15 +3085,32 @@ class Context:
             print(self.needs_line(), flush=True)
             self.root = resolve_assets(args.assets, want=example_reads(self.row, args, self.routes_on))
             self.assets = row_assets(self.root, self.row)
+            tempo_image_word(self, args)   # --tempo-image f08: the taped TEMPO image with the PBL radii path
             self.route_env, self.route_block = {}, None
             if self.routes_on:   # each file a route names is the pinned build; a scheme bundle a route lays images over
                 check_route_assets(self)
                 if not line_on:   # a gradient line carries the route's words itself (gradient_line_words)
                     self.route_env, self.route_block = route_window_words(self, door)
+            model = getattr(args, "inner_model", "full")
+            if model != "full":   # inner-model: full (the row's own derivative) unless another is asked for by name
+                if door not in ROUTE_DOORS:
+                    raise AdDoorError(f"--inner-model {model} runs on {', '.join(ROUTE_DOORS)}, not on {door}")
+                words = {INNER_MODEL_ENV: model}
+                line = INNER_MODEL_LINES[model]
+                if model == "reduced":
+                    keep = inner_model_keep(getattr(args, "inner_model_keep", None))
+                    words[INNER_MODEL_KEEP_ENV] = ",".join(keep)
+                    line = line.format(keep=", ".join(("dynamics", "surface layer") + keep),
+                                       out=", ".join(p for p in INNER_MODEL_PIECES if p not in keep) or "none")
+                self.route_env = {**self.route_env, **words}
+                print(f"gpuwm-hex {door}: {line}", flush=True)
             self.out = Path(args.out).resolve()
             self.out.mkdir(parents=True, exist_ok=True)
             self.plan, self.plan_how = resolve_plan(args, self.root, self.row_name, self.row)
+            self.row = plan_scheme_holds(self.table, self.row, self.plan)   # a scheme the plan runs held by name
             self.plan_physics_mode = refuse_plan_physics_mode(self.plan, self.physics_mode, self.table)
+            from . import ad_radiation_seed as _radseed   # the plan's cloud-sample seed rule; the other is refused
+            self.radiation_seed = _radseed.refuse_plan_seed(self.plan, getattr(args, "radiation_seed", None), door)
             said = physics_mode_block(self.table).get("line")
             if said:   # every door says which forecast its linear model is of, before the window
                 print(f"gpuwm-hex {door}: {said}", flush=True)
@@ -3166,7 +3444,9 @@ class Context:
                 except _rows.AdRowError as error:
                     raise AdDoorError(str(error)) from error
                 admission["card_words"] = filled
-            if len(self.cards) > 1 and self.row.get("shard_env"):   # physics columns on the other cards (--cards)
+            # physics columns on the other cards (--cards); not under ranks: each rank sees its one card only
+            # (CUDA_VISIBLE_DEVICES), so shard ordinals 0..N-1 would name cards the rank cannot see
+            if len(self.cards) > 1 and self.row.get("shard_env") and not split:
                 ordinals = ",".join(str(i) for i in range(len(self.cards)))
                 run_env = {**env, **{k: v.replace("{ordinals}", ordinals) for k, v in self.row["shard_env"].items()}}
             t0 = time.monotonic()
@@ -3569,6 +3849,66 @@ def dot_bar_in_force(table: dict, args: Any = None) -> dict:
         raise AdDoorError(str(error)) from error
 
 
+def self_dot_species_planes(plan, steps: int | None = None) -> bool:
+    """Whether the whole-state self-dot gives each scalar species its own unit (AD_DOT_PLANES=scalars, the default).
+
+    THE BREAKAGE THIS PREVENTS: with the 13 scalar species as ONE self-dot unit, aerosol number (about 1e9 per kg) sets
+    the unit's weight and the water-vapour words weigh nothing: on the 6 km hrrrv5 plan (l6-s1h, 29 steps, TEMPO live)
+    the qv plane's own transpose missed by 77 roundings while the one-unit dot read -40.3 roundings with no species
+    named, and "TEMPO held passes" was read on that unit too, so the miss sat unseen for a day. Per species: +5.47.
+    On where the plan's field map (alloc-map.json) has a plane-major float32 `scalars` field, which the runner needs to
+    write the planes; GPUWM_HEX_SELF_DOT_UNITS=one (or an AD_DOT_PLANES the caller set) keeps the old way.
+
+    With ``steps``, the map must also hold the window-end boundary (steps + 1), which is where the runner reads the
+    planes. THE BREAKAGE THIS PREVENTS: the README's 12 km example (adjoint-test --row hrrrv5-q12.96.2890.n40.60w91.30
+    --steps 15, 19 Nov 05:49Z) printed "the species-unit window did not finish": its map holds boundaries
+    1 to 15 and the runner stopped on boundary 16 after 0 s."""
+    if os.environ.get("GPUWM_HEX_SELF_DOT_UNITS", "").strip() == "one" or os.environ.get("AD_DOT_PLANES", "").strip():
+        return False
+    try:
+        m = json.loads((Path(plan) / "alloc-map.json").read_text())
+        f = (m.get("fields") or {}).get("scalars") or {}
+        if steps is not None and str(int(steps) + 1) not in (m.get("boundaries") or {}):
+            return False
+        return len(f.get("shape") or []) == 3 and len(f.get("strides") or []) == 3 and (f.get("strides") or [0, 0, 0])[2] == 4
+    except (OSError, ValueError, TypeError, AttributeError):
+        return False
+
+
+def dot_terms(dot: dict) -> dict | None:
+    """How well the self-form dot can see a miss: the reverse side's absolute terms (sum |x_i (M^T y)_i|) against the
+    dot, and the miss in single-precision roundings of those terms. Printed beside every reading, never the verdict.
+
+    THE BREAKAGE THIS PREVENTS: on the README's 3 km storm example the species-unit dot read +4.29 roundings, over the
+    bar of 4, and nothing said why (19 Nov). The self form's bar takes the dot (y_Mx, a sum of squares that
+    cannot cancel) as its rounding scale, but the reverse side's sum can cancel: there its terms were 128.6 against a
+    dot of 22.0 (5.8 times; with the 13 species as one unit 34.1 against 12.0, 2.8 times), and the miss was 0.73 of a
+    rounding of those terms (0.53 for the one-unit reading). One reverse per species (af-q3split) read every species
+    measured: qv -0.33, qc -0.74, qr +0.78, qi +0.54, nwfa +0.03, nr -1.43 roundings (2^-24) of each one's own terms,
+    with rain and ice bringing 11.5 and 16.5 times their vote of 1 in absolute terms; and cloud droplet number nc
+    +5.50 roundings of its terms (24.9 times its vote), 72 per cent of the whole miss (af-q3nc). So on that example
+    the whole dot read 0.73 of a rounding of its terms while one species missed by 5.5 of its own: the terms do not
+    clear a reading. A judged reading on the terms would hide real misses (the 6 km qv plane's 77-rounding miss read
+    +5.47 on the whole species dot), so the verdict keeps the dot's own scale, and this line only says how far the
+    dot can see."""
+    c = dot.get("conditioning") or {}
+    y, x = dot.get("y_Mx"), dot.get("x_MTy")
+    at, tl = c.get("abs_terms_ad"), c.get("abs_terms_tl")
+    if not (isinstance(at, (int, float)) and isinstance(y, (int, float)) and isinstance(x, (int, float))) or not y:
+        return None
+    scale = max(abs(float(at)), abs(float(tl or 0.0)), abs(float(y)))
+    return {"abs_terms_ad": at, "abs_terms_tl": tl, "ratio": scale / abs(float(y)),
+            "roundings_of_terms": (float(x) - float(y)) / (_dot_bar.EPS32 * scale)}
+
+
+def terms_words(terms: dict | None) -> str:
+    """The conditioning clause printed beside a whole-state dot reading (dot_terms)."""
+    if not terms:
+        return ""
+    return (f"; its reverse side's terms are {terms['ratio']:.1f} times the dot, and the miss is "
+            f"{terms['roundings_of_terms']:+.2f} roundings of those terms")
+
+
 def self_dot_check(doc: dict | None, bar: dict, left_out: dict | None = None,
                    proof: dict | None = None) -> dict:
     """The whole-state dot test that cannot cancel: the reverse is seeded with the tangent result itself, each unit
@@ -3592,7 +3932,7 @@ def self_dot_check(doc: dict | None, bar: dict, left_out: dict | None = None,
     under = value is not None and (many["pass"] if many else one["pass"])
     proved = left_out is None or bool((proof or {}).get("ok"))
     units = info.get("units")
-    return {"value": value, "bar": bar["rel"], "pass": under and proved,
+    return {"value": value, "bar": bar["rel"], "pass": under and proved, "terms": dot_terms(dots[0]) if info else None,
             "roundings": one["roundings"], "bar_roundings": bar["each_within_roundings"],
             "bar_setting": bar["setting"], "bar_words": bar["words"],
             "directions": None if many is None else {
@@ -4097,8 +4437,41 @@ def strict_check_inner(ctx: "Context", no_self_dot: bool = False, strict_from: P
                               what="the answer check, which this command runs after all",
                               smaller="--no-self-dot runs the gradient without its answer check (the receipt then "
                                       "reads not checked).")
+    planes = self_dot_species_planes(getattr(ctx, "plan", None) or ".", getattr(ctx, "steps", None))
+    # a proven (shipped) row keeps judging on the 13 species as one unit, the verdict its release printed, and prints
+    # the species-unit reading beside it. THE BREAKAGE THIS PREVENTS: on the README's 3 km storm example (sensitivity
+    # --row hrrrv5-q3.96.38278.n40.60w91.30 --steps 59, 19 Nov 03:18Z) the species-unit default read +4.29
+    # roundings, FAIL, where the release printed -1.50, PASS; the one-unit window of the same run read -1.50 again
+    beside = None
+    if planes and not (getattr(ctx, "row", None) or {}).get("generated"):
+        planes, beside = False, True
+    if planes:
+        env["AD_DOT_PLANES"] = "scalars"   # one unit per scalar species (self_dot_species_planes)
     whole = ctx.window(list(line_extra), sub="selfdot", door_args_key=args_key, extra_env=env,
                        spec_door="adjoint-test", **own)
+    if beside and os.environ.get("GPUWM_HEX_SELF_DOT_ONE_UNIT", "1").strip() != "0":
+        try:
+            cs = self_dot_check(ctx.window(list(line_extra), sub="selfdot-species", door_args_key=args_key,
+                                           extra_env={**env, "AD_DOT_PLANES": "scalars"}, spec_door="adjoint-test",
+                                           **own), bar)
+            beside = {"value": cs["value"], "roundings": cs["roundings"], "pass": cs["pass"],
+                      "terms": cs.get("terms")}
+        except AdDoorError as error:
+            beside = {"error": f"the species-unit window did not finish: {error}"}
+    elif beside:
+        beside = {"error": "not run (GPUWM_HEX_SELF_DOT_ONE_UNIT=0)"}
+    one_unit = None
+    if planes and os.environ.get("GPUWM_HEX_SELF_DOT_ONE_UNIT", "1").strip() != "0":
+        # the old reading beside the new: the same window with the 13 species as one unit (printed, not judged);
+        # GPUWM_HEX_SELF_DOT_ONE_UNIT=0 skips this second window
+        env1 = {k: v for k, v in env.items() if k not in ("AD_DOT_PLANES", "AD_DOT_SELF_SPLIT")}
+        try:
+            c1 = self_dot_check(ctx.window(list(line_extra), sub="selfdot-one-unit", door_args_key=args_key,
+                                           extra_env=env1, spec_door="adjoint-test", **own), bar)
+            one_unit = {"value": c1["value"], "roundings": c1["roundings"], "pass": c1["pass"],
+                      "terms": c1.get("terms")}
+        except AdDoorError as error:
+            one_unit = {"error": f"the one-unit window did not finish: {error}"}
     if dead:
         try:
             poison = ctx.window(list(line_extra), sub="selfdot-proof", door_args_key=args_key,
@@ -4109,8 +4482,10 @@ def strict_check_inner(ctx: "Context", no_self_dot: bool = False, strict_from: P
         if poison is not None:
             proof = dead_proof_check(whole, poison, ctx.out / "selfdot-proof", left_out)
     return {**self_dot_check(whole, bar, left_out, proof), "how": "own",
+            "species_units": planes, "one_unit": one_unit, "species_beside": beside,
             "seed": (1 if seed is None else seed) if ndir == 1 else f"{seed or 1}..{(seed or 1) + ndir - 1}",
-            "windows": ["selfdot"] + (["selfdot-proof"] if dead else []),
+            "windows": ["selfdot"] + (["selfdot-proof"] if dead else []) + (["selfdot-one-unit"] if one_unit else [])
+                       + (["selfdot-species"] if beside and "value" in beside else []),
             "words": ({"route": "the gradient line's words the check can take", "extra": line_extra,
                        "not_taken": cw["not_taken"]} if cw else {"route": "the row's own words"}),
             "shipped_key_sha256": shipped_key_sha256(key)}
@@ -4148,6 +4523,22 @@ def print_strict(check: dict | None) -> None:
           f"{'n/a' if r is None else format(r, '+.2f' if check.get('roundings') is not None else '.2f')} roundings   "
           f"bar {k:g} roundings ({check['bar']:.2e})   "
           f"{'PASS' if check.get('pass') else 'FAIL'}   ({check.get('allocations')} {scored}; {how}{seed})")
+    if check.get("terms"):
+        print(f"    conditioning: the bar's rounding is of the dot{terms_words(check['terms'])} (printed, not judged: "
+              "where the terms are several times the dot, a miss of a few roundings of the dot can be the float32 "
+              "sum; the whole dot cannot tell that from a small miss in one field, a reverse per field can)")
+    if check.get("species_units"):
+        o = check.get("one_unit") or {}
+        old = (o.get("error") or ("n/a" if o.get("roundings") is None else f"{o['roundings']:+.2f} roundings "
+               f"({fmt(o.get('value'))} relative{terms_words(o.get('terms'))})")) if o else \
+            "not run (GPUWM_HEX_SELF_DOT_ONE_UNIT=0)"
+        print(f"    units: one per scalar species (the default); the 13 species as one unit (the old reading): {old}")
+    elif check.get("species_beside"):
+        o = check["species_beside"]
+        new = (o.get("error") or ("n/a" if o.get("roundings") is None else f"{o['roundings']:+.2f} roundings "
+               f"({fmt(o.get('value'))} relative{terms_words(o.get('terms'))})"))
+        print(f"    units: the 13 species as one unit (this proven row's verdict, as its release printed it); one per "
+              f"scalar species (the made rows' default, printed, not judged): {new}")
     dirs = check.get("directions")
     if dirs:
         print("    directions " + ", ".join(f"{s}: {'n/a' if v is None else format(v, '+.2f')}"
@@ -4220,7 +4611,10 @@ def adjoint_verdict(doc: dict, thresholds: dict, probe: float | None = None) -> 
     doc, rough = roughness_view(doc, probe)
     td = doc.get("tangent_dir") or {}
     taylor = doc.get("taylor") or {}
-    rows = sorted((r for r in taylor.get("rows", []) if "err" in r), key=lambda r: -r["h"])
+    # A row whose err is null (the tangent along the objective is zero, so the window could not divide) is no step
+    # size a check can read. THE BREAKAGE THIS PREVENTS: such rows stopped the door with a TypeError in settled_rows
+    # before its whole-state check ran (a window with every kind on the path to the objective held, 18 Nov).
+    rows = sorted((r for r in taylor.get("rows", []) if r.get("err") is not None), key=lambda r: -r["h"])
     all_rows = rows
     if rough:   # only the step sizes the roughness lets the checks read
         rows = [r for r in rows if rough_counts(r, min(thresholds["fd_tangent_err"], thresholds["taylor_best_err"]))]
@@ -5332,6 +5726,12 @@ def refuse_speed_words(args: argparse.Namespace, table: dict) -> None:
                           "gradient line off: give one")
     name = None if getattr(args, "mesh", None) else (getattr(args, "row", None) or table["default_row"])
     row = table["rows"].get(name) if name else None
+    if getattr(args, "mesh", None):
+        # a row made for --mesh offers its template's routes (rows.<template>.boundary_layer). THE BREAKAGE THIS
+        # PREVENTS: the held MYNN-EDMF closure leaves a 30 km made row's tangent 12.5 per cent off the real model at
+        # 11 steps, and the live route that brings it to 0.77 per cent was refused on every made row
+        template = ((table.get("suites") or {}).get(getattr(args, "suite", None) or "hrrrv5") or {}).get("template_row")
+        row = table["rows"].get(template) if template else None
     routes = row_boundary_layer(row or {}).get("routes") or {}
     if not routes:
         if asked != "taped":
@@ -5358,7 +5758,50 @@ ROUTE_DOORS = ("tangent", "adjoint-test", "sensitivity")
 def row_boundary_layer(row: dict) -> dict:
     """The row's boundary-layer routes: its gradient line's (the 3 km storm row), else the row's own
     (``rows.<row>.boundary_layer``: a row whose doors run plain windows, the 12 km cut), else {}."""
-    return ((row.get("gradient_line") or {}).get("boundary_layer")) or row.get("boundary_layer") or {}
+    own = ((row.get("gradient_line") or {}).get("boundary_layer")) or row.get("boundary_layer")
+    if own:
+        return own
+    # a row made for --mesh offers its template's routes (rows.<template>.boundary_layer), also when it was made, and
+    # a plan recorded with it, before the template named them. THE BREAKAGE THIS PREVENTS: adjoint-test
+    # --boundary-layer guarded on a plan recorded with a made row ran the held closure (12.5 per cent off at 11 steps
+    # at 30 km) under the word for the live one
+    made = row.get("generated") or {}
+    template = made.get("from_row")
+    if template:
+        table = load_table()
+        bl = (table["rows"].get(template) or {}).get("boundary_layer") or {}
+        recipe = (made.get("window_class") or {}).get("from_recipe")
+        for cls in ((table.get("suites") or {}).get(made.get("suite")) or {}).get("window_classes") or ():
+            if bl and recipe and cls.get("from_recipe") == recipe and cls.get("boundary_layer_default"):
+                return {**bl, "default": cls["boundary_layer_default"]}
+        return bl
+    return {}
+
+
+def boundary_layer_for_window(args: argparse.Namespace, row: dict, steps: int, dt_s: float | None,
+                              door: str | None) -> None:
+    """A made row whose class runs a live boundary layer by default (row_boundary_layer's default, the limited-area
+    classes: guarded) runs it on windows up to its template's boundary_layer.default_live_max_s and the held closure
+    (taped) on longer ones, when the command names no route; the command says so in one line, and args.boundary_layer
+    then names taped, so the receipt does too. A route named by the command runs on any window.
+    THE BREAKAGE THIS PREVENTS: on the 30 km made row the guarded route is the closest linear model to the real model
+    over 11 steps (0.77 per cent at h 0.1, against 15.7 held) and the furthest at 1 hour (4.3 per cent, against 0.94
+    held; its tangent below the real model's change at every step size): the table's default_live_max_what."""
+    if getattr(args, "boundary_layer", None) is not None or door not in ROUTE_DOORS:
+        return
+    made = row.get("generated") or {}
+    if not made.get("from_row") or not dt_s:
+        return
+    default = row_boundary_layer(row).get("default") or "taped"
+    template = ((load_table()["rows"].get(made["from_row"]) or {}).get("boundary_layer")) or {}
+    live_max = template.get("default_live_max_s")
+    if default == "taped" or live_max is None or int(steps) * float(dt_s) <= float(live_max):
+        return
+    args.boundary_layer = "taped"
+    print(f"gpuwm-hex {door}: boundary layer taped for this window ({window_length_words(int(steps) * float(dt_s))}; "
+          f"this made row runs its default route, {default}, on windows up to {window_length_words(float(live_max))} "
+          f"and the held closure past that, measured on the 30 km made row; --boundary-layer {default} runs it on "
+          "any window)", flush=True)
 
 
 def routes_on(row: dict, args: argparse.Namespace, door: str | None, split: Any = None) -> bool:
@@ -6648,6 +7091,19 @@ def run_param_grad(args: argparse.Namespace) -> int:
 
 # -------------------------------------------------------------------------------------------------------- parsers
 def _common(parser: argparse.ArgumentParser, steps_help: str) -> None:
+    parser.add_argument("--inner-model", default="full", choices=INNER_MODELS,
+                        help="the linear model the windows run: full (default) is the row's own recorded derivative; "
+                             "reduced is that derivative with pieces left out by name (--inner-model-keep); simple is "
+                             "the purpose-built linear model a variational system's inner loop runs (exact dynamics; "
+                             "the boundary layer as a linear diffusion with MYNN's own diffusivities from the "
+                             "trajectory held; cloud, radiation, drag, land and sea ice held at the trajectory's "
+                             "tendencies). reduced and simple are an inner loop's linear model, not the derivative of "
+                             "the forecast")
+    parser.add_argument("--inner-model-keep", default=None, metavar="PIECES",
+                        help="with --inner-model reduced: the pieces kept, a comma list of "
+                             + ", ".join(INNER_MODEL_PIECES) + " (default: boundary-layer; the dynamics and the "
+                             "surface layer are always kept; every piece not listed is held at the trajectory's "
+                             "tendencies)")
     parser.add_argument("--row", default=None, help="operator row of the door table or the row cache (default: the "
                                                      "table's default row)")
     made = parser.add_argument_group("a row for any mesh (made on demand and cached; --init records its plan)")
@@ -6668,6 +7124,19 @@ def _common(parser: argparse.ArgumentParser, steps_help: str) -> None:
     src.add_argument("--plan", type=Path, default=None, help="a recorded plan package directory")
     src.add_argument("--init", type=Path, default=None,
                      help="record a plan package from this init first (needs the recorder)")
+    src.add_argument("--record-route", choices=("derivative", "forecast"), default="derivative",
+                     help="with --init: the forecast's kernel forms the recording runs (derivative, the default: the "
+                          "forms this release has derivative rows for; forecast: the forecast's own defaults, the "
+                          "same bits). A plan with a kernel kind that has no derivative is refused when it is sealed")
+    src.add_argument("--cumulus", choices=CUMULUS_SCHEMES, default=None,
+                     help="with --init: record the forecast with this cumulus scheme on (config_convection_scheme; "
+                          "default: the suite's own deck for the mesh, which for hrrrv5 away from NOAA's 12 km rows "
+                          "runs none). The window holds the scheme's derivative by name: the linear model keeps the "
+                          "forward run's cumulus tendency")
+    parser.add_argument("--tempo-image", choices=("shipped",) + tuple(TEMPO_IMAGES), default="shipped",
+                        help="the taped TEMPO derivative image (default shipped: the row's own). f08 adds the PBL "
+                             "subgrid-radii path NOAA's hrrrv5 deck runs at every radiation step (bl held as "
+                             "constants), so a window can cross a radiation step")
     src.add_argument("--case", type=Path, default=None,
                      help="for a limited-area mesh: the regional door's work directory (gpuwm-hex regional ... "
                           "--stage mesh..lbc), or a LAM_* case file; gives the recording its static file, boundaries, "
@@ -6691,6 +7160,12 @@ def _common(parser: argparse.ArgumentParser, steps_help: str) -> None:
                         help="with --cards on a row with a rank split: the rank plan package PREFIX (PREFIX-r<k>, each "
                              "with its rank-gather.json) split from the one-card plan given with --plan (default: the "
                              "table's package under the asset root)")
+    parser.add_argument("--record-ranks", type=int, default=1, metavar="N",
+                        help="with --init: record the forecast as N rank threads on the one card and cut the sealed "
+                             "plan into N rank plans, OUT/plan-r0 .. OUT/plan-r<N-1>, the plans a window split over N "
+                             "cards replays (a mesh above the one-card window classes, such as 12 km CONUS, is admitted "
+                             "by its cells per rank). The door stops after the split and prints the plans. Default 1: "
+                             "the one-card recording, unchanged")
     parser.add_argument("--wait-card", type=float, default=0.0,
                         help="seconds to wait for the row's free memory on the card (default: refuse at once)")
     parser.add_argument("--runner", type=Path, default=None, help="window runner binary (default: the installed one)")
@@ -6704,6 +7179,8 @@ def _common(parser: argparse.ArgumentParser, steps_help: str) -> None:
                         "so); auto (default): this mesh's own default in the table")
     g.add_argument("--gradient-plan", type=Path, default=None,
                    help="the companion mesh's plan package (a recording of the same start) in place of the table's")
+    from . import ad_radiation_seed as _radseed
+    parser.add_argument("--radiation-seed", choices=_radseed.CHOICES, default=None, help=_radseed.HELP)
 
 
 def _perturbation_args(parser: argparse.ArgumentParser) -> None:

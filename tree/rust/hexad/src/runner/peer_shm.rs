@@ -34,6 +34,15 @@ use std::sync::{Mutex, OnceLock};
 use std::path::{Path, PathBuf};
 
 pub const CAP: usize = 1 << 17;          // entries a kind holds (a 59-step tangent pass of a 2-rank plan needs about 5,000)
+/// the entries a kind's table holds, AD_PEER_SHM_CAP (default CAP, the table as before). Every rank takes the
+/// word from the launcher's environment, so all map the same table length. THE BREAKAGE THIS PREVENTS: forward messages
+/// stay in their table for the whole run, so a long window on many ranks fills it ("peer shm: table f full (131072
+/// entries)"); an 8-rank 59-step storm window already needed 524,288, and a 4-rank 216-step globe window has more
+/// rank-steps than that.
+pub fn cap() -> usize {
+    static C: OnceLock<usize> = OnceLock::new();
+    *C.get_or_init(|| std::env::var("AD_PEER_SHM_CAP").ok().and_then(|v| v.parse::<usize>().ok()).filter(|n| *n >= 1024).unwrap_or(CAP))
+}
 const ENTRY: usize = 64;
 const HEAD: usize = 64;
 pub const CHUNK: u64 = 1 << 30;           // bytes of one data chunk file
@@ -106,7 +115,7 @@ impl<E: Engine> Shm<E> {
         std::fs::create_dir_all(&dir).map_err(|e| format!("peer shm {}: {e}", dir.display()))?;
         let mut tables = Vec::new();
         for k in KINDS {
-            let len = (HEAD + CAP * ENTRY) as u64;
+            let len = (HEAD + cap() * ENTRY) as u64;
             let base = map_file(&dir.join(format!("shm.{}.table", k as char)), len)?;
             let dev = engine.register(base, len as usize)?;
             tables.push(Table { base, dev });
@@ -131,8 +140,8 @@ impl<E: Engine> Shm<E> {
         let h = fnv(name.as_bytes()) | 1;
         let t = &self.tables[Self::ki(kind)];
         let bump = &*(t.base as *const AtomicU64);
-        let mut i = (h as usize) % CAP;
-        for _ in 0..CAP {
+        let mut i = (h as usize) % cap();
+        for _ in 0..cap() {
             let e = self.entry(kind, i);
             let key = &*(e as *const AtomicU64);
             let off = &*(e.add(8) as *const AtomicU64);
@@ -149,7 +158,7 @@ impl<E: Engine> Shm<E> {
                 };
                 off.store(start, Release);
                 len.store(bytes as u64, Release);
-            } else if key.load(Acquire) != h { i = (i + 1) % CAP; continue; }
+            } else if key.load(Acquire) != h { i = (i + 1) % cap(); continue; }
             // the claimer sets the length right after its claim: wait for it (host words, nanoseconds)
             let mut spins = 0u64;
             while len.load(Acquire) == 0 { std::hint::spin_loop(); spins += 1; if spins > 4_000_000_000 { return Err(format!("peer shm {name}: entry never completed")); } }
@@ -162,7 +171,7 @@ impl<E: Engine> Shm<E> {
             let rdev = t.dev + (HEAD + i * ENTRY + 24) as u64;
             return Ok((ch.add((o % CHUNK) as usize), cd + o % CHUNK, r, rdev));
         }
-        Err(format!("peer shm: table {} full ({CAP} entries)", kind as char))
+        Err(format!("peer shm: table {} full ({} entries; AD_PEER_SHM_CAP sets it)", kind as char, cap()))
     }
     fn name(&self, kind: u8, key: &str) -> String {
         let e = self.pass.lock().unwrap()[Self::ki(kind)];
@@ -210,7 +219,7 @@ impl<E: Engine> Shm<E> {
         self.wait_files(&format!("{tag}.A"))?;
         if self.rank == 0 {
             let t = &self.tables[Self::ki(kind)];
-            std::ptr::write_bytes(t.base, 0, HEAD + CAP * ENTRY);
+            std::ptr::write_bytes(t.base, 0, HEAD + cap() * ENTRY);
             std::sync::atomic::fence(SeqCst);
         }
         self.wait_files(&format!("{tag}.B"))?;
@@ -320,7 +329,7 @@ impl BarrierOnly {
         if self.rank == 0 {
             // the table may exist (another rank started): clear it as the started path does
             let p = self.dir.join(format!("shm.{}.table", kind as char));
-            if p.exists() { unsafe { let b = map_file(&p, (HEAD + CAP * ENTRY) as u64)?; std::ptr::write_bytes(b, 0, HEAD + CAP * ENTRY); } }
+            if p.exists() { unsafe { let b = map_file(&p, (HEAD + cap() * ENTRY) as u64)?; std::ptr::write_bytes(b, 0, HEAD + cap() * ENTRY); } }
         }
         self.wait(&format!("{tag}.B"))?;
         if let Some(s) = started() { s.pass.lock().unwrap()[Shm::<Card>::ki(kind)] = e; }

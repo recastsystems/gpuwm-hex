@@ -676,6 +676,7 @@ def chemistry_converter_bridge(root: Path) -> Path | None:
     name = "rw_mpas_convert" + _EXE
     patch = hashlib.sha256((root / "engine-patches/chemistry-products.patch").read_bytes()).hexdigest()
     recipe = hashlib.sha256((root / "tools/build_chemistry_converter.sh").read_bytes()).hexdigest()
+    hail = hashlib.sha256((root / "engine-patches/rw-mpas-hailcast-field.patch").read_bytes()).hexdigest()
     prebuilt = os.environ.get("GPUWM_HEX_ENGINE_BRIDGES")
     if prebuilt and (Path(prebuilt) / name).is_file():
         directory = Path(prebuilt)
@@ -684,6 +685,7 @@ def chemistry_converter_bridge(root: Path) -> Path | None:
         record = provenance.get("bridges", {}).get(name) or provenance.get("chemistry_converter", {})
         binary = directory / name
         if (record.get("patch_sha256") != patch or record.get("recipe_sha256") != recipe
+                or record.get("hailcast_patch_sha256") != hail
                 or record.get("sha256") != hashlib.sha256(binary.read_bytes()).hexdigest()):
             raise SystemExit("rw_mpas_convert prebuilt lacks current chemistry product provenance")
         return binary

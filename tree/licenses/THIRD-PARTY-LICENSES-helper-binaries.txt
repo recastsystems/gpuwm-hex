@@ -30,7 +30,7 @@ WHAT IT COVERS
 --------------
   gpuwm commit             5bf7ed8ca24e0b759c43f987c77fb70496405cf9
   tools/rustwx/Cargo.lock  sha256 85f14d85e51df49cb1473ea6125567db5ecd109d0fbf7609b30bd8a7206dc1ae
-  engine-bridges.json      sha256 37770c6d9eae5e625130fee82b00bca9dd7a943ffa422075f974fa1f7a22babe
+  engine-bridges.json      sha256 91b77fd58844ea6d6109c6af27d15dd8dcd1b6712f30efd7407fc2c469a3ff0d
   source notice            licenses/THIRD-PARTY-LICENSES-bridge-binaries.txt at that commit,
                            sha256 c5534e416fd7e9fc1b9244ce15767776e019cfcfc30ca831437251d14120f934
 

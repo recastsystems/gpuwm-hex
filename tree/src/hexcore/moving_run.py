@@ -1502,8 +1502,11 @@ class Controller:
         if not self.resident_ready():
             return   # the run adopts or drops a pre-launched process at the move, as before
         if pre is not None:
+            # The record named another member: it goes, and the move's own target is named in its place.  THE
+            # BREAKAGE (hex 0.6.1; fork jacobbieker/woof PR 497, Milton 2024 at 96 km: 2 of 6 moves): a return here
+            # left no record, so the process sealed its carrier to the file and exited, and the move started a cold
+            # process.
             self.drop_prelaunch(f'the move goes to {target}')
-            return
         source = self.state['current']
         proc, pseg, pcontrol, record = self.launch(
             'move', member_name=target, begin=seconds, checkpoint_in=str(Path(control).parent / 'boundary.pkl'),

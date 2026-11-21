@@ -215,3 +215,28 @@ def test_the_init_selection_carries_the_picked_scheme(scheme, species, nonzero):
     if nonzero:
         from gpuwm.core.microphysics_transition import NSSL2_BACKGROUND_CCN_PER_KG
         assert chosen["scalar_fill"]["qnn"] == float(NSSL2_BACKGROUND_CCN_PER_KG)
+
+
+def test_door_step_keeps_a_suite_deck_step_only_under_the_mesh_limit():
+    """hrrrv5 runs NOAA's 20 s deck near 3 km; a mesh whose own limit is under 20 s runs its admitted step."""
+    from hexcore.physics_default import door_step, forecast_step, suite_deck_step
+
+    hrrrv5 = {"suite": "hrrrv5"}
+    assert suite_deck_step(hrrrv5, 3000.0)["dt_seconds"] == 20.0
+    assert suite_deck_step(hrrrv5, 2000.0) is None          # no deck row within a factor 1.2 of 2 km
+    assert suite_deck_step({"suite": "convection_permitting"}, 3000.0) is None
+    assert suite_deck_step({"namelist": "namelist.atmosphere"}, 3000.0) is None
+    # No limit given: the door behaves as before.
+    assert door_step(hrrrv5, 18.0, 3000.0) == []
+    # The deck step fits the mesh (limit 20.237 s, the 96-to-3 km globe): NOAA's deck stays.
+    assert door_step(hrrrv5, 18.0, 3000.0, 20.237) == []
+    step = forecast_step(hrrrv5, 18.0, 3000.0, 20.237)
+    assert step["dt_seconds"] == 20.0 and abs(step["margin"] - 1.01185) < 1e-4
+    # The deck step is over the mesh's limit (19.6 s, a 24 km-background globe): the admitted step is passed.
+    assert door_step(hrrrv5, 18.0, 3000.0, 19.6) == ["--dt", "18.0"]
+    step = forecast_step(hrrrv5, 18.0, 3000.0, 19.6)
+    assert step["dt_seconds"] == 18.0 and "over this mesh's limit" in step["source"]
+    # A suite with no deck is untouched by the limit.
+    assert door_step({"suite": "convection_permitting"}, 18.0, 3000.0, 19.6) == []
+    assert forecast_step({"suite": "convection_permitting"}, 18.0, 3000.0, 19.6)["dt_seconds"] == 18.0
+    assert forecast_step({"suite": "convection_permitting"}, 12.0, 3000.0, 12.45)["dt_seconds"] == 12.0

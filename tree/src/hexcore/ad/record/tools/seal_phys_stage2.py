@@ -243,18 +243,31 @@ def block_key(name):
     return (0, int(tail), '') if head == 'step' and tail.isdigit() else (1, 0, name)
 
 
-def resident_output_initial(site, hexcore_src):
-    """True when SITE ('rel/path.py:line') is the resident output diagnostics' first-use buffer upload."""
+def resident_output_initial(site, hexcore_src, rule=RESIDENT_OUTPUT_INITIAL):
+    """True when SITE ('rel/path.py:line') is the upload RULE names (file, then source texts; default the resident
+    output diagnostics' first-use buffer upload)."""
     if not site or not hexcore_src:
         return False
     rel, _, line = site.rpartition(':')
-    if rel != RESIDENT_OUTPUT_INITIAL[0] or not line.isdigit():
+    if rel != rule[0] or not line.isdigit():
         return False
     try:
         text = (Path(hexcore_src) / rel).read_text().splitlines()[int(line) - 1]
     except (OSError, IndexError):
         return False
-    return any(t in text for t in RESIDENT_OUTPUT_INITIAL[1:])
+    return any(t in text for t in rule[1:])
+
+
+#: A limited-area forecast's boundary refresh: when the window reaches the next boundary-file time the regional
+#: forecast reads that file's values on the host and uploads them onto the boundary support
+#: (cuda_regional_forecast_v841.py _derive_on_support: upload(), cp.asarray(picked)). Those bytes are the file's, not the
+#: state's: an immutable input of the trajectory at the step it is read, admitted (as the resident output's first
+#: words are) when its sha is on the run's retention list, i.e. equal in both recordings (gen_immutable.py names it in
+#: the retention round). Matched by file and source text, not by line number. THE BREAKAGE THIS PREVENTS: a 30 km
+#: 1 h window from 12Z (25 steps of 150 s) refused at seal with 17 'upload_needs_live_rule' words at step 25, all at
+#: cuda_regional_forecast_v841.py:1255, the 13Z boundary file (a 30 km recording, 2026-11-18), so no
+#: limited-area window could cross a boundary-file hour; the example windows (15 and 16 min) never reach one.
+LBC_FILE_VALUES = ('cuda_regional_forecast_v841.py', 'return cp.ascontiguousarray(cp.asarray(picked).T)')
 
 
 RESET_ZERO_SITES = {('mpasphys/device_pools_v842.py:106', 'atm_reset_diagnostics')}
@@ -843,6 +856,29 @@ def main():
         'table = cp.asarray(np.array([array.data.ptr for array in table_arrays], dtype=np.uint64))',
         'rrfs_stage_sources_rate_table')}
 
+    # The same-host transport's tables are found by source text too, not only by line number. THE BREAKAGE THIS
+    # PREVENTS: the rules named lines 632 and 576 of partition_samehost_transport_v841.py; the file moved (the fused
+    # descriptor is built at 606 and 644, the (shape, stride) pairs at 588 on this tree), so a 4-rank recording of the
+    # 103,950-column zoom globe refused with 4,372 upload_needs_live_rule, 1,872 of them "pointer table site without a
+    # rule: partition_samehost_transport_v841.py:644" (18 Nov 2026).
+    MIXED_TABLE_TEXT_RULES = {'partition_samehost_transport_v841.py': (
+        (('asarray(', 'host_descriptor'), (9, (0, 1, 2, 7))),
+        (('asarray(', 'zip(array.shape, array.strides)'), (2, ())))}
+
+    def mixed_rule(site):
+        named = MIXED_TABLE_RULES.get(site)
+        if named is not None or not site or not a.hexcore_src:
+            return named
+        rel, _, line = site.rpartition(':')
+        rules = MIXED_TABLE_TEXT_RULES.get(rel)
+        if not rules or not line.isdigit():
+            return None
+        try:
+            found = (Path(a.hexcore_src) / rel).read_text().splitlines()[int(line) - 1]
+        except (OSError, IndexError):
+            return None
+        return next((shape for words, shape in rules if all(w in found for w in words)), None)
+
     def table_rule(site):
         named = TABLE_RULES.get(site)
         if named is not None or not site or not a.hexcore_src:
@@ -943,7 +979,7 @@ def main():
         site = site_at(clock)
         if site == SCRUB_SITE:
             return scrub_descriptor_upload(op, clock, raw)
-        mixed = MIXED_TABLE_RULES.get(site)
+        mixed = mixed_rule(site)
         if mixed is not None:
             # multirank (L20): a same-host table that mixes device addresses (at fixed word positions of fixed-width
             # rows) with integer words (counts, strides, item sizes, flags). The address words become relocation patches
@@ -1239,6 +1275,12 @@ def main():
                                 'pointers': op.get('pointers', []), 'origin': 'immutable_input',
                                 'proof': {'rule': 'resident_output_initial_words', 'site': site_at(clock)}})
                     receipt['resident_output_initial_upload'] += 1
+                elif (op.get('data') and op['data'].get('sha256') in immutable_shas and not op.get('pointers')
+                        and resident_output_initial(site_at(clock), a.hexcore_src, LBC_FILE_VALUES)):
+                    out.append({'kind': 'upload', 'stream': 0, 'destination': op['destination'], 'data': op['data'],
+                                'pointers': [], 'origin': 'immutable_input',
+                                'proof': {'rule': 'lateral_boundary_file_values', 'site': site_at(clock)}})
+                    receipt['lateral_boundary_file_upload'] += 1
                 elif op.get('data'):
                     # Retained only because it is small (BINDER_RETAIN_SMALL_UPLOADS) and no pointer-table site rule
                     # matched. P1 (ad/phys): a retained payload is still a copy plan, RUC or TEMPO table upload when

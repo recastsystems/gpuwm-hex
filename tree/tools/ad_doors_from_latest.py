@@ -133,13 +133,15 @@ LAM_BOUNDED = {
     # does not run (door-row check F2, 2026-11-13)
     "what": {
         "3km": ("3 km limited-area mesh of up to 200,000 cells on one card, or two with --cards A,B (the MYNN-EDMF "
-                "and TEMPO columns split over them), the fast composition of the 3 km recipe (MYNN-EDMF bundle B9, "
-                "its boundary layer held, TEMPO block reverse that keeps no tape, fp32 TEMPO tangent; kernel set "
-                "storm-h-ws; radiation and land live, NO refuse list; --local-topology 1 --mesh-constants 1). The "
-                "check it makes is the strict self dot (AD_DOT_SELF=1). Labelled approximations: FCT limiter "
-                "coefficients held; lateral-boundary driving data held (zero tangent), the relax zone itself is "
-                "differentiated; B9 holds the MYNN-EDMF boundary layer (its turbulence closure, plume and returned "
-                "height)"),
+                "and TEMPO columns split over them), the fast composition of the 3 km recipe (MYNN-EDMF bundle B9 "
+                "with the guarded boundary-layer images laid over it (the turbulence closure, plume and returned "
+                "height differentiated under the weak-shear guard; the species outputs of the four number tendencies "
+                "held), TEMPO block reverse that keeps no tape, fp32 TEMPO tangent; kernel set storm-h-ws; radiation "
+                "and land live, NO refuse list; --local-topology 1 --mesh-constants 1). The check it makes is the "
+                "strict self dot (AD_DOT_SELF=1). Labelled approximations: the FCT limiter runs live on windows up to"
+                " fct_live_max_s and holds its coefficients past that; the species outputs of the boundary layer's "
+                "four number tendencies held; lateral-boundary driving data held (zero tangent), the relax zone "
+                "itself is differentiated; --boundary-layer taped runs B9's own held boundary layer instead"),
         "3km-exact": ("3 km limited-area mesh of up to 200,000 cells on one card, or two with --cards A,B (the MYNN-EDMF "
                       "and TEMPO columns split over them), the EXACT composition of the 3 km recipe (bundle gen-A, taped "
                       "TEMPO, fp64 TEMPO tangent, kernel set storm-h-ws, radiation and land live, NO refuse list). "
@@ -423,7 +425,8 @@ def build(manifest: dict, table: dict) -> dict:
     base = _common(fast)
     old = table["rows"]["hrrrv5-any"]
     keep = {k: old[k] for k in ("suite", "levels", "default_steps", "state_copy", "holds_physics", "record_env",
-                                "record_env_why", "kset_mesh", "template_only") if k in old}
+                                "record_env_why", "kset_mesh", "template_only", "boundary_layer",
+                                "fct_live_max_s", "fct_live_max_what") if k in old}
 
     def row(what: str, common: dict, extra_args: list[str], class_keys: set[str]) -> dict:
         assets = _generic(common["assets"], generic_kset(manifest))

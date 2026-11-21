@@ -538,7 +538,7 @@ class LtsClassExecution:
 
             def _encode(self, jobs, snapshot, when, step, *extra, **options):
                 extras = extra[0] if extra else options.pop('extras', None)
-                if extras and any(stream.name in ('output', 'history') for stream, _, _ in jobs):
+                if extras and any(stream.name in ('output', 'history', 'diagnostics') for stream, _, _ in jobs):
                     # Every class deposits its own words of the extra history fields; class 0 writes them global.
                     extras = gather_extra_history(execution, (str(when), 'extra-history'), extras)
                 if execution.index != 0:

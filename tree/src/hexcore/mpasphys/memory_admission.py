@@ -188,6 +188,40 @@ def input_payload_bytes(path):
                    if value.dtype is not str)
 
 
+
+def _slice_multihost_admission(arguments, local_cells, devices):
+    """Slice global rank lists to this host's local GPUs when --hosts spans multiple hosts.
+
+    Without this slice, ``--hosts boxC:0-7,boxD:0-7`` passes 16 ranks onto card ordinals
+    ``(0..7, 0..7)`` into :func:`rank_requirements`, pricing host 0's card 0 and host 1's
+    card 0 as two co-tenant ranks on the same physical GPU.  Single-host runs return inputs
+    untouched.
+    """
+    import json
+    import os
+    from ..multihost import ENV_HOSTS, ENV_HOST_INDEX, ENV_JOIN, parse_hosts
+
+    hosts_text = getattr(arguments, "hosts", None) or os.environ.get(ENV_HOSTS)
+    if not hosts_text:
+        return local_cells, devices
+    specs = parse_hosts(hosts_text)
+    if len(specs) <= 1:
+        return local_cells, devices
+    host_index = 0
+    raw_join = os.environ.get(ENV_JOIN)
+    if raw_join:
+        host_index = int(json.loads(raw_join).get("host_index", 0))
+    elif os.environ.get(ENV_HOST_INDEX):
+        host_index = int(os.environ[ENV_HOST_INDEX])
+    if host_index < 0 or host_index >= len(specs):
+        raise ValueError(f"multihost admission host_index {host_index} out of range for {len(specs)} hosts")
+    start = sum(len(spec.cards) for spec in specs[:host_index])
+    count = len(specs[host_index].cards)
+    if len(local_cells) < start + count:
+        return local_cells, devices
+    return list(local_cells[start:start + count]), tuple(specs[host_index].cards)
+
+
 def admit(arguments):
     """The MPAS rank gate.  A single context is priced with the suite the first gate priced
     (``arguments.native_admission_suite``, set by forecast_door.admit_native_device)."""
@@ -207,6 +241,7 @@ def admit(arguments):
         # Keep the exact proven layout for the run; do not build it twice.
         arguments.samehost_layouts = options["layouts_path"]
         arguments.samehost_part = options["part_path"]
+        local_cells, devices = _slice_multihost_admission(arguments, local_cells, devices)
     else:
         local_cells = [cells]
     import cupy as cp

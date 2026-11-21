@@ -479,10 +479,12 @@ def test_a_limited_area_mesh_above_the_storm_box_takes_the_class_sized_to_the_me
     a card under 93,000 MiB refused as larger than the whole card, though the runner's out-of-core budget runs it.
     The storm box on a 96 GB card keeps its own class, words and kernel set (its answer bytes)."""
     table = d.load_table()
-    for suite_name, recipe in (("hrrrv5", "3km"), ("hrrrv5-exact", "3km-exact")):
+    # the fast suites 3 km class runs the 3 km storm rows default-route set from 0.6.2; the exact suite keeps storm-h
+    for suite_name, recipe, kset in (("hrrrv5", "3km", "storm-bs5-lean2-astra2-dynE5-sp74-ddr"),
+                                     ("hrrrv5-exact", "3km-exact", "storm-h")):
         suite = table["suites"][suite_name]
         storm = rows.window_class(suite, 38278, "limited-area")
-        assert storm["from_recipe"] == recipe and storm["assets"]["kernels"] == "latest/kset/storm-h/kernels.json"
+        assert storm["from_recipe"] == recipe and storm["assets"]["kernels"] == f"latest/kset/{kset}/kernels.json"
         assert storm is rows.window_class(suite, 38278, "limited-area", card_mib=97887, levels=55)
         assert "card_words" not in storm and "--vram-budget-gb" not in storm["window_args"]
         big = rows.window_class(suite, 135318, "limited-area", card_mib=97887, levels=55)
@@ -529,7 +531,7 @@ def test_a_limited_area_mesh_above_the_storm_box_takes_the_class_sized_to_the_me
     _mesh(tmp_path, "r300")
     _, on96 = rows.make_row(table, "hrrrv5", rows.find_mesh("r300"), dt=15.0, card_mib=97887)
     assert on96["generated"]["window_class"]["from_recipe"] == "3km" and on96["need_free_mib"] == 93000
-    assert "card_words" not in on96 and on96["assets"]["kernels"].endswith("storm-h/kernels.json")
+    assert "card_words" not in on96 and on96["assets"]["kernels"].endswith("storm-bs5-lean2-astra2-dynE5-sp74-ddr/kernels.json")
     _, on32 = rows.make_row(table, "hrrrv5", rows.find_mesh("r300"), dt=15.0, card_mib=32607)
     assert on32["generated"]["window_class"]["from_recipe"] == "3km-bounded"
     assert on32["window_args"][on32["window_args"].index("--scratch-gib") + 1] == "5"   # 3.1 GiB, + 1
@@ -588,3 +590,21 @@ def test_the_bounded_class_label_names_its_own_window_and_kernel_set():
             assert "storm-h" not in text.replace("storm-h-ws", ""), (recipe, key)
             assert "ONE card" not in text, (recipe, key)
         assert "kernel set storm-h-ws" in cls[0]["what"] and "200,000 cells" in cls[0]["what"]
+
+
+def test_a_cached_made_row_is_checked_against_its_template_not_taken_as_shipped(monkeypatch, tmp_path):
+    # the door puts the cached rows into table["rows"] before make_row; a stale made row must be made again
+    import pytest as _pytest
+    from hexcore import ad_doors as _d
+    from hexcore.ad import rows as _rows
+    table = _d.load_table()
+    name = _rows.row_name("hrrrv5", "m-stale")
+    stale = {"generated": {"template_sha256": "stale"}, "dt_s": 150.0, "cells": 10}
+    monkeypatch.setattr(_rows, "cached_rows", lambda: {name: stale})
+    table["rows"] = {name: stale, **table["rows"]}
+
+    def remade(grid, init):
+        raise RuntimeError("made again")
+    monkeypatch.setattr(_rows, "mesh_facts", remade)
+    with _pytest.raises(RuntimeError, match="made again"):
+        _rows.make_row(table, "hrrrv5", {"mesh": "m-stale", "grid": tmp_path / "g.grid.nc", "oro": None})

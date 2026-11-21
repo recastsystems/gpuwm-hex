@@ -38,7 +38,7 @@ individual gpuwm source files by SHA-256. A bare install reached an engine the
 pin refused, and the forecast door refused at launch with a digest mismatch
 that named neither the version that works nor the fact that pip chose it.
 
-gpuwm-hex 0.6.1 declares `gpuwm>=3.0.0,<3.1`, inside the 3.0 minor, so
+gpuwm-hex 0.6.2 declares `gpuwm>=3.0.0,<3.1`, inside the 3.0 minor, so
 installing it never downgrades an engine you already have. An engine inside
 that range whose radiation helper set this release has not measured is refused
 at the forecast door by name, with the version to install. The range is
@@ -128,7 +128,7 @@ Doctor exits 1 while any required item is missing, so it works as a gate in
 a script. `gpuwm-hex doctor --explain` prints the whole pasteable remedy
 block for each finding; `gpuwm-hex doctor --json` emits the same findings as
 data. Run doctor after every step below until it says `Every check passed.`
-or, on 0.6.1, names `WPS_GEOG` alone (next paragraph).
+or names `WPS_GEOG` alone (next paragraph).
 
 On 0.6.1 with gpuwm 3.0.3 a fresh install's doctor names one missing item,
 `WPS_GEOG`, the geography archive a door needs to *build* a static file.

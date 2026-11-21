@@ -118,7 +118,7 @@ def main():
     parser.add_argument('--out', type=Path, required=True)
     args = parser.parse_args()
     asset_prefix = Path(args.asset_prefix)
-    if asset_prefix.is_absolute() or '..' in asset_prefix.parts or args.max_steps < 1 or args.max_steps > 72:
+    if asset_prefix.is_absolute() or '..' in asset_prefix.parts or args.max_steps < 1:
         parser.error('invalid relative asset prefix or step count')
     census = json.loads(args.census.read_text())
     signatures, source_images = from_cache(args.source_cache) if args.source_cache else ({}, {})

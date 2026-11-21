@@ -25,6 +25,7 @@ in-process A/B of old and new slot on real hrrrv5 inputs (SPEED-2/glue.md). Arra
 from __future__ import annotations
 
 from ...native_powf import CUDA_NATIVE_POWF
+from . import closures as _closures
 from . import bl_mynnedmf_c942418 as mynn
 from . import driver_rrfs as driver
 from .glue_plan import CopyPlan
@@ -50,6 +51,7 @@ def resident_slot(provider, call, module=None):
     """The persistent slot for the resident facade route, or None (native library route, or unsupported options)."""
     from .resident_rrfs import ResidentFrameworkFacade
     if not FUSED or not isinstance(getattr(provider, 'native', None), ResidentFrameworkFacade):
+        _closures.require_resident('pbl', provider)
         return None
     module = mynn if module is None else module
     slot = getattr(provider, '_rrfs_mynnedmf_resident', None)
@@ -59,6 +61,8 @@ def resident_slot(provider, call, module=None):
         except _Unsupported:
             slot = False
         provider._rrfs_mynnedmf_resident = slot
+    if not slot:
+        _closures.require_resident('pbl', provider)
     return slot or None
 
 
@@ -338,6 +342,16 @@ class ResidentMynnEdmfSlot:
 
     # ------------------------------------------------------------------ one call
     def run(self, call):
+        closure = _closures.ACTIVE
+        if closure is None or 'pbl' not in closure.slots:
+            return self._run(call)
+        # The run's boundary-layer closure (rrfs/closures): its column-conserving redistribution added to MYNN's
+        # tendencies after they are written back.
+        result = self._run(call)
+        closure.after_pbl_step(self, call)
+        return result
+
+    def _run(self, call):
         import numpy as np
         cp = self.cp
         options = self._options(call)

@@ -3337,7 +3337,12 @@ def execute_forecast(
     # longer pins sm_120 (``required_compute``), because that pin named no
     # breakage.  The receipt records whether the card holds an anchor
     # (``architecture`` below, hexcore.cuda_backend.arch_admission).
-    capability = require_cuda(min_compute=(12, 0), cache_dir=cache_root)
+    from hexcore.cuda_backend.cupy_cache import forecast_directory
+
+    # The box's kernel image cache, not this run's scratch (GPUWM_HEX_SHARED_KERNEL_IMAGES;
+    # fork jacobbieker/woof PR 488).
+    images = forecast_directory(cache_root)
+    capability = require_cuda(min_compute=(12, 0), cache_dir=images)
     import cupy as cp
 
     # ``required_free_bytes`` is the forecast door's own admission sum,
@@ -3360,7 +3365,7 @@ def execute_forecast(
             stochastic_bytes + tc_allowance)
     else:
         memory = proof.gpu_memory_admission(cp, minimum=int(required_free_bytes))
-    cache = KernelCache(capability=capability, cache_dir=cache_root)
+    cache = KernelCache(capability=capability, cache_dir=images)
     # RRFS v2 stage H6: a resumed run (plain restart or DA-cycling restart).
     stochastic_restart = None
     start_step = 0
@@ -3538,7 +3543,11 @@ def execute_forecast(
     from hexcore.cuda_subcycle_graphs import graph_policy, graphs_enabled
     graph_requested = graphs_enabled(int(N_CELLS))
     graph_controller = None
-    if graph_requested and lts_attachment is None and fullstep_shadow is None:
+    # Local time stepping's rate classes are launches of the same subcycle, chosen on the host by the
+    # sub-step and stage alone, so they capture and replay with it (fork jacobbieker/woof PR 473;
+    # GPUWM_HEX_CUDA_GRAPHS_LTS=0: eager, the path through hex 0.6.1).
+    lts_graphs = lts_attachment is None or os.environ.get("GPUWM_HEX_CUDA_GRAPHS_LTS", "1") != "0"
+    if graph_requested and lts_graphs and fullstep_shadow is None:
         from hexcore.cuda_subcycle_graphs import attach_subcycle_graphs
 
         graph_controller = attach_subcycle_graphs(stack["driver"])
@@ -3592,6 +3601,10 @@ def execute_forecast(
         balance_view = _Namespace(classes=[_Namespace(driver=stack["driver"], n_owned_cells=int(N_CELLS),
                                                       tables=_Namespace(rate=1))])
         balance.sample(balance_view, float(start_step) * float(DT_SECONDS), cp)
+    # The external-tendency table (hexcore.ad.external_tendency), when one is given, is uploaded here, before the
+    # step loop, so a recording holds it in boundary 0. Unset: nothing happens.
+    from hexcore.ad import external_tendency as _external_tendency
+    _external_tendency.preload(cp)
     static = proof._static_output_fields(host)
     tc_session = None
     if tc_climate is not None:
@@ -4328,7 +4341,8 @@ def execute_forecast(
             "fully_replayed_committed_steps": graph_full_steps,
             "partly_replayed_committed_steps": graph_partial_steps,
             "subcycles": None if graph_controller is None else graph_controller.receipt(),
-            "skip_reason": "local_timestep_controller" if lts_attachment is not None else None,
+            "skip_reason": ("local_timestep_controller" if lts_attachment is not None and not lts_graphs
+                            else None),
         }} if graph_requested else {}),
         "cuda_graphs_policy": graph_policy(int(N_CELLS)),
         "architecture": architecture_status(capability.compute).as_dict(),
@@ -4965,7 +4979,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
             "the physics state it resumes against would not exist"
         )
     if args.restart_from is not None and not Path(args.restart_from).is_file():
-        parser.error(f"--restart-from {args.restart_from} is not a file")
+        # A joined --hosts host on its own disk holds only its own copy (.multihost/host<N>/, checkpoint_v842).
+        from ..mpasphys.checkpoint_shards_v842 import joined_carrier
+        if not Path(joined_carrier(str(Path(args.restart_from).expanduser().absolute()))).is_file():
+            parser.error(f"--restart-from {args.restart_from} is not a file")
     if args.da_analysis is not None and not Path(args.da_analysis).is_file():
         parser.error(f"--da-analysis {args.da_analysis} is not a file")
     if args.jedi_soil_levels not in (4, 9):
@@ -5274,6 +5291,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         "static": Path(args.static).expanduser().absolute(),
         "init": Path(args.init).expanduser().absolute(),
     }
+    # The learned correction (hexcore.ad.learned_correction) is installed on the external-tendency slot only when
+    # GPUWM_HEX_LEARNED_CORRECTION names a checkpoint. Unset (the default): nothing is imported or installed.
+    if os.environ.get("GPUWM_HEX_LEARNED_CORRECTION"):
+        from hexcore.ad import learned_correction as _learned_correction
+        _learned_correction.install_from_env(paths["init"], getattr(args, "dt", None))
     arwen_checkout = proof.resolve_arwen_checkout(args.arwen_checkout)
     # Resolved first: a selection behind the column-suite seam that no
     # profile row names registers its synthesized backend row here.

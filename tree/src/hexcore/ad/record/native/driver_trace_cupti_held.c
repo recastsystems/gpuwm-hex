@@ -45,7 +45,9 @@ static _Thread_local unsigned binder_wrapped_depth;
 static _Thread_local unsigned binder_api_hold;
 static gzFile trace_stream;
 static pid_t trace_pid;
-typedef struct { device_ptr base; size_t bytes; int live; } LiveAllocation;
+/* keep: a held write landed in this allocation since the last boundary, so the lean boundary store keeps its bytes
+   at that boundary (p1fix split_words reads the forward's step-end bytes of exactly these allocations). */
+typedef struct { device_ptr base; size_t bytes; int live; int keep; } LiveAllocation;
 static LiveAllocation live_allocations[16384];
 static size_t live_count;
 static void trace_basic(const char *, uint64_t, uint64_t, size_t, uint64_t, uint64_t, int);
@@ -583,6 +585,8 @@ static int held_write_range(const char *root, const char *encoded, unsigned step
     if (gzclose(out)!=Z_OK) { unlink(path); return -53; }
     if (link(path,final) && errno!=EEXIST) { unlink(path); return -54; }
     unlink(path);
+    for (size_t i=0;i<live_count;i++)   /* the lean boundary store keeps this allocation's step-end bytes */
+        if (live_allocations[i].live && live_allocations[i].base==base) { live_allocations[i].keep=1; break; }
     struct timespec when;
     (void)clock_gettime(CLOCK_MONOTONIC,&when);
     char line[1024];
@@ -800,7 +804,10 @@ void _exit(int status) {
     if (real) real(status);
     for (;;) syscall(SYS_exit_group,status);
 }
-typedef struct { int rc; size_t bytes; char hex[65]; } SnapshotResult;
+/* masked: 1 when masked_hex holds the SHA-256 of the allocation with its residue ranges zeroed, -1 when its ranges
+   overlap or run past the allocation (no masked digest is written; p1fix refuses those itself), 0 when it has none. */
+typedef struct { int rc; size_t bytes; char hex[65]; int masked; char masked_hex[65]; } SnapshotResult;
+typedef struct { size_t allocation; size_t offset; size_t bytes; } MaskRange;
 typedef struct {
     unsigned worker, workers;
     void *context;
@@ -810,6 +817,9 @@ typedef struct {
     SnapshotResult *results;
     int rc;
     size_t *next;   /* recorder: shared work index (largest allocations do not pin one worker's stride) */
+    int lean;                    /* lean boundary store: bytes are kept only for allocations marked keep */
+    const MaskRange *masks;      /* residue ranges, sorted by (allocation index, offset) */
+    const size_t *mask_first, *mask_count;   /* per live-allocation index: its slice of masks */
 } SnapshotWorker;
 
 /* recorder: BINDER_BOUNDARY_WORKERS host workers (default 4, the earlier constant; 1..64). THE BREAKAGE THIS
@@ -854,6 +864,30 @@ static void *snapshot_worker(void *raw) {
         for (size_t j=0;j<sizeof digest;j++)
             (void)snprintf(result->hex+2*j,3,"%02x",digest[j]);
         result->bytes=done;
+        /* The residue digest (p1fix masked_payload's rule): the same bytes with each residue range read as zeros. */
+        size_t mask_n=worker->mask_count ? worker->mask_count[i] : 0;
+        if (!result->rc && mask_n) {
+            static const unsigned char zeros[65536];
+            const MaskRange *m=worker->masks+worker->mask_first[i];
+            SHA256_CTX masked;
+            SHA256_Init(&masked);
+            size_t at=0;
+            result->masked=1;
+            for (size_t k=0;k<mask_n;k++) {
+                if (m[k].offset<at || m[k].offset>done || m[k].bytes>done-m[k].offset) { result->masked=-1; break; }
+                SHA256_Update(&masked,bytes+at,m[k].offset-at);
+                for (size_t z=0;z<m[k].bytes;z+=sizeof zeros)
+                    SHA256_Update(&masked,zeros,m[k].bytes-z < sizeof zeros ? m[k].bytes-z : sizeof zeros);
+                at=m[k].offset+m[k].bytes;
+            }
+            if (result->masked==1) {
+                SHA256_Update(&masked,bytes+at,done-at);
+                SHA256_Final(digest,&masked);
+                for (size_t j=0;j<sizeof digest;j++)
+                    (void)snprintf(result->masked_hex+2*j,3,"%02x",digest[j]);
+            }
+        }
+        if (worker->lean && !allocation->keep) { free(bytes); continue; }   /* hashed, not kept */
         char path[1024],final[1024];
         (void)snprintf(final,sizeof final,"%s/payloads/%s.gz",worker->root,result->hex);
         if (!result->rc && compress_async_on() && access(final,F_OK)!=0 &&
@@ -968,7 +1002,83 @@ static int binder_digest_live(unsigned completed_step, void *driver, void *(*res
 // boundary state existed only as hashes, so a replay word that differed could not be located, address tables
 // could not be compared in one address space, and no allocation could be compared in part. It also replaces the
 // one-thread-per-allocation device digest (about 170 s of each traced step) with 4 host workers.
-static int binder_payload_live(unsigned completed_step, void *driver, void *(*resolve)(void *,const char *)) {
+/* lean store: the residue rows (device pointer, bytes) the observer names for the NEXT boundary: TEMPO's scheduling
+ * words and per-warp scratch (record_observer.py tempo_rows, the same rows its tempo-sched/step-N.json lists). Each
+ * call replaces the set; a boundary uses it and clears it. With them the boundary writes, for every allocation that
+ * holds a row, a BoundaryMaskedDigest line: the SHA-256 of the allocation's bytes with those ranges read as zeros,
+ * which is what p1fix_package.py's masked_payload computed from the kept boundary payload.
+ * THE BREAKAGE THIS PREVENTS: p1fix needed the forward's whole step-end bytes of every TEMPO allocation at every step
+ * (0.70 of the 1.11 GB a step a 12 km recording kept; the rest was kept for no reader at all), so the boundary store
+ * kept every changed allocation whole at every step, in both recordings: 1.7 GB a step at 11,688 3 km columns, 349 GB
+ * for 73 steps of the 103,950-column zoom globe, and no recording longer than minutes fit a box's disk. */
+typedef struct { device_ptr pointer; size_t bytes; } ResidueRow;
+static ResidueRow *residue_rows;
+static size_t residue_count;
+int binder_residue_rows(const unsigned long long *pointers, const unsigned long long *bytes, unsigned n) {
+    pthread_mutex_lock(&trace_lock);
+    ResidueRow *rows=n ? malloc(n*sizeof *rows) : NULL;
+    int rc=0;
+    if (n && !rows) rc=-1;
+    else {
+        for (unsigned k=0;k<n;k++) rows[k]=(ResidueRow){(device_ptr)pointers[k],(size_t)bytes[k]};
+        free(residue_rows);
+        residue_rows=rows;
+        residue_count=n;
+    }
+    pthread_mutex_unlock(&trace_lock);
+    return rc;
+}
+
+static int mask_order(const void *x, const void *y) {
+    const MaskRange *a=x, *b=y;
+    if (a->allocation!=b->allocation) return a->allocation<b->allocation ? -1 : 1;
+    return a->offset<b->offset ? -1 : a->offset>b->offset;
+}
+
+/* The residue rows placed in the live allocations, p1fix's way (locate: the live allocation with the highest base at
+   or below the pointer, the pointer at most its end). Rows in no live allocation are left out (p1fix refuses them). */
+static MaskRange *residue_masks(size_t *first, size_t *count) {
+    MaskRange *masks=residue_count ? malloc(residue_count*sizeof *masks) : NULL;
+    size_t n=0;
+    if (!masks) return NULL;
+    for (size_t r=0;r<residue_count;r++) {
+        size_t best=(size_t)-1;
+        for (size_t i=0;i<live_count;i++) {
+            LiveAllocation *a=&live_allocations[i];
+            if (a->live && a->base<=residue_rows[r].pointer && (best==(size_t)-1 || a->base>live_allocations[best].base))
+                best=i;
+        }
+        if (best==(size_t)-1 || residue_rows[r].pointer>live_allocations[best].base+live_allocations[best].bytes) continue;
+        masks[n++]=(MaskRange){best,(size_t)(residue_rows[r].pointer-live_allocations[best].base),residue_rows[r].bytes};
+    }
+    qsort(masks,n,sizeof *masks,mask_order);
+    for (size_t k=0;k<n;k++) {
+        if (!count[masks[k].allocation]) first[masks[k].allocation]=k;
+        count[masks[k].allocation]++;
+    }
+    return masks;
+}
+
+static void write_masked_line(unsigned completed_step, const LiveAllocation *a, const SnapshotResult *result,
+                              const MaskRange *m, size_t n) {
+    size_t capacity=640+n*48, used=0;
+    char *line=malloc(capacity);
+    if (!line) return;
+    int ok=append(line,capacity,&used,"{\"sequence\":%llu,\"type\":\"BoundaryMaskedDigest\",\"step\":%u,\"base\":%llu,"
+                  "\"bytes\":%zu,\"sha256\":\"%s\",\"masked_sha256\":\"%s\",\"ranges\":[",
+                  (unsigned long long)++trace_sequence,completed_step,(unsigned long long)a->base,a->bytes,
+                  result->hex,result->masked_hex);
+    for (size_t k=0;ok && k<n;k++) ok=append(line,capacity,&used,"%s[%zu,%zu]",k ? "," : "",m[k].offset,m[k].bytes);
+    if (ok) ok=append(line,capacity,&used,"],\"complete\":false}\n");
+    if (ok) write_line(line,used);
+    free(line);
+}
+
+/* lean (BINDER_BOUNDARY_PAYLOADS=digest, the recorder's default): every live allocation is copied and hashed on the
+   host exactly as with =1 (the same BoundaryAllocationDigest lines, so the same reference hashes), the residue digests
+   are written, and bytes are kept only for allocations a held write touched in the step. =1 keeps every changed
+   allocation whole too (the store before the lean store, kept for proofs and the payload readers it fed). */
+static int binder_payload_live(unsigned completed_step, void *driver, void *(*resolve)(void *,const char *), int lean) {
     const char *root=getenv("BINDER_CAPTURE_DIR");
     snapshot_sync_fn sync=(snapshot_sync_fn)resolve(driver,"cuCtxSynchronize");
     snapshot_copy_fn copy=(snapshot_copy_fn)resolve(driver,"cuMemcpyDtoH_v2");
@@ -982,13 +1092,18 @@ static int binder_payload_live(unsigned completed_step, void *driver, void *(*re
     if (!rc && !context) rc=-62;
     SnapshotResult *results=rc ? NULL : calloc(live_count ? live_count : 1,sizeof *results);
     if (!rc && !results) rc=-63;
+    size_t *mask_first=rc ? NULL : calloc(live_count ? live_count : 1,sizeof *mask_first);
+    size_t *mask_count=rc ? NULL : calloc(live_count ? live_count : 1,sizeof *mask_count);
+    if (!rc && (!mask_first || !mask_count)) rc=-67;
+    MaskRange *masks=rc ? NULL : residue_masks(mask_first,mask_count);
+    if (!rc && residue_count && !masks) rc=-68;
     const unsigned WORKERS=snapshot_worker_count();
     SnapshotWorker workers[64];
     pthread_t threads[64];
     size_t next_index=0;
     unsigned started=0;
     for (unsigned i=0;!rc && i<WORKERS;i++) {
-        workers[i]=(SnapshotWorker){i,WORKERS,context,set_context,copy,root,results,0,&next_index};
+        workers[i]=(SnapshotWorker){i,WORKERS,context,set_context,copy,root,results,0,&next_index,lean,masks,mask_first,mask_count};
         if (pthread_create(&threads[i],NULL,snapshot_worker,&workers[i])) rc=-64;
         else started++;
     }
@@ -1007,6 +1122,14 @@ static int binder_payload_live(unsigned completed_step, void *driver, void *(*re
             (unsigned long long)++trace_sequence,completed_step,(unsigned long long)a->base,a->bytes,result->hex);
         if (n>0 && (size_t)n<sizeof line) write_line(line,(size_t)n);
     }
+    if (results) for (size_t i=0;i<live_count;i++)
+        if (live_allocations[i].live && results[i].masked==1)
+            write_masked_line(completed_step,&live_allocations[i],&results[i],masks+mask_first[i],mask_count[i]);
+    for (size_t i=0;i<live_count;i++) live_allocations[i].keep=0;
+    free(residue_rows);
+    residue_rows=NULL;
+    residue_count=0;
+    free(masks); free(mask_first); free(mask_count);
     free(results);
     return rc;
 }
@@ -1019,12 +1142,16 @@ int binder_mark_step(unsigned step) {
     binder_internal=1;
     pthread_mutex_lock(&trace_lock);
     int rc=0;
-    if (step>1 && step<=73) {
+    /* Every boundary is digested. THE BREAKAGE THIS PREVENTS: boundaries after step 73 were not digested at all, so
+       stage 3 refused every plan longer than 72 steps ("no boundary state recorded for steps 73 to ..."): a 6 h
+       30 km window (145 steps), a 2 h 6 km window, any 3 km window past 18 min at 15 s. */
+    if (step>1) {
         resolve_fn resolve=(resolve_fn)dlvsym(RTLD_NEXT,"dlsym","GLIBC_2.2.5");
         void *driver=dlopen("libcuda.so.1",RTLD_NOW|RTLD_LOCAL);
         const char *payloads=getenv("BINDER_BOUNDARY_PAYLOADS");
-        if (payloads && !strcmp(payloads,"1"))
-            rc=resolve && driver ? binder_payload_live(step-1,driver,resolve) : -30;
+        int full=payloads && !strcmp(payloads,"1"), lean=payloads && !strcmp(payloads,"digest");
+        if (full || lean)
+            rc=resolve && driver ? binder_payload_live(step-1,driver,resolve,lean) : -30;
         else
             rc=resolve && driver ? binder_digest_live(step-1,driver,resolve) : -30;
         if (rc) trace_basic("BoundaryDigestError",step-1,0,0,0,0,rc);
@@ -1075,7 +1202,9 @@ int binder_mark_step(unsigned step) {
         }
         free(results);
     }
-    if (!rc) capture_step=step<=72 ? (int)step : 0;
+    /* Every step's uploads are captured. A cap of 72 steps (the 24 h, 1200 s recording that was the longest made)
+       stopped capturing after step 72, so a longer recording could not seal; no table here is sized by steps. */
+    if (!rc) capture_step=(int)step;
     trace_basic("Boundary",step,0,0,0,0,rc);
     if (trace_stream && trace_pid==getpid() && gzflush(trace_stream,Z_SYNC_FLUSH)!=Z_OK) rc=-7;
     pthread_mutex_unlock(&trace_lock);

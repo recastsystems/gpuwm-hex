@@ -1,7 +1,7 @@
 # gpuwm-hex
 
 MPAS-Atmosphere v8.4.2 and NOAA's hrrrv5 (RRFS-MPAS) configuration on NVIDIA GPUs, with the tangent-linear and
-adjoint of the exact-mode hrrrv5 forecast. gpuwm-hex 0.6.1 ports the whole model to
+adjoint of the exact-mode hrrrv5 forecast. gpuwm-hex 0.6.2 ports the whole model to
 CUDA: the dynamical core, both MPAS physics suites and their scheme options,
 initialization and static fields, the incremental analysis update, limited-area
 runs, streams, restart and diagnostics (the scheme list and what is not yet in
@@ -30,7 +30,7 @@ download, about 31 GiB unpacked). For the derivative commands install
 
 ---
 
-## What 0.6.1 claims, and how far
+## What 0.6.2 claims, and how far
 
 Each line is measured, and each carries its scope. Nothing outside the scope
 is claimed. [`tree/README.md`](tree/README.md) gives the detail.
@@ -102,10 +102,13 @@ bias that is wrong against observations is still wrong.
 - **The Rust field engines** (`rw_mpas_init`, `rw_mpas_static`,
   `rw_mpas_convert`, `rw_mpas_mesh`, `rw_mpas_lbc`, `rw_wrfbatch` and the
   others) are built in `gpuwm`'s Rust workspace and reach a user through its
-  bridge bundle (`gpuwm fetch-bridges`). Two of them, `rw_mpas_geometry` and
-  `rw_mpas_stream`, ship in the gpuwm-hex wheel instead, pinned by SHA-256,
-  because no released gpuwm carries the versions this release needs. Mesh
-  generation stays in `gpuwm`.
+  bridge bundle (`gpuwm fetch-bridges`). Several of them, among them
+  `rw_mpas_geometry`, `rw_mpas_stream` and the mesh generator `rw_mpas_mesh`,
+  ship in the gpuwm-hex wheel instead, pinned by SHA-256, because no released
+  gpuwm carries the versions this release needs (`tree/README.md`,
+  Requirements, lists them). `gpuwm-hex mesh-plan` makes a mesh with it: the
+  3 km CONUS globe, 1,959,938 cells, grid and static in 110 s on a 24-core
+  host ([mesh rows](tree/docs/mesh-rows.md)).
 - `gpuwm` does not import `hexcore`, so the two can be separate repositories.
 
 ---

@@ -167,15 +167,28 @@ def boundary_clocks(trace):
     plan, about 18 min at 100 % of one core on a recording host (2026-11-04 12:00Z) while the card waited."""
     key = str(trace)
     if key not in _BOUNDARY_CLOCKS:
-        clocks = {}
+        clocks, masked = {}, {}
         for line in _trace_lines(trace):
             if b'Boundary' not in line:
                 continue
             d = json.loads(line)
             if d.get('type') == 'Boundary':
                 clocks.setdefault(d.get('a'), d['clock_ns'])
+            elif d.get('type') == 'BoundaryMaskedDigest':
+                masked[(d['step'], d['base'], d['bytes'])] = d
         _BOUNDARY_CLOCKS[key] = clocks
+        _MASKED_DIGESTS[key] = masked
     return _BOUNDARY_CLOCKS[key]
+
+
+_MASKED_DIGESTS = {}
+
+
+def masked_digests(trace):
+    """The recorder's residue digests (BoundaryMaskedDigest: step, base, bytes, sha256, masked_sha256, ranges), read in
+    the same pass as the boundary clocks."""
+    boundary_clocks(trace)
+    return _MASKED_DIGESTS[str(trace)]
 
 
 def boundary_clock(trace, step):
@@ -499,18 +512,60 @@ def residue(plan, catalog, trace, observer, pkg, witness):
                 sys.exit(f'refusing: no reference hash for step {step} allocation {allocation}')
             ranges.sort(key=lambda r: r['offset'])
             jobs.append((step, allocation, ranges, sha, str(payloads / f'{sha}.gz')))
+    # lean store: the recorder's own residue digest (BoundaryMaskedDigest) stands for the kept payload, which a lean
+    # recording does not keep. Where both exist (a full recording) they must agree, or nothing is sealed.
+    digests = masked_digests(trace)
+    bases = {a['id']: a['recorded_base'] for a in catalog['allocations']}
+    lines = [digests.get((step, bases[allocation], by_bytes[allocation])) for step, allocation, *_ in jobs]
     # Breakage: these payload loads (gzip + sha256 of every carried TEMPO allocation at every step end) ran one
     # after another on one core; they are independent, so they run on all cores. Entries are unchanged (same order, same masked hashes).
     # peak per job: the inflated payload and its masked copy (bytearray), each one allocation long
-    peak = max((by_bytes.get(j[1], 0) for j in jobs), default=0)
-    with ProcessPoolExecutor(max_workers=pool_workers(len(jobs), 2 * peak)) as pool:
-        results = list(pool.map(masked_payload, jobs)) if jobs else []
-    for (step, allocation, ranges, _sha, _path), (error, masked) in zip(jobs, results):
+    loads = [j for j in jobs if Path(j[4]).exists()]
+    peak = max((by_bytes.get(j[1], 0) for j in loads), default=0)
+    with ProcessPoolExecutor(max_workers=pool_workers(len(loads), 2 * peak)) as pool:
+        loaded = dict(zip((j[4] for j in loads), pool.map(masked_payload, loads))) if loads else {}
+    results = [recorded_masked(job, line, loaded.get(job[4])) for job, line in zip(jobs, lines)]
+    stats = collections.Counter(how for _, _, how in results)
+    print(json.dumps({'event': 'p1fix_residue_sources', **stats}), file=sys.stderr, flush=True)
+    for (step, allocation, ranges, _sha, _path), (error, masked, _how) in zip(jobs, results):
         if error:
             sys.exit(error)
         entries.append({'allocation': allocation, 'step': step, 'ranges': ranges, 'masked_sha256': masked,
                         'reason': RESIDUE_REASON, 'witness': witness_note})
     return entries, outside
+
+
+def recorded_masked(job, line, loaded):
+    """(refusal or None, masked sha256, source) of one residue entry, from the kept payload (LOADED: masked_payload's
+    answer) and/or the recorder's BoundaryMaskedDigest LINE. The line counts only when it is of the same bytes (its
+    sha256 is the reference hash) and of the same ranges (offset and length of each, in order)."""
+    step, allocation, ranges, sha, path = job
+    for a, b in zip(ranges, ranges[1:]):
+        if a['offset'] + a['bytes'] > b['offset']:
+            return f'refusing: overlapping TEMPO arrays in allocation {allocation} at step {step}', None, 'refused'
+    if line is not None:
+        if line['sha256'] != sha:
+            return (f'refusing: the recorder digested allocation {allocation} at step {step} as {line["sha256"]}, '
+                    f'the reference says {sha}'), None, 'refused'
+        if [list(r) for r in line['ranges']] != [[r['offset'], r['bytes']] for r in ranges]:
+            return (f'refusing: the recorder masked other ranges of allocation {allocation} at step {step} '
+                    f'({line["ranges"][:4]} against {[[r["offset"], r["bytes"]] for r in ranges][:4]})'), None, 'refused'
+    if loaded is not None:
+        error, masked = loaded
+        if error or line is None:
+            return error, masked, 'payload'
+        if masked != line['masked_sha256']:
+            return (f'refusing: allocation {allocation} at step {step}: the kept payload masks to {masked}, the '
+                    f'recorder\'s residue digest is {line["masked_sha256"]}'), None, 'refused'
+        return None, masked, 'payload=recorder'
+    if line is None:
+        return (f'refusing: forward boundary bytes {path} missing and no recorder residue digest for allocation '
+                f'{allocation} at step {step} (record with a recorder that writes BoundaryMaskedDigest, or '
+                'GPUWM_HEX_RECORD_STORE=full)'), None, 'refused'
+    for r in ranges:
+        if r['offset'] + r['bytes'] > line['bytes']:
+            return f'refusing: TEMPO {r["array"]} runs past allocation {allocation}', None, 'refused'
+    return None, line['masked_sha256'], 'recorder'
 
 
 def masked_payload(job):

@@ -390,7 +390,8 @@ def class_floor_mib(table: dict, row: dict) -> int | None:
         memory = hit[0].get("memory") or memory
     if not memory:
         return None
-    return need_mib(memory, int(row["cells"]), int(row.get("levels") or 59))
+    cells = int((row.get("record_ranks") or {}).get("cells_per_rank") or row["cells"])   # one rank's card
+    return need_mib(memory, cells, int(row.get("levels") or 59))
 
 
 def with_class_floor(table: dict, row: dict) -> dict:
@@ -404,12 +405,26 @@ def with_class_floor(table: dict, row: dict) -> dict:
 
 
 # -------------------------------------------------------------------------------------------- mesh rows
+#: the halo copies a rank holds beside its own cells, as a share of them (a 4-way cut of a 362,280-cell mesh holds
+#: about 4 % more; 10 % covers 2 to 8 ranks of a compact region)
+RANK_HALO_MARGIN = 1.10
+
+
+def rank_cells(cells: int, ranks: int = 1) -> int:
+    """The cells one rank's card holds: the mesh for one rank, else cells / ranks with its halo margin."""
+    ranks = max(int(ranks or 1), 1)
+    if ranks == 1:
+        return int(cells)
+    return int(-(-int(cells) * RANK_HALO_MARGIN // ranks))
+
+
 def row_name(suite: str, mesh: str) -> str:
     return f"{suite}-{mesh}"
 
 
 def make_row(table: dict, suite_name: str, mesh: dict, *, init: Path | None = None, dt: float | None = None,
-             own_case: bool = False, door: str | None = None, card_mib: int | None = None) -> tuple[str, dict]:
+             own_case: bool = False, door: str | None = None, card_mib: int | None = None,
+             ranks: int = 1) -> tuple[str, dict]:
     """The row for (suite, mesh): from the row cache, else made from the suite's template row and the mesh files.
     ``card_mib`` is the whole memory of the card the window will run on (None: not known); it picks among the
     classes that hold the mesh (``window_class``), and a cached row made for another class is made again.
@@ -428,7 +443,12 @@ def make_row(table: dict, suite_name: str, mesh: dict, *, init: Path | None = No
     name = row_name(suite_name, mesh["mesh"])
     template = table["rows"][suite["template_row"]]
     shipped = table["rows"].get(name)
-    if shipped is not None and dt is None:
+    # a row the door made earlier comes back through the cache below (and is made again once its template or suite
+    # rule changed), never as a shipped row: the door puts the cached rows into table["rows"] before it calls this.
+    # THE BREAKAGE THIS PREVENTS: the 30 km made row cached at 22:01Z on a 96 GB card kept kernel set storm-h after the made
+    # 3 km class took storm-bs5-lean2-astra2-dynE5-sp74-ddr (about twice as fast a reverse), because the cached row
+    # answered here as a shipped one and the template check below never ran (an adjoint-test, 19 Nov 2026)
+    if shipped is not None and dt is None and not shipped.get("generated"):
         newer = bool(template.get("latest_id")) and not shipped.get("latest_id") and not shipped.get("generated")
         if not (own_case and newer and (door is None or door in template.get("doors", ()))):
             return name, shipped
@@ -445,7 +465,12 @@ def make_row(table: dict, suite_name: str, mesh: dict, *, init: Path | None = No
         raise AdRowError(f"mesh {mesh['mesh']}: no {mesh['mesh']}.ugwp_oro_data.nc beside {mesh['grid']} (the GSL "
                          "drag orography); pass --oro")
     kind = "limited-area" if facts.get("limited_area") else "global"
-    cls = window_class(suite, facts["cells"], kind, card_mib, levels)
+    # A plan split over N ranks (--record-ranks N) runs one rank a card: each card holds its own cells and their halo,
+    # so the class is the one that holds a rank (cells / N, and RANK_HALO_MARGIN for the halo copies), not the whole
+    # mesh. THE BREAKAGE THIS PREVENTS: 12 km CONUS (362,280 cells) was refused above the largest class (200,000)
+    # although four ranks of it (about 100,000 cells each) sit inside the one-card class with spill.
+    class_cells = rank_cells(facts["cells"], ranks)
+    cls = window_class(suite, class_cells, kind, card_mib, levels)
     memory = (cls or {}).get("memory") or suite["memory"]
     row = copy.deepcopy(template)
     row.pop("example_plan", None)
@@ -453,7 +478,10 @@ def make_row(table: dict, suite_name: str, mesh: dict, *, init: Path | None = No
     row["what"] = (f"{suite_name} suite on {mesh['mesh']} ({facts['cells']:,} cells, {levels} levels), dt "
                    f"{step:g} s, made on demand from row {suite['template_row']}: " + template["what"].split(":", 1)[-1].strip())
     row.update({"mesh": mesh["mesh"], "cells": facts["cells"], "edges": facts["edges"], "levels": levels,
-                "dt_s": step, "need_free_mib": need_mib(memory, facts["cells"], levels)})
+                "dt_s": step, "need_free_mib": need_mib(memory, class_cells, levels)})
+    if ranks > 1:
+        row["record_ranks"] = {"ranks": int(ranks), "cells_per_rank": class_cells,
+                               "rule": f"cells / ranks x {RANK_HALO_MARGIN:g} (halo copies)"}
     assets = dict(row["assets"])
     if cls and cls.get("whole"):   # a whole class (limited area): its recipe's files, flags, variables replace the template's
         row["window_args"] = list(cls["window_args"])
@@ -497,6 +525,9 @@ def make_row(table: dict, suite_name: str, mesh: dict, *, init: Path | None = No
         row["self_dot_dead"] = dict(cls["self_dot_dead"])
     else:
         row.pop("self_dot_dead", None)
+    if (cls or {}).get("boundary_layer_default") and row.get("boundary_layer"):
+        # the class names the route its windows run by default (the limited-area classes: guarded)
+        row["boundary_layer"] = {**row["boundary_layer"], "default": cls["boundary_layer_default"]}
     assets["grid"] = str(mesh["grid"])
     if mesh["oro"] is not None:
         assets["oro"] = str(mesh["oro"])

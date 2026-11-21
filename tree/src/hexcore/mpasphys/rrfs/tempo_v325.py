@@ -4632,7 +4632,8 @@ def warp_source(device_math_source: str, *, max_levels: int = 100, numerics: str
     if type(max_levels) is not int or max_levels < 1:
         raise ValueError("TEMPO column capacity must be a positive integer")
     return (f"#define TEMPO_NZ_MAX {max_levels}\n#define TEMPO_WARP 1\n" + _base._shared_pow_define(device_math_source)
-            + device_math_source + _column_source(numerics, corrections) + _WARP + _base._mpas_source(numerics))
+            + device_math_source + _column_source(numerics, corrections) + corrected_warp(corrections)
+            + _base._mpas_source(numerics))
 
 
 @lru_cache(maxsize=None)
@@ -4727,6 +4728,11 @@ def launch_mpas(p, *, dt_dyn, flags, bucket, diagnostics, hourly):
         if absent:raise ValueError(f"allocated native TEMPO carriers missing: {absent}")
     pa=_base._pointer_array
     f=pa([fields.get(n) for n in FA],shape=(nz,cells),device=device,optional=True)
+    if "TP6" in corrections:
+        # Correct mode TP6: pointer 20 is the solve cells' xland, which the warp driver and the phase kernels read.
+        land=_base.tp6_land(p,cells)
+        pa([land],shape=(cells,),device=device)
+        f=pa([fields.get(n) for n in FA]+[land],shape=None,device=device,optional=True)
     m=pa([p["model"].get(n) for n in MA],shape=None,device=device,optional=True)
     mesh=pa([p["mesh"][n] for n in ("zz","zgrid")],shape=None,device=device)
     d=pa([p["diagnostics"][n] for n in _base.DIAG_ARGUMENTS],shape=None,device=device)
@@ -4788,7 +4794,7 @@ def _launch_warp(module,resident,sizes,device,nz,cells,f,pbl,s,profiles,p,flags,
 # later than the tag.  Exact mode and every caller that passes no id get _COLUMN itself.
 # ---------------------------------------------------------------------------------------------------
 #: The fork correction ids this column applies as a text pair.
-CORRECTIONS = ("TP4", "TP5")
+CORRECTIONS = ("TP4", "TP5", "TP6")
 #: TP4 (NCAR/TEMPO 71588d1, #62, check_over_depletion): the riming graupel volume terms follow their mass
 #: terms through the cloud-water limiter, in upstream's order (after prg_gcw, before prh_hcw).
 _TP4_OLD = """        T.prg_gcw[k] = T.prg_gcw[k] * ratio;
@@ -4838,4 +4844,20 @@ def corrected_column(corrections=()) -> str:
             if column.count(old) != 1:
                 raise ValueError(f"TEMPO v3.2.5 correct mode: TP5 anchor found {column.count(old)} times")
             column = column.replace(old, new)
+    if "TP6" in _corrections_key(corrections):
+        # TP6 (fork_corrections): the activation takes the cell's land mask (tempo_v303.tp6_warp says how it arrives).
+        for old, new in (_TP6_CTX, _base._TP6_CALL):
+            if column.count(old) != 1:
+                raise ValueError(f"TEMPO v3.2.5 correct mode: TP6 anchor found {column.count(old)} times")
+            column = column.replace(old, new)
     return column
+
+
+#: TP6: the context's land word (0 = not given), after v3.2.5's last flag.
+_TP6_CTX = ("  int hailhyperaware_flag;  // cfgs:18 (forced off with hail-aware off, driver:85)\n};\n",
+            "  int hailhyperaware_flag;  // cfgs:18 (forced off with hail-aware off, driver:85)\n" + _base._TP6_CTX_V303[1].split("\n")[1] + "\n};\n")
+
+
+def corrected_warp(corrections=()) -> str:
+    """``_WARP`` with this column's corrections applied (TP6 sets the cell's land word); ``_WARP`` itself without."""
+    return _base.tp6_warp(_WARP) if "TP6" in _corrections_key(corrections) else _WARP

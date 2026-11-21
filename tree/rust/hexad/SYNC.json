@@ -46,7 +46,7 @@
   {
    "edited_after_sync": true,
    "public": "src/runner/capi.rs",
-   "public_sha256": "f5c0c1f51b6cc5fe685fcc28868fcad49e83a95de39c2ca1eec644b4529c1957",
+   "public_sha256": "7f72c9e35cc9e46d27600b77042cfde097783f7467f657687895057ebd7e09e0",
    "upstream": "phys/binder/runtime/src/binder/phys/capi.rs",
    "upstream_sha256": "641b7f8d4e8cf2ff1aed4ef1afe766320d5c5e717aa7f4346db1f067d399cac3"
   },
@@ -197,7 +197,7 @@
   {
    "edited_after_sync": true,
    "public": "src/runner/main.rs",
-   "public_sha256": "bce09fe06786eb3b80feb6ad89b7c2a350d1f1470d64554ebab95345e1933fb9",
+   "public_sha256": "7a1187534e426a615823f64aa3669268609e9be1cbdc592fe7a7e20ecce5e1f1",
    "upstream": "phys/binder/runtime/src/binder/phys/main.rs",
    "upstream_sha256": "9ddee480349413b0789c07af235c545a0a1bac5769438f23c23377c1e059fa8a"
   },
@@ -287,8 +287,9 @@
    "upstream_sha256": "780bc2f664fe2c9adfce9113d72885f63cca9242e82f559105c382b95aa96b7a"
   },
   {
+   "edited_after_sync": true,
    "public": "src/runner/peer_shm.rs",
-   "public_sha256": "412fefac81c1491a6340ef8fb1d0427d2b88e9d534a83a93d4b7dd78d46fad01",
+   "public_sha256": "bae31369ba546b8aeef7f57f3edd43d9109cff5be1f2ed0d81ca515c97ddf6f7",
    "upstream": "phys/binder/runtime/src/binder/phys/peer_shm.rs",
    "upstream_sha256": "98873a3b023e7a1d17c8891ea4e12f369283af9fc383fbaa8fcaa321ad18ae5c"
   },
@@ -381,7 +382,7 @@
   {
    "edited_after_sync": true,
    "public": "src/runner/schemes.rs",
-   "public_sha256": "d9fbfd49797aea044090b4ba6db0fb2c7b46a4151e4de47f3d782cf95ffc546e",
+   "public_sha256": "d98d4ebc67c8ff18ba7e8d2cc25caab13918b371734a2dbe6139d20c45bf4d72",
    "upstream": "phys/binder/runtime/src/binder/phys/schemes.rs",
    "upstream_sha256": "2c9e125ddaebd2bea0e6f8a7174a217ae75988ad7a04eedc3f09d288da8dbdbc"
   },
@@ -435,8 +436,9 @@
    "upstream_sha256": "2971a72fa26a597a3096cb06e526a8760497843802b557ce5abe039cd5ce7004"
   },
   {
+   "edited_after_sync": true,
    "public": "src/runner/submit.rs",
-   "public_sha256": "94be76400d2be0647d4a7963e9509b3bdc771605b21f2a523a5b5301920ce12d",
+   "public_sha256": "9a11631bd9bf794d576022ce0bba2c95b61378fc07284d92a59f63c7be7ed8f4",
    "upstream": "phys/binder/runtime/src/binder/phys/submit.rs",
    "upstream_sha256": "94be76400d2be0647d4a7963e9509b3bdc771605b21f2a523a5b5301920ce12d"
   },
@@ -449,7 +451,7 @@
   {
    "edited_after_sync": true,
    "public": "src/runner/tempo_adw.rs",
-   "public_sha256": "2ce60345a1c88b971e90691e9ea06c9a0f433340995a5e8d14fa555ee5c03448",
+   "public_sha256": "217b1c5c0591dac6ea2fe860cbce5b387fe0b8367925dd962118b578e97d6648",
    "upstream": "phys/binder/runtime/src/binder/phys/tempo_adw.rs",
    "upstream_sha256": "446a1a59e76e4bf4157d4d368de81dc210410854b6271bfaace7858f782a3b32"
   },
@@ -499,7 +501,7 @@
   {
    "edited_after_sync": true,
    "public": "src/runner/window.rs",
-   "public_sha256": "afc5f9699146e5458aae4c921332e8dd5d1b55aa5ec74c6dfe9c45b1221cd6c7",
+   "public_sha256": "389b5f99635bbcf7bb83d84bf86978b84f9940819d94b305eb2f655af1bdac25",
    "upstream": "phys/binder/runtime/src/binder/phys/window.rs",
    "upstream_sha256": "1a456c0d5f5426bb1cbe091eb53c04862a4d9c8b148572aeebd0200c16f32f7b"
   },
@@ -524,7 +526,7 @@
   {
    "edited_after_sync": true,
    "public": "src/runner/wrules.rs",
-   "public_sha256": "bebc772f4b91b9dcac2574bcae9dba51b274b87f3a0e2456c94040f59c6798df",
+   "public_sha256": "8e6d60e739580279e3c8f949ec52efbe2b8a19fbf4c1154cc4bad263c5d5a1fa",
    "upstream": "phys/binder/runtime/src/binder/phys/wrules.rs",
    "upstream_sha256": "4dc7ecaf4f7fe164d7af322271364e1c4713e42f7e890220a7b5460be02370d1"
   },
@@ -628,9 +630,10 @@
   },
   {
    "public": "cuda/window.cu",
-   "public_sha256": "e95d65d81764826fa39a4684d1571f2643d76f73e16d6acf4e75c5dd2c4efa4b",
+   "public_sha256": "a2ba82bdbad56d4e4babc032b516b45d5d0371a0d58674a3bac75eeaa2875a39",
    "upstream": "phys/window/cuda/window.cu",
-   "upstream_sha256": "b649438e6d6c167b22f3ad7e8ceb1c91fb0a9f41f8de32fb33b609fea6bd36d9"
+   "upstream_sha256": "b649438e6d6c167b22f3ad7e8ceb1c91fb0a9f41f8de32fb33b609fea6bd36d9",
+   "edited_after_sync": true
   },
   {
    "public": "cuda/hexad_t.cu",
@@ -1977,8 +1980,9 @@
    "upstream_sha256": "f6609fd3b0601f5084cec0f1ec6a51d25bbb4d21bbcb951f0347804e0e6b9e07"
   },
   {
+   "edited_after_sync": true,
    "public": "include/hexad_phys.h",
-   "public_sha256": "d6853b27592ca830271b72c5bd06c2716ba48046df940fc14831698c26ea8166",
+   "public_sha256": "a33e15fb5d386d2d51d541b2bdc7f5628ab87b5c1d14843ba2f5316130eb2190",
    "upstream": "phys/capi/hexad_phys.h",
    "upstream_sha256": "db061344f17bbb3ad35ee4d3202de231d3e813b0a6ccaaaa3f5d3cf5732371fa"
   },

@@ -1,6 +1,6 @@
 #!/bin/bash
 # The 12 km example end to end on one 32 GB card of compute capability 12.0 (for example a GeForce RTX 5090).
-# Needs: Python 3.14 with gpuwm-hex[ad]==0.6.1 (an environment of its own, not on top of [gpu]), 28,700 MiB free on the card, 47,104 MiB of host memory, 3.4 GB of
+# Needs: Python 3.14 with gpuwm-hex[ad]==0.6.2 (an environment of its own, not on top of [gpu]), 28,700 MiB free on the card, 47,104 MiB of host memory, 3.4 GB of
 # disk in the hex cache. The package fetches its own inputs (1.20 GB, once, each checked by SHA-256).
 # Expected numbers: expected.json, "32gb". About 12 minutes in all on a first run with the
 # inputs fetched from GitHub (693 s measured on one RTX 5090 with 0.6.0's published wheel).

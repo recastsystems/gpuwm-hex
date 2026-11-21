@@ -402,6 +402,9 @@ def test_source_prebuilts_match_this_tree_so_publish_can_build():
     converter = files["rw_mpas_convert"]["provenance"]
     assert converter["patch_sha256"] == hashlib.sha256((ROOT / "engine-patches/chemistry-products.patch").read_bytes()).hexdigest()
     assert converter["recipe_sha256"] == hashlib.sha256((ROOT / "tools/build_chemistry_converter.sh").read_bytes()).hexdigest()
+    # 0.6.2: the converter `gpuwm-hex render` runs first maps the HAILCAST fields the forecast writes by default.
+    assert converter["hailcast_patch_sha256"] == hashlib.sha256(
+        (ROOT / "engine-patches/rw-mpas-hailcast-field.patch").read_bytes()).hexdigest()
     sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
     for name, row in files.items():
         assert re.fullmatch(r"[0-9a-f]{64}", row["sha256"]) and row["provenance"]["sha256"] == row["sha256"]

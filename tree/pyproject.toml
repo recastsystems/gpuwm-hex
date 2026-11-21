@@ -43,7 +43,7 @@ name = "gpuwm-hex"
 # partition-invariant, but it has no door, no demo, and no re-proof at the
 # current engine pin, so it is not what a version number should be sold on.
 # Numbers are not reserved here any more.  A minor bump names what shipped.
-version = "0.6.1"
+version = "0.6.2"
 description = "MPAS-Atmosphere v8.4.2 and NOAA's hrrrv5 (RRFS-MPAS) configuration on NVIDIA GPUs: bit for bit against native MPAS-A and the patched native RRFS-MPAS on the measured cases (exact mode, strict numerics), with the tangent-linear and adjoint of the exact-mode hrrrv5 forecast (12 km example on a 32 GB card of compute capability 12.0)."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -297,6 +297,10 @@ gpu = ["gpuwm-hex[gpu-cu12]"]
 # absent; this line and the CI install list are what stop that skip from
 # ever being the answer where the gate matters.
 dev = ["pytest>=8.0", "setuptools>=77"]
+# A learned correction trained through the engine and its reverse (hexcore.torch_bridge): PyTorch (BSD-3) as a
+# dependency only, never copied in, and imported only by that package.  It rides the [ad] extra because the
+# training loop runs the reverse.
+torch = ["gpuwm-hex[ad]", "torch>=2.9"]
 
 [project.scripts]
 # ONE console script with subcommands, mirroring gpuwm's `gpuwm doctor` /

@@ -167,7 +167,7 @@ def write(path: Path, fields: np.ndarray, *, provenance: Mapping[str, Any]) -> N
     n = fields.shape[1]
     partial = path.with_name(path.name + ".partial")
     partial.unlink(missing_ok=True)
-    with netCDF4.Dataset(partial, "w", format="NETCDF3_64BIT_OFFSET") as out:
+    with netCDF4.Dataset(partial, "w", format="NETCDF3_64BIT_DATA") as out:
         out.createDimension("nCells", n)
         for k, name in enumerate(ORDER):
             units, long_name = VARIABLES[name]

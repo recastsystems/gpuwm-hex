@@ -611,7 +611,36 @@ def load_plan() -> tuple[list[dict[str, Any]], str]:
     return rows, ("tag" if rows else "none")
 
 
+#: Peak resident memory of one spawn compile worker: 0.96-1.02 GB for each
+#: of four workers compiling a cold 9 km regional kernel set (measured in
+#: jacobbieker/woof#239, 2026-11-09); the engine's gpuwm.kernel_plan holds
+#: the same figure.
+COMPILE_WORKER_BYTES = 1 << 30
+#: The share of the host's available memory the compile pool may plan on;
+#: the forecast beside it is still growing while the pool compiles.
+COMPILE_MEMORY_SHARE = 0.5
+
+
+def _memory_workers() -> int | None:
+    """Compile workers the host's available memory holds, or None (unknown)."""
+    try:
+        from gpuwm.ingest.preparation_workers import host_available_bytes
+        available = host_available_bytes()
+    except Exception:
+        return None
+    if not available:
+        return None
+    return max(1, int(available * COMPILE_MEMORY_SHARE) // COMPILE_WORKER_BYTES)
+
+
 def _workers() -> int:
+    """Compiler threads and processes: CPU affinity, capped by available memory.
+
+    32 spawn workers on a 32-core host peaked at 13-15 GB host RSS for one
+    cold compile (jacobbieker/woof#239); the default holds
+    COMPILE_WORKER_BYTES per worker within COMPILE_MEMORY_SHARE of the
+    available memory.  ``GPUWM_KERNEL_PLAN_WORKERS`` overrides the memory cap.
+    """
     try:
         cores = len(os.sched_getaffinity(0))
     except (AttributeError, OSError):
@@ -619,6 +648,10 @@ def _workers() -> int:
     limit = os.environ.get(WORKERS_ENVIRONMENT, "").strip()
     if limit.isdigit() and int(limit) > 0:
         cores = min(cores, int(limit))
+    else:
+        memory = _memory_workers()
+        if memory is not None:
+            cores = min(cores, memory)
     return max(1, cores)
 
 

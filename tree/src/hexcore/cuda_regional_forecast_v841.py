@@ -117,7 +117,7 @@ REGIONAL_GARBAGE_POOL: Mapping[str, float] = {
 def _padded(array: Any, axis: int, value: float) -> np.ndarray:
     """``np.concatenate([array, np.full(.., value)], axis)`` as a C-ordered array, copied on host threads.
 
-    THE COST THIS REMOVES (mv3km 3 km limited area, V6000, 2026-10-28): padding every regional array with
+    THE COST THIS REMOVES (mv3km 3 km limited area, RTX PRO 6000, 2026-10-28): padding every regional array with
     the garbage element was a strided copy plus a concatenate on the main thread, about 1.8 s of the
     start-up (the dycore build and the first boundary admissions) while the card waited.  The copy is written in blocks of
     the leading non-padded axis on host threads (hexcore.host_parallel); the words are the same.
@@ -1302,7 +1302,7 @@ class PaddedRegionalDrivingState(DeviceRegionalDrivingState):
 
         def upload(name: str) -> Any:
             # The file slab (element, level) goes to the card as stored; the (level, element) transpose and
-            # the garbage column at 0.0 are written there.  THE COST THIS REMOVES (mv3km, V6000,
+            # the garbage column at 0.0 are written there.  THE COST THIS REMOVES (mv3km, RTX PRO 6000,
             # 2026-10-28): the strided host transpose plus padding of 17 slabs took about 1.3 s of one core
             # per boundary admission (2.6 s of the first step) while the card waited.  Same words.
             slab = cp.asarray(np.ascontiguousarray(admitted.fields[name], dtype=np.float32))

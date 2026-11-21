@@ -145,7 +145,7 @@ SOURCE_DRIFT_SINCE_CAMPAIGN: dict[str, dict[str, str]] = {
     },
     "src/hexcore/cuda_regional_forecast_v841.py": {
         "recorded": "3aa30ec3c3a11c1152a67d1fcbc8b2d470fd8ac2446ec8f7ec34906873421e88",
-        "current": "622d657e9c9cabaa8bcff5fbc3eb64c8fb6a86fad9ac8d4b5423885a88323313",
+        "current": "3637f44aeebbc0d51e7db20547d9fc5d43a6c36feb2e251aec167f01c9de8896",
         "why": (
             "Integration 2026-10-04 adds explicit rank constructor dispatch "
             "and preserves the ordinary constructor. The twelve arithmetic "
@@ -393,7 +393,7 @@ SOURCE_DRIFT_SINCE_CAMPAIGN: dict[str, dict[str, str]] = {
     },
     "src/hexcore/cuda_transport_v841.py": {
         "recorded": "55c66759d9c81f65ed71ce77570897c102fd64661da6ad6c37b438b27771ab23",
-        "current": "94783b1bcf91b3465c702beed20ed9ab79dc21a7fe560c709d5056b7dfc2cca4",
+        "current": "34ad1f74992522bb863f9a2dde2ef7279ec1361ed14db8e2369dba8f0371ebf7",
         "why": (
             "2026-10-28 level-parallel integer zero classification: cells then "
             "levels preserve uint32 OR exactly; fast and strict device "

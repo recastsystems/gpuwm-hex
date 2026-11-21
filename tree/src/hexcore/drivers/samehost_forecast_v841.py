@@ -1265,7 +1265,8 @@ def _execute_samehost(forecast, *, physics_scope, devices, layouts_path, part_pa
         # item 4): the limiter splits its scale-factor exchange the same way.
         from hexcore.cuda_transport_v841 import limiter_species_per_pass
         n_species = int(described[0]["n_species"])
-        fct_parts = -(-n_species // limiter_species_per_pass(n_species)) if n_species else 1
+        from ..speed_words import schedule_species_per_pass   # GPUWM_HEX_LIMITER_BATCH; off: as before
+        fct_parts = -(-n_species // schedule_species_per_pass(n_species)) if n_species else 1
         native_rounds = expected_round_sequence(monotonic=monotonic, regional=regional,
                                                 fct_parts=fct_parts, **round_schedule)
         physics_rounds = native_rounds[:-1] + ("P", native_rounds[-1])

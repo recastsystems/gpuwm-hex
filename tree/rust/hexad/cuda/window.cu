@@ -155,3 +155,42 @@ extern "C" __global__ void win_narrow2_f64_f32(float *a, long long e0, const dou
         a[e0 + o] = (float)d[o];
     }
 }
+
+// NOAA's model-top damping (hexcore/cuda_upper_damping_v841.py), on levels k >= nl - levels and columns (cells or
+// edges) c < solved, the words the forward writes. The constants are formed exactly as the forward forms them.
+//
+// upper_cam_f32: values = max(values, floor_k), floor_k = 4 * 2.0833 * length * coefficient * (1 - (nl-1-k)/levels).
+// The derivative is the 0/1 mask (pre >= floor_k) on those words; a diagonal map, so the tangent and the adjoint are
+// the same launch. `pre` is the values array as it was before the forward launch (taped).
+extern "C" __global__ void win_upper_cam(float *a, int nl, int nc, int solved, int levels, float length, float coef,
+                                         long long e_v, const float *pre) {
+    const long long id = (long long)blockIdx.x * blockDim.x + threadIdx.x;
+    if (id >= (long long)nl * nc) return;
+    const int k = (int)(id / nc), c = (int)(id % nc);
+    if (c >= solved || k < nl - levels) return;
+    const float base = __fmul_rn(__fmul_rn(__fmul_rn(4.0f, 2.0833f), length), coef);
+    const float floor_k = __fmul_rn(base, __fsub_rn(1.0f, __fdiv_rn((float)(nl - 1 - k), (float)levels)));
+    if (!(pre[id] >= floor_k)) a[e_v + id] = 0.0f;
+}
+
+// upper_rayleigh_f32: tendency -= rho * velocity * c_k, c_k = (k - (nl - levels) + 1) / (levels * days * 86400).
+// Tangent: dt -= c_k (rho dv + v drho). Adjoint (the transpose): vbar -= c_k rho tbar, rhobar -= c_k v tbar, tbar kept.
+// rho and velocity are read only by the forward; their primal values are taped before it (rho_p, vel_p).
+extern "C" __global__ void win_upper_rayleigh(float *a, int nl, int ne, int solved, int levels, float days,
+                                              long long e_t, long long e_rho, long long e_vel,
+                                              const float *rho_p, const float *vel_p, int adjoint) {
+    const long long id = (long long)blockIdx.x * blockDim.x + threadIdx.x;
+    if (id >= (long long)nl * ne) return;
+    const int k = (int)(id / ne), e = (int)(id % ne);
+    if (e >= solved || k < nl - levels) return;
+    const float inverse = __fdiv_rn(1.0f, __fmul_rn((float)levels, __fmul_rn(days, 86400.0f)));
+    const double c = (double)__fmul_rn((float)(k - (nl - levels) + 1), inverse);
+    const double r = (double)rho_p[id], v = (double)vel_p[id];
+    if (!adjoint) {
+        a[e_t + id] = (float)((double)a[e_t + id] - c * (r * (double)a[e_vel + id] + v * (double)a[e_rho + id]));
+    } else {
+        const double tb = (double)a[e_t + id];
+        a[e_vel + id] = (float)((double)a[e_vel + id] - c * r * tb);
+        a[e_rho + id] = (float)((double)a[e_rho + id] - c * v * tb);
+    }
+}

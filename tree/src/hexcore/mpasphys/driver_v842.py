@@ -343,6 +343,10 @@ class DriverConfig:
     #: bl_kim_gwdo; None on every other drag (the v8.4.2 pin).  Engine extension; gwdo_version never enters the
     #: native Registry (the two knobs do, with bl_kim_gwdo, as PR #1409 adds them).
     gwdo: Mapping[str, Any] | None = None
+    #: The learned or symbolic surface and boundary-layer closure the run selects (hexcore.mpasphys.rrfs.closures
+    #: .configure); None, every option off, is the plain model.  Engine extension; never written into the native
+    #: Registry.
+    closure: Mapping[str, Any] | None = None
 
     def cpu_warning(self) -> str | None:
         """The loud start-up lines naming each active slot that runs on the CPU, or None when none does."""
@@ -445,6 +449,9 @@ class DriverConfig:
         if self.gwdo:
             # Only KIM runs carry it: a v8.4.2-drag receipt is word for word what it was before the knob existed.
             result["gwdo"] = dict(self.gwdo)
+        if self.closure:
+            # Only runs with a closure on carry it: an off receipt is word for word what it was before the options.
+            result["closure"] = dict(self.closure)
         # Exact-mode receipts stay word for word what they were before the switch existed.
         if self.mode != "exact":
             result.update(physics_mode=self.mode, corrections=sorted(self.corrections),
@@ -611,6 +618,9 @@ def resolve_namelist(text: str, *, backends: Mapping[str, str] | None = None,
         if not valid:
             raise ValueError(f"{name} requires MPAS Registry type {kind}")
         options[key] = float(value) if kind == "real" else value
+    # config_radt_mcica_seed: a misspelled rule refuses here, by name, before any card (mcica_seed_rule.mode).
+    from .mcica_seed_rule import mode as _mcica_seed_mode
+    _mcica_seed_mode(options)
     suite = options["config_physics_suite"].strip()
     if suite not in spec["suite_routes"]:
         raise ValueError(f"{suite!r} has no MPAS v8.4.2 driver suite route")

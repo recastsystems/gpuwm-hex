@@ -56,7 +56,7 @@ fall-through.
 | --- | --- |
 | `rw_mpas_init` | `--engine`, `$GPUWM_HEX_RW_MPAS_INIT`, `$RW_MPAS_INIT`, `$GPUWM_RW_MPAS_INIT`, gpuwm bridge directories, `PATH` |
 | `rw_mpas_convert` | `--convert-exe`, `$GPUWM_HEX_RW_MPAS_CONVERT`, `$MPAS_PORT_RW_MPAS_CONVERT`, `$GPUWM_RW_MPAS_CONVERT`, gpuwm bridge directories, `PATH` |
-| `rw_mpas_mesh` | `--mesh-exe` (`--engine` on `cull`), `$GPUWM_HEX_RW_MPAS_MESH`, `$RW_MPAS_MESH`, `$GPUWM_RW_MPAS_MESH`, gpuwm bridge directories, `PATH` |
+| `rw_mpas_mesh` | `--mesh-exe` (`--engine` on `cull`), `$GPUWM_HEX_RW_MPAS_MESH`, `$RW_MPAS_MESH`, `$GPUWM_RW_MPAS_MESH`, this wheel's `hexcore/libexec` (from 0.6.2 the wheel carries the geometry 2 generator), gpuwm bridge directories, `PATH` |
 | `rw_wrfbatch` | `--renderer-exe`, `$GPUWM_HEX_RW_WRFBATCH`, `$MPAS_PORT_RW_WRFBATCH`, `$GPUWM_RW_WRFBATCH`, gpuwm bridge directories, `PATH` |
 | `rw_mpas_geometry` | `$GPUWM_HEX_RW_MPAS_GEOMETRY`, `$RW_MPAS_GEOMETRY`, `$GPUWM_RW_MPAS_GEOMETRY`, this wheel's `hexcore/libexec`, gpuwm bridge directories, `PATH` |
 | `rw_mpas_stream` | `$GPUWM_HEX_RW_MPAS_STREAM`, `$GPUWM_RW_MPAS_STREAM`, this wheel's `hexcore/libexec`, gpuwm bridge directories, `PATH` |

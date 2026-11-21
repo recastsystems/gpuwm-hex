@@ -353,6 +353,9 @@ class DriverConfig(shared.DriverConfig):
             result["submodule_pins"].update(version.get("submodule_pins", {}))
             result["mynn_version_modules"] = {f"{slot}/{scheme}": entry["module"]
                 for slot, entries in version.get("cuda_entries", {}).items() for scheme, entry in entries.items()}
+        if getattr(self, "closure", None):
+            # The surface or boundary-layer closure (rrfs/closures), only when one is on.
+            result["closure"] = dict(self.closure)
         if self.mode != "exact":
             result.update(physics_mode=self.mode, corrections=sorted(self.corrections),
                           correct_skip=sorted(self.correct_skip), correct_mode=self.correct_mode_record())
@@ -446,6 +449,9 @@ def resolve_namelist(text: str, *, backends: Mapping[str, str] | None = None,
     if native_suite not in spec["suites"]:
         raise ValueError(f"{suite!r} has no fork driver suite row")
     options["config_physics_suite"] = native_suite
+    # config_radt_mcica_seed: a misspelled rule refuses here, by name, before any card (mcica_seed_rule.mode).
+    from ..mcica_seed_rule import mode as _mcica_seed_mode
+    _mcica_seed_mode(options)
     selectors = {}
     for slot, row in spec["slots"].items():
         value = selectors[row["derived_from"]] if row["selector"] is None else options[row["selector"]]
@@ -2832,6 +2838,27 @@ class ResidentDriverTendencies:
             raise ValueError(f'MPAS coupling missing tendencies {sorted(missing)}')
         zero = cp.zeros_like(mass)
         table_arrays = [rates[name] if name in required else zero for name in rate_names]
+        # The external-tendency slot (hexcore.ad.external_tendency): None unless a caller gives one, and then
+        # nothing below changes. Given, the four boundary-layer rates are copied into scratch (one more copy plan),
+        # the caller's tendency is added there each step, and the coupling reads the scratch.
+        from ...ad import external_tendency
+        self.external = external_tendency.slot_for(cp=cp, cache=glue.cache, shape=tuple(mass.shape), provider=p,
+                                                   qv_index=names.index('qv'))
+        self.external_targets = {}
+        self.external_plan = None
+        if self.external is not None:
+            if not pbl:
+                raise ValueError('the external tendency slot joins the boundary-layer rates (rthblten, rqvblten, '
+                                 'rublten, rvblten), and this run has config_pbl_scheme off')
+            self.external_plan = CopyPlan('rrfs.external_tendency')
+            for field, rate_name in external_tendency.RATE_OF.items():
+                scratch = cp.empty_like(rates[rate_name])
+                self.external_plan.copy(scratch, rates[rate_name])
+                self.external_targets[field] = scratch
+            by_rate = {rate_name: self.external_targets[field]
+                       for field, rate_name in external_tendency.RATE_OF.items()}
+            table_arrays = [by_rate.get(name, array) for name, array in zip(rate_names, table_arrays)]
+            self.external_plan.build()
         from ...cuda_backend.containers import require_resident_array
         for name, array in zip(rate_names, table_arrays):
             require_resident_array(name, array, dtype=np.float32, shape=mass.shape)
@@ -2853,6 +2880,8 @@ class ResidentDriverTendencies:
                 continue
             self.groups.append(group)
             inputs = [rates[zonal], rates[meridional]]
+            if self.external is not None and group == 'physics:blten':
+                inputs = [self.external_targets['u'], self.external_targets['v']]
             if a.regional_garbage:
                 padded = []
                 for value in inputs:
@@ -2889,6 +2918,10 @@ class ResidentDriverTendencies:
         g = self.glue
         for group in self.groups:
             g.assembler.exchange_halo_group(group)
+        if self.external is not None:
+            self.external_plan()
+            self.external.add(self.external_targets, dt=getattr(call, 'dt', None),
+                              time_seconds=getattr(call, 'time_seconds', None))
         self.plan()
         for args in self.projections:
             _launch(g.cache, 'project_edges_v841_f32', g.assembler.geometry.n_edges, args)

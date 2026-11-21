@@ -18,6 +18,9 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+#: The command's words. Compared word by word with shlex's tokens, so a distribution that spells the command in
+#: two words (a renamed fold of this package) is read too; one string never equals two tokens.
+DOOR = "gpuwm-hex".split()
 FIRST_RUN_PAGES = (
     "README.md",
     "docs/manual/02-quickstart.md",
@@ -57,11 +60,11 @@ def test_every_printed_door_command_parses(page):
 
     checked = 0
     for _, tokens in _commands(ROOT / page):
-        if tokens[0] != "gpuwm-hex" or len(tokens) < 2 or tokens[1].startswith("-"):
+        if tokens[:len(DOOR)] != DOOR or len(tokens) <= len(DOOR) or tokens[len(DOOR)].startswith("-"):
             continue
         if any("..." in token for token in tokens):
             continue  # a shape, not a command (the page says so beside it)
-        argv = join_negative_coordinates(tokens[1:])
+        argv = join_negative_coordinates(tokens[len(DOOR):])
         try:
             build_parser(argv[0]).parse_args(argv)
         except SystemExit as stop:
@@ -85,7 +88,7 @@ def test_no_printed_pip_line_builds_every_dependency_from_source():
 def test_every_printed_render_names_a_history_file_the_default_route_writes():
     for page in _all_pages():
         for block, tokens in _commands(page):
-            if tokens[:2] != ["gpuwm-hex", "render"] or "arwen_mpas_column" in block:
+            if tokens[:len(DOOR) + 1] != [*DOOR, "render"] or "arwen_mpas_column" in block:
                 continue
             for flag, value in zip(tokens, tokens[1:]):
                 if flag == "--history":
@@ -99,7 +102,7 @@ def test_every_printed_render_of_several_frames_names_the_run_start():
 
     for page in _all_pages():
         for _, tokens in _commands(page):
-            if tokens[:2] != ["gpuwm-hex", "render"]:
+            if tokens[:len(DOOR) + 1] != [*DOOR, "render"]:
                 continue
             frames = [value for flag, value in zip(tokens, tokens[1:]) if flag == "--history"]
             if any("*" in value for value in frames) or "--series" in tokens:

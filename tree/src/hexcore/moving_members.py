@@ -33,7 +33,7 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Sequence
 
 from .moving_case import (
     MovingCaseError,
@@ -420,8 +420,31 @@ def _tool_env(threads: int | None, tile_workers: int | None) -> dict[str, str]:
     return env
 
 
-def generate_mesh(spec_path: Path, grid: Path, receipt: Path, log: Path, env: dict[str, str]) -> float:
-    return _run_logged([_tool("MESH"), "--spec", spec_path, "--out", grid, "--receipt", receipt], log, env=env)
+def mesh_words(case: dict[str, Any]) -> list[str]:
+    """The generator's words for a case's mesh block: nothing unless the block names geometry 2
+    (``moving case --geometry 2``), then the words every member and the rotation template are built with."""
+    generator = (case.get("mesh") or {}).get("generator")
+    if not generator:
+        return []
+    from . import mesh_ask
+
+    try:
+        asked = mesh_ask.generator_request({"generator": dict(generator)})
+    except mesh_ask.MeshAskRefusal as error:
+        raise MovingCaseError(str(error)) from error
+    if asked["geometry"] == 2 and (case.get("mesh") or {}).get("corridor"):
+        raise MovingCaseError(
+            "geometry 2 is not built for a corridor case: a corridor's members are stitched from cell centres "
+            "around fixed rings, and geometry 2 lays no rings.  Use geometry 1 for a corridor, or a whole-globe "
+            "moving case for geometry 2")
+    # Each region of the block is one someone asked for; none is a halving ring to replace.
+    return [*asked["words"], "--rings", "keep"] if asked["geometry"] == 2 else []
+
+
+def generate_mesh(spec_path: Path, grid: Path, receipt: Path, log: Path, env: dict[str, str],
+                  words: Sequence[str] = ()) -> float:
+    return _run_logged([_tool("MESH"), "--spec", spec_path, "--out", grid, "--receipt", receipt, *words],
+                       log, env=env)
 
 
 def prepare_member(case_path: Path, folder: Path, name: str, lat: float, lon: float, *,
@@ -493,7 +516,9 @@ def prepare_member(case_path: Path, folder: Path, name: str, lat: float, lon: fl
             build_zone_mesh(case, prev, name, lat, lon, folder)
             _stamp(folder, name, f"zone-mesh {time.time() - began:.0f}s")
         if not mesh_ready():
-            seconds = generate_mesh(spec_path, folder / f"{name}.grid.nc", mesh_receipt, logs / f"{name}-mesh.log", env)
+            words = mesh_words(case)
+            seconds = generate_mesh(spec_path, folder / f"{name}.grid.nc", mesh_receipt, logs / f"{name}-mesh.log", env,
+                                    **({"words": words} if words else {}))
             _stamp(folder, name, f"mesh {seconds:.0f}s ({_cores(env)})")
         static_receipt = folder / f"{name}-static.json"
         static_rebuilt = mesh_rebuilt or not static_receipt.is_file() or not (folder / f"{name}.static.nc").is_file()
@@ -581,8 +606,10 @@ def prepare_case(case_path: Path, casedir: Path, *, geog: Path | None = None, th
                 spec_path.write_text(json.dumps(body, indent=2) + "\n")
             if not (casedir / f"{name}-mesh.json").is_file() or not (casedir / f"{name}.grid.nc").is_file():
                 log(f"prepare: {name} mesh")
+                words = mesh_words(case)
                 seconds = generate_mesh(spec_path, casedir / f"{name}.grid.nc", casedir / f"{name}-mesh.json",
-                                        casedir / "logs" / f"{name}-mesh.log", env)
+                                        casedir / "logs" / f"{name}-mesh.log", env,
+                                        **({"words": words} if words else {}))
                 _stamp(casedir, name, f"mesh {seconds:.0f}s")
     rotate_from = None
     if not corridor and not _near_antipode((lat, lon), TEMPLATE_CENTER):
@@ -643,7 +670,7 @@ def rotation_template(case: dict[str, Any], folder: Path, *, env: dict[str, str]
         began = time.time()
         logs = folder / "logs"
         got = prep_store.run_or_fetch(
-            [_tool("MESH"), "--spec", spec_path, "--out", grid, "--receipt", receipt],
+            [_tool("MESH"), "--spec", spec_path, "--out", grid, "--receipt", receipt, *mesh_words(case)],
             kind="mesh", runner=lambda argv: _run_logged(argv, logs / f"{TEMPLATE_NAME}-mesh.log", env=env))
         how = ("fetched from the prep store" if got.get("source") == "store"
                else f"generated here ({_cores(env)}); no prep store carries it")

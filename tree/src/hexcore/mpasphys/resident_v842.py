@@ -166,10 +166,43 @@ def ported_route_refusal(config):
         return None
     options = getattr(config, 'options', None) or {}
     suite = str(options.get('config_physics_suite', '') or 'this selection')
+    choices = gpu_choices(config)
+    advice = ('. '.join(f'With the other choices of this run, {slot} runs on the GPU as '
+                        + ' or '.join(f'--physics {selector}={scheme}' for scheme in schemes)
+                        for slot, (selector, schemes) in choices.items())
+              or 'Choose a resident scheme for that slot')
     return (f'MPAS physics suite {suite} is not runnable without the native MPAS library: '
             + '; '.join(gaps) + '. Without it the run would stop before step 1 (MPAS framework '
-            'operation has no Python implementation: mpas_to_physics). Choose a resident scheme for '
-            'that slot, or run --physics-suite convection_permitting.')
+            'operation has no Python implementation: mpas_to_physics). ' + advice
+            + ', or run --physics-suite convection_permitting.')
+
+
+def gpu_choices(config):
+    """Per refused slot, its namelist selector and the schemes that run on the GPU with every other choice kept.
+
+    A v8.4.2 row admits slot by slot (RESIDENT_SCHEMES); an RRFS row admits whole selections (its route-table
+    targets), so a slot's choices there are the targets that agree with the run on every other slot.  A slot whose
+    choice is admitted, or that no admitted selection can mend alone, is left out.
+    """
+    from .route_table import resident_targets, route_row
+    selectors = dict(getattr(config, 'selectors', None) or {})
+    slots = route_row(config).get('slots', {})
+    found = {}
+    if getattr(config, 'table_key', 'mpasphys_v842') == 'mpasphys_v842':
+        for slot, scheme in selectors.items():
+            allowed = RESIDENT_SCHEMES.get(slot, ())
+            if config.active(slot) and scheme not in allowed and allowed:
+                found[slot] = list(allowed)
+    else:
+        overrides = _profile_selectors(config)
+        targets = [dict(target, **overrides) for target in resident_targets(config)]
+        for slot, scheme in selectors.items():
+            mended = [target[slot] for target in targets if slot in target and all(
+                selectors.get(other) == want for other, want in target.items() if other != slot)]
+            if mended and scheme not in mended:
+                found[slot] = list(dict.fromkeys(mended))
+    return {slot: (str(slots.get(slot, {}).get('selector', 'config_' + slot + '_scheme')), schemes)
+            for slot, schemes in found.items()}
 
 
 @lru_cache(maxsize=1)
@@ -570,6 +603,10 @@ class ResidentPhysicsGlue:
                  and (row['pool_name'].endswith('ten')
                       or row['pool_name'] in ('rthratenlw', 'rthratensw'))}
         rates.update(getattr(self, 'local_rates', {}))
+        from ..ad import external_tendency
+        rates = external_tendency.rates_for(self, rates, cp=self.cp, cache=self.cache, mass=mass, provider=p,
+                                            qv_index=list(self.names).index('qv'), dt=getattr(call, 'dt', None),
+                                            time_seconds=getattr(call, 'time_seconds', None))
         out = self.assembler.get_tend(mass=mass, mass_edge=p.field('diag', 'rho_edge'),
             theta_m=p.field('state', 'theta_m'), scalars=p.field('state', 'scalars'),
             tendencies=rates, n_cells_solve=self.ncells,

@@ -1122,6 +1122,60 @@ def _run_renderer(command: list[str], *, log_prefix: str,
     return _run(command, log_prefix=log_prefix, env=env)
 
 
+def door_run_start(histories: list[Path], given: str | None) -> str | None:
+    """The run start the door renders with: ``--simulation-start`` when given; else the histories' own.
+
+    Several frames need it (histories_run_start refuses when they cannot give one).  One frame takes the start it
+    carries when it carries one, and is filed at lead 0 as before when it carries none.  THE BREAKAGE THIS PREVENTS
+    (0.6.2, 20 Nov 2026, a 3 h hrrrv5 run from an installed wheel): ``render --history
+    history.2026-11-19_15.00.00.nc`` of a run started at 12Z was labelled "Init 11/19 15Z | F000 | Valid 11/19 15Z": the
+    picture named a start the run never had, and the file was named f000."""
+    if given:
+        return given
+    if len(histories) > 1:
+        return histories_run_start(histories)
+    import netCDF4
+
+    try:
+        with netCDF4.Dataset(str(histories[0])) as dataset:
+            value = str(dataset.getncattr("config_start_time")).strip() if "config_start_time" in dataset.ncattrs() else ""
+    except OSError:
+        return None     # not a netCDF file the door can read here: the converter names what it cannot read
+    return value if re.fullmatch(r"\d{4}-\d{2}-\d{2}_\d{2}:\d{2}:\d{2}", value) else None
+
+
+def histories_run_start(histories: list[Path]) -> str | None:
+    """The run start every history names in ``config_start_time``, as ``YYYY-MM-DD_HH:MM:SS``.
+
+    THE BREAKAGE THIS PREVENTS (0.6.1, reproduced on the transport products page's render): given several
+    history frames and no ``--simulation-start``, the converter filed every frame as lead 0, so each frame's
+    pictures overwrote the one before and the door still ended ``failed=0``. An MPAS history carries its run's
+    start (``config_start_time``), so the door reads it there. Histories that name two starts, or a history
+    that names none, are refused: the door cannot tell the leads apart and says which flag does."""
+    import netCDF4
+
+    starts: dict[str, list[str]] = {}
+    for history in histories:
+        with netCDF4.Dataset(str(history)) as dataset:
+            value = str(dataset.getncattr("config_start_time")).strip() if "config_start_time" in dataset.ncattrs() else ""
+        starts.setdefault(value, []).append(Path(history).name)
+    if "" in starts:
+        raise RenderDoorError(
+            f"{len(histories)} history frames and no --simulation-start, and {starts[''][0]} names no run start "
+            "(config_start_time): without one every frame is filed as lead 0 and each overwrites the last. "
+            "Give the run start: --simulation-start YYYY-MM-DD_HH:MM:SS")
+    if len(starts) > 1:
+        named = "; ".join(f"{value} ({names[0]})" for value, names in sorted(starts.items()))
+        raise RenderDoorError(
+            f"the history frames name {len(starts)} run starts ({named}): render one run at a time, or give "
+            "--simulation-start YYYY-MM-DD_HH:MM:SS")
+    value = next(iter(starts))
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}_\d{2}:\d{2}:\d{2}", value):
+        raise RenderDoorError(
+            f"the histories' run start {value!r} is not YYYY-MM-DD_HH:MM:SS: give --simulation-start")
+    return value
+
+
 def convert_frames(convert_exe: Path, *, histories: list[Path] | None,
                    mesh: Path | None, scratch: Path, window: str,
                    field_set: str, simulation_start: str | None,
@@ -1689,6 +1743,30 @@ def graticule_overlays(lat, lon) -> dict | None:
     return {"lines": lines, "labels": labels, "step_deg": step}
 
 
+def merge_overlays(graticule: Path | None, extra: Path, scratch: Path) -> Path:
+    """The caller's ``--overlays`` (points, lines, labels: report rings, city names) drawn with the graticule.
+
+    THE BREAKAGE THIS PREVENTS: a hail map for a partner names the towns and rings the reports it is judged
+    against; the door put only its own graticule on them, so those maps went around it (the CF route, no state product
+    path).  The caller's file is the renderer's own ``--overlays`` schema; its entries are drawn over the graticule.
+    """
+    merged = {"lines": [], "labels": [], "points": []}
+    for path in (graticule, extra):
+        if path is None:
+            continue
+        doc = json.loads(Path(path).read_text(encoding="utf-8"))
+        if not isinstance(doc, dict):
+            raise RenderDoorError(f"--overlays {path}: a JSON object with lines, labels and points")
+        for key, value in doc.items():
+            if key not in merged or not isinstance(value, list):
+                raise RenderDoorError(f"--overlays {path}: unknown entry {key!r} (lines, labels and points only)")
+            merged[key].extend(value)
+    out = Path(scratch) / "overlays.json"
+    out.write_text(json.dumps({k: v for k, v in merged.items() if v}) + "\n", encoding="utf-8")
+    print(f"OVERLAYS {extra}: {sum(len(v) for v in merged.values())} entries with the graticule", flush=True)
+    return out
+
+
 def write_graticule_overlays(frame: Path, scratch: Path) -> tuple[Path | None, dict | None]:
     """Write :func:`graticule_overlays` for ``frame`` (a converted
     wrfout-shaped file) into ``scratch``; ``(None, None)`` when the frame
@@ -2035,6 +2113,12 @@ def _run_render_inner(args, tile, overlap) -> tuple[int, dict]:
                 "not carry the 3-D state the converter reads.")
             for item in args.history
         ]
+        if not getattr(args, "simulation_start", None):
+            # The frames' leads and the pictures' init time come from the run start the histories carry.
+            args.simulation_start = door_run_start(histories, None)
+            if args.simulation_start and tile is None:
+                print(f"START run start {args.simulation_start} read from the histories (config_start_time); "
+                      "--simulation-start names another", flush=True)
     init = None
     if getattr(args, "init", None):
         if compose is not None:
@@ -2223,6 +2307,8 @@ def _run_render_inner(args, tile, overlap) -> tuple[int, dict]:
         overlays_path, graticule = write_graticule_overlays(
             Path(frames_meta[0]["output"]), scratch)
     print(f"GRATICULE {graticule if graticule else 'none'}", flush=True)
+    if getattr(args, "overlays", None):
+        overlays_path = merge_overlays(overlays_path, Path(args.overlays), Path(scratch))
     if leads is not None:
         rows, catalog_summary, catalog_invocation = list_catalog(
             renderer_exe, series_outputs, scratch=scratch, heavy=args.heavy,
@@ -2686,6 +2772,10 @@ def add_render_arguments(parser) -> None:
     parser.add_argument(
         "--keep-scratch", action="store_true",
         help="keep the scratch dir after a clean run")
+    parser.add_argument(
+        "--overlays", default=None, metavar="FILE.json",
+        help="points, lines and labels drawn on every map over the graticule (the renderer's --overlays "
+             "schema: report rings, city names)")
     parser.add_argument(
         "--basemap-dir", default=None, metavar="DIR",
         help=f"the renderer's map geometry (natural_earth_10m/, "

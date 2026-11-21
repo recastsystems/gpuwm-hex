@@ -76,22 +76,38 @@ def test_the_lister_names_only_cupy_distributions(monkeypatch):
     assert doctor._installed_cupy_wheels() == ["cupy-cuda12x", "cupy-cuda13x"]
 
 
-def _cupy_of(extra, extras, seen=()):
-    """The CuPy distributions an extra of this package installs, following its own `gpuwm-hex[...]` references."""
+def _project():
+    """The distribution's own pyproject table: the nearest pyproject.toml up from the tests that declares `[ad]`.
+
+    In gpuwm-hex's tree that is the tree's own; where this package is folded into another distribution it is
+    that distribution's, whose extras carry the same CuPy packages under its own name."""
+    for folder in (ROOT, *ROOT.parents):
+        path = folder / "pyproject.toml"
+        if path.is_file():
+            project = tomllib.loads(path.read_text(encoding="utf-8")).get("project", {})
+            if "ad" in project.get("optional-dependencies", {}):
+                return project
+    import pytest
+    pytest.skip("no pyproject.toml declaring the [ad] extra above the tests")
+
+
+def _cupy_of(extra, extras, seen=(), name=None):
+    """The CuPy distributions an extra of this package installs, following its own `<name>[...]` references."""
     names = set()
+    prefix = f"{name or _project()['name']}["
     for requirement in extras[extra]:
         head = requirement.split(";")[0].strip()
-        if head.startswith("gpuwm-hex["):
-            for inner in head[len("gpuwm-hex["):].split("]")[0].split(","):
+        if head.startswith(prefix):
+            for inner in head[len(prefix):].split("]")[0].split(","):
                 if inner.strip() not in seen:
-                    names |= _cupy_of(inner.strip(), extras, (*seen, extra))
+                    names |= _cupy_of(inner.strip(), extras, (*seen, extra), name)
         elif head.lower().startswith("cupy-"):
             names.add(head.split("[")[0].split("=")[0].split(">")[0].split("<")[0].strip().lower())
     return names
 
 
 def test_each_extra_brings_one_cupy_and_the_pages_say_ad_is_installed_alone():
-    extras = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["optional-dependencies"]
+    extras = _project()["optional-dependencies"]
     for extra in ("gpu", "gpu-cu12", "gpu-cu13", "ad"):
         assert len(_cupy_of(extra, extras)) == 1, (extra, _cupy_of(extra, extras))
     # [gpu] and [ad] bring different CuPy packages, so no page may tell a user to install one on top of the other.

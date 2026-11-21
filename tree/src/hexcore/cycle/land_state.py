@@ -204,8 +204,8 @@ def validate_land(fields, ctx, *, require_core=False):
         f = LAND_BY_NAME[name]
         lower = None if nsoil in f.signed_diagnostic_soil_levels else f.lower
         bad = ~np.isfinite(a) | (np.abs(a) >= 1e30)
-        if lower is not None:
-            bad |= a < lower
+        if lower is not None:   # a rounded zero (acsnom -3.9e-17 after a cycle) is not a bad land state
+            bad |= a < lower - 1e-9
         if f.upper is not None:
             bad |= a > f.upper
         if name == 'lai' and np.any(a == NOAHMP_GLACIER_LAI_UNDEFINED):

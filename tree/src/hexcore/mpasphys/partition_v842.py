@@ -34,16 +34,19 @@ _REFERENCES = {
 def _maps(layout, partition):
     maps = {}
     for entity, (ids_name, owned_name) in _ENTITIES.items():
-        ids = np.asarray(getattr(partition, ids_name))
-        total = layout.dimensions[entity]
-        owned = getattr(partition, owned_name)
-        if (ids.ndim != 1 or ids.dtype.kind not in 'iu' or
-                not 0 <= owned <= len(ids) or np.any(ids < 0) or
+        raw_ids = np.asarray(getattr(partition, ids_name))
+        total = int(layout.dimensions[entity])
+        owned = int(getattr(partition, owned_name))
+        if raw_ids.ndim != 1 or raw_ids.dtype.kind not in 'iu':
+            raise ValueError(f'invalid {entity} partition map')
+        ids = np.asarray(raw_ids, dtype=np.int64)
+        if (not 0 <= owned <= len(ids) or np.any(ids < 0) or
                 np.any(ids >= total) or len(np.unique(ids)) != len(ids)):
             raise ValueError(f'invalid {entity} partition map')
-        inverse = np.full(total + 2, len(ids) + 1, dtype=np.int32)
+        inv_dtype = np.int64 if len(ids) + 1 >= (1 << 31) else np.int32
+        inverse = np.full(total + 2, len(ids) + 1, dtype=inv_dtype)
         inverse[0] = 0
-        inverse[ids + 1] = np.arange(1, len(ids) + 1, dtype=np.int32)
+        inverse[ids + 1] = np.arange(1, len(ids) + 1, dtype=inv_dtype)
         maps[entity] = (ids, owned, inverse)
     return maps
 

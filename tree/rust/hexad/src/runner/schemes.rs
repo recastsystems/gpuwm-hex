@@ -487,6 +487,8 @@ struct V { base: i64, size: i64, ndim: i32, pad: i32, shape: [i64; 4], stride: [
 fn vbytes(v: &V) -> K { K::B(unsafe { std::slice::from_raw_parts((v as *const V).cast::<u8>(), std::mem::size_of::<V>()) }.to_vec()) }
 
 include!("p3_direct.rs");
+// inner-model (0.6.2): the simplified linear model's boundary layer, off unless AD_IM_BL=fixedk.
+include!("inner_model.rs");
 
 struct P3Image { direct: Option<P3DirectImage>, tl: Module, ad: Module, count: Module, f_tl: *mut c_void, f_ad: *mut c_void, f_count: *mut c_void,
                  sz_tl: usize, sz_tape: usize, struct_bytes: usize,
@@ -2783,6 +2785,8 @@ impl Native {
     /// MYNN-EDMF whole launch in 32-column-aligned tiles. mode 0 tangent, 1 adjoint. tin / ybar = the shadow
     /// snapshot taken just before (separate-buffer entries), tout / xbar = the shadow (in-place convention).
     unsafe fn p3(&mut self, cuda: &Cuda, p: &mut Prepared, mode: i32, identity: bool) -> Result<Value, String> {
+        // inner-model: AD_IM_BL=fixedk runs the held-coefficient linear diffusion in place of the scheme's derivative.
+        if im_bl_on() { return self.im_p3_fixedk(cuda, p, mode); }
         let mut init_taped = false;
         if mode == 1 && self.p3.as_ref().and_then(|i| i.direct.as_ref()).is_some() {
             // The joined backward has no f_mym_initialize: an initflag launch (the first step of a cold start) reverses on

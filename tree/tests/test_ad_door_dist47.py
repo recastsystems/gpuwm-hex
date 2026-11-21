@@ -501,6 +501,23 @@ def test_a_command_waits_for_a_program_another_command_told_to_end(tmp_path, mon
     ctx.session.unlock()
 
 
+@pytest.mark.skipif(not sys.platform.startswith("linux"), reason="/proc")
+def test_a_program_started_a_moment_ago_is_found_serving_its_folder(tmp_path):
+    """THE BREAKAGE: straight after Popen (posix_spawn) the child's /proc command line reads empty for a moment, so
+    read_live found no program in a session folder whose program had just started (the flaky test below, 1 in 40)."""
+    folder = s.private_dir(tmp_path / "sessions") / "card0"
+    folder.mkdir(mode=0o700)
+    for _ in range(20):
+        proc = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(20)", "--resident", str(folder)])
+        try:
+            assert s._serves(proc.pid, folder)
+            assert not s._serves(proc.pid, tmp_path)
+        finally:
+            proc.kill()
+            proc.wait(timeout=10)
+    assert not s._serves(proc.pid, folder)                              # ended and reaped: serves nothing
+
+
 def test_a_program_that_is_whole_is_not_taken_for_an_ending_one(tmp_path):
     folder = s.private_dir(tmp_path / "sessions") / "card0"
     folder.mkdir(mode=0o700)

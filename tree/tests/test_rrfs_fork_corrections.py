@@ -103,33 +103,33 @@ def test_exact_mode_applies_nothing_and_correct_mode_applies_every_fix_the_runni
     assert str(correct.backends["microphysics"]) == "hex-cuda" and str(correct.backends["pbl"]) == "hex-cuda"
     assert correct.selectors["microphysics"] == "mp_tempo" and correct.selectors["pbl"] == "bl_mynnedmf"
     assert correct.options["config_tempo_version"] == "v3.2.5"
-    assert correct.corrections == frozenset({"MY1", "MY2", "MY3", "MY4", "MY5", "SF1", "TP4", "TP5"})
+    assert correct.corrections == frozenset({"MY1", "MY2", "MY3", "MY4", "MY5", "SF1", "TP4", "TP5", "TP6"})
     record = correct.receipt()["correct_mode"]
-    assert record["applied"] == ["MY1", "MY2", "MY3", "MY4", "MY5", "SF1", "TP4", "TP5"]
+    assert record["applied"] == ["MY1", "MY2", "MY3", "MY4", "MY5", "SF1", "TP4", "TP5", "TP6"]
     assert record["in_scheme_versions"] == {k: v for k, v in SIX.items() if k.startswith("TP")}
     assert record["gaps"][0]["finding"] == specification(correct)["correct_mode_inventory"]["finding"]
     warning = correct.gap_warning()
-    assert "applied fork corrections: MY1, MY2, MY3, MY4, MY5, SF1, TP4, TP5" in warning
+    assert "applied fork corrections: MY1, MY2, MY3, MY4, MY5, SF1, TP4, TP5, TP6" in warning
     assert "already in the running scheme versions: TP1 (rrfs.tempo_v325), TP2 (rrfs.tempo_v325)" in warning
     # A correct-mode run that names the TEMPO pin gets the pin with all four TEMPO fixes.
     pinned = route_namelist(deck() + PINS, physics_mode="correct")
     assert pinned.options["config_tempo_version"] == "v3.0.3"
-    assert pinned.corrections == frozenset({"MY1", "MY2", "MY3", "MY4", "MY5", "SF1", "TP1", "TP2", "TP3", "TP4", "TP5"})
+    assert pinned.corrections == frozenset({"MY1", "MY2", "MY3", "MY4", "MY5", "SF1", "TP1", "TP2", "TP3", "TP4", "TP5", "TP6"})
     assert not pinned.fork_carried()
 
 
-def test_noaa_pin_set_default_carries_six_in_its_scheme_versions_and_applies_tp4_and_tp5():
+def test_noaa_pin_set_default_carries_six_in_its_scheme_versions_and_applies_tp4_tp5_and_tp6():
     # Breakage prevented: a receipt naming MY1 applied while MYNN-EDMF v6.1.1 (whose own text has the fix, and
     # which declares no correction) runs the slot: SlotRegistry.require would refuse every default run.
     correct = route_namelist(deck(), physics_mode="correct", table_key=K44)
     assert correct.mynn_version == "mynn-v6.1" and correct.options["config_tempo_version"] == "v3.2.5"
-    assert correct.corrections == frozenset({"TP4", "TP5"})
+    assert correct.corrections == frozenset({"TP4", "TP5", "TP6"})
     assert dict(correct.fork_carried()) == SIX
     assert correct.receipt()["correct_mode"]["in_scheme_versions"] == SIX
     # The surface-layer half alone: MYNN-EDMF stays the pin, so MY1 to MY5 are applied there.
     half = route_namelist(deck() + "\n&hex_mpasphys config_mynn_version='mynn-sfc-v6.1.0' /",
                           physics_mode="correct", table_key=K44)
-    assert half.corrections == frozenset({"MY1", "MY2", "MY3", "MY4", "MY5", "TP4", "TP5"})
+    assert half.corrections == frozenset({"MY1", "MY2", "MY3", "MY4", "MY5", "TP4", "TP5", "TP6"})
     # Naming every pin in correct mode: every row is applied as a text pair.
     pins = route_namelist(deck() + PINS + "\n&hex_mpasphys config_mynn_version='pinned' /",
                           physics_mode="correct", table_key=K44)
@@ -218,7 +218,7 @@ def test_tp5_snow_moments_takes_the_mass_moment_at_bm_s_2_in_both_tempo_generati
 def test_skip_list_names_fork_ids_and_native_cpu_slot_is_a_named_gap():
     skipped = route_namelist(deck() + PINS + "\n&nhyd_model config_physics_correct_skip='TP2,MY1' /",
                              physics_mode="correct")
-    assert skipped.corrections == frozenset({"MY2", "MY3", "MY4", "MY5", "SF1", "TP1", "TP3", "TP4", "TP5"}) and skipped.correct_skip >= {"TP2", "MY1"}
+    assert skipped.corrections == frozenset({"MY2", "MY3", "MY4", "MY5", "SF1", "TP1", "TP3", "TP4", "TP5", "TP6"}) and skipped.correct_skip >= {"TP2", "MY1"}
     with pytest.raises(ValueError, match="only with config_physics_mode='correct'"):
         route_namelist(deck(), physics_mode="exact", correct_skip=("TP1",))
     with pytest.raises(ValueError, match="unknown"):
@@ -234,7 +234,7 @@ def test_registry_takes_fork_declarations_and_require_catches_a_missing_one():
     registry = SlotRegistry()
     for slot, scheme in config.selectors.items():
         if config.active(slot) and not config.native_embedded(slot):
-            declared = {"microphysics": ALL5, "pbl": ("MY1", "MY2", "MY3", "MY4", "MY5"), "surface_layer": ("SF1",)}.get(slot, ())
+            declared = {"microphysics": ALL5 + ("TP6",), "pbl": ("MY1", "MY2", "MY3", "MY4", "MY5"), "surface_layer": ("SF1",)}.get(slot, ())
             registry.register(slot, scheme, config.backends[slot], lambda call: None, corrections=declared)
     registry.require(config)
     bare = SlotRegistry()
@@ -278,3 +278,38 @@ def test_state_reflectivity_takes_the_snow_moments_correction_and_no_other():
         assert mark in fixed and fixed != plain, version
         assert fixed == refl.module_source(59, version, frozenset({"TP5"}))
         assert len(fixed.splitlines()) == len(plain.splitlines()) + 1, version
+
+
+def test_tp6_activation_takes_the_land_mask_in_both_tempo_generations():
+    """TP6: the droplet activation gets the cell's land mask (the water floor lower_lim_nuc_frac 0.15 then runs over
+    water and sea ice, as the CCPP Thompson call passes lsml). Breakage prevented: the floor is dead code with land
+    absent, and marine stratocumulus drizzles into a false light-echo sheet on coarse cells. Exact mode and every
+    run without TP6 keep the pinned text; the land word arrives as pointer 20 of the field table."""
+    from hexcore.mpasphys.rrfs import tempo_v325 as t325, tempo_phase_v325 as phase325
+    call = "activate_cloud_number(P, temp[k], w1d[k], nwfa[k], C.xland ? &tp6_land : nullptr)"
+    for column in (tempo.corrected_sources(("TP6",))[0], t325.corrected_column(("TP6",))):
+        assert column.count(call) == 1 and "activate_cloud_number(P, temp[k], w1d[k], nwfa[k], nullptr)" not in column
+        assert column.count("  int xland;  // correct mode TP6") == 1
+    for column in (tempo._COLUMN, t325._COLUMN, tempo.corrected_sources(ALL5)[0], t325.corrected_column(("TP4", "TP5"))):
+        assert "xland" not in column
+    # the warp drivers set the word after their context line, with TP3 or without
+    for warp in (tempo.corrected_sources(("TP6",))[2], tempo.corrected_sources(("TP3", "TP6"))[2],
+                 t325.corrected_warp(("TP6",))):
+        assert warp.count("ctx.xland=f[20]?(int)f[20][c]:0;") == 1
+    assert t325.corrected_warp(("TP4", "TP5")) is t325._WARP and "xland" not in tempo.corrected_sources(ALL5)[2]
+    # the phase prologue (both generations) and the composed modules
+    for ph, corr in ((phase, ALL5 + ("TP6",)), (phase325, ("TP4", "TP5", "TP6"))):
+        src = ph.phase_source(DM, 59, "", corr)
+        assert src.count("C.xland = f[20] ? (int)f[20][c] : 0;") == 1 and "f[20]" not in ph.phase_source(DM, 59, "", ())
+        assert "ctx.xland=f[20]" in ph.tail_source(DM, 59, "", corr) and "f[20]" not in ph.tail_source(DM, 59, "", ())
+    for numerics in ("strict", "fast"):
+        assert "ctx.xland=f[20]" in t325.warp_source(DM, max_levels=59, numerics=numerics, corrections=("TP6",))
+        assert "xland" not in t325.warp_source(DM, max_levels=59, numerics=numerics, corrections=())
+    assert fc.FORK_CORRECTIONS["TP6"]["carried_by"] == ()
+
+
+def test_tp6_land_word_is_required():
+    """launch_mpas refuses TP6 without the cells' xland (one line naming it) rather than reading pointer 20 past the
+    end of the field table."""
+    with pytest.raises(ValueError, match="TP6 needs the cells' xland"):
+        tempo.tp6_land({}, 10)

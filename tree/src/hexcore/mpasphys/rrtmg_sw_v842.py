@@ -120,6 +120,9 @@ def shortwave_slot(call):
     aerosols = {n: sounding[n][:, :nc] for n in ("nwfa", "nifa", "aerosol_qv") if n in sounding}
     if "ht" in sounding:
         aerosols["ht"] = sounding["ht"][:nc]
+    from .mcica_seed_rule import held as _held_seed
+    # config_radt_mcica_seed = 'cell' only: the solve cells' global indices and the call's time step.
+    options["mcica_seed"] = _held_seed(call.options, lambda: mesh["indexToCellID"][:nc], call.itimestep)
     out = engine.radiation_sw_from_MPAS(fields, surface,
         sounding["p8w"][:, :nc], sounding["t8w"][:, :nc],
         lat_cell=mesh["latCell"][:nc], lon_cell=mesh["lonCell"][:nc],
@@ -484,7 +487,11 @@ class MPASShortwave(CudaSW):
 
     #: Most sunlit columns in one SW wrapper batch, on any card. Bounds the
     #: batch's McICA slab at 4096 x 200,704 B = 0.77 GiB (nl=56).
-    SUNLIT_CHUNK_CAP = 4096
+    SUNLIT_CHUNK_CAP = int(__import__("os").environ.get("GPUWM_HEX_SW_SUNLIT_CAP", "4096"))
+    # GPUWM_HEX_SW_SUNLIT_CAP (default 4096, the cap before the word existed): a wider cap runs a region's sunlit
+    # columns in fewer wrapper batches; per-column words are the same at any width. THE BREAKAGE THIS PREVENTS: a
+    # recording of a 16,933-cell region ran short-wave in 5 batches, so 51 of its arrays were first written in part
+    # and the sealer refused (stage-2 residual allocation_first_use_not_whole_write); record such a region with one.
     SUNLIT_CHUNK_QUANTUM = 256
 
     def sunlit_column_chunk(self, nd, nl, aerosol=False, column_chunk=None):
@@ -554,11 +561,12 @@ class MPASShortwave(CudaSW):
         return max(1, min(int(nd), width))
 
     # MPAS module_ra_rrtmg_sw.F:1403-2012 with the wrapper's irng=0, permuteseed=1.
-    def _wrapper_mcica(self, n, nl, cldovrlp, idcor, julday, layers, height, latitude):
+    def _wrapper_mcica(self, n, nl, cldovrlp, idcor, julday, layers, height, latitude, held=None):
         """The (8, n, nl, 112) McICA slab: cloud, ice, liquid and snow paths from the generator,
         then the band optics slots at their clear values (tau 0, ssa 1, asym 0, fsf 0) that the
         solver's cloud-property step fills. icld 0 leaves the generator slots zero, as native's
-        early return over cleared arrays."""
+        early return over cleared arrays. ``held`` (mcica_seed_rule.Held, this batch's keys) rewrites
+        the seed words by the ``cell`` rule of config_radt_mcica_seed; None is MPAS's pressure rule."""
         cp = self.cp
         m = cp.empty((8, n, nl, 112), dtype=cp.float32)
         m[4].fill(0)
@@ -579,6 +587,9 @@ class MPASShortwave(CudaSW):
         self._launch("mpas_sw_mcica_seeds", n,
                      tuple(np.int32(v) for v in (n, nl, cldovrlp, idcor, julday, 1))
                      + (layers[0], height, latitude, seeds, weights))
+        if held is not None:
+            from .mcica_seed_rule import SHORTWAVE
+            held.write(seeds, SHORTWAVE)
         draws = mcica_draws_per_gpoint(cldovrlp, nl)
         self._launch("mpas_sw_mcica_gpoint", n * 112,
                      tuple(np.int32(v) for v in (n, nl, cldovrlp, draws))
@@ -590,7 +601,7 @@ class MPASShortwave(CudaSW):
     def rrtmg_swrad(self, fields, surface, p8w, t8w, *, xtime, gmt, julday, radt,
                     degrad, declin, solcon, icloud, cldovrlp, idcor, o3input,
                     pin, o3clim, has_reqc=0, has_reqi=0, has_reqs=0,
-                    aer_opt=0, aerosol=None, column_chunk=None, consume_fields=False):
+                    aer_opt=0, aerosol=None, column_chunk=None, consume_fields=False, mcica_seed=None):
         cp = self.cp
         nc, nz = fields["p3d"].shape
         nl = nz + 1
@@ -667,7 +678,7 @@ class MPASShortwave(CudaSW):
             with _deferred_guards():
                 self._sunlit_batches(day, nd, width, layers, interfaces, height, s, sources, nz, nl,
                                      cldovrlp, idcor, julday, cloudflag, iceflag, solcon,
-                                     cosine, column_chunk, profiles, direct, heat)
+                                     cosine, column_chunk, profiles, direct, heat, mcica_seed)
             del sources
             # The batched chain's workspace is used on radiation calls only;
             # hand it back so it is not held through the steps in between
@@ -684,7 +695,7 @@ class MPASShortwave(CudaSW):
 
     def _sunlit_batches(self, day, nd, width, layers, interfaces, height, s, sources, nz, nl,
                         cldovrlp, idcor, julday, cloudflag, iceflag, solcon, cosine, column_chunk,
-                        profiles, direct, heat):
+                        profiles, direct, heat, mcica_seed=None):
         """MPAS module_ra_rrtmg_sw.F:10026-10664: the sunlit wrapper batches of rrtmg_swrad."""
         cp = self.cp
         for first in range(0, nd, width):
@@ -694,7 +705,8 @@ class MPASShortwave(CudaSW):
             it = cp.ascontiguousarray(interfaces[:, cols, :])
             m = self._wrapper_mcica(n, nl, cldovrlp, idcor, julday, l,
                                     cp.ascontiguousarray(height[cols]),
-                                    cp.ascontiguousarray(s[0, cols]))
+                                    cp.ascontiguousarray(s[0, cols]),
+                                    None if mcica_seed is None else mcica_seed.take(cols))
             optics = None
             if sources is not None:
                 # MPAS module_ra_rrtmg_sw.F:10562-10572 copies only model

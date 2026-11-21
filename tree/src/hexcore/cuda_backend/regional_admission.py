@@ -835,8 +835,30 @@ class RegionalContract:
 #: NOT MEASURED AT THIS VALUE: the six class rows below. They are carried at it as in (4) to (42); their archived
 #: receipts keep their recorded scope and were not re-run on their own culls. A geometry outside those rows mints
 #: itself at the door on first use.
+#: (44) 2026-11-18 (for hex 0.6.2): cuda_transport_v841.py's regional target-density check
+#: tests the same cells, term for term, with element-wise bool kernels over the whole (level, cell) block and the
+#: kept-cell mask, instead of a boolean gather (target[:, keep]) that wrote a float32 copy of the field every step. It
+#: writes no value the forecast keeps: one hour, exact mode, strict numerics, before and after, one RTX 4090: the 12 km
+#: cut 49,438,230 values and the 3 km storm box 652,158,610 values of history and diagnostics, 0 different. The
+#: measurements above were made at (43)'s value. The only changed member of this set since (43). The former source set
+#: was ed66eddc159dc84fb96f918d6fa195722a65d307c2306260fae2c44f3e4acd48. Re-derived by tools/repin_source_tables.py.
+#: (45) 2026-11-20 (hex 0.6.2): cuda_transport_v841.py, the only changed member since (44).
+#: Two comment lines name fork jacobbieker/woof PR 216 beside (44)'s density check (the same check: PR 216 made the
+#: same change for the host wait). PR 224 gives _launch_checked a settle hook that runs only under
+#: GPUWM_HEX_EDGE_HOIST_CHECK (off by default), which writes the regional garbage column's 1 into both forms before
+#: they are compared; its 15,000-edge hoist threshold is in cuda_edge_hoist.py, outside this set. No forecast launch,
+#: argument or arithmetic of this set moved. Measured for the two PRs alone (20 Nov 2026, the Iowa cull,
+#: 6,446 cells, 1 h, default MPAS-suite route, an RTX 5070 Ti): 0 of 15,093,931 history words differ from the
+#: line tip. The (44) pair (12 km cut and 3 km storm box, exact, strict) is to be rerun on this tree by the release's
+#: proving runs. The former source set was dd7d6419df235c2fe9bb404fcc0f2fdadd1ee2c37f25d55e5225924a0c2483c9.
+#: Re-derived by tools/repin_source_tables.py.
+#: (46) 2026-11-21 (hex 0.6.2): cuda_regional_forecast_v841.py, the only changed member since (45). Two
+#: comment lines name the card a measurement was made on (an RTX PRO 6000) where they named the machine's label;
+#: no code line, launch, argument or arithmetic of this set moved (the file's diff is those two comment lines).
+#: The former source set was 25f40f66d75f95da7eb9fdacce78bdee4070e0fa46183d19d90109f7699fc20e.
+#: Re-derived by tools/repin_source_tables.py.
 MINTED_KERNEL_SET_SHA256 = (
-    "ed66eddc159dc84fb96f918d6fa195722a65d307c2306260fae2c44f3e4acd48"
+    "f69c6a4098cf1fae8cc24dab5a6d1074fbce1d3efeb51467021a0a60accdef3d"
 )
 
 _DRY_MINT_CAVEAT = (

@@ -693,7 +693,7 @@ class FrameworkInitializationRRFS(FrameworkInitialization):
     def prefetch_tables(cls, configs, named, *, resource='mpas-source-rrfs', pin_set='rrfs'):
         """Start reading the TEMPO lookup files on a background thread, before the dycore inputs.
 
-        THE COST THIS REMOVES (RRFS hrrrv5, mv3km, V6000, 2026-10-28): physics_init read and hashed the four
+        THE COST THIS REMOVES (RRFS hrrrv5, mv3km, RTX PRO 6000, 2026-10-28): physics_init read and hashed the four
         NOAA lookup files (~1 GB) at ~2.1 s of start-up, after the dycore was built, while the card waited.  They
         depend on nothing the run computes, so they are read beside the dycore inputs and build (the Rust
         decoder and hashlib release the GIL) and read_tempo_lookup_files takes the same words.  Any failure here

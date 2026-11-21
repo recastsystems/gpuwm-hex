@@ -568,6 +568,14 @@ def plan(args: argparse.Namespace, table: Mapping[str, Any] | None = None) -> di
         step = {**step, "capped": step.get("source") == "physics cap", "mesh_dt_seconds": mesh_dt,
                 "passed_as_dt": False,
                 "note": "the forecast door applies this step to the named suite itself; the global door passes no --dt"}
+    from .mpasphys.forecast_v842 import forecast_args_slot_refusal
+    door_flags = [str(item) for item in (args.forecast_arg or ())]
+    if route_suite is not None and not named.get("suite"):
+        door_flags += ["--physics-suite", route_suite]
+    slot_refusal = forecast_args_slot_refusal(door_flags)
+    if slot_refusal is not None:
+        # The forecast door's own refusal, read before the mesh, the static and any download.
+        raise GlobalDoorError(slot_refusal + " Nothing was built or downloaded.")
     physics["mode"] = named.get("mode") or "correct"
     physics["mode_source"] = ("--forecast-arg=--physics-mode" if named.get("mode")
                               else "the forecast door default (correct)")

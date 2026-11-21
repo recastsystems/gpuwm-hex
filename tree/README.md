@@ -26,11 +26,12 @@ gpuwm-hex adjoint-test --row hrrrv5-q12.96.2890.n40.60w91.30 --steps 15 --at 40.
 
 The last command is the 12 km example. It needs one card of compute capability 12.0 with 28,700 MiB free (a 32 GB
 GeForce RTX 5090 runs it) and 47,104 MiB of host memory, fetches its own 1.20 GB of inputs, and ends **PASS** in 5 to
-11 minutes (320 to 645 s on 0.6.0's release builds, 418 s on a pre-release build of 0.6.1 on one RTX 5090;
+13 minutes (320 to 645 s on 0.6.0's release builds; on one RTX 5090, 418 to 708 s on builds of 0.6.1 and 769 s on
+a build of 0.6.2, its host's processors shared with a package build; 466 s on one RTX PRO 6000 96 GB on another;
 *The differentiable engine*, below). `gpuwm-hex examples` prints where the runnable example scripts are, and
 `gpuwm-hex examples --copy DIR` copies them.
 
-CUDA remains the default. The [experimental AMD backend](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/amd-backend.md)
+CUDA remains the default. The [experimental AMD backend](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/amd-backend.md)
 is opt-in with `--backend amd` or `GPUWM_BACKEND=amd`; the linked page records
 the installation paths, measured single-card scope and numerical limits.
 
@@ -46,10 +47,23 @@ at the end of every run, and an experimental storm-following region.
 is an independent port and is not affiliated with or endorsed by them. The name
 is used here only to say which model was ported.)*
 
-**New in 0.6.1:** a defect release of 0.6.0. It fixes what a first user of 0.6.0 met, adds the command that finds the
-examples now in the wheel (`gpuwm-hex examples`) and one option (`--boundary-layer guarded` on the 12 km example
-row); the
-[CHANGELOG](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/CHANGELOG.md) lists each fix.
+**New in 0.6.2:** each item has a short section in
+[User Manual chapter 11](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/manual/11-new-in-0.6.2.md).
+
+- The meshes the doors generate are built with the new generator's geometry 2 (no obtuse triangle, every spacing
+  built as asked); `--geometry 1` gives 0.6.1's meshes.
+- Hail size (HAILCAST, HRRR's hail fields) on meshes finer than 4 km, on by default.
+- Ranks on several hosts (`--hosts`), with checkpoints sealed and resumed across hosts; seven speed settings for
+  runs on several ranks, on by default, none of which changes a stored value; updraft helicity on several ranks the
+  same as on one card.
+- Opt-in, off by default: three surface and boundary-layer closures for `hrrrv5` (a surface-flux network, a neural
+  boundary layer and an 8-parameter closure) and a learned column correction that takes your own checkpoint.
+- A start row `ifs-gfs-top` (ECMWF IFS open data with GFS above 50 hPa).
+- `hrrrv5` with Grell-Freitas convection (`--physics config_convection_scheme=cu_grell_freitas`) runs on the GPU.
+- Fixes: `gpuwm-hex render` given several history frames files each at its own lead, every door's `--help` runs on
+  Windows, correct mode no longer draws a false light echo over the oceans, `--local-timestep` no longer stops at
+  step 0, and twelve fixes from github.com/jacobbieker/woof. The
+  [CHANGELOG](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/CHANGELOG.md) lists each change, and 0.6.1's.
 
 **What 0.6.0 added.**
 
@@ -62,14 +76,14 @@ row); the
   transpose over the whole window: the two sides of its dot must agree within 4 single-precision roundings along every
   tested direction, and over 8 or more directions they must not lean one way. The gradient test compares the gradient's prediction with the real
   model's change and has a 1 per cent bar. What the derivative holds is named (*The differentiable engine*, below, and
-  [the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/LIMITS.md)).
+  [the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/LIMITS.md)).
 - **NOAA's hrrrv5 deck, bit for bit.** A plain `--physics-suite hrrrv5` run is NOAA's hrrrv5 deck, and with
   `--physics-mode exact --numerics strict` its one-hour forecasts on a 12 km and a 3 km limited-area mesh match the
   patched native RRFS-MPAS 44c0849 reference in every stored value (0 of 86,751,014 and 0 of 624,931,668 values
   different, each hour from the HRRR 2024-05-21 15Z start, one process on one RTX 5090; the CHANGELOG's 0.6.0 headline
   has the files). The forecast also runs on older card families, the RTX 4090 included.
 
-**New here? Start with the [User Manual](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/manual/index.md):** a
+**New here? Start with the [User Manual](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/manual/index.md):** a
 plain-language introduction, a quickstart in which every command was run
 before it was printed, task guides for each door, and a troubleshooting index
 built from the doors' own refusals. This README is the capability contract;
@@ -109,7 +123,7 @@ its glibc. Against an optimised native build, hex
 differs exactly as much as two native builds differ from each other. Not
 claimed for the dycore alone: other meshes, more ranks, several cards, and
 local time stepping, which is a different time scheme by design and is never
-called identical. [MPAS compatibility](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/mpas-compatibility.md) has the
+called identical. [MPAS compatibility](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/mpas-compatibility.md) has the
 tables; `gpuwm-hex verify-dycore` rebuilds the reference and checks it.
 
 ### MPAS physics, all on the GPU (the headline)
@@ -130,7 +144,7 @@ One 24-hour forecast of the `convection_permitting` suite on the public
 The same gate runs both MPAS suites (`mesoscale_reference` and
 `convection_permitting`) with every scheme on the native backend, and they are
 bitwise in every written field too (`x1.2562`, 24 h, one process). The decks
-are in [`verification/gates/`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/verification/gates/README.md) and the
+are in [`verification/gates/`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/verification/gates/README.md) and the
 reference recipe in `tools/native_physics_reference/`.
 
 ### Every other MPAS-A physics scheme
@@ -181,7 +195,7 @@ proof above was run in exact mode. `--physics-correct-skip ID` leaves one
 correction out, for an observation A/B arm. On the ArWen physics route the
 same flags, and correct mode by default, apply the corrections the installed
 gpuwm carries (WB4, New Tiedtke's dry-mass coupling; WB5, WSM6's surface
-integral) and name the rest as gaps. Details: [MPAS physics seam](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/manual/mpas-physics-seam.md#correct-mode-and-exact-mode).
+integral) and name the rest as gaps. Details: [MPAS physics seam](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/manual/mpas-physics-seam.md#correct-mode-and-exact-mode).
 
 ### Initialization, statics and the services around the forecast
 
@@ -203,18 +217,18 @@ speaking `hex-vertical-v1`, MPAS streams and restart use `rw_mpas_stream`,
 and a mesh generated at a point needs an `rw_mpas_static` whose statics hold
 the binary64 coordinates they declare. No released gpuwm carries any of the
 three in the version this release needs, so the wheel carries them in
-`hexcore/libexec` ([engine bridges](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/engine-bridges.md)). A door that
+`hexcore/libexec` ([engine bridges](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/engine-bridges.md)). A door that
 needs one and cannot find it refuses by name.
 
 **A forecast from an analysis.** `gpuwm-hex forecast --analysis BUNDLE` starts
-a forecast from an MPAS analysis bundle ([analysis bundle](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/analysis-bundle.md)):
+a forecast from an MPAS analysis bundle ([analysis bundle](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/analysis-bundle.md)):
 by direct insertion, with an IAU window from the bundle's increment, as a
 cycling restart, or with a remap onto another mesh. Measured on one convective
 case (ArWen physics): with no bundle every history file is byte-identical to
 the run before this release, and in correct mode a zero increment is bitwise a
 plain run. IAU also runs across a restart (the checkpoint carries its window),
 on the explicit MPAS suite route, on same-host multi-card ranks and in member
-rosters ([analysis bundle](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/analysis-bundle.md)); IAU on multi-card local
+rosters ([analysis bundle](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/analysis-bundle.md)); IAU on multi-card local
 time stepping is refused by name.
 
 ### Hex global, in one command
@@ -246,7 +260,7 @@ mesh's own step the YSU boundary layer and New Tiedtke left single layers up to
 24 K too hot, and one row ran away to 381 K. The cause is explicit tendencies
 overshooting their donor layers; an engine carrying both donor bounds runs the
 ArWen rows at the mesh's own step with no hot layer, and the door retires the
-cap there by itself. See [Hex global](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/global-door.md).
+cap there by itself. See [Hex global](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/global-door.md).
 
 ### Storm-following region (experimental)
 
@@ -256,7 +270,7 @@ measured runs used ArWen physics). One case file drives `stage`, `prepare`,
 `run` and `fixed` (the matched control); `gpuwm-hex moving check` tests an
 install with no inputs. With no moving command and no `GPUWM_HEX_MOVING_*`
 variable set, a run is unchanged (`tests/test_moving_inactive_noop.py`).
-Guide: [Moving nests](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/moving-nest.md).
+Guide: [Moving nests](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/moving-nest.md).
 
 Measured: three tropical cyclones, 48 hours each, five moves each, one card,
 a 3 km region about 450 km in radius.
@@ -267,10 +281,12 @@ a 3 km region about 450 km in radius.
 - A restart across a move continued bit for bit (one move tested).
 - Those runs used the remap before the balance fix: at 2 of the 15 moves, the
   short-term shock measured against a fixed-region run went over its 1.5 limit
-  (1.5004 and 1.81). The balance fix is now the default; on `gpuwm-hex
-  moving check` it brings the worst post-move jolt from 16.2 to 1.01 on a
-  card with local time stepping and from 21.4 to 1.04 on the CPU (ordinary
-  integrator); see [the jolt report](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/moving-jolt-report.md). A
+  (1.5004 and 1.81). The balance fix is now the default. On 0.6.2,
+  `gpuwm-hex moving check --lts` brings the worst post-move jolt from 12.97 to
+  1.014 on its gentle case and from 152.8 to 1.029 on its steep case (an RTX
+  4090 and an RTX 5070 Ti print the same numbers), and `--device cpu` brings the
+  gentle case from 19.3 to 1.04 (ordinary integrator); the first measurement is
+  in [the jolt report](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/moving-jolt-report.md). A
   full-cyclone replay of those two moves with the fix is not yet run. MPAS-A
   v8.4.2 suites move too, on one card: each move carries the suite's physics
   state, and on a 2 h western Pacific case with every convection_permitting
@@ -383,7 +399,7 @@ Noah-MP v5.0 stays a licence stub unless that build and the run opt in.
 The wheel bundles the three Rust programs the fork's dycore calls.
 `gpuwm-hex init --physics-suite hrrrv5` makes `init.nc`, the fork static and
 the hourly boundaries from GFS, the fork's init ported to Rust
-([RRFS init](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/rrfs-init.md)). The deck's invariant file is read by default
+([RRFS init](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/rrfs-init.md)). The deck's invariant file is read by default
 from the deck's directory or the init's (`--stream-input invariant=FILE` names
 another).
 
@@ -480,7 +496,7 @@ Also proven:
 
 ### 0.4 in short
 
-[Physics routes and measured comparison scopes](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/physics-routes-0.4.1.md) describe the MPAS physics route (the default since 0.4.6), the ArWen route and public licence exclusions.
+[Physics routes and measured comparison scopes](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/physics-routes-0.4.1.md) describe the MPAS physics route (the default since 0.4.6), the ArWen route and public licence exclusions.
 
 0.3.3 (2026-09-29) was the MPAS-A dynamical core on the GPU, running ArWen's
 physics. 0.4.1 is the whole of MPAS-A v8.4.2 on the GPU, each piece proven
@@ -511,7 +527,7 @@ against the real thing before it landed:
    region, and regional forecast presets.
 
 
-[What's new in 0.4](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/manual/10-whats-new-0.4.md)
+[What's new in 0.4](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/manual/10-whats-new-0.4.md)
 gives each piece of 0.4 its command, its proof, a picture and what it does not yet do.
 
 ## What is *not* claimed
@@ -527,14 +543,14 @@ gives each piece of 0.4 its command, its proof, a picture and what it does not y
   route (`--physics-suite arwen_mpas_column`) is not identical to native MPAS, and the dycore check does not
   qualify one. Its measured differences from native MPAS are registered, with
   mechanism, magnitude and observational referee, in
-  [Declared divergences](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/declared-divergences.md). Its referee is skill
+  [Declared divergences](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/declared-divergences.md). Its referee is skill
   against observations (MRMS, Stage-IV, ASOS, radiosondes), not agreement
   with another model; a bias that is wrong against observations is still
   wrong.
 - **The adjoint's consistency is not the gradient's accuracy, and one card is not several.** The dot tests show that
   the adjoint is the transpose of the tangent-linear model on the scope stated in *The differentiable engine*. How
   well the gradient predicts the forecast is claimed only for the measured rows of the table "How far the gradient can
-  be trusted" in [The differentiable engine](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/README.md): about 3 hours at
+  be trusted" in [The differentiable engine](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/README.md): about 3 hours at
   120 km and 60 km, 14 min 45 s at 3 km, about 1 hour wherever the mountain-drag closure is differentiated. A
   composite-reflectivity measure does not pass the gradient check. Nothing is claimed for a gradient split across several cards (the split is experimental, and says so when used), or for any card family but compute capability 12.0.
 - **RRFS-MPAS is matched on its measured cases only.** In exact mode with strict
@@ -578,7 +594,7 @@ gives each piece of 0.4 its command, its proof, a picture and what it does not y
 | Platforms | Linux x86_64 with glibc 2.28 or newer installs the prebuilt wheel (`manylinux_2_28`: RHEL 8 and 9, Ubuntu 20.04 and later). Anywhere else pip builds the sdist, which needs a Rust toolchain (`cargo`) for the bundled helpers; the observation scorer is built only when `GPUWM_HEX_ENGINE_SOURCE` names a gpuwm source checkout, and otherwise `gpuwm-hex score` refuses by name and `doctor` reports the gap (forecasts are unaffected). There is no prebuilt Windows wheel. |
 | Assets | A mesh grid file, a matching static file, and (for the init door) a vertical-grid declaration, normally a `--vertical-spec` JSON; a native-minted init file as a capsule is the compatibility mode. `gpuwm-hex global` fetches its published meshes itself; otherwise **gpuwm-hex ships none of these**. See *Assets you must supply*. |
 | Rust binaries | The field engines (`rw_mpas_init`, `rw_mpas_static`, `rw_mpas_convert`, `rw_mpas_lbc`, `rw_wrfbatch` and the others) come from gpuwm's bridge bundle or a gpuwm source build. Nine of them ship in this wheel, with its own helpers: `rw_mpas_geometry`, `rw_mpas_stream`, `rw_mpas_static`, `rw_mpas_mesh`, `rw_mpas_lbc` (native case-9 boundaries), `rw_igra2` (IGRA2 radiosondes for `gpuwm-hex score`) and the RRFS fork dycore's three programs. See *Getting the Rust engines*. |
-| MPAS physics suites | The MPAS-A framework uses the wheel's helpers and pinned DATA from `physics-resources-v0.4.1`. `gpuwm-hex physics-resources fetch --from DIR` stages an offline mirror; `GPUWM_HEX_PHYSICS_RESOURCES_FROM=DIR` selects it at first use. RRFS `hrrrv5`, both RRFS alias suites and New Tiedtke run on the same terms; selections without resident CUDA table entries require a site-built native library. See [MPAS physics resources](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/physics-resources.md). |
+| MPAS physics suites | The MPAS-A framework uses the wheel's helpers and pinned DATA from `physics-resources-v0.4.1`. `gpuwm-hex physics-resources fetch --from DIR` stages an offline mirror; `GPUWM_HEX_PHYSICS_RESOURCES_FROM=DIR` selects it at first use. RRFS `hrrrv5`, both RRFS alias suites and New Tiedtke run on the same terms; selections without resident CUDA table entries require a site-built native library. See [MPAS physics resources](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/physics-resources.md). |
 
 ### Install
 
@@ -656,14 +672,14 @@ prints this command with your geography root.
 - `gpuwm-hex global-cycle` repeats a global row with schedule, retention
   and status records.
 - `gpuwm-hex moving-ensemble` runs the members of a prepared storm-following case,
-  each with its own SPPT/SKEB forcing ([moving-region ensembles](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/moving-ensemble.md)).
+  each with its own SPPT/SKEB forcing ([moving-region ensembles](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/moving-ensemble.md)).
 - `gpuwm-hex chem-sources` lists, fetches and prepares smoke, composition, dust and
-  sea-salt source files for aerosol transport ([chemistry sources](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/chemistry-sources.md)).
+  sea-salt source files for aerosol transport ([chemistry sources](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/chemistry-sources.md)).
 
 ### Kernel packs
 
 Kernel packs are pinned assets for NVRTC 12.9, 13.0, 13.2, 13.4 (13.4.59 and 13.4.92) and 13.5 (release
-`kernel-packs-v0.6.0`), and hold the ArWen and MPAS physics kernels of this release.
+`kernel-packs-v0.6.2`), and hold the ArWen and MPAS physics kernels of this release.
 The `gpu-cu13` extra installs gpuwm's own `gpu-cu13` toolchain with it, so the pair resolves one CUDA stack (NVRTC 13.4.92 today, the one this release was gated on), and a fresh install loads a prebuilt pack.
 `gpuwm-hex fetch-assets --list` lists them. Run
 `gpuwm-hex fetch-assets` to stage them in the cache, or
@@ -693,7 +709,7 @@ is unchanged.
 
 ### The engine pin
 
-gpuwm-hex 0.6.1 requires gpuwm 3.0.0 or newer inside 3.0 (`gpuwm>=3.0.0,<3.1`). The installed
+gpuwm-hex 0.6.2 requires gpuwm 3.0.0 or newer inside 3.0 (`gpuwm>=3.0.0,<3.1`). The installed
 engine version and seam digests are recorded in each forecast receipt.
 The bridge source commit and measured helper source sets ship in the package manifests.
 
@@ -781,7 +797,7 @@ engine does not invent the vertical grid.
   mint is schema-complete (134/134 variables), the constructed vertical sits
   within 3.9 mm of native `zgrid` with the per-field cost quantified, and the
   minted init runs the dycore; boundary in
-  [`docs/native-free-init-admission.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/native-free-init-admission.md).
+  [`docs/native-free-init-admission.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/native-free-init-admission.md).
 - **Native-capsule compatibility mode:** pass `--capsule`/`--reference` naming
   a native-minted init-class file; the door reads `zgrid, zz, fzm, fzp, dzu,
   rdzw, zb, zb3` and the smoothed terrain out of it and asserts the capsule's
@@ -817,7 +833,7 @@ binaries. The prebuilt wheel carries 38 compiled files of its own in
   `rw_mpas_rrfs_connectivity`, `rw_mpas_rrfs_damping` and
   `rw_mpas_rrfs_deformation`. Their bytes are pinned in
   `hexcore/data/engine-bridges.json`; see
-  [engine bridges](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/engine-bridges.md).
+  [engine bridges](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/engine-bridges.md).
 
 That is the prebuilt Linux wheel. A build from the sdist (it needs `cargo`)
 always builds the host-preparation helper and the table decoders; the pool
@@ -902,7 +918,7 @@ real-data initialization needs an `rw_mpas_geometry` that speaks
 coordinates it declares (gpuwm 2.9.0's does not, and the door refuses its
 statics by name). No released gpuwm carries any of the three, so this wheel
 carries them in `hexcore/libexec`, pinned by SHA-256 to the gpuwm commit they
-were built from ([engine bridges](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/engine-bridges.md)). A flag or variable
+were built from ([engine bridges](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/engine-bridges.md)). A flag or variable
 still wins over the bundled copy (`GPUWM_HEX_RW_MPAS_STREAM` names the stream
 program), and a door that needs one refuses by name when it is absent or too
 old.
@@ -940,16 +956,16 @@ each one changes the numbers in a file that opens cleanly and reads plausibly
 either way, so a default would be a silent wrong answer. Each refusal prints the
 native namelist key it corresponds to, so a captured `namelist.init_atmosphere`
 transcribes without guessing. Full detail, including the sixteen named refusals:
-[`docs/init-door.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/init-door.md).
+[`docs/init-door.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/init-door.md).
 
 What the door accepts is not a promise but a measured table:
-[`docs/source-matrix.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/source-matrix.md) drives every source in the
+[`docs/source-matrix.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/source-matrix.md) drives every source in the
 RW-WPS registry with real bytes through intermediate, init and a
 five-composite-step forecast, and records one verdict per source — a green
 run with receipts, or the chain's refusal, verbatim.
 
 `--vertical-spec` is the native-free path (see *Assets you must supply* and
-[`docs/native-free-init-admission.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/native-free-init-admission.md));
+[`docs/native-free-init-admission.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/native-free-init-admission.md));
 `--capsule`/`--reference` with a native-minted init file is the compatibility
 mode. The two are mutually exclusive.
 
@@ -975,7 +991,7 @@ inside it, and is deleted after a clean run.
 
 There is no fallback plotter. If the Rust renderer is absent the door refuses by
 name; it never draws a weather field in Python. Full detail:
-[`docs/render-door.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/render-door.md).
+[`docs/render-door.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/render-door.md).
 
 ## Five smaller doors
 
@@ -1017,9 +1033,9 @@ print are consistency checks: they show that the adjoint is the transpose of the
 show how well the gradient predicts the forecast; that was measured separately and is summed up below. A measure
 built on composite radar reflectivity does not pass the gradient check, and the commands refuse it by name.
 
-**New to it?** [The first hour](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/FIRST-HOUR.md) says which cards run it, what each example
-needs, and how to read the first command's output line by line; [the guide](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/GUIDE.md) covers a gradient of your own measure, the checks, recordings and their cost,
-the C library for a variational system's linear model, exact against fast mode and the bit-for-bit claims; [the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/LIMITS.md)
+**New to it?** [The first hour](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/FIRST-HOUR.md) says which cards run it, what each example
+needs, and how to read the first command's output line by line; [the guide](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/GUIDE.md) covers a gradient of your own measure, the checks, recordings and their cost,
+the C library for a variational system's linear model, exact against fast mode and the bit-for-bit claims; [the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/LIMITS.md)
 lists every measured limit in one place. Runnable scripts with the numbers to expect travel in the wheel: `gpuwm-hex examples` prints their folder and `gpuwm-hex examples --copy DIR` copies them (the source archive and the repository hold the same files as `examples/differentiable/`).
 
 **Which forecast the linear model is of.** The tangent and adjoint are of the exact-mode forecast
@@ -1040,7 +1056,7 @@ the HRRR 2024-05-21 15Z start, with a 1 K temperature bump over 150 km at 40.6N 
 
 ```bash
 python3.14 -m venv hexad && . hexad/bin/activate   # Debian and Ubuntu: sudo apt install python3-venv first
-pip install "gpuwm-hex[ad]==0.6.1"
+pip install "gpuwm-hex[ad]==0.6.2"
 gpuwm-hex adjoint-test --row hrrrv5-q12.96.2890.n40.60w91.30 --steps 15 --at 40.6,-91.3 --radius-km 150 --out cut12
 ```
 
@@ -1052,9 +1068,11 @@ default, *The default route* below), and it says so in a `linear model` line; on
 seven species outputs are held in both sweeps (*Species outputs at 12 km*, above). Measured on 0.6.0's release builds, from fresh
 installs: 320 to 645 s on a first run, which also fetches and unpacks its 1.20 GB of downloads (458 s, about 7.5 minutes,
 on one RTX 5090 with the downloads fetched from GitHub; 320 s on one RTX PRO 6000 96 GB; 588 and 645 s on RTX 5090 hosts
-shared with other work); card peak 24,766 to 25,360 MiB, host peak 41,190 to 44,109 MiB. On a pre-release build of
-0.6.1, from a fresh install with the downloads fetched from GitHub, one RTX 5090: 418 s, card peak
-24,766 MiB, host peak 40,990 MiB, with the same printed readings. What it prints: the bump's dot,
+shared with other work); card peak 24,766 to 25,360 MiB, host peak 41,190 to 44,109 MiB. On builds of
+0.6.1, from fresh installs with the downloads fetched from GitHub, one RTX 5090: 418 to 708 s, card peak
+24,766 MiB, host peak 40,990 to 42,989 MiB, with the same printed readings. On 0.6.2's, the same way, on a host whose
+processors a package build shared: 769 s, card peak 24,766 MiB, host peak 43,491 MiB, the same readings; on another
+build of 0.6.2, on one RTX PRO 6000 96 GB: 466 s, card peak 25,360 MiB, host peak 42,690 MiB, the same readings. What it prints: the bump's dot,
 finite-difference, Taylor and zero checks pass (dot 1.1e-08, finite-difference and Taylor 9.9e-04), the whole-state dot passes (7.5e-08, +0.63 single-precision roundings of the dot against a bar of 4), and
 the command ends **PASS** (exit status 0) on two directions inside the 0.01 bar: the bump (9.9e-04 from 1) and the
 gradient's own steepest descent (5.0e-04 from 1). The other two read UNRESOLVED, which a PASS does not count
@@ -1065,9 +1083,10 @@ short; the forecast's own roughness along that direction (up to 3.7 per cent bet
 the command's five step sizes cannot resolve it. The term behind it is the boundary-layer plume's own speed and
 condensation, which this route holds: with them live (a form not in this release) the centred readings are 0.998 to
 1.013. `--boundary-layer guarded` (an option on this row from 0.6.1) holds nothing of the boundary layer: a low-level
-temperature measure on the storm cell, 2.2 per cent short on the default route, reads 0.996 to 1.000 with it, and this
+temperature measure on the storm cell, 2.2 per cent short on the default route, reads 0.996 to 1.000 with it (centred,
+at steps 0.1 to 0.01, measured on a 0.6.0 build with this row added), and this
 command ends NOT PASSED (UNRESOLVED) on it (466 s, card peak 23,610 MiB, on a pre-release build of 0.6.1), which is why it is not the default
-([the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/LIMITS.md), *Storm measures*).
+([the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/LIMITS.md), *Storm measures*).
 `--boundary-layer taped` tests the exact route's held boundary layer instead, and that ends **FAIL** (the
 gradient's steepest descent 0.955 and near-ground moisture 0.88 of the real change). A `sensitivity` on this row runs
 the same default route: after the test, `gpuwm-hex sensitivity --row hrrrv5-q12.96.2890.n40.60w91.30 --steps 15
@@ -1531,7 +1550,7 @@ from a local folder), then `tangent` 32.9 s and `sensitivity` 47.3 s, each takin
 `tangent` after it 29.5 s. `adjoint-test` now runs three more test directions after the bump, one more window each, on its own 1-step window:
 271.9 to 307 s on the default row and 305.6 s on the full-physics row (an earlier build of 0.6.0), ending PASS
 there; with `--steps 3` it took 443 s and 548 s on the two rows and ended NOT PASSED (UNRESOLVED), only the bump
-resolved ([the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/LIMITS.md)). A FAIL along a direction
+resolved ([the limits](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/LIMITS.md)). A FAIL along a direction
 is a reading of the gradient along it, not of the install: the receipt's `checks_passed` is the verdict of the
 first window's checks and the whole-state dot test alone.
 
@@ -1590,7 +1609,7 @@ line:
   day): moisture and vertical-wind targets at 3 km are an open accuracy item.
 
 Six hours is not claimed on any mesh. The full table, with each row's settings and where it falls off, is "How far
-the gradient can be trusted" in [The differentiable engine](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/README.md);
+the gradient can be trusted" in [The differentiable engine](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/README.md);
 its no-model baseline is 0, a forecast of no change.
 
 **A 3 km gradient taken on the 6 km mesh: measured, and not runnable on the example this release ships.** The
@@ -1625,7 +1644,7 @@ Limits, in short. The 120 km example covers 1 to 3 steps, the 12 km example 1 to
 any other count is refused before anything downloads, with the counts the example covers. A plan recorded with `--init` has not yet passed
 the strict check, and a plan replays only on the card family it was recorded on. What each row differentiates and
 holds, how to read the output, and the rest of the limits:
-[The differentiable engine](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/differentiable/README.md).
+[The differentiable engine](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/differentiable/README.md).
 
 ## The forecast lane
 
@@ -1657,10 +1676,31 @@ on a 10 GiB card. The outermost seven rings are boundary data driven from the
 parent every step rather than the model's own answer, and products drawn over
 the whole domain include them.
 
+### Making a mesh
+
+The generator ships in this wheel (`rw_mpas_mesh`, geometry 2), and `gpuwm-hex mesh-plan` makes a
+grid, its static and the rows file the forecast doors read, in one command. A request that names no
+geometry is built under geometry 2: every spacing as asked, one growth rate per cell from each fine
+zone's outline, no obtuse triangle and no cell of four edges; `--geometry 1` builds the halving
+ladder and the meshes of 0.6.1, byte for byte. The 3 km CONUS globe:
+
+```sh
+gpuwm-hex mesh-plan --global-mesh --point 38.5,-96.5 --fine-dx-m 3000 --radius-km 2100 \
+    --background-km 96 --card rtx-pro-6000 --cards 4 --generate --out-dir conus3km
+```
+
+From a fresh install with an empty home on 20 Nov 2026 it wrote 1,959,938 cells, grid and static,
+in 109.5 s on an otherwise idle 24-core host (the generator 33.7 s, the static 68.2 s), with the
+smallest edge 0.79 of 3 km and no dual-triangle angle over 87.0 degrees. A region, or a zone drawn
+to any outline, is a mesh row (`--spec ROW.json`; `regional --mesh-spec ROW.json` runs a forecast on
+one): [mesh rows](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/mesh-rows.md)
+has the words and more measured builds, and the User Manual's chapter 4 the rest.
+
 ### A fine core at any point, from HRRR
 
 `gpuwm-hex mesh-plan --point LAT,LON --fine-dx-m 937.5 --radius-km 100 --card 32gb`
-writes the registered 937.5 m ladder spec centred on the point, prices the
+writes the generator's spec for a 937.5 m core centred on the point (geometry 2 unless
+`--geometry 1` asks for the registered 937.5 m ladder), prices the
 global parent through the generator and the limited-area cull on the
 admission surface's own row for the card, and with `--generate` builds the
 pair, admits it, registers it as a RUNTIME ROW in `mesh-rows.json` beside the
@@ -1669,7 +1709,7 @@ mesh (never a checkout edit), cuts the cull and mints its vertical.
 lat-lon WPS intermediate the init and boundary engines read, through the
 engine's own decoder and interpolation operator; `gpuwm-hex lbc` builds the
 boundary series from the hourly intermediates. The whole chain, with what it
-measured, is [`docs/hex-point-hrrr.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/hex-point-hrrr.md).
+measured, is [`docs/hex-point-hrrr.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/hex-point-hrrr.md).
 
 ### Placement and cycling
 
@@ -1678,7 +1718,7 @@ sea-level-reduced pressure, a declarative threat grammar, commensurable
 ranking across phenomena that carry different units, and hysteresis so a grid
 does not chase noise. `gpuwm-hex cycle` runs the loop: a coarse parent, the
 corridors placed inside it, and the next cycle's re-detection. See
-[`docs/cycle-door.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/cycle-door.md).
+[`docs/cycle-door.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/cycle-door.md).
 
 ### Local time stepping, opt-in
 
@@ -1711,9 +1751,13 @@ remedy, so opt-in is the correct shape for it.
 Two things follow from the mesh rather than the flag:
 
 - On a **quasi-uniform** mesh every column lands in one class, so the option is
-  inert and the run is bit-identical to a default run. Measured on x1.40962:
-  all 40,962 cells in class 0, zero interface edges, identity permutation, and
-  every history frame SHA-256-identical.
+  inert: the run is bit-identical to the option-off run on the same schedule.
+  `--local-timestep` selects RK3 with six acoustic sub-steps and no FCT limiter,
+  where the route's default is RK2 with four sub-steps and the limiter on, so the
+  run to compare with is `--time-integration-order 3 --acoustic-substeps 6
+  --no-monotonic`. Measured on 0.6.2 (x1.40962, ArWen route, one hour, one RTX
+  4090): one class, zero interface edges, identity permutation, and every history
+  frame SHA-256-identical.
 - The ladder is not free. A rate must divide every RK stage's acoustic
   sub-step count, and the released `(1, 3, 6)` schedule admits `1` and `3`
   only — `2` and `4` do not divide the RK2 stage's three sub-steps.
@@ -1762,7 +1806,7 @@ whose spacing reaches three times the finest edge all sit in the seven driven
 boundary rings, every driven cell is held at rate 1, and the one-cell buffer
 demotes the rest. Measured on the RTX 5090 (point cull, 43,884 cells x 55
 levels, HRRR-driven, 1 h): `--local-timestep` executes one class and both
-history frames are byte-identical to the default run, at 0.992x the step
+history frames are byte-identical to the option-off run on the same schedule, at 0.992x the step
 (inside run-to-run noise). Forcing an interface into the interior with the
 `tools/lts_forced_classing.py` instrument (6,206 cells at rate 3, 1,456
 interface edges, an 8.5 % arithmetic acoustic saving) makes the step 1.071x
@@ -1770,7 +1814,7 @@ SLOWER: every dycore kernel on a mesh this size runs in one wave on the card,
 so the fine class costs what the whole mesh costs and each coarse-class
 launch is a further wave. The corridor cull (40,520 cells, GFS-driven) gives
 the same numbers (0.989x, 1.068x). What the forced interface does to the
-fields is in [`docs/local-timestep-lam.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/local-timestep-lam.md).
+fields is in [`docs/local-timestep-lam.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/local-timestep-lam.md).
 
 #### The full-step form, measured to a no-go
 
@@ -1888,7 +1932,7 @@ and on every mesh: global, zoom globe, limited area, RRFS included.
 They are on by default in every hex ensemble of more than one member, and
 `--no-sppt` or `--no-skeb` turns them off. On the RRFS suite route, `--sppt`
 takes NOAA's RRFS v2 ensemble settings (one scale: 0.8, 450 km, 6 h).
-[Stochastic physics](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/stochastic-physics.md) has the method, the
+[Stochastic physics](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/stochastic-physics.md) has the method, the
 controls and the measured pattern statistics.
 
 Measured on 2026-10-29:
@@ -1961,9 +2005,22 @@ gpuwm-hex forecast --mesh x1.2562 --grid x1.2562.grid.nc --init x1.2562.init.nc 
   entries require its separate site build,
   `gpuwm-hex physics-resources build --pin-set rrfs`, and a public install
   refuses the missing entry by name. See
-  [MPAS physics resources](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/physics-resources.md).
+  [MPAS physics resources](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/physics-resources.md).
 - **The mode** is correct unless `--physics-mode exact` is given (see
   *Correct mode* above).
+- **Radiation's cloud sample** (`config_radt_mcica_seed`, from 0.6.2). RRTMG
+  draws each column's sub-column clouds (McICA) from a random stream. The
+  default, `pressure`, seeds it as MPAS does, from the fractional digits of
+  the column's four lowest layer pressures, so any change of the state, down
+  to one bit of one pressure, draws that column's clouds again at the next
+  radiation call. `cell` seeds it from the cell's global index and the
+  radiation call's time step (base seed 150), so two runs from nearby starts
+  draw the same sub-columns, on any number of ranks. It is for derivative
+  checks and twin experiments, where a small change
+  of the start must not draw new clouds. It is not MPAS's rule, so a run that
+  names it is not bit for bit with MPAS; with the word left out a forecast is
+  the one it was before the option existed. Set it in the namelist's
+  `&physics` group or with `--physics config_radt_mcica_seed=cell`.
 
 `--preflight` checks routing and metadata without integrating.
 `gpuwm-hex verify-mpas --deck DECK --receipt R.json --work-root DIR --ratchet RATCHET`
@@ -2066,7 +2123,7 @@ obs-skill comparison, which is the verification of record for ArWen's physics,
 ran on 2026-08-25 and reaches two of the three; the register of
 all three — the mechanism, the magnitude, the named observational referee and
 now what that referee said — is
-[`docs/declared-divergences.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/declared-divergences.md).
+[`docs/declared-divergences.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/declared-divergences.md).
 
 Measured over 24 h, two independent weather cases, two mixing regimes,
 163,842-cell mesh, cell-aligned with no interpolation.
@@ -2235,31 +2292,16 @@ hourly boundaries with `rw_mpas_lbc`, earns a fresh configuration's runtime
 mint, checks the contract on its rings, runs `forecast --lbc-dir`, and invokes
 the products door. Mesh rows and contract evidence are passed internally.
 The source and run shape are limited-area rows in the init-source and country
-tables. See [the point/HRRR guide](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/hex-point-hrrr.md).
+tables. See [the point/HRRR guide](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/hex-point-hrrr.md).
 
-Measured 2026-10-20 on an RTX PRO 6000: the command above completed a 43,360-cell,
-55-level forecast with 2,160 steps at 5 s and four history frames. The forecast
-stage took 1,908.79 s on a shared RTX PRO 6000 Blackwell Server Edition, with
-CUDA graphs disabled. This used the installed hex 0.4.1 native binaries and
-gpuwm 2.9.3 dependencies with this branch's Python overlay. The published
-`rw_mpas_lbc` wrote the complete hourly boundary set and the forecast consumed
-it. The maps rendered 70 products, skipped two expected hour-zero products
-and failed none, using only the refined-core view.
-
-Sampled forecast VRAM peaked at 6,508 MiB under a 9,000 MiB pool reservation.
-Stage walls were mesh 1,246.24 s, intermediate 328.85 s, init 3.44 s,
-boundaries 9.11 s, contract 85.19 s and forecast 1,908.79 s. These are shared
-host timings. The original command hung in the engine's `rw_hex_points`
-bridge after the forecast passed. The engine fix on
-`development branch` (for 2.9.4) masks missing surface wind
-values and bounds raster work to the image canvas. The exact retained bridge
-invocation then completed in 0.53 s. Products-only recovery on
-the retained forecast completed in 13.81 s with 70 maps and
-6 point pictures, no failures and no global view. The merged regional
-receipt preserves the failed attempt and measured recovery separately. This
-was not an uninterrupted successful command wall, and the forecast was not
-repeated. F000 surface winds are unavailable, so point wind diagnostics show
-gaps or n/a; later frames have valid winds.
+Measured 2026-11-20 on a 0.6.2 build, one RTX PRO 6000 Blackwell Server Edition
+on a shared 8-thread host: the command above, as printed, built a 57,940-cell,
+55-level mesh (geometry 2, the default) and ran a 3 h forecast of 2,160 steps at
+5 s with four history frames. The whole command took 487 s: mesh 102 s,
+intermediate 14 s, init 11 s, boundaries 6 s, contract 38 s, forecast 313 s and
+products 3 s (13 maps of the refined core, 7 skipped, none failed). An earlier
+build's run of it found F000 surface winds unavailable, so point wind diagnostics
+show gaps or n/a there; later frames have valid winds (not rechecked on 0.6.2).
 
 The run's `regional-receipt.json` records stage start/end/wall, outcome, mesh
 and product counts. Runtime minting compares two independent strict dry
@@ -2283,9 +2325,13 @@ The lane runs, and these are its edges rather than its promises.
 
 ### Other
 
-- **Multi-node multi-GPU is built and proven but not shipped** (two-node,
-  bitwise partition-invariant, 1.23x on 25 GbE). There is no door on it, and it
-  has not been re-proven at the current engine pin.
+- **Ranks on several hosts** are a door from 0.6.2 (`gpuwm-hex forecast --hosts
+  hostA:0,hostB:0`, manual chapter 12); every host needs NCCL (`pip install
+  nvidia-nccl-cu12`). With the 120 km globe, one rank on an RTX 4090 host and one
+  on an RTX 5070 Ti host on a home network, strict numerics wrote the words of two
+  ranks on one RTX PRO 6000 (0 of 706,509,363 different), and the resume from each
+  host's own 3 h seal those of the run that never stopped. Fast numerics, the
+  default, depend on the card family. No speed is claimed for several hosts.
 - **Several cards on one host** is a door (`--samehost-devices`, manual
   chapter 12). A two-card global 30 km run restarted from a checkpoint matched
   the uninterrupted run in all 117 field hashes, but the door's own
@@ -2362,7 +2408,7 @@ PYTHONPATH=src python -m pytest tests -q
 ```
 
 Three tiers gate themselves and each names why it is skipping — see
-[`tools/battery/README.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/tools/battery/README.md) for what each covers and
+[`tools/battery/README.md`](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/tools/battery/README.md) for what each covers and
 how to run the gated ones:
 
 | tier | selector | needs |
@@ -2379,8 +2425,8 @@ configured for the engine behaves the same) bans device contact outright.
 
 `gpuwm-hex s2s --row global-120km --source gfs --members 4 --days 30
 --cycle 2026-10-17T00 --devices 0 --work-dir s2s-run` drives the persistent
-ensemble workflow. See [the S2S door](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/s2s/README.md) for lagged starts,
+ensemble workflow. See [the S2S door](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/s2s/README.md) for lagged starts,
 checkpoint recovery, products, baseline interpretation and measured costs.
 Use `--dry-run` to inspect the plan.
 
-Native forecast stores: [Icechunk output](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.1/tree/docs/icechunk.md).
+Native forecast stores: [Icechunk output](https://github.com/recastsystems/gpuwm-hex/blob/v0.6.2/tree/docs/icechunk.md).

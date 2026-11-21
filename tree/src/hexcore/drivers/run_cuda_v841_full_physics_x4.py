@@ -487,7 +487,7 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # functions of the code object and package, so every key is the same; no
     # array computation moved.  Re-ran: tests/test_prep_cache.py.
     "src/hexcore/prep_cache.py": (
-        "f238c7bf7378e55a252c1de501e22125133061ea2359d6a98e5a9b0f36fefb02"
+        "b949119cef5e6f3df5936dbf827c655333245595d120494dac5e81aaa813d069"
     ),
     # THE BREAKAGE THIS PREVENTS: the same lane that re-froze cuda_driver.py
     # also changed ``recover_state`` -- it gained ``include_pressure`` and
@@ -889,8 +889,12 @@ EXECUTION_SOURCE_PINS: dict[str, str | None] = {
     # keys retain dimensions. CUDA source expressions did not change.
     # This is the current execution identity, not a re-mint of archived x4
     # or regional forecast evidence. Device requalification remains pending.
+    # Re-frozen 2026-11-20 for hex 0.6.2: the regional target-density check of
+    # the recorder fix (no float word, a broadcast kept-cell mask) and fork jacobbieker/woof PRs 216 and 224 (no
+    # host wait; the hoisted FCT kernels settle on regional meshes) in one file.  Device requalification
+    # of the regional routes is the release's proving runs.
     "src/hexcore/cuda_transport_v841.py": (
-        "94783b1bcf91b3465c702beed20ed9ab79dc21a7fe560c709d5056b7dfc2cca4"
+        "34ad1f74992522bb863f9a2dde2ef7279ec1361ed14db8e2369dba8f0371ebf7"
     ),
     # THE BREAKAGE THESE TWO PREVENT, found by the NVRTC reciprocal-rewrite
     # lane (the NVRTC reciprocal-rewrite defect): a pinned translation unit does not compile its own file.

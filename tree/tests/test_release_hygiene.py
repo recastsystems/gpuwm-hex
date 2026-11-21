@@ -137,6 +137,28 @@ def test_the_shipped_tools_carry_no_private_rule(hygiene, tmp_path):
         hygiene.configure(os.environ.get(hygiene._content.PRIVATE_ENV))
 
 
+def test_the_shipped_tools_tree_has_no_private_line(hygiene):
+    """THE BREAKAGE (hex 0.6.2, 2026-11-20): a merge brought tools/torch-bridge/, training run scripts (with
+    scratch folders, a home path and a card pool of the machines they ran on), into tools/, which the sdist grafts
+    whole. The release's content hygiene could not rewrite their code lines (licence_export apply rc 1, 36 findings) and the release build
+    refused the sdist ("tools/torch-bridge/baseline.sh :: home-path"). No file under tools/ may carry a line the
+    rules find: the generic rules always, the private file's rules where the suite names it."""
+    tools = SCRIPT.parent
+
+    def scan():
+        rows = [(p.relative_to(tools).as_posix(), p.read_bytes(), tools) for p in sorted(tools.rglob("*"))
+                if p.is_file() and "__pycache__" not in p.parts and "target" not in p.parts]
+        return [hit[:3] for row in rows for hit in hygiene._export_member(row)]
+
+    hygiene.configure(None)
+    try:
+        assert scan() == []
+    finally:
+        hygiene.configure(os.environ.get(hygiene._content.PRIVATE_ENV))
+    if hygiene._content.PRIVATE_LOADED:
+        assert scan() == []
+
+
 def test_require_private_refuses_a_scan_without_the_pattern_file(hygiene, tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(hygiene, "identity_tokens", lambda extra, where: [])
     wheel = _wheel(tmp_path / "x-1.0-py3-none-any.whl", {"pkg/a.py": "x = 1\n"})

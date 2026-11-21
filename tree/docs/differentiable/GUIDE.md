@@ -199,6 +199,12 @@ read the case and stopped at the recorder's first forward, naming the missing ca
   A foreign plan is refused by name.
 - **A plan you record has not passed the strict check yet.** The receipt runs the whole-state dot test on it and
   says what it read.
+- **Radiation's cloud sample is part of a recording** (from 0.6.2). The linear model holds the recorded forecast's
+  sub-column clouds; the real forecasts a check runs beside it draw their own. Under MPAS's seed rule (the default)
+  a perturbed start draws new clouds in every column it reaches; `--radiation-seed cell` with `--init` records
+  under the cell rule (`config_radt_mcica_seed = cell`), so every forecast of the window draws the clouds the linear
+  model holds. A plan replays under the rule it was recorded with; a command asked for the other rule refuses by
+  name.
 - **Recording is a forecast with every launch kept.** Measured: the 3 km storm box, about 28 minutes for its
   one-hour plan; the 60 km global mesh, 43 to 78 minutes for a 2 h 54 min window (96 GB card).
 

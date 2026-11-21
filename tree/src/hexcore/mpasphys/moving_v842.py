@@ -189,9 +189,11 @@ def load_carrier(path) -> dict[str, Any]:
     data = _read_verified(path, int(receipt["bytes"]), receipt["sha256"])
     payload = pickle.loads(memoryview(data))
     del data
-    from .checkpoint_shards_v842 import SCHEMA as SHARDED, assemble_sharded
-    if payload.get("schema") == SHARDED:
-        payload = assemble_sharded(path, payload)
+    from . import checkpoint_shards_v842 as shards
+    if payload.get("schema") == shards.SCHEMA:
+        # The assembled payload, or for a same-host resume on the ranks that sealed it (GPUWM_HEX_DIRECT_SHARD_RESTORE,
+        # checkpoint_shards_v842.direct_restore_for) the manifest's direct carrier.
+        payload = shards.restore_sharded(path, payload)
     if payload.get("schema") != SCHEMA:
         raise ValueError("this moving carrier was sealed on the ArWen route; a moving run keeps one physics "
                          "route from its first segment to its last (the case's physics_args select it)")
@@ -408,11 +410,15 @@ class MovingRoute:
         route.frame_seconds = float(minutes) * 60.0 if minutes else 3600.0
         carrier = absolute("GPUWM_HEX_MOVING_CHECKPOINT_IN")
         if carrier:
+            from .checkpoint_shards_v842 import joined_carrier
+            carrier = joined_carrier(carrier)
             if environ.get("GPUWM_HEX_MOVING_CHECKPOINT_WAIT"):
                 from ..moving_control import wait_for_carrier
                 wait_for_carrier(carrier, float(environ["GPUWM_HEX_MOVING_CHECKPOINT_WAIT"]))
             route.carrier_path = carrier
-            route.carrier = load_carrier(carrier)
+            from .checkpoint_shards_v842 import direct_restore_for
+            with direct_restore_for(arguments, route):
+                route.carrier = load_carrier(carrier)
             route.origin_time = route.carrier["origin_time"]
             route.offset_seconds = float(route.carrier["time_seconds"])
             if route.operator and not route.source_grid:

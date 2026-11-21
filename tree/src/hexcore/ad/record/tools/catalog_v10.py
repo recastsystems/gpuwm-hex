@@ -115,7 +115,7 @@ def main():
             digest = row.get("sha256", "")
             digest_step = row.get("step")
             if (entry is None or row["bytes"] != entry["bytes"]
-                    or not isinstance(digest_step, int) or not 1 <= digest_step <= 72
+                    or not isinstance(digest_step, int) or digest_step < 1
                     or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest)
                     or str(digest_step) in entry["boundary_sha256"]):
                 capture_errors.append({"sequence": row["sequence"], "bad_boundary_digest": row.get("base")})

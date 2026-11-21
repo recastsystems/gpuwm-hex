@@ -123,17 +123,30 @@ def _interp_path(rows, seconds):
     return path_position(rows, seconds)
 
 
-def mesh_block(fine_km=3.0, background_km=None, fine_radius_km=200.0):
+def mesh_block(fine_km=3.0, background_km=None, fine_radius_km=200.0, geometry=None, ramp_onset=None):
     """The concentric cap family a case authored from these three numbers carries (``moving case``).
 
     One function, so the premade rotation template (``moving template``, :func:`hexcore.moving_members.
-    rotation_template`) and every authored case name the same rings and therefore the same generator spec."""
+    rotation_template`) and every authored case name the same rings and therefore the same generator spec.
+
+    ``geometry`` 2 (``--geometry 2``) is the generator's ramp: the fine circle alone, at any ratio to the
+    background, with no rings; the block carries ``generator`` and every member and the template are built with
+    its words (:func:`hexcore.moving_members.mesh_words`).  With no geometry the block is the one it always was."""
+    from . import mesh_ask
+    try:
+        generator = mesh_ask.generator_request({}, geometry, ramp_onset)
+    except mesh_ask.MeshAskRefusal as error:
+        raise MovingCaseError(str(error)) from error
     fine = _number(fine_km, '--fine-km')
     background = (_number(background_km, '--background-km') if background_km is not None
                   else fine * 2**max(1, math.ceil(math.log2(48/fine))) if fine > 0 else 48)
     radius = _number(fine_radius_km, '--fine-radius-km')
     if not 0 < fine < background or radius <= 18*fine:
         raise MovingCaseError('require 0 < fine spacing < background and fine radius > 18 fine cells')
+    if generator['geometry'] == 2:
+        return dict(background_km=background, fine_km=fine, fine_radius_km=radius, fine_transition_km=18*fine,
+                    rings=[], generator={'geometry': 2, **({'ramp_onset': generator['ramp_onset']}
+                                                           if generator['ramp_onset'] else {})})
     ratio = math.log2(background/fine)
     if not math.isclose(ratio, round(ratio), abs_tol=1e-9):
         raise MovingCaseError('background/fine spacing must be a power of two for the mesh generator')
@@ -144,7 +157,7 @@ def mesh_block(fine_km=3.0, background_km=None, fine_radius_km=200.0):
 
 
 def author_case(path, *, track=None, cycle, storm=None, best_track=False, template=None,
-                fine_km=3.0, background_km=None, fine_radius_km=200.0,
+                fine_km=3.0, background_km=None, fine_radius_km=200.0, geometry=None, ramp_onset=None,
                 hours=12.0, source='gfs', dt_seconds=None, physics_args=None,
                 target='tc', point=None, user_path=None, segment=None, boundary_field='dewpoint',
                 object_field=None, object_threshold=None, check_minutes=None, lead_hours=0,
@@ -227,7 +240,7 @@ def author_case(path, *, track=None, cycle, storm=None, best_track=False, templa
         case.pop('gfs_cycle', None)
         case.pop('init_member', None)
     else:
-        mesh = mesh_block(fine_km, background_km, fine_radius_km)
+        mesh = mesh_block(fine_km, background_km, fine_radius_km, geometry, ramp_onset)
         fine, radius = mesh['fine_km'], mesh['fine_radius_km']
         case = dict(n_levels=55, vertical_spec='tc55-v1.json', dt_seconds=6.25*fine,
                     mesh=mesh,

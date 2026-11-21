@@ -52,6 +52,20 @@ def region_request(args):
         point = f"{drawn['center_deg'][0]},{drawn['center_deg'][1]}"
         args.radius_km = float(drawn["radius_km"])
         drawn = None
+    from . import mesh_ask
+    try:
+        generator = mesh_ask.door_generator(args)
+    except mesh_ask.MeshAskRefusal as error:
+        raise MpasPortError(str(error)) from error
+    if not (point or polygon or drawn):
+        # A registered row or region names a mesh that is already made: it keeps the generator it was
+        # made with.  Geometry 2, the default since 0.6.2, applies to a region drawn at run time.
+        generator = mesh_ask.generator_request({}, 1)
+    if getattr(args, "geometry", None) == 2 and not (point or polygon or drawn):
+        raise MpasPortError(
+            "--geometry 2 builds a region drawn at run time (--point, --polygon, --ellipse or --shape); a "
+            "registered row or region names a mesh that is already made, and its generator is not this door's "
+            "to change")
     if not (region or point or polygon or drawn):
         return load_row(args.row, args.table)
     table = REGIONS if args.table == TABLE else args.table
@@ -112,10 +126,36 @@ def region_request(args):
     resolution = {}
     fine = getattr(args, "fine_dx_m", None)
     background = getattr(args, "background_km", None)
-    if fine is not None or background is not None:
+    if generator["geometry"] == 2:
+        # Geometry 2 has no halving ladder: the region is built at the spacing asked on the background asked,
+        # whatever their ratio (--background-fit has nothing to move).  The geometry is part of the region's
+        # identity, so a geometry 2 region never reuses a geometry 1 region's prepared mesh, or the reverse.
+        fine = float(fine if fine is not None else row["mesh"]["fine_dx_m"])
+        background = float(background if background is not None else row["mesh"]["background_km"])
+        if not 0.0 < fine / 1000.0 < background:
+            raise MpasPortError(f"--fine-dx-m {fine:g} m is not finer than the {background:g} km background, so "
+                                "there is nothing to refine")
+        step = min(float(row["mesh"]["dt_seconds"]), 6.0 * fine / 1000.0)
+        resolution = {"fine_dx_m": fine, "background_km": background, "dt_seconds": step,
+                      "generator": {"geometry": 2, **({"ramp_onset": generator["ramp_onset"]}
+                                                      if generator["ramp_onset"] else {})}}
+    elif fine is not None or background is not None:
         from .mesh_point import ladder_rungs
         fine = float(fine if fine is not None else row["mesh"]["fine_dx_m"])
         background = float(background if background is not None else row["mesh"]["background_km"])
+        fit = getattr(args, "background_fit", None)
+        if fit not in (None, "exact"):
+            # Any fine spacing: the fine spacing is kept and the background moves onto its halving ladder
+            # (hexcore.mesh_ask.fit_to_ladder); the move is printed, and is part of the region's identity.
+            from . import mesh_ask
+            try:
+                moved = mesh_ask.fit_to_ladder(background, fine / 1000.0, fit)
+            except mesh_ask.MeshAskRefusal as error:
+                raise MpasPortError(str(error)) from error
+            if moved["moved"]:
+                print(f"mesh: background asked {background:g} km, built {moved['built_km']:g} km, the "
+                      f"{fit} spacing the {fine:g} m region halves up to", flush=True)
+            background = float(moved["built_km"])
         ladder_rungs(background, fine)
         step = min(float(row["mesh"]["dt_seconds"]), 6.0 * fine / 1000.0)
         resolution = {"fine_dx_m": fine, "background_km": background, "dt_seconds": step}
@@ -220,10 +260,35 @@ def _measured_first_guess(met, declared):
     return guess
 
 
+def region_generator_words(row):
+    """The generator's words for a region row's mesh: nothing for geometry 1, the row's own under geometry 2."""
+    asked = _region_ask(row)
+    return [] if asked is None else list(asked["generator"]["words"])
+
+
+def _region_ask(row):
+    """A geometry 2 region as the mesh row it is (hexcore.mesh_ask): one zone, the region's own outline, at the
+    spacing asked on the background asked.  None for geometry 1."""
+    generator = row["mesh"].get("generator")
+    if not generator or int(generator.get("geometry", 1)) != 2:
+        return None
+    from . import mesh_ask
+    mesh = row["mesh"]
+    try:
+        return mesh_ask.expand({"kind": mesh_ask.ROW_KIND, "name": row["id"], "background_km": mesh["background_km"],
+                                "zones": [{"name": "region", "shape": row["geometry"], "fine_dx_m": mesh["fine_dx_m"]}],
+                                "generator": dict(generator)})
+    except mesh_ask.MeshAskRefusal as error:
+        raise MpasPortError(str(error)) from error
+
+
 def region_specification(row):
     """Use the generator's admitted halving ladder for table resolution."""
     from .mesh_point import ladder_spec, ladder_rungs
     mesh = row["mesh"]
+    asked = _region_ask(row)
+    if asked is not None:
+        return asked["spec"]
     if row["geometry"]["kind"] == "cap":
         return ladder_spec(tuple(row["geometry"]["center_deg"]), fine_dx_m=mesh["fine_dx_m"],
             radius_km=row["geometry"]["radius_km"], background_km=mesh["background_km"], name=row["id"])
@@ -411,7 +476,7 @@ def _prepare_region_stages(args, value, status, source):
     # A file at the destination is not evidence for this request. The store
     # keys the current geometry/engine and grid/geography before reusing bytes.
     measured("mesh", lambda: run_or_fetch([engine("rw_mpas_mesh"), "--spec", str(spec), "--out", str(grid),
-                      "--receipt", str(parent / "mesh-receipt.json"), "--clobber"]))
+                      "--receipt", str(parent / "mesh-receipt.json"), "--clobber", *region_generator_words(row)]))
     # The parent's static from the cut's halo and the parent's terrain (hexcore.region_static: a new box spent
     # 15.5 min here building the whole parent globe's static for a 600 km region); the whole parent's static
     # only when the halo does not hold.
@@ -968,6 +1033,11 @@ def add_country_parser(commands):
                              "under --background-km (default the table's 30 km)")
     parser.add_argument("--background-km", type=float, default=None,
                         help="with --fine-dx-m: the ladder's coarsest spacing (default the table's 120 km)")
+    parser.add_argument("--background-fit", choices=("exact", "nearest", "finer", "coarser"), default=None,
+                        help="with --fine-dx-m: when it does not halve into --background-km, keep the fine spacing "
+                             "and move the background onto its ladder (default exact: refuse, naming both)")
+    from . import mesh_ask as _mesh_ask
+    _mesh_ask.add_generator_arguments(parser)
     parser.add_argument("--source", help="init-source row override, used for init and every boundary endpoint")
     parser.add_argument("--source-table", type=Path)
     parser.add_argument("--member", type=int)

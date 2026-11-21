@@ -46,7 +46,7 @@ and `gpuwm-hex examples --copy DIR` copies them.
 
 ```bash
 python3.14 -m venv hexad && . hexad/bin/activate   # Debian and Ubuntu: sudo apt install python3-venv first
-pip install "gpuwm-hex[ad]==0.6.1"
+pip install "gpuwm-hex[ad]==0.6.2"
 gpuwm-hex adjoint-test --out at
 gpuwm-hex tangent      --steps 3 --out tl
 gpuwm-hex sensitivity  --steps 3 --metric theta_m --box 30,48,-105,-80 --levels 1-10 --out se

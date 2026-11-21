@@ -567,6 +567,15 @@ impl TempoAdw {
                                 tiles.push((a0, c - a0)); a0 = c; acc = vec![0; steps]; fixed = 0; }
               for sg in 0..steps { acc[sg] += sl(sg) * 32; } fixed += per_col_fixed; }
           tiles.push((a0, nc - a0)); }
+        // TEMPO gain diagnostic: AD_TEMPO_JAC=c1,c2,.. (columns) and AD_TEMPO_JAC_LEV=a-b (1-based input levels, default
+        // 38-45): instead of the random dot, one-column tiles and the launch's Jacobian by unit tangents, every input slot
+        // (18 fields at levels a..b, the 10 surface words) against the outputs at levels a-4..b+4 and the surface words,
+        // with the column's whole input and output vectors (receipts only; off unless set).
+        let jac_cols: Vec<usize> = std::env::var("AD_TEMPO_JAC").ok().map(|v| v.split(',').filter_map(|t| t.trim().parse::<usize>().ok()).filter(|&c| c < nc).collect()).unwrap_or_default();
+        let jac_lev: (usize, usize) = std::env::var("AD_TEMPO_JAC_LEV").ok().and_then(|v| { let mut it = v.split('-'); Some((it.next()?.parse().ok()?, it.next()?.parse().ok()?)) }).unwrap_or((38, 45));
+        let jac_lev = (jac_lev.0.max(1).min(nz), jac_lev.1.max(1).min(nz));
+        let mut jac_out: Vec<Value> = vec![];
+        if !jac_cols.is_empty() { tiles = jac_cols.iter().map(|&c| (c, 1usize)).collect(); }
         let mut g1 = Rng::new(seed); let mut g2 = Rng::new(seed ^ 0x5eed);
         let floor = [1.0, 1.0, 0.1, 1.0, 1e-6, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1e-9, 1e-3];
         let (mut lhs, mut rhs, mut worst_col) = (0f64, 0f64, 0f64);
@@ -625,12 +634,35 @@ impl TempoAdw {
                 }
                 get(cuda, a, nin * n)
             };
+            if !jac_cols.is_empty() {
+                let (la, lb) = jac_lev; let (oa, ob) = (la.saturating_sub(4).max(1), (lb + 4).min(nz));
+                let mut ins: Vec<usize> = vec![]; for j in 0..18 { for k in la..=lb { ins.push(j * nz + k - 1); } } for j in 0..10 { ins.push(18 * nz + j); }
+                let mut outs: Vec<usize> = vec![]; for g in 0..AD_NF_OUT { for k in oa..=ob { outs.push(g * nz + k - 1); } } for j in 0..10 { outs.push(AD_NF_OUT * nz + j); }
+                let mut rows: Vec<Vec<f64>> = vec![];
+                for &qi in &ins {
+                    let mut x = vec![0f64; nin]; x[qi] = 1.0;
+                    let yd = match run_tl(&x) { Ok(v) => v, Err(e) => return Ok(json!({"status":"ERROR","error":e})) };
+                    rows.push(outs.iter().map(|&qo| yd[qo]).collect());
+                }
+                jac_out.push(json!({"column": c0, "levels_in": [la, lb], "levels_out": [oa, ob], "in_slots": ins, "out_slots": outs, "J": rows,
+                    "x_all": (0..nin).map(|q| xin[q * nc + c0]).collect::<Vec<f32>>(), "y_all": (0..nin).map(|q| y[q * nc + c0]).collect::<Vec<f32>>()}));
+                arena.used = tile_mark; continue;
+            }
             let mut xd = vec![0f64; nin * n]; let mut yb = vec![0f64; nin * n];
             for t in 0..n { for q in 0..nin {
                 let fl = if q < 18 * nz { floor[q / nz] } else { 1e-3 };
                 xd[q * n + t] = g1.normal() * ((xin[q * nc + c0 + t] as f64).abs() + fl);
                 yb[q * n + t] = g2.normal();
             } }
+            // TEMPO reverse diagnostic: AD_TEMPO_DOT_X / AD_TEMPO_DOT_Y (comma lists of slot groups: inputs f0..f17, s0..s9;
+            // outputs f0, f4..f16, s0..s9, p0..p3) keep the direction and the weight on those groups only, so one path's
+            // transpose is read without the others' words (the unrestricted dot is all aerosol number on hrrrv5 decks).
+            let keep = |var: &str, name: String| std::env::var(var).ok().filter(|v| !v.is_empty()).map_or(true, |v| v.split(',').any(|g| g == name));
+            for q in 0..nin {
+                let xin_name = if q < 18 * nz { format!("f{}", q / nz) } else { format!("s{}", q - 18 * nz) };
+                let kx = keep("AD_TEMPO_DOT_X", xin_name); let ky = keep("AD_TEMPO_DOT_Y", group(q));
+                for t in 0..n { if !kx { xd[q * n + t] = 0.0; } if !ky { yb[q * n + t] = 0.0; } }
+            }
             let t1 = Instant::now(); let yd = run_tl(&xd).map_err(|e| e.to_string());
             let yd = match yd { Ok(v) => v, Err(e) => return Ok(json!({"status":"ERROR","error":e})) };
             tl_ms += t1.elapsed().as_secs_f64() * 1e3;
@@ -671,7 +703,8 @@ impl TempoAdw {
                   "tl_gain": (yy / xx.max(1e-300)).sqrt(), "tl_gain_relative": (yr / xr.max(1e-300)).sqrt(),
                   "tl_gain_by_output": by.iter().map(|(k, g)| (k.clone(), json!({"plain": (g.0 / xx.max(1e-300)).sqrt(), "relative": (g.1 / xr.max(1e-300)).sqrt(),
                       "worst_relative_word": {"ratio": g.2, "level": g.3, "column": g.4, "primal": g.5}}))).collect::<serde_json::Map<String, Value>>(),
-                  "derivative": "tempo_adw (warp shape, per-substep checkpoints, float64 tape)"}))
+                  "derivative": "tempo_adw (warp shape, per-substep checkpoints, float64 tape)",
+                  "jacobian": if jac_out.is_empty() { Value::Null } else { Value::Array(jac_out) }, "nz": nz}))
     }
 
     /// Window binding (ad/held-tempo_warp_steps): the whole-launch tangent or adjoint of one tempo_warp_steps launch at
@@ -687,6 +720,63 @@ impl TempoAdw {
     /// as does the identity word count (its token is returned). The only reads left are the count pass's segment
     /// marks, which size the tiles on the host.
     pub unsafe fn apply(&self, cuda: &Cuda, arena: &mut Arena, s: &Snap, vd: u64, rd: u64, adjoint: bool, identity: bool,
+                        led: &mut dev::Ledger) -> Result<(Option<u64>, usize, usize), String> {
+        // TEMPO gain diagnostic: AD_TEMPO_AEROSOL_IDENTITY=1 gives the two aerosol numbers (nwfa f13, nifa f14) the identity
+        // as TEMPO's derivative: their outputs' tangent is their inputs' tangent and nothing else, and no other output reads
+        // them (the cross terms, aerosol scavenging d nwfa/d qr, qs, qg ~ 1e8-1e9 per kg/kg on the 6 km plan, are dropped).
+        // Tangent and reverse change together, so the pair stays a transpose. Receipts only; off unless set.
+        // TEMPO gain diagnostic: AD_TEMPO_HOLD_COLS=c1,c2,.. holds TEMPO in those columns only (its derivative there is the
+        // identity on theta and the 13 species, zero on everything else), tangent and reverse together. Receipts only.
+        let hold: Vec<usize> = std::env::var("AD_TEMPO_HOLD_COLS").ok().map(|v| v.split(',').filter_map(|t| t.trim().parse::<usize>().ok()).filter(|&c| c < s.columns).collect()).unwrap_or_default();
+        if !hold.is_empty() {
+            let r = self.apply_aero(cuda, arena, s, vd, rd, adjoint, identity, led)?;
+            let (nz, nc) = (s.nz, s.columns); let nv = (18 * nz + 10) * nc;
+            dev::sync(cuda)?;
+            let v: Vec<f64> = get(cuda, vd, nv)?; let mut o: Vec<f64> = get(cuda, rd, nv)?;
+            for &c in &hold {
+                for q in 0..(18 * nz + 10) { o[q * nc + c] = 0.0; }
+                for k in 0..nz {
+                    if adjoint { o[k * nc + c] = v[k * nc + c]; for j in 4..17 { o[(j * nz + k) * nc + c] = v[((j - 3) * nz + k) * nc + c]; } }
+                    else { o[k * nc + c] = v[k * nc + c]; for j in 4..17 { o[((j - 3) * nz + k) * nc + c] = v[(j * nz + k) * nc + c]; } }
+                }
+            }
+            put(cuda, rd, &o)?; dev::sync(cuda)?;
+            return Ok(r);
+        }
+        self.apply_aero(cuda, arena, s, vd, rd, adjoint, identity, led)
+    }
+    unsafe fn apply_aero(&self, cuda: &Cuda, arena: &mut Arena, s: &Snap, vd: u64, rd: u64, adjoint: bool, identity: bool,
+                        led: &mut dev::Ledger) -> Result<(Option<u64>, usize, usize), String> {
+        if std::env::var("AD_TEMPO_AEROSOL_IDENTITY").as_deref() != Ok("1") { return self.apply_raw(cuda, arena, s, vd, rd, adjoint, identity, led); }
+        let (nz, nc) = (s.nz, s.columns);
+        let (oin, oout, bytes) = (8 * 13 * nz * nc, 8 * (13 - 3) * nz * nc, 8 * 2 * nz * nc);
+        if !adjoint {
+            // the aerosol inputs are zeroed before the tangent runs, so no other output reads them, as the
+            // reverse below drops their cotangent from every other output. THE BREAKAGE THIS PREVENTS: the tangent kept
+            // d(other outputs)/d(aerosol inputs) while the reverse dropped its transpose, so the switch broke the pair it
+            // says it keeps: on the README 3 km window the whole-state dot read -6276 roundings with it, the droplet-number
+            // unit -1478 roundings of its terms (19 Nov 2026), against +4.29 and +5.50 without it.
+            let mark = arena.used;
+            let save = arena.take(bytes)?;
+            dev::copy(cuda, save, vd + oin as u64, bytes)?;
+            dev::zero(cuda, vd + oin as u64, bytes)?; dev::sync(cuda)?;
+            let r = self.apply_raw(cuda, arena, s, vd, rd, adjoint, identity, led);
+            dev::sync(cuda)?; dev::copy(cuda, rd + oout as u64, save, bytes)?;
+            dev::copy(cuda, vd + oin as u64, save, bytes)?; dev::sync(cuda)?;
+            arena.used = mark;
+            return r;
+        }
+        let mark = arena.used;
+        let save = arena.take(bytes)?;
+        dev::copy(cuda, save, vd + oout as u64, bytes)?;
+        dev::zero(cuda, vd + oout as u64, bytes)?; dev::sync(cuda)?;
+        let r = self.apply_raw(cuda, arena, s, vd, rd, adjoint, identity, led);
+        dev::sync(cuda)?; dev::copy(cuda, rd + oin as u64, save, bytes)?;
+        dev::copy(cuda, vd + oout as u64, save, bytes)?; dev::sync(cuda)?;
+        arena.used = mark;
+        r
+    }
+    unsafe fn apply_raw(&self, cuda: &Cuda, arena: &mut Arena, s: &Snap, vd: u64, rd: u64, adjoint: bool, identity: bool,
                         led: &mut dev::Ledger) -> Result<(Option<u64>, usize, usize), String> {
         let start = arena.used;
         if s.blsnap != 0 {

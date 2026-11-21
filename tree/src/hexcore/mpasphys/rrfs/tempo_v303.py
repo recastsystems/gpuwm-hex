@@ -4727,6 +4727,11 @@ def launch_mpas(p, *, dt_dyn, flags, bucket, diagnostics, hourly):
         absent=[name for name in names if values.get(name) is None]
         if absent:raise ValueError(f"allocated native TEMPO carriers missing: {absent}")
     f=_pointer_array([fields.get(n) for n in FIELD_ARGUMENTS],shape=(nz,cells),device=device,optional=True)
+    if "TP6" in corrections:
+        # Correct mode TP6: pointer 20 is the solve cells' xland, which the warp driver and the phase kernels read.
+        land=tp6_land(p,cells)
+        _pointer_array([land],shape=(cells,),device=device)
+        f=_pointer_array([fields.get(n) for n in FIELD_ARGUMENTS]+[land],shape=None,device=device,optional=True)
     m=_pointer_array([p["model"].get(n) for n in MODEL_ARGUMENTS],shape=None,device=device,optional=True)
     mesh=_pointer_array([p["mesh"][n] for n in ("zz","zgrid")],shape=None,device=device)
     d=_pointer_array([p["diagnostics"][n] for n in DIAG_ARGUMENTS],shape=None,device=device)
@@ -5208,6 +5213,9 @@ def _bind_native_views(provider,call):
         dt_microp=provider["scalar_state"]["dt_microp"],n_microp=int(provider["scalar_state"]["n_microp"]),
         l_acrain=bool(provider["scalar_state"]["l_acrain"]),do_diag_dbz_flag=do_diag_dbz_flag)
     p["radii"]=radii_due(provider,call)
+    # Correct mode TP6: the cells' land mask for the droplet activation's water floor (bound once per run).
+    if "TP6" in _corrections_key(getattr(call,"corrections",())):
+        p["xland"]=tp6_xland(provider,fields["qv"].shape[1],resource)
     if "first_column_here" not in resource:resource["first_column_here"]=first_call_column_here(provider)
     p["first_column_here"]=bool(resource["first_column_here"])
     # Pack the two PBL carriers with a CUDA copy, with no host numerical processing. Only the PBL subgrid
@@ -5286,7 +5294,7 @@ def reset_output_diagnostics(diagnostics):
 # Exact mode never calls corrected_sources: the exact module sources stay _COLUMN, _DRIVER and _WARP byte for byte.
 # ---------------------------------------------------------------------------------------------------
 #: The fork correction ids this implementation applies (declared in the suite table's cuda_entries row).
-CORRECTIONS = ("TP1", "TP2", "TP3", "TP4", "TP5")
+CORRECTIONS = ("TP1", "TP2", "TP3", "TP4", "TP5", "TP6")
 
 _TP1_OLD = """#if TEMPO_WARP
   // warp: the serial RETURN at the first level with |ssatw| < eps leaves every
@@ -5355,6 +5363,62 @@ _TP3_WARP = ("TempoCtx ctx={dt,1.0f/dt,aero,hail,0,melt,0,1,last,re,re,re,last,f
              "TempoCtx ctx={dt,1.0f/dt,aero,hail,0,melt,0,1,last,re,re,re,last,first};")
 
 
+#: TP6 (fork_corrections TP6): the activation takes the cell's land mask, so TEMPO's water floor applies.  The context
+#: carries the cell's xland word (0 = not given, the exact form); the warp driver and the phase kernels set it from
+#: pointer 20 of the field table, which launch_mpas appends (the sfc_input xland of the solve cells) only with TP6.
+#: The per-thread column driver (tempo_columns) leaves it 0: land absent, as exact mode.
+_TP6_CALL = ('xnc = tmax(PS(nt_c_min), activate_cloud_number(P, temp[k], w1d[k], nwfa[k], nullptr));', "// Correct mode TP6: the cell's land mask reaches the activation (C.xland: 1 land, 2 water; 0 not given),\n        // so TEMPO's water floor (lower_lim_nuc_frac 0.15) applies over water and sea ice.\n        const int tp6_land = (C.xland == 1) ? 1 : 0;\n        xnc = tmax(PS(nt_c_min), activate_cloud_number(P, temp[k], w1d[k], nwfa[k], C.xland ? &tp6_land : nullptr));")
+_TP6_CTX_V303 = ("  int ml_for_nc_flag;\n};\n", "  int ml_for_nc_flag;\n" + "  int xland;  // correct mode TP6: the cell's MPAS xland (1 land, 2 water); 0 = not given (land absent)\n" + "};\n")
+TP6_WARP_SET = "ctx.xland=f[20]?(int)f[20][c]:0;  // correct mode TP6: the cell's xland (pointer 20, launch_mpas)"
+TP6_PHASE_SET = "  C.xland = f[20] ? (int)f[20][c] : 0;  /* correct mode TP6: the cell's xland (pointer 20) */                \\\n"
+
+
+def tp6_warp(warp: str) -> str:
+    """The warp driver with TP6's land word set right after its context line (whatever TP3 did to that line)."""
+    import re
+    m = re.findall(r"^( *)(TempoCtx ctx=\{dt,1\.0f/dt,aero,hail[^\n]*;)\n", warp, re.M)
+    if len(m) != 1:
+        raise ValueError(f"TEMPO correct mode: TP6 warp context line found {len(m)} times")
+    indent, line = m[0]
+    return warp.replace(indent + line + "\n", indent + line + "\n" + indent + TP6_WARP_SET + "\n", 1)
+
+
+def tp6_phases(phases: str, corrections) -> str:
+    """The phase kernels' prologue with TP6's land word (the context line of TPH_PROLOGUE), with TP6 only."""
+    if "TP6" not in tuple(corrections or ()):
+        return phases
+    import re
+    m = re.findall(r"^  TempoCtx C = \{dt, 1\.0f / dt, aero, hail,[^\n]*\\\n", phases, re.M)
+    if len(m) != 1:
+        raise ValueError(f"TEMPO correct mode: TP6 phase prologue context line found {len(m)} times")
+    return phases.replace(m[0], m[0] + TP6_PHASE_SET, 1)
+
+
+def tp6_land(p, cells):
+    """TP6's land word for launch_mpas: the solve cells' xland (float32), as the pool builder bound it."""
+    land = p.get("xland")
+    if land is None:
+        raise ValueError("TEMPO correct mode TP6 needs the cells' xland (sfc_input); the slot was built without it")
+    return land[:cells]
+
+
+def tp6_xland(provider, cells, resource):
+    """The solve cells' sfc_input xland as contiguous float32, bound once per run (a view when it already is one).
+    None when the provider has no sfc_input xland (launch_mpas then refuses TP6 by name)."""
+    try:
+        xl = provider["sfc_input"]["xland"]
+    except (KeyError, TypeError):
+        return None
+    key = (int(xl.data.ptr), int(cells))
+    if resource.get("tp6_xland_key") != key:
+        cp = provider.cp
+        view = xl[:cells]
+        if view.dtype != cp.float32 or not view.flags.c_contiguous:
+            view = cp.ascontiguousarray(view, dtype=cp.float32)
+        resource["tp6_xland"], resource["tp6_xland_key"] = view, key
+    return resource["tp6_xland"]
+
+
 def _once(text: str, old: str, new: str, what: str) -> str:
     if text.count(old) != 1:
         raise ValueError(f"TEMPO correct mode: {what} anchor found {text.count(old)} times")
@@ -5385,4 +5449,8 @@ def corrected_sources(corrections=()) -> tuple[str, str, str]:
     if "TP3" in chosen:
         driver = _once(driver, *_TP3_DRIVER, "TP3 column driver first call")
         warp = _once(warp, *_TP3_WARP, "TP3 warp driver first call")
+    if "TP6" in chosen:
+        column = _once(column, *_TP6_CTX_V303, "TP6 TempoCtx land word")
+        column = _once(column, *_TP6_CALL, "TP6 activation land mask")
+        warp = tp6_warp(warp)
     return column, driver, warp

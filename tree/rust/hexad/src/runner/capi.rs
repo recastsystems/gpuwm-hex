@@ -328,6 +328,15 @@ pub(crate) fn parse_manifest(path: &Path, kset: &Path, bundle: &Path) -> Result<
     if !refuse.is_empty() { args.push(("refuse".into(), refuse.join(","))); }
     let hold: Vec<&str> = doc["hold"].as_array().into_iter().flatten().filter_map(|x| x.as_str()).collect();
     if !hold.is_empty() { args.push(("hold".into(), hold.join(","))); }
+    // torch bridge: "window_args" {word: value} passes the window's own words a made row runs with (local-topology,
+    // mesh-constants, ...), so a library session can be opened with the same words as `ad-binder window`. Absent: as
+    // before. (It does not fix the open defect: the 30 km made row's library session still stops with a segmentation
+    // fault in step 1 of its forward check, after the radiation unpack, with these words and without them: three runs,
+    // 2026-11-19, where `ad-binder window` with the same plan, kernel set and bundle runs.)
+    for (k, v) in doc["window_args"].as_object().into_iter().flatten() {
+        let v = match v { Value::String(x) => x.clone(), x => x.to_string() };
+        args.push((k.clone(), v));
+    }
     let rn = &doc["runner"];
     for (k, d) in [("tape-gib", 2.0), ("scratch-gib", 1.0)] {
         let key = k.replace('-', "_");
@@ -1076,6 +1085,39 @@ impl Session {
         self.ad_s = self.steps; self.mode = Mode::Ad;
         Ok(())
     }
+    /// torch bridge reverse (form v1 "step"): a reverse that starts at boundary `step` instead of the window end,
+    /// from `v`: ZERO, ARENA (the whole cotangent arena an earlier piece handed out with ad_get(ARENA)) or INCREMENT
+    /// (T_step^T(v): the caller's cotangent on the named state fields at that boundary). Then ad_put / ad_step down to
+    /// k0 and ad_get(ARENA) hand out the state cotangent at k0. The arena is the whole cotangent state carried between
+    /// steps, so pieces [k1, k0) chained through ARENA give the whole window's reverse.
+    unsafe fn ad_init_at(&mut self, step: i32, v: &HexadVec) -> Result<(), String> {
+        if step < 0 || step as usize > self.steps { return Err(format!("ad_init_at: boundary {step} outside 0..={}", self.steps)); }
+        let zero = HexadVec { kind: VEC_ZERO, nfields: 0, fields: std::ptr::null(), seed: 0, arena: 0, words: 0 };
+        self.ad_init(&zero)?;
+        self.ad_s = step as usize;
+        match v.kind {
+            VEC_ZERO => Ok(()),
+            VEC_ARENA => self.seed(v, true),
+            VEC_INCREMENT => {
+                let _g = xfer::Cat::glue();
+                let t = self.tm.as_ref().ok_or("DEFECT increment vectors need the plan's alloc map")?;
+                let cu = &self.ex.cuda as *const Cuda;
+                let (a, b) = self.prim[self.ad_s];
+                let dst = self.arena_dst();
+                t.tst(&*cu, v, &dst, self.scale.a, a, b)
+            }
+            k => Err(format!("ad_init_at: vector kind {k} (ZERO, ARENA or INCREMENT)")),
+        }
+    }
+    /// torch bridge: the device address and bytes of the float32 cotangent (or tangent) shadow of plan allocation `alloc`
+    /// from byte `offset`: zero-copy reads and adds by the caller (DLPack / CUDA array interface), e.g. a recorded
+    /// external-tendency table's slice k once the reverse has passed step k, or a state field at the current boundary.
+    fn shadow_ptr(&self, alloc: u64, offset: u64) -> Result<(u64, u64), String> {
+        let w = self.w.as_ref().ok_or("DEFECT shadow_ptr needs a plan session")?;
+        let (Some(&el), Some(sh)) = (w.base_el.get(&alloc), w.shadows.get(&alloc)) else { return Err(format!("allocation {alloc} has no shadow")) };
+        if offset % 4 != 0 || offset as usize >= sh.bytes as usize { return Err(format!("offset {offset} outside allocation {alloc} or not on a word")); }
+        Ok((w.sh(el + (offset / 4) as i64), sh.bytes as u64 - offset))
+    }
     unsafe fn ad_put(&mut self, v: &HexadVec) -> Result<(), String> {
         let _g = xfer::Cat::glue();
         if self.tmap_only { return self.tmap_tst(v); }
@@ -1301,6 +1343,18 @@ impl Session {
 #[no_mangle] pub unsafe extern "C" fn hexad_ad_put(s: *mut Session, v: *const HexadVec) -> c_int { guard(|| s.as_mut().ok_or("null session")?.ad_put(v.as_ref().ok_or("null vector")?)) }
 #[no_mangle] pub unsafe extern "C" fn hexad_ad_step(s: *mut Session) -> c_int {
     guard(|| { let s = s.as_mut().ok_or("null session")?; let r = s.ad_step()?; eprintln!("{}", json!({"event":"hexad_reverse_step","row":r})); Ok(()) })
+}
+/// torch bridge: start a reverse at boundary `step` (form v1: a window cut at step boundaries).
+#[no_mangle] pub unsafe extern "C" fn hexad_ad_init_at(s: *mut Session, step: c_int, v: *const HexadVec) -> c_int { guard(|| s.as_mut().ok_or("null session")?.ad_init_at(step, v.as_ref().ok_or("null vector")?)) }
+/// torch bridge: the shadow of a plan allocation on the card (zero copy).
+#[no_mangle] pub unsafe extern "C" fn hexad_shadow_ptr(s: *const Session, alloc: u64, offset: u64, dptr: *mut u64, bytes: *mut u64) -> c_int {
+    guard(|| { let s = s.as_ref().ok_or("null session")?; let (p, n) = s.shadow_ptr(alloc, offset)?; if dptr.is_null() || bytes.is_null() { return Err("null out".into()); } *dptr = p; *bytes = n; Ok(()) })
+}
+/// torch bridge: the caller's function at every reversed launch named in `list` (AD_TAP's form; NULL or "" = the
+/// physics tendency sum), called with the device address of the launch's cotangent view before its adjoint entries.
+/// `f` NULL clears it. Process-wide (one reverse at a time).
+#[no_mangle] pub unsafe extern "C" fn hexad_set_tap(f: Option<super::torch_bridge::TapFn>, user: *mut c_void, list: *const c_char) -> c_int {
+    guard(|| { let l = if list.is_null() { String::new() } else { CStr::from_ptr(list).to_string_lossy().into_owned() }; super::torch_bridge::set_callback(f, user, &l) })
 }
 #[no_mangle] pub unsafe extern "C" fn hexad_ad_get(s: *mut Session, v: *const HexadVec) -> c_int { guard(|| s.as_mut().ok_or("null session")?.ad_get(v.as_ref().ok_or("null vector")?)) }
 #[no_mangle] pub unsafe extern "C" fn hexad_get_counters(s: *const Session, c: *mut HexadCounters) -> c_int {

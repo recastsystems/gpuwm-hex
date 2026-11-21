@@ -115,6 +115,16 @@ int hexad_ad_put(hexad_session* s, const hexad_vec* dx);   /* arena += T_s^T(dx)
 int hexad_ad_step(hexad_session* s);                       /* reverse s -> s-1 */
 int hexad_ad_get(hexad_session* s, const hexad_vec* dx);   /* INCREMENT: dx += T0^T(arena) (at boundary 0) */
 int hexad_position(const hexad_session* s);
+/* Torch bridge, the reverse side. ad_init_at: a reverse that starts at boundary `step` from ZERO, ARENA (the whole cotangent
+ * arena an earlier piece handed out with hexad_ad_get(ARENA)) or INCREMENT (T_step^T); pieces [k1, k0) chained through
+ * ARENA are the whole window's reverse. shadow_ptr: the float32 shadow of plan allocation `alloc` from byte `offset`
+ * on the card (zero copy: read, copy or add). set_tap: f(user, step, function, argument, dptr, bytes) at every reversed
+ * launch named in `list` ("function:arg,.."; NULL = the physics tendency sum), before its adjoint entries; dptr is the
+ * launch's cotangent view (dJ/d the argument as the launch left it), valid during the call; nonzero return stops. */
+typedef int (*hexad_tap_fn)(void* user, int step, const char* function, const char* argument, uint64_t dptr, uint64_t bytes);
+int hexad_ad_init_at(hexad_session* s, int step, const hexad_vec* v);
+int hexad_shadow_ptr(const hexad_session* s, uint64_t alloc, uint64_t offset, uint64_t* dptr, uint64_t* bytes);
+int hexad_set_tap(hexad_tap_fn f, void* user, const char* list);
 int hexad_get_counters(const hexad_session* s, hexad_counters* c);
 /* print(): the manifest, the window arguments, the trajectory state, counters, held_upload_dropped_cotangent_sq. */
 int hexad_print(const hexad_session* s, char* buf, size_t cap, size_t* needed);

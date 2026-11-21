@@ -18,11 +18,13 @@ const SUBMITTER: &str = "../../src/hexcore/native/step_submit.c";
 const SUBMITTER_SHA256: &str = "befd3d1c2f000b6596ad5b06ca51a50264e5ceda1288923882b8ce46df582e49";
 // An optional extension driver over the window (cfg hexad_ext_driver) is not part of this crate: the cfg is
 // declared and never set, so `ad-binder window --ext-driver` refuses by name.
-const IMAGES: [(&str, &str); 4] = [
+const IMAGES: [(&str, &str); 5] = [
     ("cuda/e2e_support.cu", "e2e_support.fatbin"),
     ("cuda/p8.cu", "p8_rules.fatbin"),
     ("cuda/window.cu", "window_support.fatbin"),
     ("cuda/hexad_t.cu", "hexad_t.fatbin"),
+    // inner-model (0.6.2): the simplified linear model's boundary layer (read only under AD_IM_BL=fixedk).
+    ("cuda/inner_model.cu", "inner_model.fatbin"),
 ];
 const NVCC_FLAGS: [&str; 11] = ["-fatbin", "-O3", "--fmad=false", "--prec-div=true", "--prec-sqrt=true",
     "-gencode", "arch=compute_120,code=sm_120", "-gencode", "arch=compute_89,code=sm_89",

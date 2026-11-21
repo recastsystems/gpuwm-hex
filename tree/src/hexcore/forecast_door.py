@@ -4099,7 +4099,54 @@ def bind_native_dynamics(arguments: argparse.Namespace, native_text: str) -> str
         print("gpuwm-hex: MPAS suite dycore schedule " + ", ".join(f"{k}={v}" for k, v in options.items())
               + " (explicit flags)", file=sys.stderr, flush=True)
         native_text = set_namelist_options(native_text, {"nhyd_model": options})
+    native_text = bind_native_damping(arguments, native_text)
     return bind_native_dynamics_overrides(arguments, native_text)
+
+
+#: The door's upper-damping flags, the MPAS &damping option each one names and the flag's default (forecast
+#: parser), which is also MPAS-A v8.4.2's Registry default (Registry.xml:291-325).
+NATIVE_DAMPING_FLAGS = (
+    ("cam_coefficient", "--cam-coefficient", "config_mpas_cam_coef", 0.0),
+    ("cam_damping_levels", "--cam-damping-levels", "config_number_cam_damping_levels", 4),
+    ("rayleigh_u", "--rayleigh-u", "config_rayleigh_damp_u", False),
+    ("damping_start_m", "--damping-start-m", "config_zd", 22000.0),
+)
+
+
+def bind_native_damping(arguments: argparse.Namespace, native_text: str) -> str:
+    """The MPAS suite route's upper damping: each door flag set off its default becomes its &damping option.
+
+    MPAS-A v8.4.2 reads config_mpas_cam_coef and config_number_cam_damping_levels (the CAM viscosity floor in
+    the top levels, mpas_atm_time_integration.F:6400-6402), config_rayleigh_damp_u with
+    config_number_rayleigh_damp_u_levels and config_rayleigh_damp_u_timescale_days (the horizontal Rayleigh
+    damping of u, :6608-6630) and config_zd (the w damping's base) from &damping; the route's dycore runs each of
+    them (cuda_driver.py).  The two Rayleigh knobs without a flag of their own come through ``--dynamics``.
+    THE BREAKAGE THIS PREVENTS (gpuwm-hex 0.6.1; fork jacobbieker/woof PR 509): this route returns before
+    resolve_request, the only reader of these four flags, so --cam-coefficient, --cam-damping-levels,
+    --rayleigh-u and --damping-start-m were accepted and never run (on x1.40962 the history was byte-identical
+    with and without them), and a high-top declaration's damping could not run on the MPAS suite.  A flag at its
+    default leaves the namelist (or the Registry default, the same value) in charge; a namelist naming a
+    different value is refused as two values for one run.
+    """
+    from .mpasphys.forecast_v842 import namelist_option, set_namelist_options
+
+    options: dict[str, Any] = {}
+    for attribute, flag, option, default in NATIVE_DAMPING_FLAGS:
+        given = getattr(arguments, attribute, default)
+        if given is None or given == default:
+            continue
+        value = type(default)(given)
+        named = namelist_option(native_text, "damping", option)
+        if named is not None:
+            if not _namelist_value_matches(named, value):
+                raise ValueError(f"{flag} {given} and the namelist {option} {named} name two values for one run")
+            continue
+        options[option] = value
+    if options:
+        print("gpuwm-hex: MPAS suite upper damping " + ", ".join(f"{k}={v}" for k, v in options.items())
+              + " (explicit flags)", file=sys.stderr, flush=True)
+        native_text = set_namelist_options(native_text, {"damping": options})
+    return native_text
 
 
 #: The namelist groups ``--dynamics`` reaches on the MPAS suite route: the dycore's own.  The other groups a
@@ -4303,6 +4350,10 @@ def _run_forecast(arguments: argparse.Namespace) -> int:
             # A run that names a native MPAS library runs this selection on it (forecast_v842.named_library_route).
             if suite_refusal is not None and not named_library_route(arguments, native_config):
                 raise ValueError(suite_refusal)
+            from .mpasphys.forecast_v842 import cpu_slot_refusal
+            cpu_refusal = cpu_slot_refusal(arguments, native_config)
+            if cpu_refusal is not None:
+                raise ValueError(cpu_refusal)
             # A moving region on this route runs through its own move hooks (hexcore.mpasphys.moving_v842).
             lts_refusal = mpas_suite_lts_refusal(arguments)
             if lts_refusal is not None:
@@ -4771,7 +4822,12 @@ def add_forecast_arguments(parser: argparse.ArgumentParser) -> None:
              "bl_mynn_version, bl_mynn_mixlength, mynn_sfclay_variant, "
              "rrtmg_cloud_optics_form) or config_frac_seaice; on the RRFS 44c0849 route also "
              "config_mynn_version (mynn-v6.1, the default: MYNN-EDMF v6.1.1 + MYNN-SFC v6.1.0; "
-             "mynn-sfc-v6.1.0; pinned: the 44c0849 MYNN, bitwise to native). Recorded as an "
+             "mynn-sfc-v6.1.0; pinned: the 44c0849 MYNN, bitwise to native); on the hrrrv5 route also the "
+             "surface and boundary-layer closures, one at a time and off unless named: "
+             "config_surface_flux_net=r4_a50, config_neural_pbl=v1|v2 (config_neural_pbl_dry_gate=true "
+             "turns v1 into v2), config_autophysics_pbl=v2|v3_bowen|v2_warm_night (the GPUWM_HEX_SURFACE_FLUX_NET, "
+             "GPUWM_HEX_NEURAL_PBL, GPUWM_HEX_NEURAL_PBL_DRY_GATE and GPUWM_HEX_AUTOPHYSICS_PBL words take the "
+             "same values; hexcore.mpasphys.rrfs.closures). Recorded as an "
              "override in the receipt. With no --physics-suite it overrides the ArWen "
              "suite (arwen_mpas_column); name an MPAS suite to override on the MPAS route")
     parser.add_argument(

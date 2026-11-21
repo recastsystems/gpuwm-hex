@@ -161,7 +161,7 @@ def test_every_text_that_names_this_release_names_the_declared_version():
         assert headings[0] == VERSION and len(set(headings)) == len(headings), headings[:3]
         numbers = [tuple(map(int, h.split("."))) for h in headings]
         assert numbers == sorted(numbers, reverse=True), "newest entry first, one entry a release"
-    # 0.6.1 is a defect release: it keeps the files 0.6.0 published (the pinned downloads) and the derivative engine
+    # 0.6.1 and 0.6.2 are defect releases: they keep the files 0.6.0 published (the pinned downloads) and the derivative engine
     # library 0.6.0 built, so the pin tag and the engine crate stay at ENGINE_RELEASE while the package moves.
     pins = (ROOT / "src/hexcore/data/ad-assets.json").read_text(encoding="utf-8")
     assert f'"tag": "ad-assets-v{ENGINE_RELEASE}"' in pins

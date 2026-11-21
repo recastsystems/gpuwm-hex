@@ -193,7 +193,11 @@ def test_the_derivative_runner_writes_its_approximation_only():
     # The runner once wrote an internal decision note, with its date, into every window.json's `approximation`
     # field. The runner sources are what the wheel compiles into hexcore/libexec/ad-binder; the runner's bytes follow
     # its source text, comments included, so its comments change only with a runner rebuilt on purpose.
-    window = (ROOT / "rust" / "hexad" / "src" / "runner" / "window.rs").read_text(encoding="utf-8")
+    window_rs = ROOT / "rust" / "hexad" / "src" / "runner" / "window.rs"
+    if not window_rs.is_file():
+        import pytest
+        pytest.skip("the runner's Rust source is not part of this tree (its ad-binder ships prebuilt)")
+    window = window_rs.read_text(encoding="utf-8")
     assert "fct_minmax_source differentiates source_old only. This operator is not the exact derivative" in window
     _need("runner")
     sources = [ROOT / "rust" / "hexad" / "src", ROOT / "ad" / "phys" / "binder" / "runtime" / "src"]
@@ -216,9 +220,10 @@ def test_the_door_table_prints_nothing_internal():
 
 
 def test_every_forecast_printer_uses_the_terminal_record():
-    for rel in ("src/hexcore/mpasphys/runtime_v842.py", "src/hexcore/cuda_regional_forecast_v842.py",
-                "src/hexcore/forecast_door.py"):
-        text = (ROOT / rel).read_text(encoding="utf-8")
+    from hexcore import forecast_door
+    package = Path(forecast_door.__file__).resolve().parent   # the package under test, wherever it is laid out
+    for rel in ("mpasphys/runtime_v842.py", "cuda_regional_forecast_v842.py", "forecast_door.py"):
+        text = (package / rel).read_text(encoding="utf-8")
         assert "print(json.dumps(terminal_record(receipt)" in text, rel
         assert "print(json.dumps(receipt" not in text, rel
 

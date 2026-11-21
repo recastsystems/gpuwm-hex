@@ -65,13 +65,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import subprocess
 import sys
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from .errors import MpasPortError
 
@@ -367,11 +368,101 @@ def _parent(args: argparse.Namespace, hours: int) -> dict[str, Any] | None:
             "history": [str(Path(p).absolute()) for p in window], "start": start.strftime("%Y-%m-%dT%H:%M")}
 
 
+def _mesh_row(args: argparse.Namespace) -> dict[str, Any] | None:
+    """``--mesh-spec ROW.json`` expanded (:mod:`hexcore.mesh_ask`), with the door's own words set from it."""
+
+    path = getattr(args, "mesh_spec", None)
+    if path is None:
+        return None
+    from . import mesh_ask
+
+    given = [f"--{word.replace('_', '-')}" for word in ("point", "shape", "ellipse", "fine_dx_m", "radius_km",
+                                                         "background_km") if getattr(args, word, None) is not None]
+    if given:
+        raise RegionalRefusal(
+            f"--mesh-spec names its own zones, spacing, background and rim; {', '.join(given)} would say them twice")
+    try:
+        asked = mesh_ask.expand(mesh_ask.load_row(path), geometry=getattr(args, "geometry", None),
+                                ramp_onset=getattr(args, "ramp_onset", None))
+    except mesh_ask.MeshAskRefusal as error:
+        raise RegionalRefusal(str(error)) from error
+    if asked["cut"] is None:
+        raise RegionalRefusal(
+            f"{path} is a whole globe; a region needs the row's domain to be "
+            '{"kind": "region", "rim_km": KM} (a globe runs through mesh-plan --global-mesh --spec)')
+    base = next(zone for zone in asked["zones"] if zone["name"] == asked["cut"]["around"])
+    lat, lon = base["centre_deg"]
+    args.point = f"{lat!r},{lon!r}"
+    args.radius_km = (float(base["shape"]["radius_km"]) if base["shape"]["kind"] == "cap"
+                      else math.sqrt(float(base["area_km2"]) / math.pi))
+    args.fine_dx_m = float(asked["anchor_fine_km"]) * 1000.0
+    args.background_km = float(asked["background"]["built_km"])
+    return asked
+
+
+def _mesh_row_reach(asked: Mapping[str, Any], point: tuple[float, float]) -> float:
+    """How far from ``point`` a row's cut and its boundary rings reach, km (the source-coverage check)."""
+
+    import numpy as np
+
+    from . import mesh_ask, mesh_shape
+
+    cut = asked["cut"]["region"]
+    if cut["kind"] == "cap":
+        centre = mesh_shape._xyz(*cut["center_deg"])
+        far = (float(cut["radius_km"])
+               + 6371.229 * float(np.arccos(np.clip(centre @ mesh_shape._xyz(*point), -1.0, 1.0))))
+    else:
+        vertices = mesh_shape._xyz(*mesh_shape._ring(cut).T)
+        far = 6371.229 * float(np.arccos(np.clip(vertices @ mesh_shape._xyz(*point), -1.0, 1.0)).max())
+    rim = asked["cut"]["rim_spacing_km"]
+    # Past the cut each ring is wider than the one inside it where the spacing still grows
+    # (mesh_ask.boundary_ring_reach_km); a row's own rim spacing, when it names one, is the floor. (It read the
+    # background's spacing for a row that names none, which put a geometry-2 800 km region from HRRR 1,640 km out
+    # where its rings end near 1,300 km.)
+    floor = mesh_ask.BOUNDARY_RINGS * float(rim) if rim else 0.0
+    return far + max(floor, mesh_ask.boundary_ring_reach_km(asked))
+
+
+def _geometry_two_reach(args: argparse.Namespace, point: tuple[float, float], radius: float, fine: float,
+                        background: float, words: Sequence[str]) -> float | None:
+    """How far from ``point`` a geometry-2 region's cut and rings reach, from the row the mesh stage will build
+    (mesh-plan's own request for the same words); None when that request cannot be read here."""
+
+    from . import mesh_point
+    from .cli import build_parser
+
+    if getattr(args, "shape", None) is not None:
+        core = ["--shape", str(args.shape)]
+    elif getattr(args, "ellipse", None) is not None:
+        core = [f"--ellipse={args.ellipse}"]
+    else:
+        core = [f"--point={point[0]},{point[1]}", "--radius-km", repr(float(radius))]
+    try:
+        arguments = build_parser().parse_args(["mesh-plan", *core, "--fine-dx-m", repr(float(fine)),
+                                               "--background-km", repr(float(background)), *words])
+        request = mesh_point.request_from_arguments(arguments)
+    except (SystemExit, mesh_point.PointPlanRefusal):
+        return None
+    if request.ask is None or request.ask.get("cut") is None:
+        return None
+    return _mesh_row_reach(request.ask, point)
+
+
 def plan(args: argparse.Namespace) -> dict[str, Any]:
     from . import mesh_shape
     from .mesh_point import drawn_shape, parse_point
 
     row, data_dir = load_row(args.row, args.table)
+    asked = _mesh_row(args)
+    from . import mesh_ask as _mesh_ask
+
+    try:
+        # The door's own geometry words, refused here in the row's words before anything is fetched.
+        geometry_two = int(_mesh_ask.door_generator(args)["geometry"]) == 2
+        geometry_words = _mesh_ask.door_argv(args)
+    except _mesh_ask.MeshAskRefusal as error:
+        raise RegionalRefusal(str(error)) from error
     # A drawn core (--shape/--ellipse) is the region; the circle is --point.
     drawn = drawn_shape(args)
     if drawn is not None and args.point is not None:
@@ -396,13 +487,23 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
         source = {"id": "hex-parent", "display_name": "kept hex run",
                   "intermediate": {"row": None}, "first_guess": None}
         cycle = datetime.strptime(parent["start"], "%Y-%m-%dT%H:%M")
+        blend = None
     else:
+        blend = None
         if not getattr(args, "cycle", None):
             raise RegionalRefusal(
                 "--cycle was not given: the source cycle is what the init's valid time and every boundary time "
                 "are counted from (or cut the region from a kept hex run with --parent-*)")
         source_name = args.source or row["init_source"]
         table, source = resolve_regional_source(source_name)
+        if source.get("blend"):
+            # A blend row (HRRR inside its grid over GFS) has no first guess or boundary cadence of its own: the region
+            # runs its outside row for the start, the met and the boundaries, then blends the inside source over that
+            # start at the init stage (blend_start, the global door's route). THE BREAKAGE THIS PREVENTS: --source
+            # hrrr-gfs stopped the plan with KeyError 'first_guess' (18 Nov 2026), so no region could start from
+            # the analysis the forecast work starts from.
+            blend = source["id"]
+            table, source = resolve_regional_source(source["blend"]["outside"])
         cycle = _cycle(args.cycle)
         from .init_sources import admit_cycle
 
@@ -471,11 +572,29 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
                 np.sin(a)*np.sin(c)+np.cos(a)*np.cos(c)*np.cos(b-d), -1, 1)).max())
         fine = float(args.fine_dx_m if args.fine_dx_m is not None else row["fine_dx_m"])
         background = float(getattr(args, "background_km", None) or row.get("background_km") or DEFAULT_BACKGROUND_KM)
-        spec = ladder_spec(point, fine_dx_m=fine, radius_km=radius, background_km=background)
-        cut = predicted_cull_cells(spec=spec, radius_km=radius, pad_scale=DEFAULT_CULL_PAD_SCALE)
-        reach = cut["cut_radius_km"] + cut["halo_km"]
+        reach = None
+        if asked is not None:
+            reach = _mesh_row_reach(asked, point)
+        elif geometry_two:
+            # The row mesh-plan builds for these words, its rings walked at their own spacing.
+            reach = _geometry_two_reach(args, point, radius, fine, background, geometry_words)
+        if reach is None:
+            # Geometry 2 has no ladder (any ratio of spacings is built), so the reach is read off the one
+            # region it builds; the cut and its halo are the same circle either way.
+            spec = ({"name": "reach", "background_km": background, "regions": [{
+                        "shape": {"kind": "cap", "center_deg": [point[0], point[1]], "radius_km": radius},
+                        "spacing_km": fine / 1000.0, "transition_km": 18.0 * fine / 1000.0}]}
+                    if geometry_two else
+                    ladder_spec(point, fine_dx_m=fine, radius_km=radius, background_km=background))
+            cut = predicted_cull_cells(spec=spec, radius_km=radius, pad_scale=DEFAULT_CULL_PAD_SCALE)
+            reach = cut["cut_radius_km"] + cut["halo_km"]
+        from .hrrr_intermediate import SOURCE_ROWS as _PROJECTED, cap_coverage_refusal
         for candidate in (source, boundary):
             refusal = coverage_refusal(candidate, point, reach, margin_km=30)
+            projected = (candidate.get("intermediate") or {}).get("row")
+            if not refusal and candidate.get("coverage_window") is None and projected in _PROJECTED:
+                # A projected source (HRRR) declares no coverage window; its native grid is the window.
+                refusal = cap_coverage_refusal(_PROJECTED[projected], point, reach)
             if refusal:
                 raise RegionalRefusal(refusal)
     start = cycle + timedelta(hours=lead)
@@ -486,6 +605,11 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
     switches = table["run_switches"]
     from .global_door import forecast_arg_physics
     physics_flags = _physics_default_flags(args, source=source["id"], cold=parent is None)
+    from .mpasphys.forecast_v842 import forecast_args_slot_refusal
+    slot_refusal = forecast_args_slot_refusal(physics_flags)
+    if slot_refusal is not None:
+        # The forecast door's own refusal, read before the mesh and any download (forecast_args_slot_refusal).
+        raise RegionalRefusal(slot_refusal + " Nothing was built or downloaded.")
     producer = _producer_suite({"forecast_args": physics_flags})
     if args.vertical_spec and producer:
         # THE BREAKAGE THIS PREVENTS (13 Nov 2026): a producer suite builds its start with
@@ -505,6 +629,8 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
         "source": {"id": source["id"], "display_name": source.get("display_name"),
                    "intermediate_row": (source.get("intermediate") or {}).get("row"),
                    "first_guess": first_guess},
+        # A blend row named by --source: its id (the init stage blends it over the outside row's start), else None.
+        "blend_source": blend,
         "lead_hours": lead,
         # The ensemble member every series of a row in member_rows reads (init-source --member), else None.
         "member": member if members else None,
@@ -516,6 +642,12 @@ def plan(args: argparse.Namespace) -> dict[str, Any]:
         "boundary_interval_hours": interval,
         "point_deg": list(point),
         "drawn_shape": drawn,
+        # A mesh row (hexcore.mesh_ask) the mesh stage hands to mesh-plan --spec as written.
+        "mesh_row": None if asked is None else str(Path(args.mesh_spec).expanduser().absolute()),
+        # --geometry / --ramp-onset as the mesh stage passes them on (empty: the generator's default).
+        **({"mesh_generator_argv": geometry_words} if geometry_words else {}),
+        # --mesh-exe: another build of the generator for the mesh stage (the mesh door's own word, passed on).
+        **({"mesh_exe": str(Path(args.mesh_exe).expanduser().absolute())} if getattr(args, "mesh_exe", None) else {}),
         "fine_dx_m": float(args.fine_dx_m if args.fine_dx_m is not None else row["fine_dx_m"]),
         "radius_km": (float(mesh_shape.equal_area_radius_km(drawn)) if drawn is not None else
                       float(args.radius_km if args.radius_km is not None else row["radius_km"])),
@@ -743,6 +875,17 @@ def _stage_mesh(args, value, status) -> dict[str, Any]:
         status.note(f"mesh already generated in {mesh_dir}")
         return {"returncode": 0, "reused": True}
     lat, lon = value["point_deg"]
+    if value.get("mesh_row"):
+        # The row names its zones, spacing, grading, background and rim; nothing here restates them.
+        argv = ["mesh-plan", "--spec", value["mesh_row"], "--generate", "--out-dir", str(mesh_dir),
+                "--vertical-spec", value["paths"]["vertical_spec"], *value.get("mesh_generator_argv", ())]
+        if value.get("mesh_exe"):
+            argv += ["--mesh-exe", value["mesh_exe"]]
+        if value["card"]:
+            argv += ["--card", value["card"]]
+        if args.geog is not None:
+            argv += ["--geog", str(Path(args.geog).expanduser().absolute())]
+        return {"returncode": _cli(argv, status)}
     if value.get("drawn_shape"):
         # The drawn region rides to the mesh door as the row it resolved to.
         mesh_dir.mkdir(parents=True, exist_ok=True)
@@ -755,7 +898,9 @@ def _stage_mesh(args, value, status) -> dict[str, Any]:
         core = [f"--point={lat},{lon}", "--radius-km", repr(value["radius_km"])]
     argv = ["mesh-plan", *core, "--fine-dx-m", repr(value["fine_dx_m"]),
             "--generate", "--out-dir", str(mesh_dir),
-            "--vertical-spec", value["paths"]["vertical_spec"]]
+            "--vertical-spec", value["paths"]["vertical_spec"], *value.get("mesh_generator_argv", ())]
+    if value.get("mesh_exe"):
+        argv += ["--mesh-exe", value["mesh_exe"]]
     if value.get("background_km") is not None:
         argv += ["--background-km", repr(value["background_km"])]
     if value["card"]:
@@ -789,8 +934,16 @@ def _stage_one_intermediate(args, value, status) -> dict[str, Any]:
         return _stage_intermediate_from_table(args, value, status)
     generated = _generated(value)
     Path(value["paths"]["grib"]).mkdir(parents=True, exist_ok=True)
+    # THE BREAKAGE THIS PREVENTS (0.6.2, 20 Nov 2026): a mesh row's region (3 km to 120 km, rim 300 km at
+    # 12 km) cuts at 420 km and lays its seven boundary rings of 12 km cells outside that, to 505 km; the box
+    # --from-plan draws is the cut radius plus a 30 km margin, so 553 of the cull's 18,320 cells lay outside the
+    # HRRR intermediate and the init stage refused ("lie outside the first guess"). The box is drawn over every
+    # cell of the cull itself (intermediate --grid), the remedy that refusal names; a plan with no cull grid
+    # keeps --from-plan.
+    cull_grid = (generated.get("cull") or {}).get("grid")
+    box = ["--grid", str(cull_grid)] if cull_grid else ["--from-plan", generated["_path"]]
     argv = ["intermediate", "--source", value["source"]["intermediate_row"],
-            "--from-plan", generated["_path"], "--grib-dir", value["paths"]["grib"],
+            *box, "--grib-dir", value["paths"]["grib"],
             "--cycle", value["cycle"], "--hours",
             f"0-{int(value['lead_hours']) + boundary_span(int(value['hours']), value.get('boundary_interval_hours'))}",
             "--out-dir", str(met),
@@ -1076,7 +1229,10 @@ def _orographic_statistics(args, value, status) -> Path | None:
 def _stage_init_state(args, value, status) -> dict[str, Any]:
     init = Path(value["paths"]["init"])
     from .init_physics import profile_init_matches
-    if init.is_file() and (value.get("parent") or profile_init_matches(init, value.get("forecast_args"))):
+    blended = not value.get("blend_source") or init.with_name("init.outside.nc").is_file()
+    if init.is_file() and blended and (value.get("parent") or profile_init_matches(init, value.get("forecast_args"))):
+        # A blend row's start is present only once the blend wrote it (init.outside.nc beside it). THE BREAKAGE THIS
+        # PREVENTS: a rerun after a failed blend took the outside row's start for the blended one (18 Nov 2026).
         status.note(f"init already present: {init}")
         return {"returncode": 0, "reused": True}
     if value.get("parent"):
@@ -1130,7 +1286,46 @@ def _stage_init_state(args, value, status) -> dict[str, Any]:
         # the WPS box); the init moves that donor's moisture onto the suite's own land model.
         argv += ["--deep-soil-keep-above-m", repr(float(deep["keep_above_m"])),
                  "--deep-soil-model", str(deep["soil_model"]), "--deep-soil-donor", str(deep["source_id"])]
-    return {"returncode": _cli(argv, status)}
+    code = _cli(argv, status)
+    if code == 0 and value.get("blend_source"):
+        return _blend_over_init(args, value, status, init, suite_argv)
+    return {"returncode": code}
+
+
+def _blend_over_init(args, value, status, init: Path, suite_argv: list[str]) -> dict[str, Any]:
+    """The blend row's inside source over the region's start (init-source --outside-init): the outside row's init is
+    kept beside it as ``init.outside.nc`` and the blended init takes its place, on the same grid and vertical grid."""
+    generated = _generated(value)
+    outside = init.with_name("init.outside.nc")
+    init.replace(outside)
+    out_dir = init.parent / "blend"
+    argv = ["init-source", "--source", value["blend_source"], "--cycle", value["cycle"],
+            "--out-dir", str(out_dir), "--grid", generated["cull"]["grid"], "--static", generated["cull"]["static"],
+            "--outside-init", str(outside), "--jobs", str(int(getattr(args, "workers", None) or 8))]
+    if int(value.get("lead_hours") or 0):
+        argv += ["--lead-hours", str(int(value["lead_hours"]))]
+    if "--physics-suite" in suite_argv:
+        argv += ["--physics-suite", suite_argv[suite_argv.index("--physics-suite") + 1]]
+    if args.geog is not None:
+        argv += ["--geog", str(Path(args.geog).expanduser().absolute())]
+    code = _cli(argv, status)
+    made = out_dir / "init.nc"
+    if code != 0 or not made.is_file():
+        failed = init.with_name("init.outside-unblended.nc")
+        outside.replace(failed)   # not init.nc: a rerun of the stage must blend again, not reuse the outside start
+        raise RegionalRefusal(f"the {value['blend_source']} blend over the region's {value['source']['id']} start "
+                              f"exited {code}; see init-source in {out_dir} (the unblended start is at {failed}; "
+                              "rerun --stage init)")
+    made.replace(init)
+    # The inside source's download and decoded hours are spent once the blend is written (about 28 GB at 30 km: two
+    # HRRR hours of MET at 6.8 GB each and their GRIB); the receipt names how to make them again.
+    import shutil
+    for spent in ("met", "grib"):
+        shutil.rmtree(out_dir / "inside" / spent, ignore_errors=True)
+    status.note(f"{value['blend_source']}: blended over the {value['source']['id']} start ({init}; the outside "
+                f"start kept at {outside})")
+    return {"returncode": 0, "blend": {"source": value["blend_source"], "outside_init": str(outside),
+                                       "receipt": str(out_dir / "init-source-receipt.json")}}
 
 
 def _physics_default_flags(args, *, source=None, cold=True) -> list[str]:
@@ -1592,6 +1787,17 @@ def add_regional_parser(commands: argparse._SubParsersAction) -> None:
                              "fewer leads")
     parser.add_argument("--hours", type=float, default=None, help="forecast length (default: the row's)")
     parser.add_argument("--history-every-minutes", type=int, default=None)
+    parser.add_argument("--mesh-spec", type=Path, default=None, metavar="ROW.json",
+                        help="a mesh row (gpuwm-hex.mesh-ask/v1) with a region domain: zones of any shape and "
+                             "spacing, nesting, grading, background, rim distance and rim spacing; instead of "
+                             "--point/--shape/--ellipse, --fine-dx-m, --radius-km and --background-km. "
+                             "`gpuwm-hex mesh-plan --spec ROW.json --plan-only` prices it first")
+    from . import mesh_ask as _mesh_ask
+
+    _mesh_ask.add_generator_arguments(parser)
+    parser.add_argument("--mesh-exe", type=Path, default=None, metavar="FILE",
+                        help="another build of rw_mpas_mesh for the mesh stage (default: the one this install "
+                             "resolves, GPUWM_HEX_RW_MPAS_MESH first); passed to mesh-plan as given")
     parser.add_argument("--fine-dx-m", type=float, default=None, help="fine spacing (default: the row's)")
     parser.add_argument("--radius-km", type=float, default=None, help="fine core radius (default: the row's)")
     parser.add_argument("--background-km", type=float, default=None,

@@ -81,7 +81,8 @@ def _author(arguments: argparse.Namespace) -> int:
     case = author_case(arguments.out, track=arguments.tracks or arguments.best_track,
         cycle=arguments.cycle, storm=arguments.storm, best_track=arguments.best_track is not None,
         template=arguments.template, fine_km=arguments.fine_km, background_km=arguments.background_km,
-        fine_radius_km=arguments.fine_radius_km, hours=arguments.hours, source=arguments.source,
+        fine_radius_km=arguments.fine_radius_km, geometry=arguments.geometry, ramp_onset=arguments.ramp_onset,
+        hours=arguments.hours, source=arguments.source,
         dt_seconds=arguments.dt_seconds, physics_args=arguments.physics_arg,
         target=arguments.target, point=arguments.point, user_path=arguments.path, segment=arguments.segment,
         boundary_field=arguments.boundary_field, object_field=arguments.object_field,
@@ -122,7 +123,8 @@ def _template(arguments: argparse.Namespace) -> int:
     from .moving_author import mesh_block
     from .moving_members import rotation_template, template_spec, _tool_env
 
-    case = {"mesh": mesh_block(arguments.fine_km, arguments.background_km, arguments.fine_radius_km)}
+    case = {"mesh": mesh_block(arguments.fine_km, arguments.background_km, arguments.fine_radius_km,
+                               arguments.geometry, arguments.ramp_onset)}
     grid = rotation_template(case, arguments.out_dir, env=_tool_env(arguments.threads, None), log=_print)
     _print(json.dumps(dict(grid=str(grid), spec=template_spec(case)), indent=2))
     return 0
@@ -384,6 +386,8 @@ def add_moving_parser(commands) -> None:
     author.add_argument('--background-km', type=float, default=None,
                         help='background spacing (default: a power-of-two multiple of fine spacing, at least 48 km)')
     author.add_argument('--fine-radius-km', type=float, default=200.0)
+    from . import mesh_ask as _mesh_ask
+    _mesh_ask.add_generator_arguments(author)
     author.add_argument('--dt-seconds', type=float, help='override spacing-derived step; must align all clocks')
     author.add_argument('--physics-arg', action='append', default=None, help='forecast physics argument (repeatable)')
     author.set_defaults(handler=_author)
@@ -437,6 +441,7 @@ def add_moving_parser(commands) -> None:
     template.add_argument("--background-km", type=float, default=None,
                           help="background spacing (default: as `moving case` picks it)")
     template.add_argument("--fine-radius-km", type=float, default=200.0)
+    _mesh_ask.add_generator_arguments(template)
     template.add_argument("--out-dir", type=Path, required=True, help="folder for the template grid")
     template.add_argument("--threads", type=int, default=_prep_cores(), help="Rust tool threads")
     template.set_defaults(handler=_template)

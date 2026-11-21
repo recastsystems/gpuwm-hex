@@ -1,5 +1,228 @@
 # Changelog
 
+## 0.6.2
+
+Requires gpuwm>=3.0.0,<3.1. The kernel packs are new (release `kernel-packs-v0.6.2`): the TEMPO fix below changes
+three of their modules, and the 0.6.1 packs would leave a correct-mode TEMPO run compiling those at every run. The
+mesh generator `rw_mpas_mesh` and the history converter `rw_mpas_convert` are new (release `engine-bridges-v0.6.2`);
+the other engine bridges are the ones 0.6.1 pinned.
+
+Changed:
+- **The meshes the doors generate are built under the generator's geometry 2 by default.** It grows the spacing by
+  one rate per cell from each fine zone's own line, builds every spacing as asked (no halving ladder), and hands out
+  no mesh with an obtuse triangle; the same ask is more columns, and the plan counts them: a few per cent on a zoom
+  globe, and on the 3 km storm box over eastern Iowa (`gpuwm-hex regional --point 40.6,-91.3 --radius-km 300
+  --fine-dx-m 3000 --background-km 96`) 51,671 columns against 38,278, whose forecast took 27.5 s of step loop a
+  forecast hour against 20.8 s (2 h, one RTX PRO 6000). The 3 km CONUS zoom globe (1,959,938 cells) is one command,
+  `mesh-plan --global-mesh --point 38.5,-96.5 --fine-dx-m 3000 --radius-km 2100 --background-km 96 --card
+  rtx-pro-6000 --cards 4 --generate`: grid and static in 110 s on a 24-core host, with no obtuse triangle and no cell
+  of four edges.
+  `--geometry 1` (or a row's `"generator": {"geometry": 1}`) builds the halving ladder and the meshes of 0.6.1 byte
+  for byte; a registered country row or region keeps the mesh it was made with.
+- The mesh generator runs on at most 32 threads when nothing sets `RAYON_NUM_THREADS`
+  (`RW_MPAS_MESH_MAX_THREADS` changes the cap); the mesh it writes is the same on any thread count.
+- **Seven speed words for several-rank runs, each on unless set to 0; none changes a word written.**
+  `GPUWM_HEX_LIMITER_BATCH` (the multi-rank monotonic limiter carries 7 species a pass: 13 tracers take two limiter
+  halo exchanges a step, not thirteen), `GPUWM_HEX_HALO_PARALLEL_RECV` (each peer's halo receive on its own stream),
+  `GPUWM_HEX_HALO_TABLE_CACHE` (halo descriptor tables kept and uploaded from pinned memory),
+  `GPUWM_HEX_PUBLISH_LEAN` and `GPUWM_HEX_PUBLISH_FAST` (the host pools downloaded only when something reads them,
+  and transposed on the card), `GPUWM_HEX_RESTART_RELEASE` (a same-host resume lets go of the whole-globe copy once
+  every rank has its share) and `GPUWM_HEX_DIRECT_SHARD_RESTORE` (a resume from rank shards on the same ranks and
+  partitions restores each rank from its own shard; rank 0 no longer assembles the globe). With every word set to 0
+  a run is the bytes it was. They were made for many-card runs and change no speed on one card: two ranks of the
+  3 km storm box over eastern Iowa on one RTX PRO 6000 step at 37 to 39 s a forecast hour with them on or off, as
+  0.6.1 does.
+- Updraft helicity on several same-host ranks is the same, word for word, as on one card: each rank sums a seam
+  cell's vertex terms in one card's order (it differed in the last place at the seams).
+  `GPUWM_HEX_UH_RANK_ORDER=native` keeps a native MPAS rank's own order.
+
+Fixed:
+- **`gpuwm-hex regional --point` stopped at its init stage under geometry 2** ("362 of the 51671 cells ... lie
+  outside the first guess", the 3 km storm box over eastern Iowa): the plan left out the width of the cut's seven
+  boundary rings, so the HRRR window ended 30 km past the cut while the rings reach 66 km past it. The plan
+  carries it, as geometry 1's always did, with each ring walked at its own spacing (past the cut geometry 2's
+  spacing keeps growing), and the regional door draws the HRRR window over the cut's own cells.
+- **A region whose cut and boundary rings leave the HRRR grid was found only after the mesh and the download.**
+  The regional door now reads that circle against HRRR's grid first and refuses by name, with the side and by
+  how many grid cells, before anything is built or fetched.
+- **A host the door starts for `--hosts` could not resume from its seal**: it seals its shards under the run's
+  `.multihost/host<N>/` folder, and `--restart-from` pointed it at rank 0's ("1 of its 2 rank shards are not on
+  this host"). It resumes from its own copy.
+- **Same-host ranks resumed from a seal began HAILCAST's updraft count again**, so the next hour's hail fields
+  differed from the run that never stopped (1,246 words over 156 cells of the 3 km storm box on two ranks; every
+  other word was equal). The carried count and maxima reach each rank.
+- `--hosts` on a host with no NCCL names the pip line that installs it.
+- **hrrrv5 with MPAS-A's Grell-Freitas convection runs on the GPU.** `--physics
+  config_convection_scheme=cu_grell_freitas` with `--physics-suite hrrrv5` had no GPU route: the RRFS 44c0849 route
+  had no GPU entry for the scheme, and with one its resident glue refused the pairing with TEMPO. The scheme now runs
+  on the card beside TEMPO, MYNN-EDMF, RUC and UGWP with the port MPAS-A's convection_permitting suite uses (the fork
+  compiles the same scheme file); the route table names the pairing as its own variant, "hrrrv5 + Grell-Freitas".
+  A choice that still has no GPU slot (cu_tiedtke or cu_kain_fritsch with hrrrv5) stops at the door before any download (`gpuwm-hex regional` and `global` read it before the mesh), instead of
+  fetching 1 GB of tables and ending on "the packaged physics manifest has no assets", and the message names the
+  schemes of that slot that run on the GPU with the run's other choices, as `--physics` flags.
+- **`gpuwm-hex render` given several history frames and no `--simulation-start` filed every frame as lead 0**, so
+  each frame's pictures overwrote the one before, and the door still ended `failed=0`. The door now reads the run
+  start every history carries (`config_start_time`) and says so in one `START` line; frames that name two starts,
+  or none, are refused with the flag that settles it. One frame takes its run start the same way: a +3 h frame was
+  drawn as "Init" at its own valid time and "F000".
+- **`gpuwm-hex --help` stopped on Windows** with `No module named 'resource'` (and then `'fcntl'`): two derivative
+  modules imported POSIX-only modules at the top, and `--help` builds every door. They are imported where they are
+  used; the derivative commands still run on Linux only, and say so.
+- **Ten doors' `--help` stopped on Windows when their output went to a pipe or a file** (`forecast`, `global`,
+  `regional` and seven more): Python writes such a stream in the ANSI code page there, and the arrow in their help
+  text stopped it with `UnicodeEncodeError`. A stream that is not UTF-8 now writes a character it cannot encode as
+  a backslash escape.
+- **The release build's netCDF-4 step could stop on a bad zlib download** ("zlib.tar.gz: FAILED"): one server
+  sometimes answered with other bytes. The build now fetches the pinned zlib 1.3.1 from upstream's GitHub release
+  first and zlib.net's fixed path second, tries each three times, and names the size, sum and first bytes of any
+  answer that is not the pinned file. A wheel built from the source archive takes the same road.
+- **The scorer (`hex_obs_scorecard`) and the energy tables program (`rw_s2s_energy`) built to different bytes in
+  different folders**: Cargo hashes a path dependency outside the project by its whole path, so the folder entered
+  the programs. Both now reach the engine through a link inside their project and remap both roots, so one source
+  builds one program wherever it is built.
+- **A false light echo over the oceans: TEMPO's droplet activation never took the land mask.** Upstream TEMPO
+  (v3.2.5 and its main branch) calls droplet activation in `cloud_condensation` without the cell's land mask, so the
+  scheme's own floor (at least 0.15 of the aerosol number activated over water and sea ice, none over land) never
+  runs; CCPP Thompson, the scheme this activation comes from, passes the mask (`lsml`). Our port copied the call as
+  written. On coarse ocean cells the resolved vertical motion sits at the activation table's floor, marine stratus
+  activates very few droplets and drizzles, and the radar product shows a sheet of light echo where there is none.
+  Correct mode (the default) now passes the cell's land mask on both TEMPO generations (fork correction `TP6`;
+  `--physics-correct-skip TP6` turns it off). Exact mode is unchanged byte for byte. No floor on vertical motion is
+  added: TEMPO, WRF Thompson and CCPP Thompson all activate on the resolved motion.
+- A cycle's land state no longer refuses a rounded zero just below a lower bound (an `acsnom` of -3.9e-17).
+- **`tests/test_moving_vertical_cuda.py` failed 12 of its 55 cases when run on its own on a card**: it compares
+  the CUDA remap bit for bit with the CPU reference, which holds under strict numerics only, and it took the
+  fast default outside the battery. It now selects strict numerics itself. No kernel changed.
+
+Text corrected:
+- The 12 km `adjoint-test`'s time on the README's first screen and in the first-hour page is 5 to 13 minutes (418 to
+  708 s on builds of 0.6.1 and 769 s on 0.6.2's, on one RTX 5090); it said 5 to 11.
+- The guarded route's reading (0.996 to 1.000) names its step sizes and the build it was measured on, and the
+  per-species check names its full setting (`AD_DOT_SELF=1 AD_DOT_PLANES=scalars`) and that it misses on rain at
+  12 km.
+- The User Manual's 2.2 no longer names a version for doctor's `WPS_GEOG` line.
+- The moving check's jolt figures in the README and the moving-nest guide are 0.6.2's own: 12.97 to 1.014 on the
+  gentle case and 152.8 to 1.029 on the steep case on a card, 19.3 to 1.04 on the CPU. They gave a first
+  measurement's 16.2 to 1.01 and 21.4 to 1.04, which today's check does not print. The User Manual's *What's new
+  in 0.4* gives the same figures.
+- The README's local-time-stepping section says what a one-class run is bit-identical to: the option-off run on the
+  option's own schedule (RK3, six acoustic sub-steps, no FCT limiter), not a default run, which takes RK2 with four
+  sub-steps and the limiter on.
+
+Added:
+- **Ranks on several hosts.** `gpuwm-hex forecast ... --hosts hostA:0-7,hostB:0-7` runs one rank process per listed
+  card across machines, halos through NCCL; a checkpoint is sealed as rank shards on every host and a run resumes
+  across hosts from them, a joined host from its own disk. A launcher that starts every host itself sets
+  `GPUWM_HEX_MULTIHOST_EXTERNAL` with `MASTER_ADDR`, `MASTER_PORT` and `GPUWM_HEX_MULTIHOST_TOKEN`. Off by default:
+  `GPUWM_HEX_PER_RANK_OUTPUT=1` (each rank writes its own cells),
+  `GPUWM_HEX_PER_RANK_START=1` and `GPUWM_HEX_START_SHARDS=DIR` (no whole-globe start held in memory). Every host
+  needs NCCL, which no gpu extra installs: `pip install nvidia-nccl-cu12` in the same environment. Shown with the
+  120 km globe, 6 h with a 3 h seal, one rank on an RTX 4090 host and one on an RTX 5070 Ti host on a home network:
+  in strict numerics the words of two ranks on one RTX PRO 6000 (0 of 706,509,363 history and diagnostics words
+  different) and, resumed from each host's own seal, of the run that never stopped (0 of 302,789,727); in fast
+  numerics, the default, the door's ssh start and a launcher's start write the same words and the resume is exact,
+  but fast words depend on the card family, so they match a one-host run only on the same families. No speed is
+  claimed for several hosts.
+- A start row `ifs-gfs-top`, selected by name only: ECMWF IFS open data at 0.25 degree with NCEP GFS above 50 hPa.
+- **Three surface and boundary-layer closures on the hrrrv5 suite, each off unless named, one at a time:** a
+  surface-flux network (`--physics config_surface_flux_net=r4_a50`), a neural boundary layer
+  (`config_neural_pbl=v1`, or `v2` with its dry-air gate) and an 8-parameter closure with no network
+  (`config_autophysics_pbl=v2`, `v3_bowen` or `v2_warm_night`); the `GPUWM_HEX_SURFACE_FLUX_NET`,
+  `GPUWM_HEX_NEURAL_PBL`, `GPUWM_HEX_NEURAL_PBL_DRY_GATE` and `GPUWM_HEX_AUTOPHYSICS_PBL` words take the same values.
+  They act after RUC's land step and after MYNN-EDMF. Their weights and parameter sets ship in the wheel, each
+  checked by its SHA-256 before the first step; the two networks need the `[torch]` extra. Two at once, the dry-air
+  gate alone, a route without RUC land and the MPAS-A v8.4.2 suites are refused by name. Off, the forecast is the
+  plain model bit for bit. NOTICE section 20 names what each was trained or fitted on.
+- **A learned column correction on the forecast's external-tendency slot**, off unless
+  `GPUWM_HEX_LEARNED_CORRECTION=/path/checkpoint.pt` names a network (`GPUWM_HEX_LEARNED_CORRECTION_ARCH`,
+  `GPUWM_HEX_LEARNED_CORRECTION_SCALE`); one card only. No weights ship with the package. Unset, the forecast is the
+  plain model bit for bit.
+- **Hail size: HAILCAST, on by default wherever the mesh is finer than 4 km.** The forecast writes HRRR's hail fields
+  to its diagnostics stream under HRRR's names and units, each the largest since the last whole-hour frame (so the
+  hourly frame holds HRRR's hourly maximum): `HAILCAST_DIAM_MAX`, `HAILCAST_DIAM_MEAN`, `HAILCAST_DIAM_STD` and
+  `HAILCAST_DHAIL1`-`5` in mm (HAILCAST's stone model, HRRR v4.1.21's by default), and `HAIL_MAXK1` / `HAIL_MAX2D`
+  in m (the size distribution's largest hail at the lowest level and in the column: TEMPO's own on the RRFS route,
+  gpuwm's `hail_psd` on MPAS-A Thompson and WSM6). The stone model is gpuwm's, compiled from the installed engine,
+  whose columns match WRF's and HRRR's Fortran; a gpuwm whose hail kernels differ is refused with one log line and the
+  forecast goes on without these fields. Runs on several cards and runs resumed from a checkpoint give the same fields
+  as one card and a run that never stopped. `GPUWM_HEX_HAILCAST=0` turns it off, `=1` runs it in every cell,
+  `GPUWM_HEX_HAILCAST_VERSION=wrf_461` takes WRF 4.6.1's stones. It costs time where it runs: on the 3 km storm box
+  over eastern Iowa (38,278 cells, HRRR 2024-05-21 15Z, 2 h, one RTX PRO 6000) the step loop took 20.8 s a forecast
+  hour with it and 18.2 to 18.4 s with `GPUWM_HEX_HAILCAST=0`, as 0.6.1 does (18.2 to 18.7 s); with it off that
+  run's words are 0.6.1's. `gpuwm-hex render --products hail_max_hailcast,hail_max_surface,hail_max_column` draws
+  them (they are not in the default map set): the converter the wheel bundles, which the door runs before any gpuwm
+  bridge, now maps `HAILCAST_DIAM_MAX` in mm and `HAIL_MAXK1` / `HAIL_MAX2D` in m and keeps their peaks. Before it, a
+  hail product named at the door was refused ("not stored: hail_max_hailcast_surface") whatever gpuwm was installed.
+
+Derivative engine (tangent, adjoint, sensitivity):
+- Added: `--inner-model simple` on `tangent`, `adjoint-test` and `sensitivity`, a simplified inner model; off by
+  default.
+- Added: `--physics config_radt_mcica_seed=cell` seeds RRTMG's McICA cloud sample by cell, so a recording's
+  perturbed forwards and its linear model hold the same sample; `pressure`, MPAS's rule, stays the default, and a
+  door asked for one rule on a plan recorded under the other refuses by name.
+- Added: recordings as several rank threads on one card (`record --ranks N`, the doors' `--record-ranks N`) and a
+  made row run as N ranks (`--rank-plans`); `--cumulus` records a plan with a cumulus scheme on. All off by default.
+- Added: the external-tendency slot (`hexcore.ad.external_tendency`), a caller's tendency added to the
+  boundary-layer rates once a step, with its cotangent handed out each step of the reverse (the torch bridge).
+- Changed: rows made for `--mesh` offer `--boundary-layer guarded` (the live MYNN-EDMF derivative); the made
+  limited-area classes run it up to 30 minutes and the held closure past it.
+- Changed: every whole-state dot reading prints its conditioning beside it.
+- Fixed: a plan recorded from a default forecast lost part of three recover kernels' input cotangents (the short
+  array lifetimes, `GPUWM_HEX_MEM_ACOUSTIC`, have them write over their own inputs; a 16-step 12 km plan read a
+  whole-state dot of 0.239). The derivative route records with `GPUWM_HEX_MEM_ACOUSTIC=0`, the form every example
+  plan was recorded in; the forecast's own default is unchanged. Sealing refuses a plan that aliases a checked
+  kind's arguments in a pair no example plan ran.
+- Fixed: the window had no rules for the model-top damping NOAA's hrrrv5 deck turns on (`upper_cam_f32`,
+  `upper_rayleigh_f32`); a plan whose kernels the window cannot differentiate is refused at seal, naming each kind.
+- Fixed: the regional transport's density check no longer writes a float copy of the field that has no derivative
+  row (a 15-minute 12 km plan failed the release's own check).
+- Fixed: New Tiedtke keeps one pipeline workspace per host thread, so rank threads sharing a card do not share it.
+- Fixed: `gpuwm-hex regional --source hrrr-gfs` runs the blend row on a cut, and a failed blend leaves no start a
+  rerun would reuse.
+
+<!-- fork jacobbieker/woof fixes: begin -->
+Fixed (brought from github.com/jacobbieker/woof, by Jacob Prince-Bieker, Apache-2.0; NOTICE section 19):
+- **Every `--local-timestep` run stopped at step 0** with `TypeError: LocalTimestepAttachment.divergence_damping_3d()
+  got an unexpected keyword argument 'native_stored_inverse'`. The local-time-stepping damping now takes the keyword
+  the acoustic loop passes and forms its coefficient as the shared kernel does. From fork jacobbieker/woof PR 447.
+- **`--local-timestep` runs no longer go eager whatever the graph policy says.** The rate-class launches are captured
+  and replayed with the CUDA subcycle graph, with the same words and the same launch counts as eager
+  (`GPUWM_HEX_CUDA_GRAPHS_LTS=0` keeps them eager). From fork jacobbieker/woof PR 473.
+- **A registry-id microphysics or land surface stopped the forecast door with a bare KeyError** (for example
+  `--physics-suite arwen_mpas_column --physics mp_physics=2`: `KeyError: 'lin-mp2'`). A selector with no
+  suite-table row is now an engine-only row. From fork jacobbieker/woof PR 379.
+- **Every ArWen-route forecast recompiled kernels into its own scratch.** The v8.4.1 driver now keeps its kernel
+  images in the box kernel cache (`<kernel cache root>/cupy`), keyed after the numerics options, so a run in a
+  fresh work dir starts from the images the last one made (`GPUWM_HEX_SHARED_KERNEL_IMAGES=0` keeps them per
+  run). Output is byte-identical. From fork jacobbieker/woof PR 488.
+- **A blow-up on the MPAS-suite route was reported as mesh corruption.** The wind-reconstruction refusal now says
+  which check failed: the geometry against its sealed copy (naming the array), or a non-finite normal velocity
+  (with its count and levels). From fork jacobbieker/woof PR 495.
+- **A moving run started a cold process when a move went to another member than the prepared one, and prepared
+  the next segment beside the running one even when the host had no room for it.** The resident record now
+  follows the move, the preparation waits for host memory to hold a second copy
+  (`GPUWM_HEX_MOVING_PREPARE_HOST_GATE=0` turns the gate off), and freed heap is returned at each move. Same
+  words. From fork jacobbieker/woof PR 497.
+- **Every regional transport step waited on the host** in the FCT target-density check. The check is now one
+  device OR over a broadcast mask, with the same flag. From fork jacobbieker/woof PR 216.
+- **Small regional meshes ran the slower element FCT kernels**: the hoisted forms now start at 15,000 edges
+  (was 30,000), with the same words, and `GPUWM_HEX_EDGE_HOIST_CHECK` no longer refuses a regional mesh over
+  its garbage column. From fork jacobbieker/woof PR 224.
+- **A 256-level column could not be remapped by a moving run** (the guard refused more than 255 source layers;
+  the one-byte layer index holds 256). From fork jacobbieker/woof PR 137.
+- **`--physics slope_rad=1` stopped at step 0 with non-finite surface fluxes, and `topo_shading=1` changed every
+  frame with a shadow the column call cannot compute.** Both (and `shadlen`) are now refused by name: the hex
+  column call has no neighbour terrain. Mechanism from fork jacobbieker/woof PR 302.
+- **The upper-damping flags did nothing on the MPAS suite route.** `--cam-coefficient`, `--cam-damping-levels`,
+  `--rayleigh-u` and `--damping-start-m` were accepted and dropped (the history was word-for-word the run
+  without them); they now reach `&damping` and the route's damping operators. From fork jacobbieker/woof PR 509.
+- **Regional views lacked the lightning threat and the 10 m gust maps.** They now draw from the frames already
+  stored. From fork jacobbieker/woof PR 433.
+- **A cold kernel compile on a crowded host took 13 to 15 GB.** The compile pool is now sized by free host memory
+  as well as by CPUs (1 GiB a worker within half of what is free), as gpuwm does; `GPUWM_KERNEL_PLAN_WORKERS`
+  still sets it. From fork jacobbieker/woof PR 239.
+<!-- fork jacobbieker/woof fixes: end -->
+
 ## 0.6.1
 
 Requires gpuwm>=3.0.0,<3.1. A defect release: it fixes what a first user of 0.6.0 met, adds the command that finds
@@ -52,7 +275,8 @@ Fixed:
 
 Added as an option, not a default:
 - **`--boundary-layer guarded` on the 12 km example row.** With nothing of the boundary layer held, a low-level
-  temperature measure placed on the storm cell reads 0.996 to 1.000 of the gradient's prediction, where the default
+  temperature measure placed on the storm cell reads 0.996 to 1.000 of the gradient's prediction (centred, at steps
+  0.1 to 0.01, measured on a 0.6.0 build with this row added), where the default
   route is 2.2 per cent short. It is not the default: the README's 12 km command ends NOT PASSED (UNRESOLVED) on it
   (466 s, card peak 23,610 MiB, on one RTX 5090, on a pre-release build of 0.6.1). `docs/differentiable/LIMITS.md` has both readings.
 
@@ -124,7 +348,7 @@ New, the differentiable engine:
 - Before the example downloads, a command checks the card's family and whole size, Python and the `ad` extra, and stops by name on a machine without them. A bump or region off the mesh is refused after the mesh file alone (2 MB for the 12 km cut). Free card memory, the host memory it needs, disk and, for `--init`, the recorder are checked after that mesh file and before the rest of the example (`--wait-card SECONDS` waits for card memory another job holds).
 - `--strict-from` takes the strict check from a passing `adjoint-test` receipt of the same plan. `--seed N` sets the strict check's test direction in `tangent`, `sensitivity` and `param-grad`.
 - The whole-state check scores the model's prognostic fields at the window end, one unit a field, where the plan's field map holds that boundary. Where it does not (a 15-step window on a plan recorded with 15 boundaries), it scores memory allocations and the command says so. `AD_DOT_SELF_UNITS=pool` asks the runner for memory allocations.
-- The runner's window check has a per-species form (`AD_DOT_PLANES=scalars`): each of the 13 scalar species is weighted and read on its own, and a species that carries no tangent is named. It also names the form it ran; the independent form (a random second vector not made from the tangent, `--direction fieldxy` without `AD_DOT_SELF`) is in `docs/differentiable/CHECKS.md`.
+- The runner's window check has a per-species form (`AD_DOT_SELF=1 AD_DOT_PLANES=scalars`): each of the 13 scalar species is weighted and read on its own, and a species that carries no tangent is named. On the 12 km example it misses on rain (`docs/differentiable/LIMITS.md`), and no example runs it. It also names the form it ran; the independent form (a random second vector not made from the tangent, `--direction fieldxy` without `AD_DOT_SELF`) is in `docs/differentiable/CHECKS.md`.
 - The per-launch transpose check of a replay builds its topology tables from the run's own mesh and refuses a stored table of another mesh by name.
 - `sensitivity` draws its map over the whole globe. Every receipt names how its plan was recorded and the boundary of the plan at which the window end was read (`window_end_boundary`); `tangent` also writes the edge wind `u` at the window end.
 - A perturbation that is zero on every cell is refused by name. A bump, bump level or metric region that misses the row's mesh is refused before the example downloads, from the mesh file alone (2 MB for the 12 km cut).

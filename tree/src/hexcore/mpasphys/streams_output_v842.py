@@ -650,6 +650,15 @@ class PhysicsStreams(NativePoolStreams):
         # Variables outside the Registry for the history stream (the suite route's chemistry), captured now.
         extras = (None if getattr(self, 'extra_history', None) is None
                   or not any(s.name in ('output', 'history') for s in selected) else self.extra_history())
+        # Variables outside the Registry for the diagnostics stream (hexcore.hailcast's hail fields), captured now,
+        # before after_snapshot below restarts their window.  They ride the same extras to the encoder, which
+        # hands each stream its own (extra_diagnostics_names).
+        diag_extra = getattr(self, 'extra_diagnostics', None)
+        if diag_extra is not None and any(s.name == 'diagnostics' for s in selected):
+            words = diag_extra()
+            if words:
+                self.extra_diagnostics_names = frozenset(words) | getattr(self, 'extra_diagnostics_names', frozenset())
+                extras = {**(extras or {}), **words}
         if self.diagnostics is not None:
             # Reset only after immutable capture, while this event's stream
             # alarms still ring (mpas_atm_core.F:877-910).
@@ -800,12 +809,21 @@ class PhysicsStreams(NativePoolStreams):
                 writer.write_restart(target, self.mesh, snapshot, when, stream=stream,
                                      timestamp_path=self.output/'restart_timestamp', **options)
             else:
+                diag_names = getattr(self, 'extra_diagnostics_names', frozenset())
                 if extras and stream.name in ('output', 'history'):
-                    options['extra_fields'] = extras
+                    history = {name: value for name, value in extras.items() if name not in diag_names}
+                    if history:
+                        options['extra_fields'] = history
+                elif extras and stream.name == 'diagnostics':
+                    diagnostics = {name: value for name, value in extras.items() if name in diag_names}
+                    if diagnostics:
+                        options['extra_fields'] = diagnostics
                 writer.write_stream(target, stream, self.mesh, snapshot, when, **options)
             request = self.output / 'native-physics-request.json'
             from ..native_geometry import FIELDS, seal, sidecar, publish
-            if (stream.name in ('output', 'history') and request.is_file()
+            # A rank writing only its owned slice (GPUWM_HEX_PER_RANK_OUTPUT) seals no global-extent identity.
+            if (not getattr(self, '_per_rank_output', False)
+                    and stream.name in ('output', 'history') and request.is_file()
                     and (json.loads(request.read_text()).get('native_state_publication', False)
                          or set(FIELDS) <= set(self.stream_fields(stream)))):
                 arrays = {name: np.asarray(snapshot[name].values) for name in FIELDS if name in snapshot}

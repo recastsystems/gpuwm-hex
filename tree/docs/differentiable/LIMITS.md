@@ -1,4 +1,4 @@
-# Limits of the differentiable engine in 0.6.1
+# Limits of the differentiable engine in 0.6.2
 
 Every limit here was measured, and each states where. Nothing on this page is a limit nobody has reproduced. When a
 limit is lifted it leaves this page in the release that lifts it. [GUIDE.md](GUIDE.md) says what the tangent and
@@ -66,6 +66,18 @@ adjoint are; the README's *The differentiable engine* has every number with its 
 
 ## What the checks show, and what they do not
 
+- **Radiation's cloud sample sets a floor under how small a change of the start a real forecast follows**
+  (from 0.6.2). Under MPAS's seed rule, the default, RRTMG seeds each column's sub-column clouds from the fractional
+  digits of its lowest layer pressures, so any change of the start, once it reaches those pressures, draws new clouds
+  at the next radiation call; no linear model predicts that. On the 12 km example's start (cumulus off, radiation
+  every 30 minutes, the forecast door's defaults), the part of the real change in potential temperature on the lowest
+  15 levels that keeps its sign when the change flips sign is 0.023 to 0.026 K (root mean square over cells) at
+  +1 hour for warm bumps of 1, 0.1 and 0.001 K alike. With `config_radt_mcica_seed = cell` it is 0.0026 to
+  0.0067 K, and the 0.1 K pair's plus and minus changes mirror each other with a correlation of 0.64 on cells and
+  0.98 on boxes of about 165 km, against -0.49 and -0.06 under MPAS's rule. A 0.001 K bump stays under what is left
+  (its own sign-flipping part is 0.0013 K). Up to +30 minutes the two rules read the same: the first radiation call,
+  at the start, sees no cloud in that forecast. Measured once, on that start only, to +1 hour (its boundaries end
+  there).
 - **Near-ground moisture on the 12 km example is about 2 to 4 per cent short.** At ten step sizes of both signs the
   real change read 1.010 to 1.049 of the gradient's prediction (centred, 1.021 to 1.036: outside the 0.01 bar,
   2.6e-02 from 1, when read on centred differences). The cause is the
@@ -158,7 +170,8 @@ adjoint are; the README's *The differentiable engine* has every number with its 
     model is smooth along this measure's steepest descent, and read centred it gives 1.020 to 1.024 of the default
     route's prediction at steps 0.1 to 0.01: the gradient is 2.2 per cent short. The cause is the boundary layer's
     plume and mixing length, which the default route holds. With nothing of the boundary layer held
-    (`--boundary-layer guarded`, an option on this row from 0.6.1) the same direction reads 0.996 to 1.000; with
+    (`--boundary-layer guarded`, an option on this row from 0.6.1) the same direction reads 0.996 to 1.000
+    (measured on a 0.6.0 build with this row added); with
     the boundary layer held whole (the exact route) 1.040 to 1.043; the cloud numbers, the cloud route and the
     limiter change it by under 0.1 per cent. Through `adjoint-test` on the guarded route the measure reads INSIDE
     along its own descent (1.89e-04 from 1; the command as a whole prints FAIL on its bump, a bump at level 32

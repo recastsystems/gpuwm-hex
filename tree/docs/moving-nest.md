@@ -173,9 +173,11 @@ convection_permitting with every scheme on the GPU, 2 h, one 357 km move at 1 h)
   bit-identical.
 - These runs used the remap before the balance fix. Against the fixed-region run, two of 15 moves
   exceeded the 1.5 jolt limit: 1.5004 and 1.81.
-- The balance fix brings the reduced test (`gpuwm-hex moving check`) from 16.2 to 1.01 on a card
-  (LTS) and from 21.4 to 1.04 on the CPU (ordinary integrator), with mass, heat and tracer kept to
-  1e-9 per move.
+- The balance fix keeps mass, heat and tracer to 1e-9 per move in the reduced test. On 0.6.2,
+  `gpuwm-hex moving check --lts` goes from 12.97 to 1.014 on the gentle case and from 152.8 to 1.029
+  on the steep case (an RTX 4090 and an RTX 5070 Ti print the same numbers), and `--device cpu` from
+  19.3 to 1.04 on the gentle case (the ordinary integrator). The jolt report has the first
+  measurement (16.2 to 1.01 and 21.1 to 1.04, gentle case, an RTX 5090).
 - One region split across two cards of one host (`--cards 2`, two RTX PRO 6000, every rate class but
   the finest cut across both cards):
   - `gpuwm-hex moving check --lts --cards 2`: worst jolt 1.013, mass, heat and tracer to 4.1e-10 per

@@ -726,9 +726,10 @@ def compile_entry(row, arch):
                     nvrtc.compileProgram(program, raw_options)
                     blob, mapping = nvrtc.getCUBIN(program), None
                     from .compile_contract import NvrtcObservation, _object_record
+                    flags = tuple(option for option in raw_options if not str(option).startswith("-I"))
                     raw_evidence = {
                         "status": "resolved", "method": "raw nvrtc.compileProgram with explicit options",
-                        "observations": [NvrtcObservation(row["source_sha256"], raw_options, 0,
+                        "observations": [NvrtcObservation(row["source_sha256"], flags, len(raw_options) - len(flags),
                                                            _object_record(blob)).as_dict()]}
                 except Exception as error:
                     raise RuntimeError(nvrtc.getProgramLog(program)) from error
@@ -1024,6 +1025,32 @@ def _compile_jobs(jobs, *, workers, identity, job_dir, reserve_bytes):
     return [results[i] for i in range(len(jobs))]
 
 
+def without_include_paths(row):
+    """A pack row whose compile evidence names no folder of the machine that built it.
+
+    THE BREAKAGE THIS PREVENTS (0.6.2's check): the raw-route rows recorded every ``-I`` option with the builder's
+    own folders in ``effective_compile`` (``-I/home/<builder>/.../site-packages/cupy/_core/include``), so the
+    published packs, and every run receipt that copies a row's evidence, named the build machine's home folder.
+    Evidence keeps the flags without the include folders and counts them, as the NVRTC capture does
+    (``compile_contract._observation``); rows reused from an earlier pack are rewritten the same way.
+    """
+    evidence = row.get("effective_compile")
+    observations = evidence.get("observations") if isinstance(evidence, dict) else None
+    if not isinstance(observations, list) or not any(
+            isinstance(o, dict) and any(str(f).startswith("-I") for f in o.get("effective_flags") or ())
+            for o in observations):
+        return row
+    cleaned = []
+    for observation in observations:
+        if isinstance(observation, dict) and isinstance(observation.get("effective_flags"), list):
+            flags = [f for f in observation["effective_flags"] if not str(f).startswith("-I")]
+            observation = {**observation, "effective_flags": flags,
+                           "include_path_count": int(observation.get("include_path_count") or 0)
+                           + len(observation["effective_flags"]) - len(flags)}
+        cleaned.append(observation)
+    return {**row, "effective_compile": {**evidence, "observations": cleaned}}
+
+
 def build(output, *, entries=None, architectures=ARCHITECTURES, base_pack=None, workers=None,
           prune=False, job_dir=None, reserve_bytes=8 << 30):
     """Build requested images, optionally extending a verified shared pack.
@@ -1096,7 +1123,7 @@ def build(output, *, entries=None, architectures=ARCHITECTURES, base_pack=None, 
     if nvrtc_build(banner) == "unavailable" or not build_id_accepted(nvrtc_build_id(banner)):
         raise ValueError("NVRTC build banner could not be measured for the wheel")
     compiled = [{**row, "nvrtc_banner": banner} for row in compiled]
-    write(output, identity, [*retained, *compiled])
+    write(output, identity, [without_include_paths(row) for row in (*retained, *compiled)])
     return {"modules": len(rows), "entries": len(retained) + len(compiled),
             "compiled": len(compiled), "reused": len(reused), "retained": len(retained),
             "architectures": list(architectures)}

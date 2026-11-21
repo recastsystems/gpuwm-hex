@@ -111,6 +111,7 @@ pub(crate) const EXT_DRIVER_ABSENT: &str = "DEFECT: --ext-driver: this build doe
 #[path = "live_sweep.rs"] pub mod live_sweep;
 /// central hunt-3km-slot: the self dot's arithmetic, AD_DOT_SELF_FLOOR and AD_DOT_ROUNDINGS (all diagnostics; valid unchanged).
 #[path = "self_dot.rs"] mod self_dot;
+#[path = "torch_bridge.rs"] pub mod torch_bridge;
 
 const P8_IMAGE: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/p8_rules.fatbin"));
 const WIN_IMAGE: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/window_support.fatbin"));
@@ -490,6 +491,7 @@ struct Fns {
     view_tl: *mut c_void, view_ad: *mut c_void, where_tl: *mut c_void, where_ad: *mut c_void,
     max_tl: *mut c_void, max_ad: *mut c_void, view_zero: *mut c_void, fill: *mut c_void, dot2: *mut c_void, nonfinite: *mut c_void,
     fct_minmax_tl: *mut c_void, fct_minmax_ad: *mut c_void, axpy: *mut c_void, widen: *mut c_void, narrow: *mut c_void,
+    upper_cam: *mut c_void, upper_rayleigh: *mut c_void,
     /// 60 km tape: the pitched pair (null when the fatbin lacks them; then the one-row-a-launch loop).
     widen2: *mut c_void, narrow2: *mut c_void,
 }
@@ -563,7 +565,7 @@ mod bsprof {
         match r {
             R::Rows { .. } => "rule:rows", R::View { .. } => "rule:view", R::ZeroView { .. } => "rule:zero_view", R::Max { .. } => "rule:max",
             R::Where { .. } => "rule:where", R::Scale { .. } => "rule:scale", R::Copy { .. } => "rule:copy", R::Axpy { .. } => "rule:axpy", R::Zero { .. } => "rule:zero",
-            R::Held { .. } => "rule:held", R::FctMinmax { .. } => "rule:fct_minmax", R::Entry | R::Identity(_) | R::Refused(_) => "rule:none",
+            R::Held { .. } => "rule:held", R::FctMinmax { .. } => "rule:fct_minmax", R::UpperDamp { .. } => "rule:upper_damping", R::Entry | R::Identity(_) | R::Refused(_) => "rule:none",
             _ => "rule:other",
         }
     }
@@ -795,6 +797,21 @@ unsafe fn restore_host(ex: &mut Execution, frame: &mut Option<ReplayFrame>, h: &
 /// drain at the chunk end, every drain under AD_PLANT on that row, and every drain when MYNN-EDMF runs on shard contexts
 /// (AD_MYNN_SHARD_DEVICES: those copies cross contexts). The row's "ms" is then host time only (card time lands in the
 /// next drain).
+/// split adjoint: receive-and-adds held back by AD_PEER_SENDS_FIRST (the receipt's count).
+pub(crate) static PEER_DEFERRED: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+/// split adjoint: may this rule's adjoint run before the held receive-and-adds? Only a send of a cotangent, a copy or a zero
+/// whose words (element ranges of the shadow) are none of the words a held receive adds into. Anything else waits.
+fn peer_may_pass(r: &R, held: &[(R, u64)]) -> bool {
+    let clear = |e: i64, n: usize| held.iter().all(|(h, _)| match h {
+        R::PeerSend { src, n: m, .. } => e + n as i64 <= *src || *src + *m as i64 <= e,
+        _ => false });
+    match r {
+        R::PeerRecv { dst, n, .. } => clear(*dst, *n),
+        R::Copy { dst, src, n } => clear(*dst, *n) && clear(*src, *n),
+        R::Zero { ranges, .. } => ranges.iter().all(|(e, n)| clear(*e, *n)),
+        _ => false,
+    }
+}
 fn native_nodrain() -> bool {
     static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *ON.get_or_init(|| std::env::var("AD_NATIVE_NODRAIN").as_deref() == Ok("1")
@@ -1212,6 +1229,15 @@ fn scalar_skip(kd: &deriv::KernelDeriv, e: &str) -> bool {
             "why": if binds_scalar { "only output is a discarded cotangent (by-value launch scalar or G6-inactive sink)" } else { "listed but no listed entry of this kernel accumulates into a scalar cell: runs" }}));
     }
     binds_scalar
+}
+/// runner overhead (0.6.2): whether the comma list in environment word `key` names `f`, the list read once per process
+/// (AD_SUBNORMAL, AD_ZERO_DERIV: diagnostics read for every reversed launch). The same answer as reading it each time.
+fn env_list_has(key: &'static str, f: &str) -> bool {
+    static LISTS: std::sync::OnceLock<std::sync::Mutex<HashMap<&'static str, Vec<String>>>> = std::sync::OnceLock::new();
+    let m = LISTS.get_or_init(Default::default);
+    let mut g = match m.lock() { Ok(g) => g, Err(p) => p.into_inner() };
+    g.entry(key).or_insert_with(|| std::env::var(key).map(|v| v.split(',').map(str::to_owned).collect()).unwrap_or_default())
+        .iter().any(|x| x == f)
 }
 fn entry_sync() -> bool {
     static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
@@ -2428,6 +2454,7 @@ impl Win {
             fct_minmax_tl: function(cuda, mw, "win_fct_minmax_frozen_tl")?, fct_minmax_ad: function(cuda, mw, "win_fct_minmax_frozen_ad")?,
             axpy: function(cuda, mw, "win_axpy_primal_f32")?, widen: function(cuda, mw, "win_widen_f32_f64")?,
             narrow: function(cuda, mw, "win_narrow_f64_f32")?,
+            upper_cam: function(cuda, mw, "win_upper_cam")?, upper_rayleigh: function(cuda, mw, "win_upper_rayleigh")?,
             widen2: if stripe_xfer_on() { function(cuda, mw, "win_widen2_f32_f64").unwrap_or(ptr::null_mut()) } else { ptr::null_mut() },
             narrow2: if stripe_xfer_on() { function(cuda, mw, "win_narrow2_f64_f32").unwrap_or(ptr::null_mut()) } else { ptr::null_mut() } };
         let native = if opt(a, "native-schemes") == Some("1") {
@@ -2947,6 +2974,7 @@ impl Win {
                 (R::Held { origin, .. }, _) => format!("held-upload:{origin}"),
                 (R::Identity(s), _) => s.clone(), (R::Refused(s), _) => format!("REFUSED:{s}"),
                 (R::FctMinmax { .. }, _) => "rule:fct-frozen:fct_minmax_source (source_old exact, limiter bounds constant)".into(),
+                (R::UpperDamp { kind, .. }, _) => format!("rule:upper-damping:{}", if *kind == 0 { "upper_cam_f32" } else { "upper_rayleigh_f32" }),
                 (R::Native(f), _) => format!("native:{}:{f}", self.native.as_ref().and_then(|n| n.row(f)).map(|r| r.unit.clone()).unwrap_or_default()),
                 (R::Tempo(f), _) => format!("tempo-adw:{f}"),
                 (R::TempoSerial(f), _) => format!("tempo-serial:{f} (P5 per-thread entry, float64 tape)"),
@@ -3074,6 +3102,18 @@ impl Win {
         }
         Ok(p)
     }
+    /// NOAA's model-top damping (R::UpperDamp): the taped spans are laid out as tape_fct lays them.
+    unsafe fn upper_damp(&self, cuda: &Cuda, r: &R, prim: u64, adjoint: bool) -> Result<(), String> {
+        let R::UpperDamp { kind, nl, nn, solved, levels, p, e, prim: spans } = r else { return Err("not a damping rule".into()) };
+        let (mut a, mut nl, mut nn, mut solved, mut levels) = (self.sh_base, *nl, *nn, *solved, *levels);
+        let (mut p0, mut p1) = (p[0], p[1]);
+        let (mut e0, mut e1, mut e2) = (e[0], e[1], e[2]);
+        let (mut x0, mut x1) = (prim, prim + ((spans[0].2 * 4).div_ceil(256) * 256) as u64);
+        let g = grid1(nl as i64 * nn as i64);
+        if *kind == 0 { return launch(cuda, self.f.upper_cam, g, kargs!(a, nl, nn, solved, levels, p0, p1, e0, x0)); }
+        let mut adj: i32 = adjoint as i32;
+        launch(cuda, self.f.upper_rayleigh, g, kargs!(a, nl, nn, solved, levels, p0, e0, e1, e2, x0, x1, adj))
+    }
     unsafe fn fct_minmax(&self, cuda: &Cuda, r: &R, prim: u64, adjoint: bool) -> Result<(), String> {
         let R::FctMinmax { nt, nl, nc, dt, e, prim: spans } = r else { return Err("not a frozen minmax rule".into()) };
         let (mut a, mut nt, mut nl, mut nc, mut dt) = (self.sh_base, *nt, *nl, *nc, *dt);
@@ -3172,6 +3212,28 @@ impl Win {
         let (itok, icmp, tiles) = if let Some(pool) = self.tempo_shards.as_mut() {
             pool.apply(cuda, t, ar, s, vd, rd, adjoint, led)?
         } else { t.apply(cuda, ar, s, vd, rd, adjoint, !adjoint, led)? };
+        if std::env::var("AD_TEMPO_SLOTS").as_deref() == Ok("1") {
+            // TEMPO reverse diagnostic: per slot group, the sum of squares and the largest word of the vector TEMPO's derivative
+            // read (vd) and wrote (rd) at this launch: the tangent reads the input layout (f0..f17 at j*nz, s0..s9 at 18nz+j)
+            // and writes the output layout (f0, f4..f16 at (j-3)*nz, s0..s9 at 14nz+j, p0..p3 at 14nz+10+p*nz); the reverse
+            // the other way round. Receipts only.
+            dev::sync(cuda)?;
+            let a: Vec<f64> = dev::download(cuda, vd, 8 * nv)?.chunks_exact(8).map(|c| f64::from_le_bytes(c.try_into().unwrap())).collect();
+            let b: Vec<f64> = dev::download(cuda, rd, 8 * nv)?.chunks_exact(8).map(|c| f64::from_le_bytes(c.try_into().unwrap())).collect();
+            let in_name = |q: usize| if q < 18 * nz { format!("f{}", q / nz) } else { format!("s{}", q - 18 * nz) };
+            let out_name = |q: usize| if q < nz { "f0".to_string() } else if q < 14 * nz { format!("f{}", q / nz + 3) }
+                else if q < 14 * nz + 10 { format!("s{}", q - 14 * nz) } else if q < 18 * nz + 10 { format!("p{}", (q - 14 * nz - 10) / nz) } else { "pad".into() };
+            let groups = |v: &[f64], out: bool| -> Value {
+                let mut m: BTreeMap<String, (f64, f64, usize)> = BTreeMap::new();
+                for q in 0..nin { let name = if out { out_name(q) } else { in_name(q) };
+                    let e = m.entry(name).or_insert((0.0, 0.0, 0));
+                    for c in 0..nc { let x = v[q * nc + c]; e.0 += x * x; if x.abs() > e.1 { e.1 = x.abs(); e.2 = (q % nz.max(1)) * 1_000_000 + c; } } }
+                json!(m.into_iter().filter(|(_, v)| v.0 > 0.0).map(|(k, v)| (k, json!([v.0, v.1, v.2 / 1_000_000, v.2 % 1_000_000]))).collect::<BTreeMap<_, _>>())
+            };
+            eprintln!("{}", json!({"event":"window_tempo_slots","pass":if adjoint { "ad" } else { "tl" },"step":step,
+                                   "fields":"group -> [sum sq, max |word|, level of max, column of max]",
+                                   "read":groups(&a, adjoint),"wrote":groups(&b, !adjoint)}));
+        }
         let parts = t.parts.get();
         let peak = ar.peak as f64;
         let what = if adjoint { "cotangent" } else { "tangent" };
@@ -3384,6 +3446,7 @@ impl Win {
             },
             R::Zero { ranges, .. } | R::Held { ranges, .. } => for (e, n) in ranges { dev::zero(cuda, self.sh(*e), n * 4)?; },
             R::FctMinmax { .. } => self.fct_minmax(cuda, r, prim, false)?,
+            R::UpperDamp { .. } => self.upper_damp(cuda, r, prim, false)?,
             R::Native(f) => return Err(format!("{f}: native row reached the generic tangent")),
             R::Tempo(f) => return Err(format!("{f}: TEMPO launch reached the generic tangent")),
             R::TempoSerial(f) => return Err(format!("{f}: TEMPO serial entry reached the generic tangent")),
@@ -3456,6 +3519,22 @@ impl Win {
             R::Axpy { y, x, n, c } => if *n > 0 {
                 let (mut xp, mut yp, mut cc, mut nn) = (self.sh(*x), self.sh(*y), *c, *n as i64);
                 launch(cuda, self.f.axpy, [grid1(nn)[0].min(65535), 1, 1], kargs!(xp, yp, cc, nn))?;
+                // torch bridge training (AD_SLOT_DIR + AD_SLOT_ALLOCS=id,id,..; default off): the external-tendency slot's per-step
+                // sensitivity. Its rule is x_bar += y_bar with x = slice k of the caller's table; the table is uploaded
+                // in step 1 (an immutable input), whose reverse drops the table's cotangent, so the slice is read here,
+                // right after its only add: dJ/d ext_k, written as slot-<allocation>-<byte offset>.f32.
+                if let (Some(dir), Some(ids)) = (std::env::var_os("AD_SLOT_DIR"), std::env::var_os("AD_SLOT_ALLOCS")) {
+                    for id in ids.to_string_lossy().split(',').filter_map(|t| t.trim().parse::<u64>().ok()) {
+                        let (Some(&el), Some(sh)) = (self.base_el.get(&id), self.shadows.get(&id)) else { continue };
+                        let words = (sh.bytes / 4) as i64;
+                        if *x >= el && *x + nn <= el + words {
+                            dev::sync(cuda)?;
+                            let bytes = dev::download(cuda, self.sh(*x), (nn * 4) as usize)?;
+                            let path = std::path::Path::new(&dir).join(format!("slot-{id}-{}.f32", (*x - el) * 4));
+                            fs::write(&path, &bytes).map_err(|e| format!("{}: {e}", path.display()))?;
+                        }
+                    }
+                }
             },
             // multidevice-runner: the transpose of the cross-rank copy dst <- src is src += dst_bar, dst_bar = 0, split
             // across the two ranks: the receiving rank sends its cotangent and zeroes it, the sending rank adds it.
@@ -3500,6 +3579,7 @@ impl Win {
                 for (e, n) in ranges { dev::zero(cuda, self.sh(*e), n * 4)?; }
             },
             R::FctMinmax { .. } => self.fct_minmax(cuda, r, prim, true)?,
+            R::UpperDamp { .. } => self.upper_damp(cuda, r, prim, true)?,
             R::Native(f) => return Err(format!("{f}: native row reached the generic adjoint")),
             R::Tempo(f) => return Err(format!("{f}: TEMPO launch reached the generic adjoint")),
             R::TempoSerial(f) => return Err(format!("{f}: TEMPO serial entry reached the generic adjoint")),
@@ -3806,7 +3886,7 @@ impl Win {
                 self.note("tl", &f, t0);
                 Ok(est)
             },
-            (R::FctMinmax { prim, .. }, _) => {
+            (R::FctMinmax { prim, .. }, _) | (R::UpperDamp { prim, .. }, _) => {
                 self.tape.reset();
                 let p = self.tape_fct(ex, prim)?;
                 forward(ex)?;
@@ -3955,7 +4035,7 @@ impl Win {
                 };
                 FzPre::Done(Tp::TempoSmall { f: f.clone(), snap, ins, outs })
             },
-            (R::FctMinmax { prim, .. }, _) => {
+            (R::FctMinmax { prim, .. }, _) | (R::UpperDamp { prim, .. }, _) => {
                 let p = match self.tape_fct(ex, prim) { Ok(p) => p, Err(e) if exhausted(&e) => return Ok(None), Err(e) => return Err(e) };
                 FzPre::Done(Tp::Rule { r: r.clone(), prim: p })
             },
@@ -4320,6 +4400,7 @@ impl Win {
         let est = if tangent { if self.fz_cur.is_some() { self.fused_tangent(ex, command, step, base, frame)? } else { self.tangent(ex, command, step, base, frame)? } } else { exec(ex, command, step, base, frame)?; 0 };
         if tw.is_some() { let l = format!("walk:{}", self.last_label); dev::sites::add(&l, tw); }
         if self.hold.on() { let rp = self.hold.regroup; self.hold_hook(ex, command, step, rp)?; }
+        if !tangent { torch_bridge::kick_hook(ex, command, step)?; }
         if let (Some((f, ids)), Some(b)) = (&watch, &before) {
             let a = self.alloc_norms(&ex.cuda, ids)?;
             let rows: Vec<Value> = ids.iter().zip(b.iter().zip(a.iter())).map(|(id, (x, y))| json!([id, x.sqrt(), y.sqrt()])).collect();
@@ -4516,6 +4597,7 @@ impl Win {
         let sprof = std::env::var("AD_DIGEST_PROF").as_deref() == Ok("1");
         let t_s = Instant::now();
         self.hold.ord = 0; self.hold.regroup = None;
+        torch_bridge::kick_reset();
         let blocks = match frame.as_mut() {
             Some(f) => { f.begin(step)?; f.blocks(plan.physics.as_ref().ok_or("missing physics plan")?)? },
             None => plan.cadence[step - 1].clone(),
@@ -5774,6 +5856,7 @@ impl Win {
         // (Taping::Full), so the caller can copy the chunk out and go on from the live state, with no restore.
         let mut full: Option<usize> = None;
         if let Some(c) = self.census.as_mut() { c.begin_segment(step); }
+        wrules::rb_defer::clear();
         let mut tape = Vec::with_capacity(end - lo);
         // No-recording self-driven live save (AD_LIVE_SELF; see live_self_cfg). The adapter is made before the first command
         // of a call that has commands in scope (its constructor empties the pre-launch cache, as tape_range just did).
@@ -5844,7 +5927,11 @@ impl Win {
             let trl = dev::prof::start();
             // the taped re-run's own rule call may take its descriptor tables from the book (deriv::predict::table)
             deriv::predict::table_scope(true);
+            let rb_n = wrules::rb_defer::pending_len();
+            wrules::rb_defer::scope(ordered(ex));
             let rl = self.rule(ex, op, step, base, frame.as_ref());
+            wrules::rb_defer::scope(false);
+            if wrules::rb_defer::pending_len() > rb_n { wrules::rb_defer::mark_counted(self.counting); }
             deriv::predict::table_scope(false);
             dev::prof::add(17, trl);
             if self.rev_count.is_some() { self.counting = false; }
@@ -6041,8 +6128,8 @@ impl Win {
                     exec(ex, op, step, base, frame)?;
                     tape.push(Tp::TempoSmall { f, snap, ins, outs });
                 },
-                (r @ R::FctMinmax { .. }, _) => {
-                    let R::FctMinmax { prim, .. } = &r else { unreachable!() };
+                (r @ R::FctMinmax { .. }, _) | (r @ R::UpperDamp { .. }, _) => {
+                    let (R::FctMinmax { prim, .. } | R::UpperDamp { prim, .. }) = &r else { unreachable!() };
                     let p = match self.tape_fct(ex, prim) { Ok(p) => p, Err(e) if exhausted(&e) => { if guard { self.tape.used = u_op; full = Some(i); break 'ops; } return Ok(Taping::Overflow(i)) }, Err(e) => return Err(e) };
                     exec(ex, op, step, base, frame)?;
                     tape.push(Tp::Rule { r, prim: p });
@@ -6086,7 +6173,55 @@ impl Win {
             eprintln!("{}", json!({"event":"live_self","step":step,"lo":lo,"end":end,"full_at":full,"records":tape.len(),"live_commands":live_n.0,
                 "in_scope_not_live":live_n.1,"keep":live_keep,"not_live_kinds":live_not,"commands_by_rk_scope":live_stage,"tape_used":self.tape.used,"live_first_last":live_span,"live_kinds":live_kernels}));
         }
+        self.rb_resolve(ex, step, &mut tape)?;
         Ok(match full { Some(i) => Taping::Full(i, tape), None => Taping::Done(tape) })
+    }
+    /// batched replay (AD_RB_DEFER_TABLES=1, see wrules::rb_defer): build the rules whose tables were read in stream order
+    /// while this range was taped. One drain for all of them; then each placeholder, in tape order, gets the rule the
+    /// same code builds from the same bytes, with what rule_inner does after it (refusal check, gather, label count).
+    unsafe fn rb_resolve(&mut self, ex: &mut Execution, step: usize, tape: &mut [Tp]) -> Result<(), String> {
+        let pend = wrules::rb_defer::take_pending();
+        if pend.is_empty() { return Ok(()); }
+        let t0 = Instant::now();
+        dev::sync(&ex.cuda)?;
+        let drain_s = t0.elapsed().as_secs_f64();
+        let n = pend.len();
+        let mut it = pend.into_iter();
+        for tp in tape.iter_mut() {
+            let Tp::Rule { r, .. } = tp else { continue };
+            if !matches!(r, R::Identity(s) if s == wrules::rb_defer::MARK) { continue; }
+            let p = it.next().ok_or("DEFECT rb-defer: a placeholder rule has no deferred read")?;
+            wrules::rb_defer::supply_from(p.off, p.bytes)?;
+            let real = self.ctx().kernel(ex, &p.f, &p.args, p.grid, p.block);
+            wrules::rb_defer::supply_clear();
+            let real = real?;
+            if let R::Identity(s) = &real { if s == wrules::rb_defer::MARK { return Err(format!("DEFECT rb-defer: step {step} {}: the rule deferred again", p.f)); } }
+            if let R::Refused(s) = &real {
+                if std::env::var("AD_UNLISTED_REFUSED").as_deref() != Ok("identity") && !self.refuse.contains_key(p.f.as_str()) {
+                    return Err(format!("DEFECT window: step {step}: {s}. Nothing asked for this refusal (--refuse does not name it), and it would run as identity in the tangent and the adjoint while the dot test still passes. Give the command a rule or a row, or freeze it on purpose with --refuse NAME=why (AD_UNLISTED_REFUSED=identity: diagnostic run, labelled invalid)."));
+                }
+            }
+            let mut real = real;
+            if let R::Rows { rows, label } = &real {
+                let g = if self.defer && std::env::var("AD_GATHER_SYNC").as_deref() != Ok("1") { let (rows, label) = (rows.clone(), *label); self.gather_defer(&rows, label); Ok(false) }
+                        else { let rows = rows.clone(); self.gather_for(&ex.cuda, &rows) };
+                if let Err(e) = g {
+                    if std::env::var("AD_UNLISTED_REFUSED").as_deref() != Ok("identity") {
+                        return Err(format!("DEFECT window: step {step}: {label}: {e}. The copy rows of this command cannot be built, and it would run as identity in the tangent and the adjoint (AD_UNLISTED_REFUSED=identity: diagnostic run, labelled invalid)."));
+                    }
+                    real = R::Refused(format!("{label}: {e}"));
+                }
+            }
+            if p.counted {
+                if let Some(c) = self.labels.get_mut(wrules::rb_defer::MARK) { *c = c.saturating_sub(1); if *c == 0 { self.labels.remove(wrules::rb_defer::MARK); } }
+                let name = match &real { R::Rows { label, .. } => format!("rule:rows:{label}"), R::Identity(s) => s.clone(), R::Refused(s) => format!("REFUSED:{s}"), _ => "?".into() };
+                *self.labels.entry(name).or_default() += 1;
+            }
+            *r = real;
+        }
+        if it.next().is_some() { return Err(format!("DEFECT rb-defer: step {step}: deferred reads left without a placeholder")); }
+        eprintln!("{}", json!({"event":"window_rb_defer","step":step,"deferred_reads":n,"drain_s":drain_s,"resolve_s":t0.elapsed().as_secs_f64(),"no_room_reads":wrules::rb_defer::full_reads()}));
+        Ok(())
     }
     /// tape-dedupe-and-pack (window cache): promote this segment's pre-launch copies whose span the segment's whole forward
     /// left unchanged (live == copy now, word for word, batched: one readback per 512 compares) into the window arena, so
@@ -6788,9 +6923,28 @@ impl Win {
         let light = ordered(ex);
         let bsl = bsprof::level();
         let mut tape_it = tape.into_iter().enumerate().rev().peekable();
+        // split adjoint (AD_PEER_SENDS_FIRST=1; off by default): the reverse halo exchange without the chain. The adjoint of
+        // a rank's forward receive is a send of its cotangent (non-blocking), the adjoint of a forward send is a receive
+        // added into the owner's cotangent (it waits for the peer). Walked in tape order, a piece cannot send until it has
+        // received, so every exchange walks a chain through the pieces (8 ranks of the storm window: 1,047 messages on the critical path a
+        // step against 526 on the busiest piece). Here each receive-and-add waits in `peer_deferred` while the rules after
+        // it that touch none of its words (sends, copies, zeroes) go first, so every piece sends before it receives.
+        // Nothing else moves, and the words added into each cotangent are added in the same order: the gradient is the
+        // same bytes as the walk in tape order.
+        let peer_defer = crate::peer::get().is_some() && std::env::var("AD_PEER_SENDS_FIRST").as_deref() == Ok("1");
+        let mut peer_deferred: Vec<(R, u64)> = Vec::new();
         while let Some((j, t)) = tape_it.next() {
             let nodrain = light && native_nodrain() && matches!(&t, Tp::Native { f, .. } if plant().as_ref().is_none_or(|(pk, _, _)| pk.as_str() != f.as_str()));
             if self.sync_owed && !matches!(t, Tp::Entry { .. }) && !(light && matches!(t, Tp::Rule { .. })) && !nodrain { let tw = Instant::now(); dev::sync(cuda)?; self.sync_owed = false; self.wk_s[4] += tw.elapsed().as_secs_f64(); }
+            if peer_defer {
+                if matches!(&t, Tp::Rule { r: R::PeerSend { .. }, .. }) {
+                    if let Tp::Rule { r, prim } = t { self.peer_note_deferred(); peer_deferred.push((r, prim)); }
+                    continue;
+                }
+                if !peer_deferred.is_empty() && !matches!(&t, Tp::Rule { r, .. } if peer_may_pass(r, &peer_deferred)) {
+                    self.peer_flush(cuda, &mut peer_deferred, light)?;
+                }
+            }
             let (wk_k, wk_t) = (match &t { Tp::Entry { .. } => 0usize, Tp::Rule { .. } => 1, Tp::Native { .. } => 2, _ => 3 }, Instant::now());
             let probe_cmd = crate::word_probe::cmd_on("reverse", step, j);
             let digest_cmd = crate::rev_digest::cmd_step(step);
@@ -6802,8 +6956,15 @@ impl Win {
                     let mut bt = t0;
                     let kd = &self.kernels[&f];
                     let li = deriv::LaunchInfo { args: &args, grid, block, shared };
-                    let mut live = ex.allocations.clone();
-                    for (id, a) in &post { live.insert(*id, *a); }
+                    // runner overhead (0.6.2): the live table is borrowed as it is when the entry carries no allocation
+                    // of its own (post empty, most entries), not cloned for every reversed launch. The same table either way.
+                    let live_own;
+                    let live: &HashMap<u64, submit::Allocation> = if post.is_empty() { &ex.allocations } else {
+                        let mut l = ex.allocations.clone();
+                        for (id, a) in &post { l.insert(*id, *a); }
+                        live_own = l;
+                        &live_own
+                    };
                     if bsl > 0 { bsprof::lap(0, &mut bt); }
                     self.graph_scratch_epoch = self.graph_scratch_epoch.checked_add(1).ok_or("DEFECT graph scratch epoch overflow")?;
                     self.scratch.reset();
@@ -6811,7 +6972,7 @@ impl Win {
                     kd.bind_transient(cuda, &mut self.scratch, &mut b, &li).map_err(|e| format!("step {step} {f} transient bind: {e}"))?;
                     kd.bind_recon(cuda, &self.support, &mut self.scratch, &mut b).map_err(|e| format!("step {step} {f} block rebuild: {e}"))?;
                     if bsl > 0 { bsprof::lap(1, &mut bt); }
-                    if kd.aug { kd.launch(cuda, &mut self.scratch, &mut b, &li, &live, "aug")?; }
+                    if kd.aug { kd.launch(cuda, &mut self.scratch, &mut b, &li, live, "aug")?; }
                     if bsl > 0 { bsprof::lap(2, &mut bt); if kd.aug { bsprof::launches(1); } }
                     for c in b.ad_cells.values() { dev::zero(cuda, c.0, 8)?; }
                     kd.snapshot_seeds(cuda, &b, &li)?;
@@ -6826,14 +6987,16 @@ impl Win {
                             dev::sync(cuda)?;
                             Some((a, dev::download(cuda, a, n)?, *pf)) },
                         _ => None };
+                    // torch bridge (AD_TAP / hexad_set_tap, default off): the slot's cotangent before this launch's adjoint.
+                    if torch_bridge::tap_on() { torch_bridge::tap_entry(cuda, step, &f, kd, &b, &li)?; }
                     // AD_SUBNORMAL=f1,f2 (diagnostic only): the argument shadows' census before and after this adjoint.
-                    let census = std::env::var("AD_SUBNORMAL").ok().is_some_and(|v| v.split(',').any(|x| x == f));
+                    let census = env_list_has("AD_SUBNORMAL", &f);
                     let before = if census { dev::sync(cuda)?; kd.shadow_census(cuda, &b, &li) } else { Vec::new() };
                     { let t = dev::prof::start(); kd.begin_ad(cuda, &self.support, &mut b, &li)?; dev::prof::add(1, t); }
                     if bsl > 0 { bsprof::lap(4, &mut bt); }
                     // AD_ZERO_DERIV (bisection diagnostic): the transpose of "outputs constant" consumes the seeds and adds
                     // nothing to the inputs, so the adjoint entries are skipped and the inout seed views zeroed.
-                    let zero_d = std::env::var("AD_ZERO_DERIV").ok().is_some_and(|v| v.split(',').any(|x| x == f));
+                    let zero_d = env_list_has("AD_ZERO_DERIV", &f);
                     if zero_d { dev::sync(cuda)?; kd.zero_written(cuda, &b, &li, true)?; }
                     else if self.graph_segment && f == "w_edge_flux_f32" {
                         // Existing host decisions bind this invocation before any graph update.
@@ -6842,8 +7005,8 @@ impl Win {
                         let t = dev::prof::start();
                         let scratch_before = self.scratch.used;
                         let entries: Vec<&str> = kd.ad_order.iter().filter(|e| !scalar_skip(kd, e)).map(String::as_str).collect();
-                        let (derived_tables, derived_bytes) = kd.prepare_graph_tables(cuda, &b, &li, &live)?;
-                        let commands = kd.lower_graph_ad_entries(cuda, &mut self.scratch, &mut b, &li, &live, &entries)?;
+                        let (derived_tables, derived_bytes) = kd.prepare_graph_tables(cuda, &b, &li, live)?;
+                        let commands = kd.lower_graph_ad_entries(cuda, &mut self.scratch, &mut b, &li, live, &entries)?;
                         let kernels = commands.iter().filter(|c| matches!(c, submit::Command::Kernel { .. })).count();
                         let clears = commands.iter().filter(|c| matches!(c, submit::Command::Clear { .. })).count();
                         let allocations = [submit::Allocation { id: 0, address: self.scratch.base, bytes: self.scratch.bytes }];
@@ -6867,7 +7030,7 @@ impl Win {
                             "outside_segment":"binding, begin_ad, finish_ad, failure ledger and all other physics remain enabled"}));
                         dev::prof::add(5, t);
                     }
-                    else { let t = dev::prof::start(); for e in kd.ad_order.iter().filter(|e| !scalar_skip(kd, e)) { kd.launch(cuda, &mut self.scratch, &mut b, &li, &live, e)?; if bsl > 0 { bsprof::launches(1); } } dev::prof::add(5, t); }
+                    else { let t = dev::prof::start(); for e in kd.ad_order.iter().filter(|e| !scalar_skip(kd, e)) { kd.launch(cuda, &mut self.scratch, &mut b, &li, live, e)?; if bsl > 0 { bsprof::launches(1); } } dev::prof::add(5, t); }
                     if bsl > 0 { bsprof::lap(5, &mut bt); }
                     { let t = dev::prof::start(); kd.finish_ad(cuda, &mut b, &li, Some(&self.support))?; dev::prof::add(1, t); }
                     if bsl > 0 { bsprof::lap(6, &mut bt); }
@@ -7047,12 +7210,20 @@ impl Win {
             if digest_cmd { self.rev_digest(cuda, "command", step, Some((j, &label)), &Value::Null)?; }
             if self.fz_pf.is_some() { let tw = Instant::now(); self.fz_pf_issue(cuda, j, false)?; self.wk_s[5] += tw.elapsed().as_secs_f64(); }
         }
+        if !peer_deferred.is_empty() { self.peer_flush(cuda, &mut peer_deferred, light)?; }
         self.sync_owed = false;
         let tw = Instant::now();
         let r = dev::sync(cuda);
         self.wk_s[6] += tw.elapsed().as_secs_f64();
         r
     }
+    /// split adjoint: the receive-and-adds held back by AD_PEER_SENDS_FIRST, run in the order the tape gave them.
+    unsafe fn peer_flush(&mut self, cuda: &Cuda, d: &mut Vec<(R, u64)>, light: bool) -> Result<(), String> {
+        if self.sync_owed && !light { dev::sync(cuda)?; self.sync_owed = false; }
+        for (r, prim) in d.drain(..) { let t = dev::prof::start(); self.ad(cuda, &r, prim)?; dev::prof::add(11, t); }
+        Ok(())
+    }
+    fn peer_note_deferred(&mut self) { PEER_DEFERRED.fetch_add(1, std::sync::atomic::Ordering::Relaxed); }
     /// memory (AD_TL_BIND_SCRATCH=1): room in the scratch for one MYNN-EDMF tangent bind's two regions. The scratch
     /// is re-made at need + 256 MiB + 64 MiB (the size `fit_scratch` gives a `max`-sized reverse scratch, so the reverse
     /// keeps it) when it is smaller; nothing lives in it here (the native row reset it, and the context is drained
@@ -9117,6 +9288,13 @@ fn run_window(argv: Vec<String>) -> Result<(), String> {
                 objs.push((p.to_owned(), doc["name"].clone(), t)); forms.push(Some(f));
             } else { let (n, t) = read_terms(p)?; objs.push((p.to_owned(), n, t)); forms.push(None); }
         }
+        // torch bridge training: the gradient objective may carry "dense" blocks {"alloc", "offset", "file"} (raw
+        // float32 seed words over a window-end allocation range), uploaded as whole blocks into the reverse seed beside
+        // the sparse terms. THE COST THIS REMOVES: a state-space loss seeds millions of words, and the term route
+        // uploads one word per call (4 M words: tens of seconds a gradient) and parses a JSON list as large. A file
+        // without "dense" reads as before; a form objective refuses it (its seed comes from eval()).
+        let obj_dense: Vec<(u64, usize, Vec<u8>)> = match objs.first() { Some((p, _, _)) => read_dense(p)?, None => Vec::new() };
+        if !obj_dense.is_empty() && forms.first().is_some_and(|f| f.is_some()) { return Err("--objective: a form objective takes no dense blocks".into()); }
         // J(h) - J(0) of objective i from the live window-end words q and the stored base words p.
         let obj_dj = |i: usize, q: &[f64], p: &[f64]| -> f64 {
             match &forms[i] { Some(f) => f.eval(q).0 - f.eval(p).0,
@@ -10021,6 +10199,14 @@ fn run_window(argv: Vec<String>) -> Result<(), String> {
                 let el = *w.base_el.get(&al).ok_or_else(|| format!("objective allocation {al} has no shadow"))?;
                 dev::upload(&*cuda, w.sh(el + wd as i64), &wt.to_le_bytes())?;
             }
+            for (al, off, bytes) in &obj_dense {
+                let (Some(&el), Some(sh)) = (w.base_el.get(al), w.shadows.get(al)) else { return Err(format!("objective dense allocation {al} has no shadow")) };
+                let _ = sh;
+                let (_, _, bn) = *bounds[bounds.len() - 1].index.iter().find(|x| x.0 == *al).ok_or_else(|| format!("objective dense allocation {al} is not live at the window end"))?;
+                if off + bytes.len() > bn { return Err(format!("objective dense block {al}:{off} (+{} bytes) is outside allocation {al} ({bn} bytes)", bytes.len())); }
+                dev::upload(&*cuda, w.sh(el + (*off / 4) as i64), bytes)?;
+            }
+            if !obj_dense.is_empty() { log(json!({"event":"window_objective_dense","blocks":obj_dense.len(),"words":obj_dense.iter().map(|b| b.2.len() / 4).sum::<usize>()})); }
             w.entry_ms = 0.0;
             let mut pfams: Vec<String> = w.params.iter().map(|p| p.fam.clone()).collect();
             pfams.sort(); pfams.dedup();
@@ -10280,6 +10466,7 @@ fn run_window(argv: Vec<String>) -> Result<(), String> {
                 let (mut rg_step, mut rg_field) = (Vec::new(), vec![0u64; regime.len()]);
                 let (tf, mut rg_s) = (Instant::now(), 0f64);
                 w.hold.mode = 1;
+                torch_bridge::kick_set(h);
                 // any-mesh (taylor-digest): a Taylor row's perturbed forward has no reference and stores no boundary,
                 // so nothing reads its boundary digests: J(h) comes from the live device words below, and the next row
                 // (or anything after the rows) starts from a restore, which puts back a stored pointer history. THE
@@ -10346,6 +10533,8 @@ fn run_window(argv: Vec<String>) -> Result<(), String> {
                 ph.insert("digest_skipped", if taylor_digest_skip && !row_check { 1.0 } else { 0.0 });
                 w.row_live = false;
                 w.hold.mode = 0;
+                torch_bridge::kick_set(0.0);
+                if std::env::var_os("AD_KICK").is_some() { ph.insert("kick_hits_total", torch_bridge::KICK_HITS.load(std::sync::atomic::Ordering::Relaxed) as f64); }
                 let hold_row = if w.hold.on() { Some(w.hold.take()) } else { None };
                 ph.insert("restore_s", w.restore_s - rs0);
                 ph.insert("forward_s", tf.elapsed().as_secs_f64() - rg_s);
@@ -11978,5 +12167,30 @@ mod dot_verdict_tests {
         // a real error is still caught: a miss of 1e-5 of the terms fails valid whatever the cancellation
         let (_, v, _) = dot_verdict(false, 1e-5 / 0.9, 1e-5 / 0.9, Some(1e-5));
         assert!(v > 1e-7);
+    }
+}
+
+#[cfg(test)]
+mod adj_cards_sends_first {
+    use super::*;
+    fn recv_add(src: i64, n: usize) -> (R, u64) { (R::PeerSend { src, n, key: "k".into() }, 0) }
+    #[test]
+    fn a_send_copy_or_zero_passes_a_held_receive_only_when_it_touches_none_of_its_words() {
+        let held = vec![recv_add(100, 10), recv_add(500, 4)];
+        // sends of other words go first (the point of the word)
+        assert!(peer_may_pass(&R::PeerRecv { dst: 0, n: 100, key: "a".into() }, &held));
+        assert!(peer_may_pass(&R::PeerRecv { dst: 110, n: 390, key: "a".into() }, &held));
+        // a send of a word the held receive adds into waits (it would send a cotangent missing the received share)
+        assert!(!peer_may_pass(&R::PeerRecv { dst: 109, n: 1, key: "a".into() }, &held));
+        assert!(!peer_may_pass(&R::PeerRecv { dst: 503, n: 8, key: "a".into() }, &held));
+        // copies and zeroes: both ends checked
+        assert!(peer_may_pass(&R::Copy { dst: 0, src: 200, n: 50 }, &held));
+        assert!(!peer_may_pass(&R::Copy { dst: 0, src: 95, n: 6 }, &held));
+        assert!(!peer_may_pass(&R::Copy { dst: 499, src: 0, n: 2 }, &held));
+        assert!(peer_may_pass(&R::Zero { ranges: vec![(0, 100), (110, 10)], label: String::new() }, &held));
+        assert!(!peer_may_pass(&R::Zero { ranges: vec![(0, 100), (105, 1)], label: String::new() }, &held));
+        // anything else (a kernel's rule, another receive) never passes
+        assert!(!peer_may_pass(&R::PeerSend { src: 0, n: 1, key: "b".into() }, &held));
+        assert!(!peer_may_pass(&R::Axpy { y: 0, x: 1, n: 1, c: 1.0 }, &held));
     }
 }

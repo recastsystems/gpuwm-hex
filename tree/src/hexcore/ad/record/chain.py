@@ -37,8 +37,10 @@ import time
 from pathlib import Path
 
 from . import build as native
+from . import coverage
 from . import env
 from . import lam
+from . import route as routes
 
 #: residual classes a sealed package may keep: recorded for check only / allocation first use (declared, not state)
 ALLOWED_RESIDUAL = {"radii_recorded_for_check_only", "allocation_first_use_not_whole_write"}
@@ -128,12 +130,84 @@ def forecast_args(o) -> list[str]:
         args += ["--orographic-statistics", str(o.oro)]
     if getattr(o, "lam", None):   # a limited-area mesh: its static, boundaries and start (lam.py)
         args += lam.forecast_words(o.lam)
-    return args + list(o.forecast_extra)
+    return args + list(o.forecast_extra) + rank_words()
+
+
+# rank recordings (GPUWM_HEX_RECORD_RANKS=N, N >= 2; unset or 1: the one-card recording as before): the forecast is recorded as N
+# rank threads of one process on the one card (the region cut in N parts, halos as device copies), under the rank
+# observer (tools/mdev_observer.py: the rank threads take turns under a baton and meet at one global step boundary;
+# each rank thread has its own CuPy pool, so every recorded allocation belongs to one rank). tools/split_plan.py then
+# cuts the sealed plan into one plan per rank (PeerSend / PeerRecv for the halo copies). an 8-rank chain (13 Nov) recorded
+# this way through an earlier recorder; this brings it into the release recorder. THE BREAKAGE THIS PREVENTS: a mesh
+# above 200,000 cells (12 km CONUS, 352,235) has no window on cards, because the only multi-card window needs a plan
+# per rank and the release recorder could make none.
+def record_ranks() -> int:
+    v = os.environ.get("GPUWM_HEX_RECORD_RANKS", "").strip()
+    if not v:
+        return 1
+    n = int(v)
+    if n < 1:
+        raise ValueError(f"GPUWM_HEX_RECORD_RANKS={v}: a count of rank threads, 1 or more")
+    return n
+
+
+def rank_words() -> list[str]:
+    n = record_ranks()
+    return [] if n < 2 else ["--samehost-devices", ",".join(["0"] * n), "--samehost-ranks", "threads"]
+
+
+def rank_env(work: Path) -> dict:
+    n = record_ranks()
+    if n < 2:
+        return {}
+    logs = work / "rank-logs"
+    logs.mkdir(parents=True, exist_ok=True)
+    return {"MR_RANKS": str(n), "MR_RANK_POOLS": "1", "MR_TOOLS": str(env.TOOLS), "MR_LOGS": str(logs),
+            "MR_BATON_TRACE": "1", "GPUWM_HEX_MPAS_SAMEHOST_TIMEOUT": "3600", "GPUWM_HEX_RECEIPT_EVERY_SECONDS": "0"}
+
+
+def split_ranks(o, run, pair: dict) -> dict:
+    """OUT -> OUT-r0 .. OUT-r<N-1>: the sealed N-rank-thread plan cut per rank (tools/split_plan.py: a command goes
+    to the rank of the thread that issued it, read from recording A's driver trace; ownership from A's partial plan,
+    which still carries every command's recorded_sequence; a cross-rank device copy becomes PeerSend/PeerRecv).
+    Each rank plan is a package the multi-card window (``ad-binder ranks --pkg OUT``) replays on its own card.
+    THE BREAKAGE THIS PREVENTS: a mesh above 200,000 cells (12 km CONUS) has no window on cards without rank plans,
+    and split_plan.py run by hand after the recorder has removed its work folder has no trace to read."""
+    n = record_ranks()
+    trace = pair["a"].get("trace")
+    partial = o.work / "seal-a" / "a" / "partial-plan.json.gz"
+    if not trace or not Path(trace).is_file():
+        run.fail(f"--ranks {n}: recording A left no driver trace to split by ({trace})")
+    cmd = _py("split_plan.py") + [str(o.out), "--ranks", str(n), "--trace", str(trace), "--out", str(o.out)]
+    if partial.is_file():
+        cmd += ["--ownership-from", str(partial)]
+    t0 = time.monotonic()
+    log = o.work / "split.log"
+    with open(log, "wb") as stream:
+        rc = subprocess.run(cmd, stdout=stream, stderr=subprocess.STDOUT, cwd=o.work).returncode
+    run.stage("split", t0)
+    plans = [Path(f"{o.out}-r{k}") for k in range(n)]
+    whole = [p for p in plans if (p / "plan.json").is_file()]
+    if rc != 0 or len(whole) != n:
+        run.fail(f"--ranks {n}: split_plan.py rc {rc}, {len(whole)} of {n} rank plans written: {_tail(log, 3)}")
+    run.log(f"SPLIT {o.out} into {n} rank plans {o.out}-r0..r{n - 1} ({round(time.monotonic() - t0, 1)} s)")
+    return {"ranks": n, "prefix": str(o.out), "plans": [str(p) for p in plans], "log": str(log),
+            "wall_s": round(time.monotonic() - t0, 1)}
+
+
+def retain_kind(o) -> str:
+    """Which small-upload bound the recorder keeps bytes under. A rank-thread recording uploads the same-host halo
+    descriptor tables (9 int64 a row, 648 bytes and more), which the sealer rebuilds from live allocations only when
+    their bytes are kept. THE BREAKAGE THIS PREVENTS: at the global bound (512) a 4-rank zoom-globe recording kept
+    none of the 2,500 descriptor uploads of 648 to 2,592 bytes and its pair could not seal (18 Nov 2026)."""
+    return "limited-area" if record_ranks() > 1 else o.mesh_kind
 
 
 def _base_env(o, card: str) -> dict:
     e = env.runtime_env(card)
     e.pop("GPUWM_HEX_CUDA_GRAPHS", None)
+    # The route's kernel forms (route.py): its words win over the caller's, so the receipt's route is what ran.
+    e.update(routes.words(getattr(o, "route", None) or routes.default()))
     # The prebuilt kernel packs of a wheel install (hexcore.cuda_backend.aot) answer CuPy's cached compile with a
     # shipped image and never call the compile underneath, so the observer sees no CUDA source for those modules.
     # THE BREAKAGE THIS PREVENTS: a fresh-install x1.2562 pair observed 8 sources instead of ~100 and stage 2 left
@@ -206,6 +280,26 @@ def _cpus(spec: str | None) -> list[str]:
     return ["taskset", "-c", spec] if spec else []
 
 
+#: GPUWM_HEX_RECORD_STORE: what a recording keeps at each step boundary after step 1 (the recorder's
+#: BINDER_BOUNDARY_PAYLOADS). lean: every allocation hashed (the same reference hashes), the TEMPO residue digests
+#: written by the recorder, bytes kept only where a held write landed. full: every changed allocation kept whole too.
+#: THE BREAKAGE lean PREVENTS: full kept 1.1 GB a step per recording at 2,890 12 km columns and 1.7 GB at 11,688 3 km
+#: columns, A and B both, for one reader (p1fix's masked TEMPO hashes) that needs none of it; a 73-step zoom-globe
+#: recording wrote 349 GB and no window past minutes fit a box's disk. Both give the same plan. Proof (12 km example
+#: start, 16 steps, 2026-11-18): in the full recording p1fix computed all 80 residue hashes from the kept bytes and
+#: from the recorder's lines, 80 equal; the lean recording kept 32 bytes a step against 1.19 GB, sealed, replayed
+#: strict (7,232 boundary hashes, 80 masked equal, 0 mismatch, as the full one), and the example's adjoint-test on the
+#: two plans printed the same objective dot and the same 20 Taylor ratios.
+BOUNDARY_STORES = {"lean": "digest", "full": "1"}
+
+
+def boundary_store() -> str:
+    store = os.environ.get("GPUWM_HEX_RECORD_STORE", "lean")
+    if store not in BOUNDARY_STORES:
+        env.defect(f"GPUWM_HEX_RECORD_STORE={store}: one of {sorted(BOUNDARY_STORES)}")
+    return store
+
+
 def record_one(o, run: Run, tag: str, card: str, cpus: str | None, libs: dict, retention: Path) -> dict:
     w = o.work
     rec, obs, cuda = w / f"rec-{tag}-recorder", w / f"rec-{tag}-observer", w / f"cuda-{tag}"
@@ -236,7 +330,10 @@ def record_one(o, run: Run, tag: str, card: str, cpus: str | None, libs: dict, r
         "BINDER_CUBLAS_OBSERVER": str(obs / "cublas-geam-calls.jsonl"),
         "LD_PRELOAD": ":".join(preload),
         "BINDER_HOLD_SLOTS": o.hold_slots, "BINDER_D2H_STACKS": "1", "BINDER_D2H_PAYLOADS": "1",
-        "BINDER_RETAIN_SMALL_UPLOADS": str(lam.RETAIN_SMALL_UPLOADS[o.mesh_kind]), "BINDER_BOUNDARY_PAYLOADS": "1",
+        "BINDER_RETAIN_SMALL_UPLOADS": str(lam.RETAIN_SMALL_UPLOADS[retain_kind(o)]),
+        # the store word reaches the recorder (a merge took the rank recording's side of this line and dropped it: a lean
+        # 3 h 30 km plan wrote about 3 GB a step per recording while its receipt said lean).
+        "BINDER_BOUNDARY_PAYLOADS": BOUNDARY_STORES[boundary_store()],
         "BINDER_BOUNDARY_WORKERS": str(o.boundary_workers),
         "BINDER_IMMUTABLE_UPLOADS_FILE": str(retention),
     })
@@ -246,7 +343,8 @@ def record_one(o, run: Run, tag: str, card: str, cpus: str | None, libs: dict, r
     # them again on the forecast thread (content-named; the recorder verifies them).
     subprocess.run(_py("seed_payloads.py") + [str(retention), str(w / "payload-store"), str(w), str(rec / "payloads")],
                    cwd=w, capture_output=True)
-    cmd = _cpus(cpus) + _py("record_observer.py") + ["--observer-dir", str(env.TOOLS), "--out", str(obs), "--"] \
+    e.update(rank_env(w))
+    cmd = _cpus(cpus) + _py("mdev_observer.py" if record_ranks() > 1 else "record_observer.py") + ["--observer-dir", str(env.TOOLS), "--out", str(obs), "--"] \
         + _with_out(forecast_args(o), w / f"fc-{tag}")
     t0 = time.monotonic()
     deadline = t0 + 60 * o.wait_for_card
@@ -700,14 +798,21 @@ def record(o) -> dict:
         o.lam = lam.localize_rows(o.lam, o.work / "case")
     else:
         o.lam = None
-    if o.mesh_kind == "limited-area" and not getattr(o, "fixed_free_mib", None):
+    # A rank-thread recording runs under the rank observer, whose every free-memory reading is MR_FIXED_FREE_MIB
+    # (16,384 MiB unless the recorder names one), so it gets the card's free memory as a limited-area one does.
+    # THE BREAKAGE THIS PREVENTS: the 103,950-column zoom globe as 4 rank threads (40,950,330,742 bytes asked) was
+    # refused at recording A's own card admission, "but has 17179869184 free", on an empty 96 GB card (18 Nov 2026).
+    if (o.mesh_kind == "limited-area" or record_ranks() > 1) and not getattr(o, "fixed_free_mib", None):
         o.fixed_free_mib = _card_free_mib(o.card)
     runner = env.which_runner(o.runner)
     if runner is None:
         run.fail("no replay runner: pass --runner, set HEXAD_RUNNER, or install the hexad runner (ad-binder on PATH)")
     T0 = time.monotonic()
+    o.route = getattr(o, "route", None) or routes.default()
+    routes.words(o.route)   # an unknown route refuses here, before any card
     run.log(f"{o.suite} on {o.mesh}, dt {o.dt} s, {o.hours} h = {o.steps} steps, numerics {o.numerics}, card "
-            f"{o.card}{'' if o.serial else '/' + str(o.card_b)}{' (serial pair)' if o.serial else ''}, out {o.out}")
+            f"{o.card}{'' if o.serial else '/' + str(o.card_b)}{' (serial pair)' if o.serial else ''}, out {o.out}, "
+            f"route {o.route}")
     t0 = time.monotonic()
     libs = native.build(quiet=True)
     run.stage("build", t0)
@@ -742,6 +847,18 @@ def record(o) -> dict:
         if result["rc3"] != 0:
             run.fail(f"stage 3 failed (rc {result['rc3']}): {_tail(o.work / 'seal-a' / 'stage3.log', 2)}")
         package(o, run, pair, retention, pairs)
+        # Every kernel kind of the plan has a derivative in this release, or nothing is sealed (coverage.py).
+        covered = coverage.check(o.out / "plan.json", runner)
+        (o.out / "derivative-coverage.json").write_text(json.dumps(covered, indent=1) + "\n")
+        if coverage.refuses(covered):
+            (o.out / "plan.json").rename(o.out / "plan.refused.json")
+            run.fail(coverage.refusal(covered))
+        run.log(f"derivative coverage: {covered['kinds']} kernel kinds, every one covered {covered['by']}"
+                + (f"; held by name: {', '.join(covered['held_by_name'])}" if covered["held_by_name"] else ""))
+        if covered["runner_lacks"]:
+            run.log(f"WARNING: the runner bound here ({runner}) has no window rule for {', '.join(covered['runner_lacks'])}"
+                    " (they came in 0.6.2): run this plan's windows with a runner built from 0.6.2 or later "
+                    "(--runner or GPUWM_HEX_AD_RUNNER), or every window stops at the first such launch")
         deck = deck_of(o.work / "record-a.log")
         run.log("deck of the recorded forecast: " + (json.dumps({k: v for k, v in deck.items() if k not in
                                                                    ("source", "door_line")}) if deck
@@ -761,7 +878,9 @@ def record(o) -> dict:
         "schema": "hexad.record-receipt/v1", "suite": o.suite, "mesh": o.mesh, "dt_s": o.dt, "hours": o.hours,
         "steps": o.steps, "numerics": o.numerics, "physics_mode": RECORD_PHYSICS_MODE, "hold_slots": o.hold_slots,
         "mesh_kind": o.mesh_kind, "limited_area_case": o.lam, "fixed_free_mib": getattr(o, "fixed_free_mib", None),
-        "milestone": os.environ["BINDER_PHYS_MILESTONE"],
+        "milestone": os.environ["BINDER_PHYS_MILESTONE"], "route": routes.record(o.route),
+        "boundary_store": boundary_store(),
+        "derivative_coverage": {k: covered[k] for k in ("kinds", "by", "held_by_name", "table")},
         "init": str(o.init), "init_sha256": env.sha256_file(Path(o.init)), "forecast_args": forecast_args(o),
         "deck": deck,
         "pair": {k: {x: v[x] for x in ("rc", "wall_s", "card")} for k, v in pair.items()},
@@ -774,6 +893,9 @@ def record(o) -> dict:
     if proof is not None and (proof["rc"] != 0 or proof["mismatch"] or proof["boundary_hashes"] == 0):
         run.fail(f"strict replay of the new plan failed: {proof}")
     run.log(f"SEALED {o.out} ({receipt['wall_s']['total']} s)")
+    if record_ranks() > 1:   # --ranks N: the sealed plan cut into one plan per rank while the recording is still here
+        receipt["rank_split"] = split_ranks(o, run, pair)
+        (o.out / "record-receipt.json").write_text(json.dumps(receipt, indent=1))
     if not o.keep_work:  # the recordings are regenerable from the receipt; the package and the logs are kept
         for p in o.work.iterdir():
             if p.is_dir() and p.name != "no-mps":

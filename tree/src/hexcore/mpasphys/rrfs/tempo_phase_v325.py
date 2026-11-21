@@ -738,7 +738,12 @@ def phase_source(device_math_source: str, max_levels: int, inline: str = "", cor
     work, tend = layout(col)
     binding, words = _work_binding(work, tend)
     return (f"#define TEMPO_NZ_MAX {max_levels}\n" + _shared_pow(device_math_source) + device_math_source
-            + col + layout_macros(words, "TM" in inline) + binding + _PHASES)
+            + col + layout_macros(words, "TM" in inline) + binding + _tp6_phases(_PHASES, corrections))
+
+
+def _tp6_phases(phases: str, corrections) -> str:
+    from hexcore.mpasphys.rrfs import tempo_v303 as t
+    return t.tp6_phases(phases, corrections)
 
 
 def _shared_pow(device_math_source: str) -> str:
@@ -1021,7 +1026,8 @@ def tail_source(device_math_source: str, max_levels: int, inline: str = "", corr
     mb = _tail_minblocks(inline)
     lb = f"#define TEMPO_TAIL_LB __launch_bounds__(32, {mb})\n" if mb else ""
     return (f"#define TEMPO_NZ_MAX {max_levels}\n#define TEMPO_WARP 1\n" + lb + _shared_pow(device_math_source)
-            + device_math_source + col + t._WARP + layout_macros(words, "TM" in inline) + _tail_kernel(col, work, tend)
+            + device_math_source + col + t.corrected_warp(corrections) + layout_macros(words, "TM" in inline)
+            + _tail_kernel(col, work, tend)
             + t._mpas_source("fast"))
 
 

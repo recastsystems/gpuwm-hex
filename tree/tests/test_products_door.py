@@ -1274,3 +1274,12 @@ def test_a_regional_view_draws_the_severe_weather_set_the_arwen_route_draws():
                  "bulk_shear_0_6km", "stp_fixed", "ehi_0_1km"):
         assert slug in products_door.REGIONAL_PRODUCTS
         assert slug not in products_door.GLOBAL_PRODUCTS
+
+
+def test_regional_views_carry_the_lightning_threat_and_the_gust():
+    """Brought from fork jacobbieker/woof PR 433 (Apache-2.0): through hex 0.6.1 a regional view had neither."""
+    from hexcore.products_door import GLOBAL_PRODUCTS, REGIONAL_PRODUCTS
+
+    for name in ("lightning_threat_3", "10m_wind_gusts", "mlcape", "srh_0_1km", "stp_fixed"):
+        assert name in REGIONAL_PRODUCTS
+    assert "lightning_threat_3" not in GLOBAL_PRODUCTS

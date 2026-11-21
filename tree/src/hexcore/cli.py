@@ -508,7 +508,27 @@ def _fold_stochastic_switches(arguments: argparse.Namespace) -> None:
     arguments.stochastic = json.dumps(current, sort_keys=True)
 
 
+def _streams_write_any_text() -> None:
+    """Let an output stream that is not UTF-8 write every character the doors print.
+
+    THE BREAKAGE THIS PREVENTS (0.6.2's check, Windows 11, Python 3.13): with its output piped or sent to a file,
+    Python on Windows writes in the ANSI code page (cp1252), and ten doors' ``--help`` (forecast, global, regional,
+    country, mesh-plan, pair, products, s2s, run-plan, global-cycle) stopped with ``UnicodeEncodeError`` on the arrow
+    in their help text, exit 1, before printing it. Such a stream now writes a character it cannot encode as a
+    backslash escape; a UTF-8 stream is left as it is.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        encoding = (getattr(stream, "encoding", None) or "").lower().replace("-", "").replace("_", "")
+        if encoding.startswith("utf8") or not hasattr(stream, "reconfigure"):
+            continue
+        try:
+            stream.reconfigure(errors="backslashreplace")
+        except (AttributeError, OSError, ValueError):
+            pass
+
+
 def main(argv: Sequence[str] | None = None) -> int:
+    _streams_write_any_text()
     argv = sys.argv[1:] if argv is None else list(argv)
     if argv and argv[0] == "--version":
         # Answered here, before the engine is imported or any door's parser is built: the word a user types to

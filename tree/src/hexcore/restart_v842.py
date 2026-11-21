@@ -368,7 +368,11 @@ def write_stream(path: str | Path, stream: Stream | str, mesh: object,
             shutil.copyfile(path,staged)
         attrs=_json_attrs(getattr(mesh,'attrs',{}))
         if global_attrs: attrs.update(_json_attrs(global_attrs))
-        request={'operation':'write','path':str(staged),'format':stream.options.get('io_type','pnetcdf'),
+        _fmt = stream.options.get('io_type', 'pnetcdf')
+        _max_bytes = max((int(np.asarray(v.values).nbytes) if isinstance(v, HistoryField) else int(getattr(v, 'nbytes', 0)) for v in fields.values()), default=0)
+        if _fmt == 'pnetcdf' and (_max_bytes >= (1 << 31) or os.environ.get('GPUWM_HEX_NETCDF_64BIT', '0').strip().lower() in ('1', 'true', 'yes', 'on')):
+            _fmt = 'pnetcdf,cdf5'
+        request={'operation':'write','path':str(staged),'format':_fmt,
                'dimensions':{d:sizes[d] for d in dimension_order},'dimension_order':dimension_order,
                'variables':variables,'global_attrs':attrs,'global_attribute_order':list(attrs),
                # MPAS v8.4.2 SMIOL smiol.c:15,341-344 reserves a 128 KiB

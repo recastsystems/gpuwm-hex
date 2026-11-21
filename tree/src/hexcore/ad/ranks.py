@@ -39,6 +39,30 @@ def split_of(table: dict, row_name: str) -> dict | None:
     return dict(entry) if isinstance(entry, dict) else None
 
 
+MADE = "made"   # table rank_splits.made: the split of a row made for a mesh (--mesh) whose rank plans are given
+
+
+def made_split(table: dict, row: dict) -> dict | None:
+    """The rank split of a row made for a mesh (``--mesh``, ``row["generated"]``) when the user gives its rank plans
+    (``--rank-plans PREFIX``): the table's ``rank_splits.made`` entry with one plan entry per rank count up to its
+    cards_max, each asking every card for the row's own one-card need (an upper bound: a rank holds 1/N of the columns
+    and its halo). None when the table has no such entry.
+
+    THE BREAKAGE THIS PREVENTS: a row made for a mesh never had a rank split (rank_splits names shipped rows only), so
+    ``--cards 0,1,2,3 --rank-plans PREFIX`` on a made mesh (the 96-to-24 km zoom globe, 103,950 columns; anything over
+    the 200,000-cell one-card limit) ran the window on card 0 alone and never read the rank plans."""
+    entry = (table.get("rank_splits") or {}).get(MADE)
+    if not isinstance(entry, dict) or not row.get("generated"):
+        return None
+    out = dict(entry)
+    need = int(row.get("need_free_mib") or 0)
+    out["plans"] = {str(n): {"pkg": "(given with --rank-plans)", "need_free_mib_rank": need,
+                             "need_host_mib_rank": None, "shm_mib": None,
+                             "measured": "not measured per rank: the made row's one-card need, an upper bound"}
+                    for n in range(2, int(entry.get("cards_max") or 1) + 1)}
+    return out
+
+
 def choose(split: dict, row_name: str, n_cards: int, door: str) -> dict:
     """The split for N cards (one rank a card): the plan package and the memory each rank needs.
 
@@ -69,6 +93,7 @@ def choose(split: dict, row_name: str, n_cards: int, door: str) -> dict:
             "exchange": word, "exchange_env": dict(exchange.get("env") or {}),
             "exchange_runner_label": exchange.get("runner_label"),
             "env_drop": list(split.get("env_drop") or []), "window_args": list(split.get("window_args") or []),
+            "window_args_drop": list(split.get("window_args_drop") or []),
             "assets": dict(split.get("assets") or {}), "row_overrides": dict(split.get("row_overrides") or {}),
             "ownerreduce": dict(split["ownerreduce"]) if split.get("ownerreduce") else None,
             "measured": entry.get("measured"), "what": split.get("what"),

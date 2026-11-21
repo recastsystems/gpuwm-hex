@@ -98,24 +98,53 @@ def main():
             return [plain(k) for k in key]
         return key if isinstance(key, (bool, int, float, str)) or key is None else (int(key) if hasattr(key, "__index__") else repr(key))
 
-    def capture(step):
-        import cupy as cp
+    def tempo_rows():
+        """(key, name, array) of every TEMPO scheduling word array and per-warp scratch array: the rows capture writes
+        and the rows register hands the recorder, from one list so the two are the same rows."""
         from hexcore.mpasphys.rrfs import tempo_v303 as tempo
-        cp.cuda.runtime.deviceSynchronize()
         rows = []
         for key, arrays in list(tempo._ORDER_WORK.items()):
-            for name, array in zip(('cost', 'order', 'hist'), arrays):
+            rows += [(key, name, array) for name, array in zip(('cost', 'order', 'hist'), arrays)]
+        for key, arrays in list(tempo._WARP_WORK.items()):
+            rows += [(key, name, array) for name, array in zip(('warp_states', 'warp_work', 'warp_blwork'), arrays)]
+        return rows
+
+    def capture(step):
+        import cupy as cp
+        cp.cuda.runtime.deviceSynchronize()
+        rows = []
+        for key, name, array in tempo_rows():
+            if name in ('cost', 'order', 'hist'):
                 data = cp.asnumpy(array).tobytes()
                 rows.append({'key': plain(key), 'name': name, 'pointer': int(array.data.ptr),
                              'bytes': len(data), 'hex': data.hex()})
-        # Per-warp scratch (states, work, PBL work): pointers and sizes only, no bytes. The kernel zeroes work
-        # itself and starts each column's state afresh; which warp ran which column follows the order above.
-        for key, arrays in list(tempo._WARP_WORK.items()):
-            for name, array in zip(('warp_states', 'warp_work', 'warp_blwork'), arrays):
+            else:
+                # Per-warp scratch (states, work, PBL work): pointers and sizes only, no bytes. The kernel zeroes work
+                # itself and starts each column's state afresh; which warp ran which column follows the order above.
                 rows.append({'key': plain(key), 'name': name, 'pointer': int(array.data.ptr),
                              'bytes': int(array.nbytes)})
         with open(os.path.join(target, f'step-{step}.json'), 'w') as f:
             json.dump({'schema': 'ad.binder.tempo-scheduling-words/v1', 'step': step, 'rows': rows}, f)
+
+    # lean store: the same rows go to the recorder BEFORE it marks the boundary (binder_residue_rows), so it writes the
+    # masked digest of each allocation holding them (BoundaryMaskedDigest) and keeps none of their bytes. Pointers and
+    # sizes only: no device read, nothing the forward sees. A library without the symbol (an older recorder) is skipped.
+    import ctypes
+    try:
+        _register = ctypes.CDLL(None).binder_residue_rows
+        _register.argtypes = [ctypes.POINTER(ctypes.c_ulonglong), ctypes.POINTER(ctypes.c_ulonglong), ctypes.c_uint]
+        _register.restype = ctypes.c_int
+    except AttributeError:
+        _register = None
+
+    def register():
+        if _register is None:
+            return
+        rows = tempo_rows()
+        pointers = (ctypes.c_ulonglong * max(1, len(rows)))(*[int(a.data.ptr) for _, _, a in rows])
+        sizes = (ctypes.c_ulonglong * max(1, len(rows)))(*[int(a.nbytes) for _, _, a in rows])
+        if _register(pointers, sizes, len(rows)):
+            raise RuntimeError('recorder: binder_residue_rows failed')
 
     def boundary_trace(observer):
         inner = original(observer)
@@ -134,6 +163,8 @@ def main():
             state = {'local': local}
 
             def mine(current, kind, value):
+                if kind == 'line' and current.f_lineno in (before, finish) and current.f_locals.get('step', 0):
+                    register()   # before the inner trace marks the boundary
                 result = state['local'](current, kind, value)
                 if result is not None:
                     state['local'] = result

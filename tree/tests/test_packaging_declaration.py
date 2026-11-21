@@ -39,8 +39,8 @@ def declaration() -> dict:
 # ---------------------------------------------------------------------------
 def test_the_version_is_stated_in_exactly_one_place(declaration: dict) -> None:
     declared = declaration["project"]["version"]
-    assert declared == "0.6.1", (
-        "0.6.1 is the defect release of 0.6.0 (paired with gpuwm 3.0); "
+    assert declared == "0.6.2", (
+        "0.6.2 is the defect release of 0.6.1 (paired with gpuwm 3.0); "
         "moving it is a release decision, not an edit"
     )
 
@@ -268,9 +268,18 @@ def test_the_import_namespace_carries_no_other_project_name() -> None:
 # ---------------------------------------------------------------------------
 # the dependency table
 # ---------------------------------------------------------------------------
+# A subpackage that is an optional extra's own code may import that extra's distributions at module scope: nothing
+# else in the package imports it, so `import hexcore` and every other module still import without the extra (held by
+# test_extra_subpackages_are_imported_only_by_themselves).  THE BREAKAGE the plain rule would cause (2026-11-19): the
+# torch bridge, opt-in by design, could only be written with its imports hidden inside functions.
+_EXTRA_SUBPACKAGES = {"torch_bridge": {"torch"}}
+
+
 def _module_scope_third_party_imports() -> set[str]:
     found: set[str] = set()
     for path in sorted(PACKAGE.rglob("*.py")):
+        rel = path.relative_to(PACKAGE).parts
+        allowed = _EXTRA_SUBPACKAGES.get(rel[0], set()) if len(rel) > 1 else set()
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in tree.body:
             names: list[str] = []
@@ -289,8 +298,30 @@ def _module_scope_third_party_imports() -> set[str]:
                 # imports read as undeclared dependencies.
                 if (path.parent / f"{top}.py").is_file():
                     continue
+                if top in allowed:
+                    continue
                 found.add(top)
     return found
+
+
+def test_extra_subpackages_are_imported_only_by_themselves() -> None:
+    for path in sorted(PACKAGE.rglob("*.py")):
+        rel = path.relative_to(PACKAGE).parts
+        for sub in _EXTRA_SUBPACKAGES:
+            if rel[0] == sub:
+                continue
+            for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+                names = []
+                if isinstance(node, ast.Import):
+                    names = [a.name for a in node.names]
+                elif isinstance(node, ast.ImportFrom) and not node.level:
+                    names = [node.module or ""] + [f"{node.module}.{a.name}" for a in node.names]
+                elif isinstance(node, ast.ImportFrom) and node.level == 1 and path.parent == PACKAGE:
+                    names = [f"hexcore.{node.module or ''}"] + [f"hexcore.{a.name}" for a in node.names]
+                assert not any(n == f"hexcore.{sub}" or n.startswith(f"hexcore.{sub}.") for n in names), (
+                    f"{path.relative_to(ROOT)} imports hexcore.{sub}, an optional extra's subpackage: the package "
+                    "would then need that extra to import"
+                )
 
 
 def test_every_module_scope_import_is_a_declared_dependency(

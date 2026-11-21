@@ -504,6 +504,26 @@
       }
     }
   },
+  "refused_settings": {
+    "about": "Engine settings the column route accepts at resolve time and cannot honour: hex integrates with the MPAS-A dycore on an unstructured mesh and hands the engine one column-physics call, so a setting whose code reads the neighbouring grid points of a structured domain runs on columns that are not neighbours. A request for one is refused by name, with its reason. A value in inactive_values is the setting's off state and passes; refused_values, when given, names the only values refused. From fork jacobbieker/woof PR 302 (Apache-2.0), the rows checked against this engine.",
+    "settings": {
+      "slope_rad": {
+        "inactive_values": ["0"],
+        "reason": "WRF's slope shortwave builds each point's slope and aspect from the terrain of its grid neighbours (gpuwm.core.topo_radiation.slope_geometry); the hex column call has no neighbour terrain and no per-cell slope or aspect statics are staged. THE BREAKAGE: on gpuwm-hex 0.6.1, x1.40962 with --physics slope_rad=1 stopped at step 0 with non-finite sensible and latent heat fluxes (5,865 and 3,501 cells) going into YSU",
+        "follow_up": "slope_rad=0"
+      },
+      "topo_shading": {
+        "inactive_values": ["0"],
+        "reason": "WRF's terrain shadow mask marches the sun direction over the neighbouring terrain of a structured grid; a hex column has no neighbour terrain and no shadow statics are staged. THE BREAKAGE: on gpuwm-hex 0.6.1, x1.40962 with --physics topo_shading=1 ran and changed every history frame against the run without it (digest e334f5fd against 09df5028), though no shadow it computed can be right",
+        "follow_up": "topo_shading=0"
+      },
+      "shadlen": {
+        "inactive_values": [],
+        "reason": "shadlen is the search length of topo_shading's terrain shadow mask, which hex cannot run (see topo_shading)",
+        "follow_up": "drop shadlen with topo_shading=0"
+      }
+    }
+  },
   "pairings": [
     {
       "if": {
@@ -1855,6 +1875,10 @@
         "type": "character",
         "value": "constant"
       },
+      "config_radt_mcica_seed": {
+        "type": "character",
+        "value": "pressure"
+      },
       "config_gfconv_closure_deep": {
         "type": "integer",
         "value": 0
@@ -2054,7 +2078,7 @@
             "module": "rrfs.tempo_v303",
             "call": "run_slot",
             "bind": "bind_native_pools",
-            "corrections": ["TP1", "TP2", "TP3", "TP4", "TP5"],
+            "corrections": ["TP1", "TP2", "TP3", "TP4", "TP5", "TP6"],
             "resources": {
               "module": "rrfs.tempo_v303",
               "call": "load_resources",
@@ -2749,6 +2773,10 @@
         "type": "character",
         "value": "constant"
       },
+      "config_radt_mcica_seed": {
+        "type": "character",
+        "value": "pressure"
+      },
       "config_gfconv_closure_deep": {
         "type": "integer",
         "value": 0
@@ -3250,6 +3278,7 @@
         "config_mynn_sfcflux_water",
         "config_radt_cld_overlap",
         "config_radt_cld_dcorrlen",
+        "config_radt_mcica_seed",
         "config_gfconv_closure_deep",
         "config_gfconv_closure_shallow",
         "config_mynn_tkeadvect",
@@ -5652,7 +5681,7 @@
             "module": "rrfs.tempo_v303",
             "call": "run_slot",
             "bind": "bind_native_pools",
-            "corrections": ["TP1", "TP2", "TP3", "TP4", "TP5"],
+            "corrections": ["TP1", "TP2", "TP3", "TP4", "TP5", "TP6"],
             "resources": {
               "module": "rrfs.tempo_v303",
               "call": "load_resources",
@@ -5710,6 +5739,11 @@
           },
           "cu_ntiedtke": {
             "module": "ntiedtke_v842",
+            "call": "run_slot",
+            "bind": "bind_native_pools"
+          },
+          "cu_grell_freitas": {
+            "module": "gf_mpas_v842",
             "call": "run_slot",
             "bind": "bind_native_pools"
           }
@@ -6276,6 +6310,10 @@
       "config_radt_cld_dcorrlen": {
         "type": "character",
         "value": "constant"
+      },
+      "config_radt_mcica_seed": {
+        "type": "character",
+        "value": "pressure"
       },
       "config_gfconv_closure_deep": {
         "type": "integer",
@@ -6845,6 +6883,7 @@
         "config_mynn_sfcflux_water",
         "config_radt_cld_overlap",
         "config_radt_cld_dcorrlen",
+        "config_radt_mcica_seed",
         "config_gfconv_closure_deep",
         "config_gfconv_closure_shallow",
         "config_mynn_tkeadvect",
@@ -10402,6 +10441,16 @@
           "gwdo": "bl_ugwp_gwdo",
           "radiation_lw": "rrtmg_lw",
           "radiation_sw": "rrtmg_sw"
+        },
+        {
+          "microphysics": "mp_tempo",
+          "convection": "cu_grell_freitas",
+          "pbl": "bl_mynnedmf",
+          "surface_layer": "sf_mynnsfclay",
+          "land_surface": "sf_ruc",
+          "gwdo": "bl_ugwp_gwdo",
+          "radiation_lw": "rrtmg_lw",
+          "radiation_sw": "rrtmg_sw"
         }
       ]
     },
@@ -10417,6 +10466,18 @@
           "this pairing is not NOAA's hrrrv5, which runs no cumulus scheme (the fork's hrrrv5 suite, mpas_atmphys_control.F); the fork's own suites put a cumulus scheme only in mesoscale_reference (New Tiedtke) and convection_permitting (Grell-Freitas)"
         ],
         "source": "RRFSx/MPAS-Model@44c0849 src/core_atmosphere/physics/mpas_atmphys_driver_convection.F (cu_grell_freitas_li), GFL submodule bf6a4b0"
+      },
+      "hrrrv5 + Grell-Freitas": {
+        "suite": "hrrrv5",
+        "selectors": {
+          "config_convection_scheme": "cu_grell_freitas"
+        },
+        "for": "a control or comparison that needs MPAS-A's own Grell-Freitas (the convection_permitting suite's scheme) beside hrrrv5's other physics, on meshes with cells coarser than about 5 km",
+        "differences_from_suite": [
+          "convection: MPAS-A's Grell-Freitas (module_cu_gf.mpas.F, the same file at MPAS-A v8.4.2 and in the RRFS fork at 44c0849, sha256 b63086af) on every cell, on the GPU (gf_mpas_v842); hrrrv5 runs none at 3 km and New Tiedtke at 12 km. Its updraft fraction scales with each cell's spacing (len_disp / meshDensity**0.25)",
+          "this pairing is not NOAA's hrrrv5; the fork's own suites put Grell-Freitas only in convection_permitting (with Thompson, MYNN and Noah)"
+        ],
+        "source": "RRFSx/MPAS-Model@44c0849 src/core_atmosphere/physics/mpas_atmphys_driver_convection.F (cu_grell_freitas) and physics_wrf/module_cu_gf.mpas.F"
       }
     },
     "streams_parser": "hexcore.mpasphys.rrfs.stream_xml_rrfs:stream_tree",

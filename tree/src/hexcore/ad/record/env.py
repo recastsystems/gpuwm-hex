@@ -114,13 +114,28 @@ def compute_capability(card: str) -> str:
     return f"sm_{major}{minor}"
 
 
+def physical_card(card) -> str:
+    """The card a chain step runs on, as CUDA_VISIBLE_DEVICES names it for the child: a card this process may see is
+    kept; an index within a set CUDA_VISIBLE_DEVICES (the scheduler's cards) is counted inside it.
+    THE BREAKAGE THIS PREVENTS: under a queue that gave the job card 3 (CUDA_VISIBLE_DEVICES=3), `record --card 0`
+    (the default) set CUDA_VISIBLE_DEVICES=0 for every forward, so the recordings ran on physical card 0, another
+    job's card, while the queue counted them on card 3 (18 Nov 2026: three 3-36 km recordings on card 0)."""
+    card = str(card)
+    seen = [c.strip() for c in os.environ.get("CUDA_VISIBLE_DEVICES", "").split(",") if c.strip()]
+    if not seen or seen[0].startswith("-") or card in seen:
+        return card
+    if card.isdigit() and int(card) < len(seen):
+        return seen[int(card)]
+    return card
+
+
 def runtime_env(card: str) -> dict:
     """The process environment every CUDA step of the chain runs in: the named card, the wheel toolkit, no MPS."""
     root = cuda_root()
     libcupti, _ = cupti()
     env = dict(os.environ)
     env.pop("CUDA_HOME", None)
-    env["CUDA_VISIBLE_DEVICES"] = str(card)
+    env["CUDA_VISIBLE_DEVICES"] = physical_card(card)
     env["CUDA_PATH"] = str(root)
     paths = [str(libcupti.parent), str(root / "lib")]
     if env.get("LD_LIBRARY_PATH"):

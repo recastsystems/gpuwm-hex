@@ -322,3 +322,20 @@ def test_every_split_row_is_experimental_and_the_storm_box_line_names_what_diffe
     for name, v in rows.items():
         for n in v["plans"]:
             assert rk.choose(v, name, int(n), v["doors"][0])["experimental"] == v["experimental"]
+
+
+def test_a_made_row_with_rank_plans_takes_the_made_split_and_drops_the_one_process_host_budget():
+    table = d.load_table()
+    row = {"generated": True, "need_free_mib": 90660, "window_args": ["--anchors", "1", "--host-budget-gb", "320",
+                                                                      "--vram-budget-gb", "93"],
+           "assets": {}, "window_env": {"AD_TAPE_UNREAD": "x", "AD_ANCHORS_AHEAD": "0"}}
+    split = rk.made_split(table, row)
+    assert split is not None and rk.made_split(table, {**row, "generated": False}) is None
+    s = rk.choose(split, "hrrrv5-made", 4, "sensitivity")
+    assert s["ranks"] == 4 and s["need_free_mib_rank"] == 90660 and s["exchange_env"] == {"AD_PEER_SHM": "1"}
+    assert s["experimental"]["line"]
+    out = d.split_row(row, s)
+    assert out["window_args"] == ["--anchors", "1", "--vram-budget-gb", "93"]
+    assert out["window_env"] == {"AD_ANCHORS_AHEAD": "0"}
+    with pytest.raises(rk.RankSplitError):
+        rk.choose(split, "hrrrv5-made", 9, "sensitivity")

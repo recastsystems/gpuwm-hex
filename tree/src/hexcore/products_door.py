@@ -138,6 +138,10 @@ REGIONAL_EXTRA_PRODUCTS = (
     "bulk_shear_0_6km",
     "stp_fixed",
     "ehi_0_1km",
+    # McCaul's total lightning threat and the 10 m gust, which the renderer also derives from a hex frame's own
+    # columns (fork jacobbieker/woof PR 433; the rest of that PR's set was already here).
+    "lightning_threat_3",
+    "10m_wind_gusts",
 )
 GLOBAL_PRODUCTS = BASE_GLOBAL_PRODUCTS + WINDOWED_PRODUCTS
 REGIONAL_PRODUCTS = GLOBAL_PRODUCTS + REGIONAL_EXTRA_PRODUCTS
